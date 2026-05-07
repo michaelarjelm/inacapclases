@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 04/05 — Gemini CLI + Configuración + Hardening + Apache</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: white;
+    font-family: 'Barlow', sans-serif;
+    color: #333;
+    overflow-x: hidden;
+    scroll-snap-type: y mandatory;
+  }
+  :root {
+    --red:       #E31E24;
+    --dark-gray: #4A4A4A;
+    --blue:      #0063B1;
+    --green:     #107C10;
+  }
+
+  .header {
+    background: white;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #EBEBEB;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-title { display: flex; align-items: center; gap: 12px; }
+  .header-title h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: #1A1A1A;
+  }
+  .header-title span { color: var(--red); }
+  .header-badge {
+    background: #1A1A1A;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .header-logo { height: 36px; opacity: 0.6; }
+
+  .slide {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 40% 60%;
+    gap: 0;
+    align-items: stretch;
+    border-bottom: 5px solid var(--red);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  .slide-content {
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: white;
+  }
+  .slide-image {
+    background: #F5F5F5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    padding: 30px;
+  }
+
+  .slide-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+  .slide-number {
+    background: var(--red);
+    color: white;
+    width: 56px;
+    height: 56px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .slide-header h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #1A1A1A;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .slide-header h2 span { color: var(--red); }
+
+  .slide-description { font-size: 17px; line-height: 1.7; color: #555; margin-bottom: 24px; }
+  .slide-description strong { color: #1A1A1A; font-weight: 700; }
+  .slide-description code {
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #CC0000;
+  }
+
+  .info-box {
+    background: #FFF3F3;
+    border-left: 4px solid var(--red);
+    border-radius: 4px;
+    padding: 14px 16px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #555;
+  }
+  .info-box strong { color: #B71C1C; font-weight: 700; }
+  .info-box code {
+    background: rgba(227,30,36,0.12);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #B71C1C;
+  }
+  .info-box.info-blue  { background: #EEF4FF; border-color: var(--blue); color: #0D47A1; }
+  .info-box.info-blue strong { color: #0D47A1; }
+  .info-box.info-blue code  { background: rgba(0,99,177,0.12); color: #003d82; }
+  .info-box.info-green { background: #F0FFF0; border-color: var(--green); color: #1B5E20; }
+  .info-box.info-green strong { color: #1B5E20; }
+  .info-box.info-green code  { background: rgba(16,124,16,0.12); color: #0b3810; }
+  .info-box.info-yellow { background: #FFFBEA; border-color: #F59E0B; color: #78350F; }
+  .info-box.info-yellow strong { color: #78350F; }
+  .info-box.info-yellow code  { background: rgba(245,158,11,0.15); color: #78350F; }
+
+  .part-slide {
+    background: linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .part-slide .slide-content { background: transparent; padding: 80px 50px; }
+  .part-slide h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 72px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: white;
+    line-height: 1;
+    margin-bottom: 20px;
+    letter-spacing: -0.01em;
+  }
+  .part-slide h2 span { color: var(--red); }
+  .part-slide p { font-size: 22px; color: rgba(255,255,255,0.6); line-height: 1.6; max-width: 600px; }
+
+  .console {
+    background: #0d0d0d;
+    border: 1px solid #333;
+    border-radius: 6px;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    width: 100%;
+  }
+  .console-header {
+    background: #1a1a1a;
+    border-bottom: 1px solid #333;
+    padding: 10px 16px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .console-button { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .console-button.red    { background: #ff5f56; }
+  .console-button.yellow { background: #ffbd2e; }
+  .console-button.green  { background: #27c93f; }
+  .console-title { color: #888; font-size: 12px; margin-left: 8px; }
+  .console-content {
+    padding: 16px;
+    color: #00ff00;
+    font-size: 12.5px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .prompt-box {
+    background: #0d0d0d;
+    border: 1px solid #444;
+    border-radius: 6px;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    width: 100%;
+  }
+  .prompt-box-header {
+    background: #1a1a1a;
+    border-bottom: 1px solid #333;
+    padding: 10px 16px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .prompt-label {
+    color: #ffd700;
+    font-size: 12px;
+    font-weight: 700;
+    margin-left: 8px;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .prompt-content {
+    padding: 16px;
+    color: #e0e0e0;
+    font-size: 12px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  .prompt-content .prompt-arrow { color: #ffd700; font-weight: 700; }
+  .prompt-content .prompt-comment { color: #666; }
+
+  .checklist {
+    background: white;
+    border-radius: 8px;
+    padding: 20px 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    width: 100%;
+  }
+  .checklist h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #1A1A1A;
+    margin-bottom: 14px;
+    border-bottom: 2px solid var(--green);
+    padding-bottom: 6px;
+  }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: #333;
+  }
+  .check-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    background: var(--green);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 900;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .check-cmd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: #f0f0f0;
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #333;
+  }
+  .check-expected {
+    color: #107C10;
+    font-weight: 600;
+  }
+
+  .copy-btn {
+    margin-left: auto;
+    background: none;
+    border: 1px solid #555;
+    color: #aaa;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { border-color: #ffd700; color: #ffd700; }
+  .copy-btn.copied { border-color: #27c93f; color: #27c93f; }
+
+  @media (max-width: 1024px) {
+    .slide { grid-template-columns: 1fr; min-height: auto; }
+    .slide-content { padding: 40px 30px; }
+    .slide-image { min-height: 300px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-title">
+    <h1>Clase <span>04/05</span> — Sistemas Operativos</h1>
+    <div class="header-badge">RHEL 9</div>
+  </div>
+  <img src="https://siga.inacap.cl/Inacap.VerificacionCertificados/assets/img/logo-blanco.png" class="header-logo" alt="INACAP">
+</div>
+
+
+<!-- PARTE 1 HEADER -->
+<div class="slide part-slide">
+  <div class="slide-content">
+    <h2>Parte 1 — Instalar <span>Gemini CLI</span></h2>
+    <p>Instalamos Node.js 20, Gemini CLI y autenticamos con nuestra cuenta Google. Es el punto de partida para controlar el servidor con lenguaje natural.</p>
+  </div>
+</div>
+
+
+<!-- SLIDE 1: Node.js 20 -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">1</div>
+      <h2>Prerequisito <span>Node.js 20</span></h2>
+    </div>
+    <p class="slide-description">Gemini CLI requiere <strong>Node.js 20 o superior</strong>. El repositorio base de RHEL 9 trae Node.js 16, por lo que hay que habilitar explícitamente el módulo correcto antes de instalar.<br><br><strong>Pasos (máquina nueva):</strong><br>1. Habilitar el stream de Node.js 20<br>2. Instalar con <code>dnf</code></p>
+    <div class="info-box info-green">
+      <strong>Validación:</strong> <code>node --version</code> debe mostrar <span class="check-expected">v20.x.x</span> — si muestra v16 o "command not found", el módulo no se habilitó correctamente.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — 80x24</span>
+      </div>
+      <div class="console-content"><span style="color:#888;">[ec2-user@ip ~]$</span> <span style="color:#90EE90;">sudo dnf module enable nodejs:20 -y</span>
+Dependencies resolved. Complete!
+
+<span style="color:#888;">[ec2-user@ip ~]$</span> <span style="color:#90EE90;">sudo dnf install nodejs -y</span>
+Installing: nodejs  20.18.1  appstream
+Complete!
+
+<span style="color:#888;"># Validacion</span>
+<span style="color:#888;">[ec2-user@ip ~]$</span> <span style="color:#90EE90;">node --version</span>
+<span style="color:#00ff00;">v20.18.1</span>
+
+<span style="color:#888;">[ec2-user@ip ~]$</span> <span style="color:#90EE90;">npm --version</span>
+<span style="color:#00ff00;">10.8.2</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 2: Instalar Gemini CLI -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">2</div>
+      <h2>Instalar <span>Gemini CLI</span></h2>
+    </div>
+    <p class="slide-description">Con Node.js 20 listo, instalamos Gemini CLI de forma global. El <code>sudo</code> es obligatorio porque la instalación escribe en <code>/usr/local/lib/</code>, que pertenece a root.<br><br><strong>Comando:</strong><br><code>sudo npm install -g @google/gemini-cli</code><br><br>El flag <code>-g</code> instala el ejecutable en <code>/usr/local/bin/gemini</code>, que ya está en el PATH de todos los usuarios.</p>
+    <div class="info-box info-green">
+      <strong>Validación:</strong><br>
+      <code>gemini --version</code> → <span class="check-expected">0.1.x</span><br>
+      <code>which gemini</code> → <span class="check-expected">/usr/local/bin/gemini</span>
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — 80x24</span>
+      </div>
+      <div class="console-content"><span style="color:#888;">[ec2-user@ip ~]$</span> <span style="color:#90EE90;">sudo npm install -g @google/gemini-cli</span>
+
+npm warn deprecated inflight@1.0.6
+added 247 packages in 52s
+
+<span style="color:#888;"># Validacion</span>
+<span style="color:#888;">[ec2-user@ip ~]$</span> <span style="color:#90EE90;">gemini --version</span>
+<span style="color:#00ff00;">0.1.7</span>
+
+<span style="color:#888;">[ec2-user@ip ~]$</span> <span style="color:#90EE90;">which gemini</span>
+<span style="color:#00ff00;">/usr/local/bin/gemini</span>
+
+<span style="color:#888;">[ec2-user@ip ~]$</span> <span style="color:#90EE90;">ls -la /usr/local/bin/gemini</span>
+<span style="color:#00ff00;">-rwxr-xr-x. 1 root root 312 /usr/local/bin/gemini</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 3: Autenticación -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">3</div>
+      <h2>Primer uso y <span>autenticación</span></h2>
+    </div>
+    <p class="slide-description">La primera vez que ejecutas <code>gemini</code>, solicita autenticación con una cuenta Google. El flujo es:<br><br>1. Ejecutar <code>gemini</code> en el servidor<br>2. Gemini muestra un URL de autenticación<br>3. Abrir ese URL en el navegador de tu PC (no en el servidor)<br>4. Iniciar sesión con tu cuenta Google<br>5. Copiar el código de autorización y pegarlo en la terminal<br><br>Las credenciales se guardan en <code>~/.config/gemini/</code> para sesiones futuras — no hay que autenticarse de nuevo.</p>
+    <div class="info-box info-green">
+      <strong>Validación:</strong> después de autenticarte, escribe <code>hola</code> en el prompt de Gemini. Si responde en texto, la autenticación fue exitosa. Escribe <code>/quit</code> para salir.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — 80x24</span>
+      </div>
+      <div class="console-content"><span style="color:#888;">[ec2-user@ip ~]$</span> <span style="color:#90EE90;">gemini</span>
+
+<span style="color:#00d4ff;">  ╔══════════════════════════════════════════╗
+  ║          Welcome to Gemini CLI           ║
+  ╚══════════════════════════════════════════╝</span>
+
+<span style="color:#888;">To authenticate, open this URL in your browser:</span>
+<span style="color:#ffd700;">https://accounts.google.com/o/oauth2/auth?...</span>
+
+<span style="color:#888;">Enter the authorization code:</span> <span style="color:#90EE90;">4/0AX4XfW...</span>
+
+<span style="color:#00ff00;">Authenticated successfully.</span>
+<span style="color:#00ff00;">Ready. Type your message below.</span>
+
+<span style="color:#888;"># Validacion: escribe hola</span>
+<span style="color:#ffd700;">&gt;</span> hola
+<span style="color:#00d4ff;">Hola! Estoy listo para ayudarte a administrar este servidor.</span>
+
+<span style="color:#ffd700;">&gt;</span> /quit
+<span style="color:#888;">[ec2-user@ip ~]$</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- PARTE 2 HEADER -->
+<div class="slide part-slide">
+  <div class="slide-content">
+    <h2>Parte 2 — <span>Prompt 1</span><br>Config inicial</h2>
+    <p>Usamos Gemini para dejar el servidor actualizado y configurado: hostname, zona horaria, firewall y servicios innecesarios deshabilitados.</p>
+  </div>
+</div>
+
+
+<!-- SLIDE 4: Prompt 1 - Config inicial -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">4</div>
+      <h2>Prompt — <span>configuración inicial</span></h2>
+    </div>
+    <p class="slide-description">Copia y pega este prompt en Gemini. Reemplaza <code>[TU_HOSTNAME]</code> por el nombre que le pusiste a tu instancia en AWS.<br><br>Cubre la actualización completa del servidor, configuración base, firewall, deshabilitar servicios innecesarios y restringir Gemini solo a <code>ec2-user</code>.</p>
+    <div class="info-box info-green">
+      <strong>Validación al finalizar:</strong><br>
+      <code>sudo dnf check-update</code> → <span class="check-expected">No packages needed</span><br>
+      <code>hostnamectl | grep hostname</code> → <span class="check-expected">tu hostname</span><br>
+      <code>timedatectl | grep "Time zone"</code> → <span class="check-expected">America/Santiago</span><br>
+      <code>sudo firewall-cmd --list-services</code> → <span class="check-expected">ssh</span><br>
+      <code>sudo systemctl is-active postfix</code> → <span class="check-expected">inactive</span><br>
+      <code>ls -la /usr/local/bin/gemini</code> → <span class="check-expected">-rwxr-x--- root ec2-user</span>
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="prompt-box">
+      <div class="prompt-box-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="prompt-label">Prompt — pegar en Gemini</span>
+        <button class="copy-btn">Copiar</button>
+      </div>
+      <div class="prompt-content"><span class="prompt-arrow">&gt;</span> Eres un administrador de sistemas experto en RHEL 9.
+  Vamos a hacer la configuracion inicial de este servidor.
+
+  Antes de ejecutar cualquier cosa, dame el plan completo
+  con todos los pasos numerados. Solo cuando yo confirme,
+  ejecuta uno a uno esperando mi aprobacion en cada paso.
+
+  Los pasos deben cubrir:
+  1. Mostrar informacion basica (OS, kernel, hostname, disco, RAM)
+  2. Actualizar el servidor completo: dnf upgrade -y
+  3. Configurar el hostname como <span style="color:#ffd700;">[TU_HOSTNAME]</span> con hostnamectl
+  4. Configurar zona horaria a America/Santiago con timedatectl
+  5. Verificar que firewalld esta activo y dejar solo el servicio SSH
+  6. Mostrar puertos escuchando y deshabilitar postfix y cockpit
+  7. Restringir Gemini CLI solo a ec2-user:
+     chown root:ec2-user /usr/local/bin/gemini
+     chmod 750 /usr/local/bin/gemini
+  8. Resumen final del estado del servidor
+
+<span class="prompt-comment">  Recuerda: plan primero, ejecucion despues
+  con mi confirmacion en cada paso.</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- PARTE 3 HEADER -->
+<div class="slide part-slide">
+  <div class="slide-content">
+    <h2>Parte 3 — <span>Prompt 2</span><br>Usuarios y Gemini</h2>
+    <p>Creamos un usuario sin acceso a sudo ni a Gemini CLI, aplicando el principio de mínimo privilegio directamente desde un prompt.</p>
+  </div>
+</div>
+
+
+<!-- SLIDE 5: Prompt 2 - Usuarios -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">5</div>
+      <h2>Prompt — <span>usuarios y acceso</span></h2>
+    </div>
+    <p class="slide-description">Este prompt crea dos usuarios sin acceso a sudo: <code>docente01</code> en el grupo <code>docentes</code> y <code>alumno01</code> en el grupo <code>alumnos</code>.<br><br>Ninguno está en <code>wheel</code>, por lo que tampoco pueden usar Gemini (ya restringido en el Prompt 1).</p>
+    <div class="info-box info-green">
+      <strong>Validación al finalizar:</strong><br>
+      <code>id docente01</code> → <span class="check-expected">groups=docentes</span><br>
+      <code>id alumno01</code> → <span class="check-expected">groups=alumnos</span><br>
+      <code>id docente01 | grep wheel</code> → <span class="check-expected">sin resultado (no está en wheel)</span><br>
+      <code>id alumno01 | grep wheel</code> → <span class="check-expected">sin resultado (no está en wheel)</span><br>
+      <code>su -c "sudo whoami" docente01</code> → <span class="check-expected">docente01 is not in sudoers</span><br>
+      <code>su -c "sudo whoami" alumno01</code> → <span class="check-expected">alumno01 is not in sudoers</span>
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="prompt-box">
+      <div class="prompt-box-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="prompt-label">Prompt — pegar en Gemini</span>
+        <button class="copy-btn">Copiar</button>
+      </div>
+      <div class="prompt-content"><span class="prompt-arrow">&gt;</span> Eres un administrador de sistemas experto en RHEL 9.
+  Necesito configurar los usuarios del servidor.
+
+  Dame el plan completo primero sin ejecutar nada:
+  1. Crear el grupo "docentes"
+  2. Crear el usuario docente01 con nombre completo
+     "Docente INACAP", shell bash, grupo docentes
+  3. Asignarle la contrasena Inacap2026!
+  4. Crear el grupo "alumnos"
+  5. Crear el usuario alumno01 con nombre completo
+     "Alumno INACAP", shell bash, grupo alumnos
+  6. Asignarle la contrasena Inacap2026!
+  7. Verificar que docente01 y alumno01 NO estan
+     en el grupo wheel
+  8. Resumen final: usuarios, grupos creados y
+     quien tiene acceso a Gemini
+
+<span class="prompt-comment">  Recuerda: plan primero, ejecucion paso a paso
+  con mi aprobacion.</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- PARTE 4 HEADER -->
+<div class="slide part-slide">
+  <div class="slide-content">
+    <h2>Parte 4 — <span>Prompt 3</span><br>Hardening</h2>
+    <p>Auditamos el servidor completo: actualizaciones, firewall, puertos, servicios y SSH. Gemini revisa cada punto e indica qué está bien y qué falta mejorar.</p>
+  </div>
+</div>
+
+
+<!-- SLIDE 6: Prompt 3 - Hardening -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">6</div>
+      <h2>Prompt — <span>auditoría hardening</span></h2>
+    </div>
+    <p class="slide-description">Auditamos y aplicamos el hardening completo del servidor. Primero Gemini revisa el estado actual, luego aplica las correcciones de SSH y entrega un resumen final.</p>
+    <div class="info-box info-green">
+      <strong>Validación — resultado esperado al finalizar:</strong><br>
+      <code>sudo dnf check-update --security</code> → <span class="check-expected">0 paquetes pendientes</span><br>
+      <code>sudo firewall-cmd --list-services</code> → <span class="check-expected">ssh</span><br>
+      <code>sudo ss -tlnp</code> → <span class="check-expected">solo puerto 22</span><br>
+      <code>sudo sshd -T | grep permitrootlogin</code> → <span class="check-expected">no</span><br>
+      <code>sudo sshd -T | grep passwordauthentication</code> → <span class="check-expected">no</span><br>
+      <code>sudo sshd -T | grep allowusers</code> → <span class="check-expected">ec2-user</span>
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="prompt-box">
+      <div class="prompt-box-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="prompt-label">Prompt — pegar en Gemini</span>
+        <button class="copy-btn">Copiar</button>
+      </div>
+      <div class="prompt-content"><span class="prompt-arrow">&gt;</span> Eres un administrador de sistemas experto en RHEL 9.
+  Vamos a aplicar el hardening de este servidor.
+  Dame el plan completo primero sin ejecutar nada.
+
+  Los pasos deben cubrir:
+  1. Revisar actualizaciones de seguridad pendientes
+     (dnf check-update --security)
+  2. Verificar estado del firewall y servicios permitidos
+     (firewall-cmd --list-all)
+  3. Revisar puertos en escucha y proceso dueno de cada uno
+     (ss -tlnp)
+  4. Revisar servicios en ejecucion innecesarios
+     (systemctl list-units --state=running)
+  5. Aplicar hardening SSH en /etc/ssh/sshd_config:
+     PermitRootLogin no
+     PasswordAuthentication no
+     AllowUsers ec2-user
+     MaxAuthTries 3
+     ClientAliveInterval 300
+  6. Verificar con sshd -T que los cambios aplicaron
+  7. Reiniciar sshd y confirmar que el servicio esta activo
+  8. Resumen final: que esta bien y que se corrigio
+
+<span class="prompt-comment">  Recuerda: plan primero, ejecucion con mi
+  aprobacion en cada paso.</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- PARTE 5 HEADER -->
+<div class="slide part-slide">
+  <div class="slide-content">
+    <h2>Parte 5 — <span>Prompt 4</span><br>Apache y sitio web</h2>
+    <p>Instalamos Apache HTTP Server, abrimos el puerto 80 en el firewall y levantamos una página web personalizada accesible desde el navegador.</p>
+  </div>
+</div>
+
+
+<!-- SLIDE 7: Prompt 4 - Apache -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">7</div>
+      <h2>Prompt — <span>Apache y sitio web</span></h2>
+    </div>
+    <p class="slide-description">Instalamos <code>httpd</code> (Apache), lo habilitamos para que arranque automáticamente y creamos una página de inicio personalizada.<br><br>Para acceder desde el navegador necesitas la <strong>IP pública</strong> de la instancia. Encuéntrala con:<br><code>curl -s http://169.254.169.254/latest/meta-data/public-ipv4</code><br><br>En el navegador escribe: <code>http://[IP_PUBLICA]</code></p>
+    <div class="info-box info-green">
+      <strong>Validación al finalizar:</strong><br>
+      <code>sudo systemctl is-active httpd</code> → <span class="check-expected">active</span><br>
+      <code>sudo firewall-cmd --list-services</code> → <span class="check-expected">http ssh</span><br>
+      <code>curl http://localhost</code> → <span class="check-expected">responde con HTML</span><br>
+      Navegador → <code>http://[IP_PUBLICA]</code> → <span class="check-expected">página visible</span>
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="prompt-box">
+      <div class="prompt-box-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="prompt-label">Prompt — pegar en Gemini</span>
+        <button class="copy-btn">Copiar</button>
+      </div>
+      <div class="prompt-content"><span class="prompt-arrow">&gt;</span> Eres un administrador de sistemas experto en RHEL 9.
+  Necesito instalar Apache y levantar un sitio web.
+
+  Dame el plan completo primero sin ejecutar nada:
+  1. Instalar el paquete httpd con dnf
+  2. Habilitar e iniciar el servicio httpd con systemctl
+     (que arranque automaticamente al reiniciar)
+  3. Abrir el puerto HTTP (80) en el firewall de forma
+     permanente y recargar firewalld
+  4. Crear una pagina de inicio en /var/www/html/index.html
+     con el nombre del servidor, la fecha actual y
+     el nombre del administrador (ec2-user)
+  5. Verificar que el servicio responde:
+     curl http://localhost
+  6. Obtener la IP publica de la instancia y mostrarla
+     para acceder desde el navegador
+
+<span class="prompt-comment">  Recuerda: plan primero, ejecucion paso a paso
+  con mi aprobacion.</span></div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const content = btn.closest('.prompt-box').querySelector('.prompt-content');
+      const text = content.innerText.replace(/^>\s*/, '').trim();
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copiado!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copiar';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+  });
+</script>
+
+<!-- FOOTER -->
+<div style="background:#1A1A1A; color:white; padding:24px 40px; text-align:center; border-top:3px solid var(--red);">
+  <p style="font-size:14px; color:rgba(255,255,255,0.7);">TI3V35 — Sistemas Operativos &nbsp;|&nbsp; INACAP Puente Alto &nbsp;|&nbsp; Michael Arjel Mayerovich</p>
+</div>
+
+</body>
+</html>
