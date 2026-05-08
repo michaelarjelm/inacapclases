@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Calificaciones - INACAP</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Login Section -->
+        <div id="login-section" class="card fade-in">
+            <div class="logo">
+                <img src="https://www.inacap.cl/web/template-aplicaciones/img/logo-inacap.png" alt="INACAP Logo">
+            </div>
+            <h2>Portal de Alumnos</h2>
+            <p>Ingresa tu RUT para consultar tus notas acumulativas.</p>
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="rut">RUT (ej: 12345678-9)</label>
+                    <input type="text" id="rut" placeholder="12345678-K" required>
+                </div>
+                <button type="submit" class="btn-primary">Consultar</button>
+            </form>
+            <div id="error-msg" class="error hidden">RUT no encontrado. Verifica e intenta nuevamente.</div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="hidden">
+            <div class="card fade-in">
+                <div class="header">
+                    <div>
+                        <h2 id="student-name">Cargando...</h2>
+                        <p id="student-module" style="color: var(--text-muted); font-weight: 600; margin-bottom: 5px;">Módulo: ---</p>
+                        <p id="student-section" class="badge">Sección: ---</p>
+                    </div>
+                    <button id="logout-btn" class="btn-secondary">Cerrar Sesión</button>
+                </div>
+
+                <div class="grades-grid" id="grades-container">
+                    <!-- Grades will be injected here -->
+                </div>
+
+                <div class="summary-section">
+                    <div class="summary-card">
+                        <span class="label">Promedio Real</span>
+                        <span id="avg-real" class="value">0.0</span>
+                    </div>
+                    <div class="summary-card highlight">
+                        <span class="label">Promedio Final (n-2)</span>
+                        <span id="avg-final" class="value">0.0</span>
+                    </div>
+                </div>
+                
+                <div class="footer-note">
+                    * El promedio final considera las mejores n-2 calificaciones del periodo.
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
