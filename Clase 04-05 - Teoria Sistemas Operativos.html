@@ -1,0 +1,2571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 04/05 — Teoría: Administración de Servidores RHEL 9</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: white;
+    font-family: 'Barlow', sans-serif;
+    color: #333;
+    overflow-x: hidden;
+    scroll-snap-type: y mandatory;
+  }
+  :root {
+    --red:       #E31E24;
+    --dark-gray: #4A4A4A;
+    --blue:      #0063B1;
+    --green:     #107C10;
+  }
+
+  .header {
+    background: white;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #EBEBEB;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-title { display: flex; align-items: center; gap: 12px; }
+  .header-title h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: #1A1A1A;
+  }
+  .header-title span { color: var(--red); }
+  .header-badge {
+    background: #1A1A1A;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .header-badge.teoria { background: var(--blue); }
+  .header-logo { height: 36px; opacity: 0.6; }
+
+  .slide {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 40% 60%;
+    gap: 0;
+    align-items: stretch;
+    border-bottom: 5px solid var(--red);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  .slide-content {
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: white;
+  }
+  .slide-image {
+    background: #F5F5F5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    padding: 30px;
+  }
+
+  .slide-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+  .slide-number {
+    background: var(--red);
+    color: white;
+    width: 56px;
+    height: 56px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .slide-number.blue  { background: var(--blue); }
+  .slide-number.green { background: var(--green); }
+  .slide-number.dark  { background: #1A1A1A; }
+  .slide-number.orange { background: #D97706; }
+
+  .slide-header h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #1A1A1A;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .slide-header h2 span { color: var(--red); }
+  .slide-header h2 span.blue  { color: var(--blue); }
+  .slide-header h2 span.green { color: var(--green); }
+  .slide-header h2 span.orange { color: #D97706; }
+
+  .slide-description { font-size: 16px; line-height: 1.75; color: #555; margin-bottom: 20px; }
+  .slide-description strong { color: #1A1A1A; font-weight: 700; }
+  .slide-description code {
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #CC0000;
+  }
+
+  .bullet-list { list-style: none; margin-bottom: 20px; }
+  .bullet-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: #444;
+  }
+  .bullet-list li::before {
+    content: '▸';
+    color: var(--red);
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-weight: 700;
+  }
+  .bullet-list li code {
+    background: #f0f0f0;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #CC0000;
+  }
+  .bullet-list li strong { color: #1A1A1A; }
+
+  .info-box {
+    background: #FFF3F3;
+    border-left: 4px solid var(--red);
+    border-radius: 4px;
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #555;
+  }
+  .info-box strong { color: #B71C1C; font-weight: 700; }
+  .info-box code {
+    background: rgba(227,30,36,0.12);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #B71C1C;
+  }
+  .info-box.info-blue  { background: #EEF4FF; border-color: var(--blue); color: #0D47A1; }
+  .info-box.info-blue strong { color: #0D47A1; }
+  .info-box.info-blue code  { background: rgba(0,99,177,0.12); color: #003d82; }
+  .info-box.info-green { background: #F0FFF0; border-color: var(--green); color: #1B5E20; }
+  .info-box.info-green strong { color: #1B5E20; }
+  .info-box.info-green code  { background: rgba(16,124,16,0.12); color: #0b3810; }
+  .info-box.info-yellow { background: #FFFBEA; border-color: #F59E0B; color: #78350F; }
+  .info-box.info-yellow strong { color: #78350F; }
+  .info-box.info-yellow code  { background: rgba(245,158,11,0.15); color: #78350F; }
+
+  .part-slide {
+    background: linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    border-bottom: 5px solid var(--red);
+  }
+  .part-slide .slide-content { background: transparent; padding: 80px 50px; }
+  .part-slide h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 72px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: white;
+    line-height: 1;
+    margin-bottom: 20px;
+    letter-spacing: -0.01em;
+  }
+  .part-slide h2 span { color: var(--red); }
+  .part-slide h2 span.blue  { color: #60AEFF; }
+  .part-slide h2 span.green { color: #4ADE80; }
+  .part-slide h2 span.orange { color: #FCD34D; }
+  .part-slide p { font-size: 22px; color: rgba(255,255,255,0.6); line-height: 1.6; max-width: 600px; }
+  .part-number {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 12px;
+  }
+
+  .console {
+    background: #0d0d0d;
+    border: 1px solid #333;
+    border-radius: 6px;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    width: 100%;
+  }
+  .console-header {
+    background: #1a1a1a;
+    border-bottom: 1px solid #333;
+    padding: 10px 16px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .console-button { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .console-button.red    { background: #ff5f56; }
+  .console-button.yellow { background: #ffbd2e; }
+  .console-button.green  { background: #27c93f; }
+  .console-title { color: #888; font-size: 12px; margin-left: 8px; }
+  .console-content {
+    padding: 16px;
+    color: #00ff00;
+    font-size: 12px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  /* Theory-specific components */
+  .theory-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    font-size: 13px;
+  }
+  .theory-table th {
+    background: #1A1A1A;
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .theory-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #EBEBEB;
+    color: #333;
+    line-height: 1.45;
+    vertical-align: top;
+  }
+  .theory-table tr:last-child td { border-bottom: none; }
+  .theory-table tr:nth-child(even) td { background: #FAFAFA; }
+  .theory-table code {
+    background: #f0f0f0;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #CC0000;
+  }
+  .theory-table .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .tag.red    { background: #FFEEEE; color: #B71C1C; }
+  .tag.green  { background: #F0FFF0; color: #1B5E20; }
+  .tag.blue   { background: #EEF4FF; color: #0D47A1; }
+  .tag.yellow { background: #FFFBEA; color: #78350F; }
+  .tag.gray   { background: #F5F5F5; color: #4A4A4A; }
+
+  .diagram-box {
+    background: white;
+    border: 2px solid #EBEBEB;
+    border-radius: 8px;
+    padding: 24px;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .diagram-box h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #888;
+    margin-bottom: 18px;
+  }
+
+  .stack-layer {
+    padding: 12px 18px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .stack-layer span { font-size: 12px; font-weight: 600; opacity: 0.7; font-family: 'JetBrains Mono', monospace; text-transform: none; letter-spacing: 0; }
+
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .flow-bubble {
+    background: #1A1A1A;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .flow-bubble.red   { background: var(--red); }
+  .flow-bubble.blue  { background: var(--blue); }
+  .flow-bubble.green { background: var(--green); }
+  .flow-bubble.gray  { background: #888; }
+  .flow-arrow { color: #aaa; font-size: 16px; }
+
+  .perm-visual {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    width: 100%;
+  }
+  .perm-row {
+    display: flex;
+    gap: 0;
+    margin-bottom: 8px;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 2px;
+  }
+  .perm-char { padding: 4px 6px; border-radius: 3px; }
+  .perm-char.type   { color: #888; }
+  .perm-char.owner  { color: #fff; background: #E31E24; margin-right: 4px; }
+  .perm-char.group  { color: #fff; background: #0063B1; margin-right: 4px; }
+  .perm-char.others { color: #fff; background: #888; }
+  .perm-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .perm-legend-item {
+    padding: 8px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .perm-legend-item.owner  { background: #FFEEEE; }
+  .perm-legend-item.group  { background: #EEF4FF; }
+  .perm-legend-item.others { background: #F5F5F5; }
+  .perm-legend-item strong { display: block; font-size: 13px; margin-bottom: 2px; }
+
+  .state-machine {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+  .state-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .state-node {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    min-width: 110px;
+    text-align: center;
+  }
+  .state-node.active   { background: #F0FFF0; color: #1B5E20; border: 2px solid var(--green); }
+  .state-node.inactive { background: #F5F5F5; color: #4A4A4A; border: 2px solid #ccc; }
+  .state-node.failed   { background: #FFEEEE; color: #B71C1C; border: 2px solid var(--red); }
+  .state-node.masked   { background: #1A1A1A; color: #aaa; border: 2px solid #333; }
+  .state-cmd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #888;
+    background: #f0f0f0;
+    padding: 3px 8px;
+    border-radius: 3px;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+  }
+  .mini-card {
+    background: white;
+    border: 1px solid #EBEBEB;
+    border-radius: 6px;
+    padding: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .mini-card h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .mini-card p { font-size: 12.5px; line-height: 1.55; color: #555; }
+  .mini-card code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: #f0f0f0;
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: #CC0000;
+  }
+
+  .firewall-diagram {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .fw-layer {
+    width: 100%;
+    padding: 14px 20px;
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .fw-arrow {
+    font-size: 20px;
+    color: #aaa;
+    text-align: center;
+    padding: 2px 0;
+  }
+
+  .privilege-ladder {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .priv-rung {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  .priv-rung .priv-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    text-transform: uppercase;
+    min-width: 120px;
+  }
+  .priv-rung .priv-desc { font-size: 13px; color: inherit; opacity: 0.8; }
+  .priv-rung code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: rgba(255,255,255,0.3);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .copy-btn {
+    margin-left: auto;
+    background: none;
+    border: 1px solid #555;
+    color: #aaa;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { border-color: #ffd700; color: #ffd700; }
+  .copy-btn.copied { border-color: #27c93f; color: #27c93f; }
+
+  @media (max-width: 1024px) {
+    .slide { grid-template-columns: 1fr; min-height: auto; }
+    .slide-content { padding: 40px 30px; }
+    .slide-image { min-height: 300px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-title">
+    <h1>Clase <span>04/05</span> — Teoría</h1>
+    <div class="header-badge teoria">Fundamentos</div>
+  </div>
+  <img src="https://siga.inacap.cl/Inacap.VerificacionCertificados/assets/img/logo-blanco.png" class="header-logo" alt="INACAP">
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- INTRODUCCIÓN: Gemini CLI                              -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide part-slide">
+  <div class="slide-content">
+    <div class="part-number">Introducción</div>
+    <h2>Gemini <span>CLI</span></h2>
+    <p>Qué es, cómo funciona realmente, y cómo usarlo como herramienta de administración de servidores sin perder el control de lo que ocurre.</p>
+  </div>
+</div>
+
+
+<!-- SLIDE A: Qué es Gemini CLI -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number" style="background:#6B21A8;">A</div>
+      <h2>¿Qué es <span>Gemini CLI</span>?</h2>
+    </div>
+    <p class="slide-description">Gemini CLI es un modelo de inteligencia artificial de Google que se ejecuta desde la terminal. No es un script ni una herramienta tradicional — es un modelo de lenguaje que genera texto en respuesta a lo que le escribes.</p>
+    <p class="slide-description">No tiene acceso directo al servidor. Solo sabe lo que tú le describes en el prompt. No puede leer archivos, ver procesos ni ejecutar comandos por sí solo — todo pasa por tu aprobación explícita.</p>
+    <p class="slide-description">Genera planes, comandos y explicaciones en lenguaje natural. Es útil para aprender, para recordar sintaxis y para no partir de cero. Pero lo que haces con esa información depende completamente de ti.</p>
+    <div class="info-box info-blue">
+      <strong>Analogía:</strong> Gemini es como un colega muy informado que te sugiere cómo hacer algo. Tú decides si seguir su consejo, modificarlo o ignorarlo. La responsabilidad del servidor es tuya.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">Gemini CLI — interacción básica</span>
+      </div>
+      <div class="console-content" style="font-size:11.5px;"><span style="color:#888;"># Gemini recibe lo que tú escribes</span>
+<span style="color:#ffd700;">&gt;</span> <span style="color:#e0e0e0;">Eres un administrador de sistemas experto en RHEL 9.
+  Dame el plan para actualizar el servidor.
+  Plan primero, ejecucion despues.</span>
+
+<span style="color:#888;"># Gemini genera un plan en texto</span>
+<span style="color:#00d4ff;">Plan de actualización:
+  1. Verificar espacio en disco disponible
+  2. Revisar actualizaciones disponibles: dnf check-update
+  3. Actualizar el servidor: dnf upgrade -y
+  4. Verificar que no haya paquetes rotos
+  5. Reiniciar si hay actualización de kernel
+
+¿Confirmas que ejecute el paso 1?</span>
+
+<span style="color:#888;"># Tú decides si continuar o no</span>
+<span style="color:#ffd700;">&gt;</span> <span style="color:#e0e0e0;">sí, continúa con el paso 1</span>
+
+<span style="color:#00d4ff;">Ejecutando: df -h ...</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE C: Conceptos clave — modelos, tokens, cuota -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number" style="background:#6B21A8;">C</div>
+      <h2>Modelos, tokens <span>y cuota</span></h2>
+    </div>
+    <p class="slide-description">Un <strong>token</strong> es la unidad básica de texto que el modelo procesa — aproximadamente una palabra. Cada vez que interactúas con Gemini consumes tokens: los del prompt que escribes más los de la respuesta que genera.</p>
+    <p class="slide-description">La <strong>ventana de contexto</strong> es el límite de tokens que el modelo puede "ver" en una conversación. Cuando se llena, empieza a olvidar el inicio del chat. Por eso las sesiones largas pueden volverse inconsistentes — el modelo pierde el contexto de lo que se hizo antes.</p>
+    <p class="slide-description">La <strong>cuota</strong> es el límite de uso del plan gratuito: requests por minuto y tokens por día. Si se agota, Gemini deja de responder hasta el siguiente ciclo. Para la clase, una cuenta por persona es suficiente.</p>
+    <div class="info-box info-blue">
+      <strong>Tip práctico:</strong> si Gemini empieza a dar respuestas inconsistentes o "olvida" lo que acordaron antes, es señal de que la ventana de contexto está llena. Lo mejor es iniciar una sesión nueva con el contexto resumido.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div style="display:flex;flex-direction:column;gap:10px;width:100%;">
+      <div style="background:white;border-radius:6px;border-left:4px solid #6B21A8;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;text-transform:uppercase;color:#6B21A8;margin-bottom:4px;">Token</div>
+        <div style="font-size:13px;color:#555;line-height:1.5;">Unidad básica de texto que el modelo procesa (~1 palabra). Cada interacción consume tokens del prompt que escribes <em>más</em> los de la respuesta generada. Prompts muy largos llenan el contexto más rápido.</div>
+      </div>
+      <div style="background:white;border-radius:6px;border-left:4px solid #0063B1;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;text-transform:uppercase;color:#0063B1;margin-bottom:4px;">Ventana de contexto</div>
+        <div style="font-size:13px;color:#555;line-height:1.5;">Máximo de tokens que el modelo puede recordar en una sesión. Al llenarse, empieza a olvidar el inicio de la conversación — las respuestas se vuelven inconsistentes.</div>
+      </div>
+      <div style="background:white;border-radius:6px;border-left:4px solid #E31E24;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;text-transform:uppercase;color:#E31E24;margin-bottom:4px;">Cuota</div>
+        <div style="font-size:13px;color:#555;line-height:1.5;">Límite de uso del plan gratuito: requests por minuto y tokens por día. Si se agota, Gemini deja de responder hasta el ciclo siguiente. Una cuenta por persona es suficiente para la clase.</div>
+      </div>
+      <table class="theory-table">
+        <thead>
+          <tr><th>Modelo</th><th>Perfil</th><th>Cuándo usarlo</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>gemini-2.0-flash</code></td>
+            <td><span class="tag green">Rápido</span></td>
+            <td>Tareas cotidianas de administración. Default en CLI.</td>
+          </tr>
+          <tr>
+            <td><code>gemini-2.5-pro</code></td>
+            <td><span class="tag blue">Preciso</span></td>
+            <td>Problemas complejos o análisis de configuraciones difíciles.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE B: Buenas prácticas con Gemini CLI -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number" style="background:#6B21A8;">B</div>
+      <h2>Buenas prácticas <span>con Gemini</span></h2>
+    </div>
+    <p class="slide-description"><strong>Plan primero, ejecución después.</strong> Siempre pídele el plan completo antes de que ejecute nada. Así puedes detectar errores o pasos innecesarios antes de que sucedan en el servidor.</p>
+    <p class="slide-description"><strong>No ejecutes lo que no entiendes.</strong> Si Gemini propone un comando que no reconoces, pídele que te lo explique antes de aprobarlo. Nunca copies y pegues a ciegas.</p>
+    <p class="slide-description"><strong>Valida el resultado tú mismo.</strong> Gemini puede responder "listo" cuando el comando falló silenciosamente. Siempre corre el comando de verificación correspondiente — no confíes solo en su confirmación.</p>
+    <p class="slide-description"><strong>Una sesión, un objetivo.</strong> El contexto de la conversación afecta las respuestas. Mezclar tareas distintas en una sola sesión puede producir respuestas inconsistentes o que confundan el estado del servidor.</p>
+    <div class="info-box">
+      <strong>Regla de oro:</strong> Gemini comete errores. Puede inventar flags que no existen, proponer comandos correctos para la distribución equivocada, o no conocer el estado real de tu servidor. Tú eres el administrador — él es solo una herramienta.
+    </div>
+  </div>
+  <div class="slide-image">
+    <table class="theory-table">
+      <thead>
+        <tr><th>Práctica</th><th style="color:#ff6b6b;">Mal uso</th><th style="color:#4ADE80;">Buen uso</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Prompt</strong></td>
+          <td>"actualiza el servidor"</td>
+          <td>"Eres experto en RHEL 9. Dame el plan completo primero sin ejecutar nada."</td>
+        </tr>
+        <tr>
+          <td><strong>Aprobación</strong></td>
+          <td>Confirmar todos los pasos de una vez</td>
+          <td>Aprobar un paso a la vez y leer el output</td>
+        </tr>
+        <tr>
+          <td><strong>Validación</strong></td>
+          <td>Confiar en el "Completado" de Gemini</td>
+          <td>Correr el comando de verificación después de cada paso</td>
+        </tr>
+        <tr>
+          <td><strong>Comandos</strong></td>
+          <td>Ejecutar sin leer qué hace</td>
+          <td>Preguntar "¿qué hace exactamente este comando?" antes de aprobar</td>
+        </tr>
+        <tr>
+          <td><strong>Sesión</strong></td>
+          <td>Mezclar tareas distintas en una conversación</td>
+          <td>Una sesión por objetivo: usuarios, hardening, Apache por separado</td>
+        </tr>
+        <tr>
+          <td><strong>Errores</strong></td>
+          <td>Asumir que Gemini tiene razón y buscar el error en otro lado</td>
+          <td>Si algo falla, cuestionar primero el comando sugerido</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- SLIDE D: Componentes de un buen prompt -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number" style="background:#6B21A8;">D</div>
+      <h2>Anatomía de un <span>buen prompt</span></h2>
+    </div>
+    <p class="slide-description">Un prompt bien estructurado tiene cuatro componentes. El <strong>rol</strong> define desde qué perspectiva responde Gemini — "experto en RHEL 9" es distinto a "experto en Ubuntu".</p>
+    <p class="slide-description">El <strong>contexto</strong> le da información sobre la situación actual. Sin contexto, Gemini asume condiciones genéricas que pueden no aplicar a tu servidor.</p>
+    <p class="slide-description">La <strong>tarea</strong> describe qué debe hacer, con suficiente detalle para que no asuma cosas. Cuanto más específica, más útil la respuesta.</p>
+    <p class="slide-description">Las <strong>restricciones</strong> controlan cómo lo hace: plan primero, un paso a la vez, esperar aprobación. Sin ellas, Gemini puede ejecutar todo de golpe sin darte tiempo de revisar.</p>
+    <div class="info-box" style="background:#F5F0FF;border-color:#6B21A8;color:#4B1B82;">
+      <strong>Regla:</strong> un prompt que no tiene rol, contexto, tarea y restricciones es un prompt incompleto — y una respuesta incompleta o incorrecta es el resultado más probable.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="diagram-box">
+      <h4>Prompt real de la clase — desglosado</h4>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.75;">
+        <div style="background:#F5F0FF;border-left:4px solid #6B21A8;padding:8px 12px;border-radius:0 4px 4px 0;margin-bottom:6px;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#6B21A8;">Rol</span><br>
+          Eres un administrador de sistemas experto en RHEL 9.
+        </div>
+        <div style="background:#EEF4FF;border-left:4px solid #0063B1;padding:8px 12px;border-radius:0 4px 4px 0;margin-bottom:6px;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#0063B1;">Contexto</span><br>
+          Necesito configurar los usuarios del servidor.
+        </div>
+        <div style="background:#F0FFF0;border-left:4px solid #107C10;padding:8px 12px;border-radius:0 4px 4px 0;margin-bottom:6px;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#107C10;">Tarea</span><br>
+          Dame el plan completo primero sin ejecutar nada:<br>
+          1. Crear el grupo "docentes"<br>
+          2. Crear el usuario docente01...<br>
+          3. Asignarle la contrasena Inacap2026!
+        </div>
+        <div style="background:#FFFBEA;border-left:4px solid #F59E0B;padding:8px 12px;border-radius:0 4px 4px 0;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#78350F;">Restricciones</span><br>
+          Recuerda: plan primero, ejecucion paso a paso<br>
+          con mi aprobacion.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- BLOQUE 1: Gestión de usuarios y permisos              -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide part-slide">
+  <div class="slide-content">
+    <div class="part-number">Bloque 1 de 5</div>
+    <h2>Gestión de <span>Usuarios</span><br>y Permisos</h2>
+    <p>Cómo crear usuarios y grupos, el modelo de permisos Unix, los archivos del sistema que guardan identidades, y el principio de mínimo privilegio como filosofía de seguridad.</p>
+  </div>
+</div>
+
+
+<!-- SLIDE 1: Crear usuarios y grupos -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">1</div>
+      <h2>Crear <span>usuarios</span> y grupos</h2>
+    </div>
+    <p class="slide-description">Antes de ejecutar el Prompt 2, conoce los cuatro comandos que Gemini va a utilizar. Cada uno cumple un rol específico en el ciclo de vida de un usuario.</p>
+    <table class="theory-table" style="margin-bottom:14px;">
+      <thead>
+        <tr><th>Paso</th><th>Comando</th><th>Qué hace</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td><code>groupadd docentes</code></td><td>Crea el grupo vacío</td></tr>
+        <tr><td>2</td><td><code>useradd -c "..." -s /bin/bash -g docentes docente01</code></td><td>Crea el usuario con sus atributos</td></tr>
+        <tr><td>3</td><td><code>passwd docente01</code></td><td>Asigna la contraseña</td></tr>
+        <tr><td>4</td><td><code>id docente01</code></td><td>Verifica UID, GID y grupos</td></tr>
+      </tbody>
+    </table>
+    <p class="slide-description" style="margin-bottom:10px;">Los <strong>flags de <code>useradd</code></strong> le dicen al sistema cómo crear el usuario:</p>
+    <table class="theory-table" style="margin-bottom:14px;">
+      <thead>
+        <tr><th>Flag</th><th>Valor en el Prompt 2</th><th>Para qué sirve</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>-c</code></td><td><code>"Docente INACAP"</code></td><td>Nombre completo (campo GECOS en /etc/passwd)</td></tr>
+        <tr><td><code>-s</code></td><td><code>/bin/bash</code></td><td>Shell de inicio de sesión</td></tr>
+        <tr><td><code>-g</code></td><td><code>docentes</code></td><td>Grupo primario — debe existir antes de ejecutar <code>useradd</code></td></tr>
+      </tbody>
+    </table>
+    <div class="info-box info-blue">
+      <strong>Conexión con la práctica:</strong> el Prompt 2 le pide a Gemini ejecutar exactamente esta secuencia, primero para <code>docente01</code> y luego para <code>alumno01</code> — dos grupos, dos usuarios, los mismos pasos.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — crear grupos y usuarios</span>
+      </div>
+      <div class="console-content"><span style="color:#888;"># 1. Crear el grupo primario</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo groupadd docentes</span>
+
+<span style="color:#888;"># 2. Crear el usuario con sus atributos</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo useradd \</span>
+    <span style="color:#90EE90;">-c "Docente INACAP" \</span>
+    <span style="color:#90EE90;">-s /bin/bash \</span>
+    <span style="color:#90EE90;">-g docentes \</span>
+    <span style="color:#90EE90;">docente01</span>
+
+<span style="color:#888;"># 3. Asignar contrasena</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo passwd docente01</span>
+<span style="color:#00ff00;">Changing password for user docente01.
+New password:
+Retype new password:
+passwd: all authentication tokens updated successfully.</span>
+
+<span style="color:#888;"># 4. Verificar resultado</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">id docente01</span>
+<span style="color:#00ff00;">uid=1001(docente01) gid=1002(docentes) groups=1002(docentes)</span>
+
+<span style="color:#888;"># wheel NO aparece = sin sudo, sin Gemini</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 2: Permisos rwx y notación octal -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">2</div>
+      <h2>Permisos <span>Unix</span>: rwx y octal</h2>
+    </div>
+    <p class="slide-description">Cada archivo tiene <strong>9 bits de permisos</strong> divididos en 3 grupos: propietario, grupo, otros. Cada grupo puede tener hasta 3 permisos.</p>
+    <table class="theory-table" style="margin-bottom:14px;">
+      <thead>
+        <tr><th>Letra</th><th>Nombre</th><th>Valor</th><th>Permite</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>r</code></td><td>read</td><td><strong>4</strong></td><td>Leer el archivo</td></tr>
+        <tr><td><code>w</code></td><td>write</td><td><strong>2</strong></td><td>Modificar el archivo</td></tr>
+        <tr><td><code>x</code></td><td>execute</td><td><strong>1</strong></td><td>Ejecutar el archivo</td></tr>
+        <tr><td><code>-</code></td><td>ninguno</td><td><strong>0</strong></td><td>Sin acceso</td></tr>
+      </tbody>
+    </table>
+    <p class="slide-description" style="margin-bottom:10px;">Los valores se <strong>suman</strong> para obtener el número octal de cada grupo. Ejemplo con <code>chmod 750</code>:</p>
+    <table class="theory-table" style="margin-bottom:14px;">
+      <thead>
+        <tr><th>Grupo</th><th>Permisos</th><th>Cálculo</th><th>Octal</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Propietario</td><td><code>rwx</code></td><td>4+2+1</td><td><strong>7</strong></td></tr>
+        <tr><td>Grupo</td><td><code>r-x</code></td><td>4+0+1</td><td><strong>5</strong></td></tr>
+        <tr><td>Otros</td><td><code>---</code></td><td>0+0+0</td><td><strong>0</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="info-box info-blue">
+      <strong>Conexión con la práctica:</strong> <code>chmod 750 /usr/local/bin/gemini</code> — root controla todo, wheel puede ejecutar, el resto no puede ni verlo.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="diagram-box">
+      <h4>Desglose de permisos — ls -la /usr/local/bin/gemini</h4>
+      <div class="perm-visual">
+        <div class="perm-row">
+          <span class="perm-char type">-</span>
+          <span class="perm-char owner">r</span><span class="perm-char owner">w</span><span class="perm-char owner">x</span>
+          <span class="perm-char group">r</span><span class="perm-char group">-</span><span class="perm-char group">x</span>
+          <span class="perm-char others">-</span><span class="perm-char others">-</span><span class="perm-char others">-</span>
+        </div>
+        <div class="perm-legend">
+          <div class="perm-legend-item owner">
+            <strong style="color:#B71C1C;">Propietario (root)</strong>
+            r+w+x = 4+2+1 = <strong>7</strong><br>
+            Lee, escribe, ejecuta
+          </div>
+          <div class="perm-legend-item group">
+            <strong style="color:#0D47A1;">Grupo (wheel)</strong>
+            r+x = 4+0+1 = <strong>5</strong><br>
+            Lee y ejecuta, no escribe
+          </div>
+          <div class="perm-legend-item others">
+            <strong style="color:#4A4A4A;">Otros</strong>
+            --- = 0+0+0 = <strong>0</strong><br>
+            Sin ningún acceso
+          </div>
+        </div>
+        <div style="margin-top:18px;background:#f0f0f0;border-radius:4px;padding:10px 14px;font-size:12px;color:#333;">
+          <span style="color:#888;"># Octal resultante</span><br>
+          chmod <span style="color:#B71C1C;font-weight:700;">7</span><span style="color:#0D47A1;font-weight:700;">5</span><span style="color:#4A4A4A;font-weight:700;">0</span> /usr/local/bin/gemini
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 3: Asignar permisos con chmod y chown -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">3</div>
+      <h2><span>chmod</span> y <span>chown</span>: asignar permisos</h2>
+    </div>
+    <p class="slide-description">Saber calcular octal es la teoría. <strong>chmod</strong> aplica los permisos al archivo y <strong>chown</strong> define quién es el dueño y el grupo. El patrón <code>chown root:GRUPO + chmod 750</code> es la técnica para restringir cualquier herramienta a un grupo específico.</p>
+    <table class="theory-table" style="margin-bottom:12px;">
+      <thead>
+        <tr><th>Comando</th><th>Propietario</th><th>Grupo</th><th>Otros</th><th>Caso de uso</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>chmod 750 archivo</code></td><td><code>rwx</code></td><td><code>r-x</code></td><td><code>---</code></td><td>Herramienta solo para el grupo</td></tr>
+        <tr><td><code>chmod 644 archivo</code></td><td><code>rw-</code></td><td><code>r--</code></td><td><code>r--</code></td><td>Archivo de configuración público</td></tr>
+        <tr><td><code>chmod 600 archivo</code></td><td><code>rw-</code></td><td><code>---</code></td><td><code>---</code></td><td>Clave privada SSH (.pem)</td></tr>
+      </tbody>
+    </table>
+    <p class="slide-description" style="margin-bottom:8px;"><strong>El mismo patrón, aplicado a las herramientas de la evaluación:</strong></p>
+    <table class="theory-table">
+      <thead>
+        <tr><th>Herramienta</th><th>Grupo autorizado</th><th>Ruta del binario</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>nano</code></td>
+          <td><span class="tag blue">administrativos</span> (wheel via <code>sudo</code>)</td>
+          <td><code>$(which nano)</code> → <code>/usr/bin/nano</code></td>
+        </tr>
+        <tr>
+          <td><code>cowsay</code></td>
+          <td><span class="tag green">medicos</span></td>
+          <td><code>$(which cowsay)</code> → <code>/usr/bin/cowsay</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — restringir nano y cowsay por grupo</span>
+      </div>
+      <div class="console-content"><span style="color:#888;"># Primero: instalar las herramientas</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo dnf install nano cowsay -y</span>
+
+<span style="color:#888;"># which: encontrar la ruta exacta del binario</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">which nano</span>
+<span style="color:#00ff00;">/usr/bin/nano</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">which cowsay</span>
+<span style="color:#00ff00;">/usr/bin/cowsay</span>
+
+<span style="color:#888;"># ── nano → solo administrativos (+ wheel via sudo) ──</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo chown root:administrativos /usr/bin/nano</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo chmod 750 /usr/bin/nano</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">ls -la /usr/bin/nano</span>
+<span style="color:#00ff00;">-rwxr-x--- 1 root administrativos ... /usr/bin/nano</span>
+
+<span style="color:#888;"># ── cowsay → solo medicos ──────────────────</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo chown root:medicos /usr/bin/cowsay</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo chmod 750 /usr/bin/cowsay</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">ls -la /usr/bin/cowsay</span>
+<span style="color:#00ff00;">-rwxr-x--- 1 root medicos ... /usr/bin/cowsay</span>
+
+<span style="color:#888;"># 750 = dueño rwx | grupo r-x | otros ---</span>
+<span style="color:#888;"># → solo el grupo asignado puede ejecutar</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 4: /etc/passwd y /etc/shadow -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">4</div>
+      <h2><span>/etc/passwd</span> y shadow</h2>
+    </div>
+    <p class="slide-description">Cada línea de <code>/etc/passwd</code> describe un usuario con <strong>7 campos separados por ":"</strong>. La contraseña real nunca está aquí.</p>
+    <table class="theory-table" style="margin-bottom:16px;">
+      <thead>
+        <tr><th>#</th><th>Campo</th><th>Ejemplo</th><th>Qué es</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Usuario</td><td><code>docente01</code></td><td>Nombre de login</td></tr>
+        <tr><td>2</td><td>Contraseña</td><td><code>x</code></td><td>"x" significa que está en /etc/shadow</td></tr>
+        <tr><td>3</td><td>UID</td><td><code>1001</code></td><td>Identificador numérico del usuario</td></tr>
+        <tr><td>4</td><td>GID</td><td><code>1002</code></td><td>Grupo primario — el número, no el nombre</td></tr>
+        <tr><td>5</td><td>Nombre</td><td><code>Docente INACAP</code></td><td>Nombre completo (campo GECOS)</td></tr>
+        <tr><td>6</td><td>Home</td><td><code>/home/docente01</code></td><td>Directorio personal del usuario</td></tr>
+        <tr><td>7</td><td>Shell</td><td><code>/bin/bash</code></td><td>Programa al iniciar sesión</td></tr>
+      </tbody>
+    </table>
+    <div class="info-box info-yellow">
+      <strong>/etc/shadow</strong> guarda el hash real de la contraseña y solo <strong>root</strong> puede leerlo. Si fuera legible por todos, un atacante podría extraer los hashes y crackearlos offline con <code>hashcat</code> sin generar ninguna alerta.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">/etc/passwd y /etc/shadow — formato de campos</span>
+      </div>
+      <div class="console-content"><span style="color:#888;"># /etc/passwd — 7 campos separados por ":"</span>
+<span style="color:#ffd700;">docente01</span>:<span style="color:#ff6b6b;">x</span>:<span style="color:#90EE90;">1001</span>:<span style="color:#87CEEB;">1001</span>:<span style="color:#DDA0DD;">Docente INACAP</span>:<span style="color:#FFA07A;">/home/docente01</span>:<span style="color:#98FB98;">/bin/bash</span>
+<span style="color:#666;">  │        │    │     │     │               │               └─ shell</span>
+<span style="color:#666;">  │        │    │     │     │               └─ home dir</span>
+<span style="color:#666;">  │        │    │     │     └─ GECOS (nombre completo)</span>
+<span style="color:#666;">  │        │    │     └─ GID primario</span>
+<span style="color:#666;">  │        │    └─ UID</span>
+<span style="color:#666;">  │        └─ 'x' = contrasena en shadow</span>
+<span style="color:#666;">  └─ username</span>
+
+<span style="color:#888;"># /etc/shadow — solo root puede leer</span>
+<span style="color:#ff6b6b;">-r-------- 1 root root /etc/shadow</span>
+
+<span style="color:#ffd700;">docente01</span>:<span style="color:#ff6b6b;">$6$rounds=...</span>:<span style="color:#90EE90;">19845</span>:0:99999:7:::
+<span style="color:#666;">  │         │               │</span>
+<span style="color:#666;">  │         │               └─ dias desde epoch (ultimo cambio)</span>
+<span style="color:#666;">  │         └─ hash SHA-512 de la contrasena</span>
+<span style="color:#666;">  └─ username</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 5: Grupos y /etc/group -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">5</div>
+      <h2>Grupos y <span>/etc/group</span></h2>
+    </div>
+    <p class="slide-description">Todo usuario necesita un grupo primario. Si no indicas uno con <code>-g</code>, Linux crea automáticamente un grupo nuevo con el mismo nombre y el mismo número que el UID — eso es el <strong>UPG (User Private Group)</strong>.</p>
+    <table class="theory-table" style="margin-bottom:14px;">
+      <thead>
+        <tr><th>Comando</th><th>Usuario creado</th><th>Grupo creado</th><th>Grupo primario</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>useradd alumno01</code></td><td><code>alumno01</code></td><td><code>alumno01</code> (automático — UPG)</td><td><code>alumno01</code></td></tr>
+        <tr><td><code>useradd -g alumnos alumno01</code></td><td><code>alumno01</code></td><td>(ninguno)</td><td><code>alumnos</code> (ya existía)</td></tr>
+      </tbody>
+    </table>
+    <p class="slide-description" style="margin-bottom:10px;">Un usuario puede pertenecer a <strong>dos tipos de grupos</strong> al mismo tiempo:</p>
+    <table class="theory-table" style="margin-bottom:14px;">
+      <thead>
+        <tr><th>Tipo</th><th>Flag</th><th>Qué hace</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Primario</strong></td><td><code>-g</code></td><td>Grupo dueño de los archivos que crea el usuario. Solo uno posible.</td></tr>
+        <tr><td><strong>Suplementario</strong></td><td><code>-G</code></td><td>Acceso adicional a recursos como <code>wheel</code>. Puede haber varios.</td></tr>
+      </tbody>
+    </table>
+    <div class="info-box info-green">
+      <strong>Regla práctica:</strong> <code>id alumno01</code> muestra todos los grupos. Si <code>wheel</code> no aparece, sin sudo ni acceso a Gemini.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — grupos en acción</span>
+      </div>
+      <div class="console-content"><span style="color:#888;"># Crear grupo y usuario</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo groupadd docentes</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo useradd -c "Docente INACAP" \</span>
+                         <span style="color:#90EE90;">-s /bin/bash -g docentes docente01</span>
+
+<span style="color:#888;"># Ver membresía completa</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">id docente01</span>
+<span style="color:#00ff00;">uid=1001(docente01) gid=1002(docentes)
+groups=1002(docentes)</span>
+
+<span style="color:#888;"># /etc/group — formato</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">grep docentes /etc/group</span>
+<span style="color:#ffd700;">docentes</span>:<span style="color:#ff6b6b;">x</span>:<span style="color:#90EE90;">1002</span>:<span style="color:#87CEEB;">docente01</span>
+<span style="color:#666;">   │       │    │      └─ miembros suplementarios</span>
+<span style="color:#666;">   │       │    └─ GID</span>
+<span style="color:#666;">   │       └─ contrasena (obsoleto)</span>
+<span style="color:#666;">   └─ nombre del grupo</span>
+
+<span style="color:#888;"># wheel NO aparece: sin sudo, sin gemini</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">id docente01 | grep wheel</span>
+<span style="color:#ff6b6b;">(sin resultado)</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 6: Principio de mínimo privilegio -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">6</div>
+      <h2>Mínimo <span>privilegio</span></h2>
+    </div>
+    <p class="slide-description">Cada usuario solo debe tener los permisos <strong>mínimos necesarios</strong> para su función. Si una cuenta es comprometida, el atacante solo llega hasta donde esa cuenta puede ir.</p>
+    <table class="theory-table" style="margin-bottom:14px;">
+      <thead>
+        <tr><th>Usuario / Rol</th><th>sudo</th><th>Gemini</th><th>SSH</th><th>Alcance</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>root</code></td>
+          <td><span class="tag green">Sí</span></td>
+          <td><span class="tag green">Sí</span></td>
+          <td><span class="tag red">No directo</span></td>
+          <td>Control total del sistema</td>
+        </tr>
+        <tr>
+          <td><code>ec2-user</code> (wheel)</td>
+          <td><span class="tag green">Sí</span></td>
+          <td><span class="tag green">Sí</span></td>
+          <td><span class="tag green">Sí</span></td>
+          <td>Administrador via sudo</td>
+        </tr>
+        <tr>
+          <td><code>docente01</code> (docentes)</td>
+          <td><span class="tag red">No</span></td>
+          <td><span class="tag red">No</span></td>
+          <td><span class="tag green">Sí</span></td>
+          <td>Solo su directorio home</td>
+        </tr>
+        <tr>
+          <td><code>alumno01</code> (alumnos)</td>
+          <td><span class="tag red">No</span></td>
+          <td><span class="tag red">No</span></td>
+          <td><span class="tag green">Sí</span></td>
+          <td>Solo su directorio home</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="info-box">
+      <strong>Principio de diseño:</strong> parte sin acceso y otorga solo lo necesario. Es más fácil abrir permisos que cerrar los que ya están abiertos.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="diagram-box">
+      <h4>Jerarquía de privilegio en el servidor</h4>
+      <div class="privilege-ladder">
+        <div class="priv-rung" style="background:#FFEEEE;color:#B71C1C;">
+          <div class="priv-label">root</div>
+          <div class="priv-desc">Control total del sistema. UID 0. Nunca se usa directamente — se accede via <code>sudo</code>.</div>
+        </div>
+        <div style="text-align:center;font-size:18px;color:#aaa;">↑ sudo ↑</div>
+        <div class="priv-rung" style="background:#FFF8E1;color:#78350F;">
+          <div class="priv-label">wheel</div>
+          <div class="priv-desc">Puede ejecutar <code>sudo</code>. Accede a Gemini. Solo <code>ec2-user</code> pertenece a este grupo.</div>
+        </div>
+        <div style="text-align:center;font-size:18px;color:#aaa;">↑ grupos ↑</div>
+        <div class="priv-rung" style="background:#EEF4FF;color:#0D47A1;">
+          <div class="priv-label">docentes</div>
+          <div class="priv-desc">Acceso SSH al servidor. Sin sudo. Sin Gemini. Solo puede operar en su home.</div>
+        </div>
+        <div class="priv-rung" style="background:#F0FFF0;color:#1B5E20;">
+          <div class="priv-label">alumnos</div>
+          <div class="priv-desc">Acceso SSH limitado. Sin sudo. Sin Gemini. Mínimo privilegio aplicado.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 7: sudo y su -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">7</div>
+      <h2><span>sudo</span> y su</h2>
+    </div>
+    <p class="slide-description">Dos comandos para ejecutar acciones con los privilegios de otro usuario. <strong>sudo</strong> es el camino correcto en RHEL 9 — ejecuta un solo comando como root y deja registro. <strong>su</strong> cambia de usuario completamente.</p>
+    <table class="theory-table" style="margin-bottom:12px;">
+      <thead>
+        <tr><th>Comando</th><th>Qué hace</th><th>Contraseña que pide</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>sudo comando</code></td>
+          <td>Ejecuta UN comando como root. Requiere que tu usuario esté en el grupo <code>wheel</code></td>
+          <td>La tuya propia</td>
+        </tr>
+        <tr>
+          <td><code>sudo -i</code></td>
+          <td>Abre un shell interactivo como root. Usar solo cuando es estrictamente necesario</td>
+          <td>La tuya propia</td>
+        </tr>
+        <tr>
+          <td><code>su usuario</code></td>
+          <td>Cambia completamente al usuario indicado y abre su shell</td>
+          <td>La del usuario destino</td>
+        </tr>
+        <tr>
+          <td><code>su -c "cmd" usuario</code></td>
+          <td>Ejecuta UN comando como el usuario indicado sin cambiar de sesión</td>
+          <td>La del usuario destino</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="info-box info-yellow">
+      <strong>Por qué sudo y no su root:</strong> con <code>sudo</code>, cada acción queda registrada en <code>/var/log/secure</code> con el usuario real que la ejecutó. Con <code>su root</code>, el sistema solo ve "root" — sin trazabilidad.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — sudo vs su en la práctica</span>
+      </div>
+      <div class="console-content"><span style="color:#888;"># sudo: funciona porque ec2-user está en wheel</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">groups ec2-user</span>
+<span style="color:#00ff00;">ec2-user wheel</span>
+
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo groupadd docentes</span>
+<span style="color:#00ff00;">(sin error = comando ejecutado como root)</span>
+
+<span style="color:#888;"># su -c: probar si docente01 puede usar sudo</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">su -c "sudo whoami" docente01</span>
+Password:  <span style="color:#888;"># contrasena de docente01</span>
+<span style="color:#ff6b6b;">docente01 is not in the sudoers file.</span>
+<span style="color:#888;"># docente01 no esta en wheel → no puede usar sudo</span>
+<span style="color:#888;"># Esto es exactamente la validacion del Prompt 2</span>
+
+<span style="color:#888;"># El registro queda en /var/log/secure</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo tail -3 /var/log/secure</span>
+<span style="color:#00ff00;">sshd: Accepted publickey for ec2-user
+sudo: ec2-user : COMMAND=/usr/sbin/groupadd docentes
+sudo: docente01 : user NOT in sudoers</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- BLOQUE 2: Administración de servicios con systemd     -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide part-slide">
+  <div class="slide-content">
+    <div class="part-number">Bloque 2 de 5</div>
+    <h2>Servicios con <span style="color:#60AEFF;">systemd</span></h2>
+    <p>Qué es un daemon, cómo systemd gestiona el ciclo de vida de los servicios, y por qué deshabilitar servicios innecesarios reduce la superficie de ataque.</p>
+  </div>
+</div>
+
+
+<!-- SLIDE 8: Gestión de paquetes con dnf -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">8</div>
+      <h2>Paquetes con <span>dnf</span></h2>
+    </div>
+    <p class="slide-description">Todo software en RHEL se instala desde repositorios oficiales con <code>dnf</code>. Antes de instalar un servicio, existe como paquete. Antes de iniciar un servicio, el paquete debe estar instalado.</p>
+    <table class="theory-table" style="margin-bottom:12px;">
+      <thead>
+        <tr><th>Comando</th><th>Qué hace</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>dnf install httpd -y</code></td>
+          <td>Instala el paquete. <code>-y</code> auto-confirma sin pedir aprobación interactiva</td>
+        </tr>
+        <tr>
+          <td><code>dnf remove httpd -y</code></td>
+          <td>Desinstala el paquete y sus dependencias huérfanas</td>
+        </tr>
+        <tr>
+          <td><code>dnf upgrade -y</code></td>
+          <td>Actualiza <strong>todos</strong> los paquetes instalados a la versión más reciente</td>
+        </tr>
+        <tr>
+          <td><code>dnf check-update --security</code></td>
+          <td>Lista solo actualizaciones de <strong>seguridad</strong> pendientes. Sin resultado = sistema al día</td>
+        </tr>
+        <tr>
+          <td><code>dnf list installed</code></td>
+          <td>Lista todos los paquetes instalados en el sistema</td>
+        </tr>
+        <tr>
+          <td><code>dnf search cowsay</code></td>
+          <td>Busca en los repositorios sin instalar nada</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="info-box info-blue">
+      <strong>Conexión con la práctica:</strong> el Prompt 3 empieza con <code>dnf check-update --security</code> para verificar que no hay vulnerabilidades pendientes. El Prompt 4 instala Apache con <code>dnf install httpd</code>.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — dnf en los prompts de práctica</span>
+      </div>
+      <div class="console-content"><span style="color:#888;"># Prompt 3: verificar actualizaciones de seguridad</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo dnf check-update --security</span>
+<span style="color:#00ff00;">Last metadata expiration check: 0:12:04 ago.
+</span><span style="color:#ffd700;">0 paquetes pendientes</span>  <span style="color:#888;"># sistema al dia</span>
+
+<span style="color:#888;"># Prompt 4: instalar Apache</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo dnf install httpd -y</span>
+<span style="color:#00ff00;">Resolving dependencies...
+Installing: httpd x86_64 2.4.57 ...
+Complete!</span>
+
+<span style="color:#888;"># Prompt 4: instalar cowsay</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo dnf install cowsay -y</span>
+<span style="color:#00ff00;">Complete!</span>
+
+<span style="color:#888;"># Verificar que quedo instalado</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">dnf list installed | grep cowsay</span>
+<span style="color:#00ff00;">cowsay.noarch    3.04-17.el9    @appstream</span>
+<span style="color:#666;">  nombre          version       repositorio</span>
+
+<span style="color:#888;"># Diferencia clave</span>
+<span style="color:#888;"># upgrade: actualiza todo lo instalado</span>
+<span style="color:#888;"># check-update --security: solo reporta, no instala</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 9: Daemons y systemd -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number blue">9</div>
+      <h2>Daemons y <span class="blue">systemd</span></h2>
+    </div>
+    <p class="slide-description">Un <strong>daemon</strong> es un proceso que corre en segundo plano, sin intervención del usuario, esperando eventos o peticiones. SSH, el firewall y el scheduler de tareas son todos daemons.</p>
+    <p class="slide-description"><strong>systemd</strong> es el proceso PID 1 en RHEL 9 — el padre de todos los procesos. Reemplazó a init, SysVinit y Upstart porque hace el arranque en paralelo (más rápido), permite declarar dependencias entre servicios sin escribir lógica de espera, y centraliza todos los logs en <code>journald</code> — accesibles con <code>journalctl</code> en vez de buscar en archivos dispersos.</p>
+    <div class="info-box info-blue">
+      <strong>Analogía:</strong> systemd es el administrador del servidor. Sabe qué servicios deben correr, en qué orden, y qué hacer si fallan.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">systemctl — inspeccionar servicios</span>
+      </div>
+      <div class="console-content"><span style="color:#888;"># PID 1 siempre es systemd</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">ps -p 1</span>
+<span style="color:#00ff00;">  PID TTY   CMD
+    1 ?     /usr/lib/systemd/systemd</span>
+
+<span style="color:#888;"># Ver estado de un servicio</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">systemctl status sshd</span>
+<span style="color:#00ff00;">● sshd.service - OpenSSH server daemon
+     Loaded: loaded (/usr/lib/systemd/system/sshd.service)
+     Active: </span><span style="color:#4ADE80;">active (running)</span><span style="color:#00ff00;"> since Sun 2026-05-03
+   Main PID: 892 (sshd)
+      Tasks: 1</span>
+
+<span style="color:#888;"># Ver todos los servicios activos</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">systemctl list-units --type=service \
+                         --state=running</span>
+<span style="color:#00ff00;">  UNIT          ACTIVE  DESCRIPTION
+  crond.service active  Command Scheduler
+  firewalld.service active  Firewall
+  sshd.service  active  OpenSSH server</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 10: Ciclo de vida de un servicio -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number blue">10</div>
+      <h2>Ciclo de vida de <span class="blue">un servicio</span></h2>
+    </div>
+    <p class="slide-description">Instalar un paquete no es suficiente — hay que controlar cuándo corre y si sobrevive al reinicio. <code>systemctl</code> es el comando que gestiona ese ciclo.</p>
+    <table class="theory-table" style="margin-bottom:14px;">
+      <thead>
+        <tr><th>Comando</th><th>Efecto inmediato</th><th>Persiste al reinicio</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>systemctl start sshd</code></td><td>Arranca ahora</td><td>No</td></tr>
+        <tr><td><code>systemctl stop sshd</code></td><td>Detiene ahora</td><td>No</td></tr>
+        <tr><td><code>systemctl enable sshd</code></td><td>No</td><td>Sí — arranca en el boot</td></tr>
+        <tr><td><code>systemctl disable sshd</code></td><td>No</td><td>Sí — no arranca en el boot</td></tr>
+        <tr><td><code>systemctl mask sshd</code></td><td>Bloquea — ni manual ni boot</td><td>Sí</td></tr>
+      </tbody>
+    </table>
+    <div class="info-box info-yellow">
+      <strong>Error común:</strong> <code>systemctl stop</code> sin <code>disable</code> — el servicio vuelve a correr en el próximo reinicio. Para apagarlo del todo: stop + disable.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — cowsay + ciclo de un servicio real</span>
+      </div>
+      <div class="console-content"><span style="color:#888;"># Instalar cowsay (herramienta, no daemon)</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo dnf install cowsay -y</span>
+<span style="color:#00ff00;">Complete!</span>
+
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">cowsay "Aprende systemctl!"</span>
+<span style="color:#ffd700;"> ____________________
+&lt; Aprende systemctl! &gt;
+ --------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||</span>
+
+<span style="color:#888;"># sshd es un daemon real — veamos su ciclo</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">systemctl is-active sshd</span>
+<span style="color:#00ff00;">active</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">systemctl is-enabled sshd</span>
+<span style="color:#00ff00;">enabled</span>
+
+<span style="color:#888;"># Detener sin deshabilitar = vuelve al reinicio</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo systemctl stop sshd</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">systemctl is-active sshd</span>
+<span style="color:#ff6b6b;">inactive</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">systemctl is-enabled sshd</span>
+<span style="color:#00ff00;">enabled</span>  <span style="color:#ffd700;"># aun arranque en el proximo boot</span>
+
+<span style="color:#888;"># Correcto: stop + disable</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo systemctl disable --now sshd</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 11: Unidades .service vs .socket -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number blue">11</div>
+      <h2>Unidades <span class="blue">.service</span> vs .socket</h2>
+    </div>
+    <ul class="bullet-list">
+      <li>systemd gestiona diferentes tipos de <strong>unidades</strong>: service, socket, timer, mount, target, entre otras.</li>
+      <li><strong>.service:</strong> proceso que corre continuamente en segundo plano.</li>
+      <li><strong>.socket:</strong> escucha conexiones y arranca el .service correspondiente solo cuando llega una conexión. Ahorra memoria cuando el servicio se usa poco.</li>
+      <li><code>cockpit.socket</code> es un ejemplo real: Cockpit solo levanta cuando alguien abre el puerto 9090 en el navegador.</li>
+    </ul>
+    <div class="info-box info-blue">
+      <strong>Por eso deshabilitamos cockpit.socket</strong> y no cockpit.service en la práctica — la unidad activa era el socket, no el servicio.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — .service vs .socket en acción</span>
+      </div>
+      <div class="console-content" style="font-size:11.5px;"><span style="color:#888;"># .service: proceso siempre corriendo en memoria</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">systemctl status sshd.service</span>
+<span style="color:#00ff00;">● sshd.service - OpenSSH server daemon
+     Active: </span><span style="color:#4ADE80;">active (running)</span><span style="color:#00ff00;">
+   Main PID: 892 (sshd)</span>
+<span style="color:#888;"># sshd siempre ocupa RAM, escucha puerto 22 sin parar</span>
+
+<span style="color:#888;"># .socket: systemd escucha, el servicio arranca solo si alguien conecta</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">systemctl status cockpit.socket</span>
+<span style="color:#00ff00;">● cockpit.socket - Cockpit Web Service Socket
+     Active: </span><span style="color:#4ADE80;">active (listening)</span><span style="color:#00ff00;">
+   Listen: 0.0.0.0:9090</span>
+<span style="color:#888;"># puerto 9090 abierto, pero cockpit.service NO corre — sin consumo de RAM</span>
+
+<span style="color:#888;"># Por eso deshabilitamos el .socket y no el .service</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo systemctl disable --now cockpit.socket</span>
+<span style="color:#00ff00;">Removed .../sockets.target.wants/cockpit.socket</span>
+
+<span style="color:#888;"># Verificar que ya no escucha en 9090</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo ss -tlnp | grep 9090</span>
+<span style="color:#ff6b6b;">(sin resultado)</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 12: Superficie de ataque -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number blue">12</div>
+      <h2>Superficie de <span class="blue">ataque</span></h2>
+    </div>
+    <p class="slide-description">La <strong>superficie de ataque</strong> es la suma de todo lo que un atacante puede intentar explotar en un sistema: puertos abiertos, servicios corriendo, usuarios con acceso, software instalado.</p>
+    <p class="slide-description">Cada servicio activo es un <strong>punto de entrada potencial</strong>. Tiene un proceso escuchando en un puerto, código que puede tener vulnerabilidades, y credenciales que alguien podría intentar robar. Si no usas ese servicio, deshabilitarlo elimina ese vector de ataque sin ningún costo operativo.</p>
+    <p class="slide-description">Reducir la superficie de ataque es una de las medidas de hardening más efectivas porque no requiere configuración compleja — solo apagar lo que no se necesita.</p>
+    <div class="info-box">
+      <strong>Regla de oro:</strong> si no sabes para qué sirve un servicio corriendo en tu servidor, es razón suficiente para investigarlo. Si no lo necesitas, apágalo.
+    </div>
+  </div>
+  <div class="slide-image">
+    <table class="theory-table">
+      <thead>
+        <tr>
+          <th>Servicio</th>
+          <th>Puerto</th>
+          <th>Riesgo si no se usa</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>postfix</code></td>
+          <td>25</td>
+          <td>Open relay, spam, RCE histórico</td>
+          <td><span class="tag red">Deshabilitar</span></td>
+        </tr>
+        <tr>
+          <td><code>cockpit</code></td>
+          <td>9090</td>
+          <td>Panel admin expuesto en red</td>
+          <td><span class="tag red">Deshabilitar</span></td>
+        </tr>
+        <tr>
+          <td><code>avahi-daemon</code></td>
+          <td>5353 UDP</td>
+          <td>Descubrimiento de red no deseado</td>
+          <td><span class="tag red">Deshabilitar</span></td>
+        </tr>
+        <tr>
+          <td><code>sshd</code></td>
+          <td>22</td>
+          <td>Necesario — hardening requerido</td>
+          <td><span class="tag yellow">Restringir</span></td>
+        </tr>
+        <tr>
+          <td><code>firewalld</code></td>
+          <td>—</td>
+          <td>Sin él, no hay filtrado de paquetes</td>
+          <td><span class="tag green">Mantener</span></td>
+        </tr>
+        <tr>
+          <td><code>crond</code></td>
+          <td>—</td>
+          <td>Necesario para tareas programadas</td>
+          <td><span class="tag green">Mantener</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- BLOQUE 3: Firewall y modelo de red en Linux           -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide part-slide">
+  <div class="slide-content">
+    <div class="part-number">Bloque 3 de 5</div>
+    <h2>Firewall y <span>Red</span><br>en Linux</h2>
+    <p>Cómo el kernel filtra paquetes, qué son las zonas de firewalld, los puertos bien conocidos, y por qué en AWS hay dos capas de firewall.</p>
+  </div>
+</div>
+
+
+<!-- SLIDE 13: netfilter y firewalld -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">13</div>
+      <h2><span>netfilter</span> y firewalld</h2>
+    </div>
+    <p class="slide-description"><strong>netfilter</strong> es el framework dentro del kernel Linux que intercepta y filtra cada paquete de red que entra o sale del servidor. Es el motor real del firewall — todo lo demás es una interfaz para configurarlo.</p>
+    <p class="slide-description"><strong>nftables</strong> es la herramienta moderna para escribir reglas en netfilter, reemplazando al antiguo iptables. Y <strong>firewalld</strong> es el demonio de RHEL 9 que gestiona nftables con una abstracción más amigable basada en zonas y servicios.</p>
+    <p class="slide-description">En la práctica tú escribes <code>firewall-cmd</code>, firewalld lo traduce a reglas nftables, y el kernel las aplica. Cada capa simplifica la anterior.</p>
+    <div class="info-box info-blue">
+      <strong>Capas de abstracción:</strong> firewall-cmd → firewalld → nftables → netfilter (kernel).
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="diagram-box">
+      <h4>Flujo de un paquete entrante</h4>
+      <div class="firewall-diagram">
+        <div class="fw-layer" style="background:#EEF4FF;color:#0D47A1;border-radius:6px;border:2px solid #0063B1;">
+          Internet — paquete llega a la interfaz de red
+        </div>
+        <div class="fw-arrow">↓</div>
+        <div class="fw-layer" style="background:#FFFBEA;color:#78350F;border-radius:6px;border:2px solid #F59E0B;">
+          AWS Security Group — primer filtro (capa de nube)
+        </div>
+        <div class="fw-arrow">↓ (si el SG lo permite)</div>
+        <div class="fw-layer" style="background:#FFEEEE;color:#B71C1C;border-radius:6px;border:2px solid var(--red);">
+          netfilter (kernel) — firewalld aplica reglas nftables
+        </div>
+        <div class="fw-arrow">↓ (si la zona lo permite)</div>
+        <div class="fw-layer" style="background:#F0FFF0;color:#1B5E20;border-radius:6px;border:2px solid var(--green);">
+          Proceso destino — sshd, httpd, etc.
+        </div>
+      </div>
+      <div style="margin-top:14px;font-size:12px;color:#888;text-align:center;">
+        Un paquete debe pasar ambas capas para llegar al proceso.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 14: Zonas de firewalld -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">14</div>
+      <h2>Zonas de <span>firewalld</span></h2>
+    </div>
+    <p class="slide-description">Una <strong>zona</strong> es un nivel de confianza que firewalld asigna a una interfaz de red. Según la zona, se permiten o bloquean distintos servicios y puertos. En AWS, la interfaz <code>eth0</code> queda en la zona <code>public</code> por defecto — la más restrictiva para redes desconocidas.</p>
+    <p class="slide-description">Las zonas no filtran por IP de origen, sino que definen una política general para todo el tráfico que entra por esa interfaz. Si necesitas dar más confianza a un rango de IPs específico, puedes asignarlas a una zona distinta con <code>--add-source</code>.</p>
+    <p class="slide-description">La tabla de la derecha muestra las zonas de menor a mayor confianza. En un servidor en internet, lo correcto es quedarse en <code>public</code> y permitir solo los servicios estrictamente necesarios.</p>
+    <div class="info-box info-green">
+      <strong>Práctica:</strong> <code>firewall-cmd --list-services</code> muestra qué está permitido en la zona activa. Tras el hardening, solo debe aparecer <code>ssh</code>.
+    </div>
+  </div>
+  <div class="slide-image">
+    <table class="theory-table">
+      <thead>
+        <tr><th>Zona</th><th>Confianza</th><th>Comportamiento por defecto</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>drop</code></td>
+          <td><span class="tag red">Mínima</span></td>
+          <td>Descarta todo sin responder. Máxima seguridad.</td>
+        </tr>
+        <tr>
+          <td><code>block</code></td>
+          <td><span class="tag red">Muy baja</span></td>
+          <td>Rechaza conexiones entrantes con ICMP prohibited.</td>
+        </tr>
+        <tr>
+          <td><code>public</code></td>
+          <td><span class="tag yellow">Baja</span></td>
+          <td>Solo servicios explícitamente permitidos. <strong>Default en AWS.</strong></td>
+        </tr>
+        <tr>
+          <td><code>external</code></td>
+          <td><span class="tag yellow">Baja</span></td>
+          <td>Como public pero con IP masquerading para routers NAT.</td>
+        </tr>
+        <tr>
+          <td><code>home</code></td>
+          <td><span class="tag blue">Media</span></td>
+          <td>Permite más servicios. Para redes domésticas conocidas.</td>
+        </tr>
+        <tr>
+          <td><code>work</code></td>
+          <td><span class="tag blue">Media</span></td>
+          <td>Similar a home, pensada para redes de oficina.</td>
+        </tr>
+        <tr>
+          <td><code>trusted</code></td>
+          <td><span class="tag green">Máxima</span></td>
+          <td>Todo el tráfico está permitido. Solo para redes internas.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- SLIDE 15: firewall-cmd en acción -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">15</div>
+      <h2><span>firewall-cmd</span> en acción</h2>
+    </div>
+    <p class="slide-description">Tres operaciones clave con firewalld: <strong>consultar</strong> el estado actual, <strong>modificar</strong> qué servicios están permitidos, y <strong>persistir</strong> los cambios para que sobrevivan al reinicio.</p>
+    <table class="theory-table" style="margin-bottom:14px;">
+      <thead>
+        <tr><th>Comando</th><th>Qué hace</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>firewall-cmd --state</code></td><td>¿Está corriendo el firewall?</td></tr>
+        <tr><td><code>firewall-cmd --list-services</code></td><td>Servicios permitidos en la zona activa</td></tr>
+        <tr><td><code>firewall-cmd --list-all</code></td><td>Todo: zona, servicios, puertos abiertos</td></tr>
+        <tr><td><code>firewall-cmd --add-service=http --permanent</code></td><td>Abre el puerto 80 de forma permanente</td></tr>
+        <tr><td><code>firewall-cmd --remove-service=cockpit --permanent</code></td><td>Cierra el panel de RHEL (puerto 9090)</td></tr>
+        <tr><td><code>firewall-cmd --reload</code></td><td>Aplica los cambios <code>--permanent</code></td></tr>
+      </tbody>
+    </table>
+    <div class="info-box info-yellow">
+      <strong>--permanent vs sin flag:</strong> sin <code>--permanent</code> el cambio es solo en memoria y desaparece al reiniciar. Con <code>--permanent</code> se escribe en disco pero requiere <code>--reload</code> para activarse ahora.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — hardening del firewall (Prompt 3)</span>
+      </div>
+      <div class="console-content"><span style="color:#888;"># 1. Verificar que firewalld esta activo</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">firewall-cmd --state</span>
+<span style="color:#00ff00;">running</span>
+
+<span style="color:#888;"># 2. Ver que servicios estan permitidos ahora</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">firewall-cmd --list-services</span>
+<span style="color:#00ff00;">cockpit dhcpv6-client ssh</span>
+<span style="color:#ffd700;"># cockpit (9090) no deberia estar abierto en produccion</span>
+
+<span style="color:#888;"># 3. Quitar cockpit de forma permanente</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo firewall-cmd --remove-service=cockpit --permanent</span>
+<span style="color:#00ff00;">success</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo firewall-cmd --remove-service=dhcpv6-client --permanent</span>
+<span style="color:#00ff00;">success</span>
+
+<span style="color:#888;"># 4. Abrir HTTP para Apache (puerto 80)</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo firewall-cmd --add-service=http --permanent</span>
+<span style="color:#00ff00;">success</span>
+
+<span style="color:#888;"># 5. Aplicar todos los cambios permanentes</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo firewall-cmd --reload</span>
+<span style="color:#00ff00;">success</span>
+
+<span style="color:#888;"># 6. Verificar resultado final</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">firewall-cmd --list-services</span>
+<span style="color:#00ff00;">http ssh</span>
+<span style="color:#ffd700;"># Solo lo necesario: SSH para admin, HTTP para Apache</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 16: Verificar puertos con ss -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">16</div>
+      <h2>Verificar puertos <span>con ss</span></h2>
+    </div>
+    <p class="slide-description"><code>ss</code> (Socket Statistics) reemplaza al antiguo <code>netstat</code>. Muestra qué procesos están <strong>realmente escuchando</strong> en qué puertos — es la forma de confirmar que el hardening funcionó.</p>
+    <table class="theory-table" style="margin-bottom:12px;">
+      <thead>
+        <tr><th>Parte</th><th>Qué hace</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>ss</code></td>
+          <td><strong>Socket Statistics</strong> — muestra conexiones de red activas en el sistema</td>
+        </tr>
+        <tr>
+          <td><code>-t</code></td>
+          <td>Solo sockets <strong>TCP</strong> (ignora UDP y Unix sockets)</td>
+        </tr>
+        <tr>
+          <td><code>-l</code></td>
+          <td>Solo sockets en modo <strong>LISTEN</strong> — esperando conexiones entrantes</td>
+        </tr>
+        <tr>
+          <td><code>-n</code></td>
+          <td><strong>Numeric</strong> — muestra el número de puerto (22) en vez del nombre ("ssh")</td>
+        </tr>
+        <tr>
+          <td><code>-p</code></td>
+          <td><strong>Process</strong> — muestra qué proceso está usando cada socket</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="info-box">
+      <strong>Conexión con la práctica:</strong> el Prompt 3 usa <code>sudo ss -tlnp</code> para verificar que solo el puerto 22 está escuchando. Si aparecen otros puertos, hay servicios que no deberían estar corriendo.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — ss -tlnp antes y después del hardening</span>
+      </div>
+      <div class="console-content"><span style="color:#888;"># ANTES del hardening: varios puertos abiertos</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo ss -tlnp</span>
+<span style="color:#ff6b6b;">State   Recv-Q  Send-Q  Local Address:Port  Process
+LISTEN  0       128     0.0.0.0:22         sshd
+LISTEN  0       128     0.0.0.0:9090       cockpit
+LISTEN  0       128     0.0.0.0:25         postfix</span>
+<span style="color:#888;"># cockpit (9090) y postfix (25) no deberian estar aqui</span>
+
+<span style="color:#888;"># Despues del hardening: solo SSH</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo ss -tlnp</span>
+<span style="color:#00ff00;">State   Recv-Q  Send-Q  Local Address:Port  Process
+LISTEN  0       128     0.0.0.0:22         sshd</span>
+
+<span style="color:#888;"># Como leer la salida:</span>
+<span style="color:#888;"># Local Address:Port → en que IP y puerto escucha</span>
+<span style="color:#888;"># 0.0.0.0 → acepta conexiones desde cualquier IP</span>
+<span style="color:#888;"># Process → que servicio esta detras de ese puerto</span>
+<span style="color:#888;"># Solo puerto 22 = hardening exitoso</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 17: Puertos bien conocidos -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">17</div>
+      <h2>Puertos <span>bien conocidos</span></h2>
+    </div>
+    <p class="slide-description">Los puertos van del <strong>0 al 65535</strong> y se dividen en tres rangos. Los <strong>well-known (0-1023)</strong> están asignados por la IANA a servicios estándar como SSH (22), HTTP (80) o HTTPS (443). Solo root puede abrir un proceso que escuche en ellos.</p>
+    <p class="slide-description">Los <strong>registered (1024-49151)</strong> también los asigna la IANA, pero a aplicaciones más específicas como MariaDB (3306) o Cockpit (9090). Cualquier usuario puede escuchar en ellos sin privilegios especiales.</p>
+    <p class="slide-description">Los <strong>ephemeral (49152-65535)</strong> los asigna el kernel dinámicamente cada vez que tu PC inicia una conexión saliente — son los puertos del cliente, no del servidor.</p>
+    <div class="info-box info-yellow">
+      <strong>Por qué importa:</strong> abrir el puerto 80 en el firewall solo tiene efecto si hay un proceso escuchando ahí. Si no hay proceso, el paquete llega al servidor y muere sin respuesta.
+    </div>
+  </div>
+  <div class="slide-image">
+    <table class="theory-table">
+      <thead>
+        <tr><th>Puerto</th><th>Protocolo</th><th>Servicio</th><th>Rango</th><th>Privilegio</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>22</strong></td><td>TCP</td><td>SSH</td><td><span class="tag red">Well-known</span></td><td>Solo root</td></tr>
+        <tr><td><strong>25</strong></td><td>TCP</td><td>SMTP (correo saliente)</td><td><span class="tag red">Well-known</span></td><td>Solo root</td></tr>
+        <tr><td><strong>80</strong></td><td>TCP</td><td>HTTP</td><td><span class="tag red">Well-known</span></td><td>Solo root</td></tr>
+        <tr><td><strong>443</strong></td><td>TCP</td><td>HTTPS</td><td><span class="tag red">Well-known</span></td><td>Solo root</td></tr>
+        <tr><td><strong>3306</strong></td><td>TCP</td><td>MariaDB / MySQL</td><td><span class="tag yellow">Registered</span></td><td>Cualquier usuario</td></tr>
+        <tr><td><strong>8080</strong></td><td>TCP</td><td>HTTP alternativo</td><td><span class="tag yellow">Registered</span></td><td>Cualquier usuario</td></tr>
+        <tr><td><strong>9090</strong></td><td>TCP</td><td>Cockpit (panel RHEL)</td><td><span class="tag yellow">Registered</span></td><td>Cualquier usuario</td></tr>
+        <tr><td><strong>49152+</strong></td><td>TCP/UDP</td><td>Puerto cliente (saliente)</td><td><span class="tag green">Ephemeral</span></td><td>Kernel (dinámico)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- SLIDE 18: firewalld vs AWS Security Group -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number">18</div>
+      <h2>Dos capas de <span>firewall</span></h2>
+    </div>
+    <p class="slide-description">En AWS, el tráfico pasa por <strong>dos firewalls independientes</strong> antes de llegar al proceso. El <strong>Security Group</strong> opera a nivel de red virtual (VPC), fuera de la instancia — filtra por IP, puerto y protocolo antes de que el paquete llegue al sistema operativo.</p>
+    <p class="slide-description">El segundo filtro es <strong>firewalld</strong>, que corre dentro del sistema operativo a nivel de kernel. Es completamente independiente del Security Group — ninguno conoce al otro.</p>
+    <p class="slide-description">Un puerto debe estar abierto en <strong>ambos</strong> para que el tráfico llegue al proceso. Si uno lo bloquea, el paquete no pasa sin importar cómo esté configurado el otro.</p>
+    <div class="info-box">
+      <strong>Ejemplo real:</strong> al levantar Nginx en el puerto 8080 con Podman, tuvimos que abrirlo en firewalld <em>y</em> en el Security Group de la consola AWS. Solo uno no alcanza.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — dos firewalls, un mismo puerto</span>
+      </div>
+      <div class="console-content" style="font-size:11.5px;"><span style="color:#888;"># CAPA 1: Security Group (AWS) — fuera del servidor</span>
+<span style="color:#888;"># Se configura en la consola AWS o con la CLI</span>
+<span style="color:#888;"># Filtra por IP de origen, puerto y protocolo</span>
+<span style="color:#888;"># El paquete ni llega al SO si el SG lo bloquea</span>
+<span style="color:#888;">$ aws ec2 authorize-security-group-ingress \</span>
+<span style="color:#888;">    --port 8080 --protocol tcp --cidr 0.0.0.0/0</span>
+
+<span style="color:#888;"># CAPA 2: firewalld (RHEL) — dentro del servidor</span>
+<span style="color:#888;"># Se configura con firewall-cmd en la instancia</span>
+<span style="color:#888;"># El paquete llegó al SO pero aún puede bloquearse aquí</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo firewall-cmd --add-port=8080/tcp --permanent</span>
+<span style="color:#00ff00;">success</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo firewall-cmd --reload</span>
+<span style="color:#00ff00;">success</span>
+
+<span style="color:#888;"># Verificar que el proceso escucha y el puerto está abierto</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo ss -tlnp | grep 8080</span>
+<span style="color:#00ff00;">LISTEN 0.0.0.0:8080  users:(("nginx",pid=3201))</span>
+
+<span style="color:#888;"># Si el SG está cerrado, este comando responde pero el</span>
+<span style="color:#888;"># navegador no llega. Ambas capas deben estar abiertas.</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- BLOQUE 4: Hardening de SSH                            -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide part-slide">
+  <div class="slide-content">
+    <div class="part-number">Bloque 4 de 5</div>
+    <h2>Hardening <span>de SSH</span></h2>
+    <p>Por qué las contraseñas son inseguras en SSH, cómo funciona la criptografía asimétrica, y qué directivas de sshd_config reducen el riesgo real.</p>
+  </div>
+</div>
+
+
+<!-- SLIDE 19: PasswordAuthentication y fuerza bruta -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number dark">19</div>
+      <h2>Por qué deshabilitar <span>contraseñas</span></h2>
+    </div>
+    <p class="slide-description">Un servidor con el puerto 22 abierto en internet recibe intentos de login SSH <strong>a los pocos minutos</strong> de estar online. Bots automatizados escanean rangos de IPs continuamente buscando servidores con contraseñas débiles.</p>
+    <p class="slide-description">Los dos ataques más comunes son la <strong>fuerza bruta</strong> — probar millones de combinaciones usuario/contraseña hasta acertar — y el <strong>credential stuffing</strong>, que usa credenciales filtradas de otras brechas asumiendo que la gente reutiliza contraseñas.</p>
+    <p class="slide-description">Con <code>PasswordAuthentication no</code> el servidor rechaza directamente cualquier intento de login con contraseña y solo acepta llaves criptográficas, haciendo ambos ataques imposibles.</p>
+    <div class="info-box">
+      <strong>Dato real:</strong> un servidor AWS con puerto 22 abierto recibe entre 1.000 y 10.000 intentos de login por día. Con Fail2ban instalado se pueden ver en tiempo real.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">/var/log/secure — intentos de acceso reales</span>
+      </div>
+      <div class="console-content" style="font-size:11px;"><span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo tail -f /var/log/secure</span>
+
+<span style="color:#ff6b6b;">May  3 03:12:41 sshd: Failed password for root
+                       from 185.234.218.43 port 52718</span>
+<span style="color:#ff6b6b;">May  3 03:12:43 sshd: Failed password for root
+                       from 185.234.218.43 port 52722</span>
+<span style="color:#ff6b6b;">May  3 03:12:44 sshd: Failed password for admin
+                       from 185.234.218.43 port 52731</span>
+<span style="color:#ff6b6b;">May  3 03:12:45 sshd: Invalid user ubuntu
+                       from 185.234.218.43 port 52740</span>
+<span style="color:#ff6b6b;">May  3 03:12:47 sshd: Invalid user pi
+                       from 185.234.218.43 port 52751</span>
+<span style="color:#888;"># ... miles de intentos por dia ...</span>
+
+<span style="color:#888;"># Con PasswordAuthentication no:</span>
+<span style="color:#00ff00;">May  3 03:15:01 sshd: Disconnected from
+  authenticating user root 185.234.218.43:
+  Permission denied (publickey)</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 20: Criptografía asimétrica y llaves SSH -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number dark">20</div>
+      <h2>Criptografía <span>asimétrica</span></h2>
+    </div>
+    <p class="slide-description">La criptografía asimétrica genera dos llaves matemáticamente relacionadas: una <strong>pública</strong>, que se puede compartir libremente, y una <strong>privada</strong>, que nunca sale de tu PC. Lo que se cifra con una solo lo puede descifrar la otra.</p>
+    <p class="slide-description">En SSH, el servidor guarda tu llave pública en <code>~/.ssh/authorized_keys</code>. Al conectarte, el servidor te envía un desafío cifrado con esa llave. Solo quien tiene la llave privada puede resolverlo — sin necesidad de enviar ningún secreto por la red.</p>
+    <p class="slide-description">Incluso si alguien intercepta toda la comunicación, no puede impersonarte sin la llave privada. Y no hay contraseña que adivinar: una llave de 3072 bits tardaría más que la edad del universo en crackearse por fuerza bruta.</p>
+    <div class="info-box info-green">
+      <strong>Ventaja clave:</strong> la autenticación ocurre sin transmitir ningún secreto. La llave privada nunca viaja por la red.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="diagram-box">
+      <h4>Flujo de autenticación SSH con llaves</h4>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="flow-step">
+          <div class="flow-bubble blue">Tu PC</div>
+          <span class="flow-arrow">→</span>
+          <span style="font-size:13px;color:#555;">genera par de llaves: <code style="font-family:'JetBrains Mono';font-size:11px;background:#f0f0f0;padding:1px 4px;border-radius:3px;">ssh-keygen -t rsa -b 3072</code></span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0;">
+          <div style="background:#EEF4FF;border-radius:4px;padding:10px;font-size:12px;color:#0D47A1;text-align:center;">
+            <strong>Llave PUBLICA</strong><br>
+            <span style="font-family:'JetBrains Mono';font-size:10px;">~/.ssh/id_rsa.pub</span><br>
+            Se copia al servidor
+          </div>
+          <div style="background:#FFEEEE;border-radius:4px;padding:10px;font-size:12px;color:#B71C1C;text-align:center;">
+            <strong>Llave PRIVADA</strong><br>
+            <span style="font-family:'JetBrains Mono';font-size:10px;">~/.ssh/id_rsa</span><br>
+            Nunca sale de tu PC
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-bubble blue">Tu PC</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-bubble gray">Servidor</div>
+          <span style="font-size:12px;color:#555;">solicita conexión SSH</span>
+        </div>
+        <div class="flow-step">
+          <div class="flow-bubble gray">Servidor</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-bubble blue">Tu PC</div>
+          <span style="font-size:12px;color:#555;">envía desafío cifrado con tu llave pública</span>
+        </div>
+        <div class="flow-step">
+          <div class="flow-bubble blue">Tu PC</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-bubble gray">Servidor</div>
+          <span style="font-size:12px;color:#555;">descifra con llave privada y responde</span>
+        </div>
+        <div class="flow-step">
+          <div class="flow-bubble green">Acceso</div>
+          <span style="font-size:12px;color:#1B5E20;">identidad verificada sin transmitir la llave privada</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 21: Directivas clave de sshd_config -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number dark">21</div>
+      <h2>Directivas de <span>sshd_config</span></h2>
+    </div>
+    <p class="slide-description"><code>/etc/ssh/sshd_config</code> es el archivo de configuración del servidor SSH. Cada directiva controla un aspecto del comportamiento — quién puede conectarse, cómo se autentica, cuánto tiempo puede estar inactiva una sesión.</p>
+    <p class="slide-description">Los cambios no tienen efecto hasta hacer <code>systemctl restart sshd</code>. Si hay un error de sintaxis, sshd no reinicia y pierdes el acceso. Por eso siempre se valida primero con <code>sshd -T</code>, que revisa la configuración completa sin tocar el servicio.</p>
+    <p class="slide-description"><code>AllowUsers</code> es una whitelist explícita — solo los usuarios listados pueden conectarse por SSH, sin importar si tienen contraseña válida o llave registrada. Es más seguro que depender solo de los grupos.</p>
+    <div class="info-box info-yellow">
+      <strong>Protocolo de seguridad:</strong> mantén siempre una sesión SSH abierta mientras editas sshd_config. Si algo falla, puedes corregirlo sin perder el acceso al servidor.
+    </div>
+  </div>
+  <div class="slide-image">
+    <table class="theory-table">
+      <thead>
+        <tr><th>Directiva</th><th>Valor seguro</th><th>Qué hace</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>PermitRootLogin</code></td>
+          <td><code>no</code></td>
+          <td>Impide login directo como root — el atacante debe saber también el usuario.</td>
+        </tr>
+        <tr>
+          <td><code>PasswordAuthentication</code></td>
+          <td><code>no</code></td>
+          <td>Solo acepta llaves criptográficas. Elimina la fuerza bruta de contraseñas.</td>
+        </tr>
+        <tr>
+          <td><code>AllowUsers</code></td>
+          <td><code>ec2-user</code></td>
+          <td>Whitelist de usuarios que pueden conectarse por SSH. Cualquier otro es rechazado.</td>
+        </tr>
+        <tr>
+          <td><code>MaxAuthTries</code></td>
+          <td><code>3</code></td>
+          <td>Cierra la conexión después de 3 intentos fallidos. Dificulta la fuerza bruta.</td>
+        </tr>
+        <tr>
+          <td><code>ClientAliveInterval</code></td>
+          <td><code>300</code></td>
+          <td>Cierra sesiones inactivas después de 5 minutos. Reduce ventana de ataque.</td>
+        </tr>
+        <tr>
+          <td><code>Protocol</code></td>
+          <td><code>2</code></td>
+          <td>Solo SSH v2 — SSHv1 tiene vulnerabilidades conocidas.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- SLIDE 22: sshd_config en acción -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number dark">22</div>
+      <h2><span>sshd_config</span> en acción</h2>
+    </div>
+    <p class="slide-description">Los comandos del Prompt 3 usan tres herramientas: <code>sed</code> para modificar líneas existentes, <code>tee</code> para agregar líneas nuevas, y <code>sshd -T</code> para validar sin reiniciar.</p>
+    <table class="theory-table" style="margin-bottom:12px;">
+      <thead>
+        <tr><th>Parte</th><th>Qué hace</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>sed</code></td>
+          <td><strong>Stream editor</strong> — lee el archivo línea por línea y aplica transformaciones</td>
+        </tr>
+        <tr>
+          <td><code>-i</code></td>
+          <td><strong>In-place</strong> — modifica el archivo directamente. Sin <code>-i</code>, solo imprime en pantalla</td>
+        </tr>
+        <tr>
+          <td><code>s/patron/reemplazo/</code></td>
+          <td>Sintaxis de sustitución: busca <em>patron</em> y lo reemplaza por <em>reemplazo</em></td>
+        </tr>
+        <tr>
+          <td><code>^#*PermitRootLogin.*</code></td>
+          <td><code>^</code> inicio de línea · <code>#*</code> cero o más <code>#</code> (maneja líneas comentadas) · <code>.*</code> cualquier valor actual</td>
+        </tr>
+        <tr>
+          <td><code>tee -a</code></td>
+          <td>Escribe en el archivo Y muestra en pantalla. <code>-a</code> = append (agrega al final, no sobreescribe)</td>
+        </tr>
+        <tr>
+          <td><code>sshd -T</code></td>
+          <td><strong>Test mode</strong> — valida la sintaxis y muestra la configuración efectiva sin reiniciar sshd</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="info-box info-blue">
+      <strong>Conexión con la práctica:</strong> el Prompt 3 le pide a Gemini aplicar estas tres directivas. <code>sshd -T</code> es el paso de validación que Gemini ejecuta antes de reiniciar el servicio.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — hardening SSH paso a paso (Prompt 3)</span>
+      </div>
+      <div class="console-content"><span style="color:#888;"># 1. Aplicar las tres directivas</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo sed -i \
+  's/^#*PermitRootLogin.*/PermitRootLogin no/' \
+  /etc/ssh/sshd_config</span>
+
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo sed -i \
+  's/^#*PasswordAuthentication.*/PasswordAuthentication no/' \
+  /etc/ssh/sshd_config</span>
+
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">echo "AllowUsers ec2-user" | \
+  sudo tee -a /etc/ssh/sshd_config</span>
+
+<span style="color:#888;"># 2. Validar configuracion sin reiniciar</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo sshd -T | grep -E \
+  "permitrootlogin|passwordauthentication|allowusers"</span>
+<span style="color:#00ff00;">permitrootlogin no
+passwordauthentication no
+allowusers ec2-user</span>
+
+<span style="color:#888;"># 3. Solo si el paso 2 es correcto, reiniciar</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo systemctl restart sshd</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo systemctl is-active sshd</span>
+<span style="color:#00ff00;">active</span>
+
+<span style="color:#ffd700;"># Mantener sesion abierta y probar desde otra terminal</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 23: El riesgo de romperse el acceso -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number dark">23</div>
+      <h2>El riesgo de <span>bloquearse</span></h2>
+    </div>
+    <p class="slide-description">Un error en <code>sshd_config</code> puede dejarte sin acceso al servidor de dos formas distintas. Si hay un error de sintaxis y reinicias sshd, el daemon <strong>no levanta</strong> — el servicio queda caído y nadie puede conectarse por SSH.</p>
+    <p class="slide-description">El segundo caso es más silencioso: si escribes mal tu usuario en <code>AllowUsers</code>, sshd reinicia correctamente pero te rechaza al intentar conectarte. El servicio funciona, pero tú quedas afuera.</p>
+    <p class="slide-description">En AWS esto es recuperable via Session Manager desde la consola EC2, pero en un servidor físico o en otro proveedor puede significar perder el acceso definitivamente. El procedimiento correcto es validar con <code>sshd -T</code>, reiniciar, y verificar desde una segunda terminal antes de cerrar la sesión actual.</p>
+    <div class="info-box">
+      <strong>Lección operacional:</strong> la diferencia entre un sysadmin junior y uno senior no es saber más comandos — es saber validar antes de aplicar.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">Procedimiento seguro para editar sshd_config</span>
+      </div>
+      <div class="console-content" style="font-size:11.5px;"><span style="color:#888;"># Paso 1: editar el archivo</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo nano /etc/ssh/sshd_config</span>
+
+<span style="color:#888;"># Paso 2: SIEMPRE validar antes de reiniciar</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo sshd -T | grep -E \
+  "permitrootlogin|passwordauth|allowusers"</span>
+<span style="color:#00ff00;">permitrootlogin no
+passwordauthentication no
+allowusers ec2-user</span>
+
+<span style="color:#888;"># Paso 3: solo si el paso 2 es correcto</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo systemctl restart sshd</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo systemctl is-active sshd</span>
+<span style="color:#00ff00;">active</span>
+
+<span style="color:#888;"># Paso 4: verificar desde OTRA terminal antes de cerrar</span>
+<span style="color:#888;"># Abrir nueva conexion SSH y confirmar que funciona</span>
+<span style="color:#888;"># Solo entonces cerrar la sesion original</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- BLOQUE 5: Arquitectura de un servidor web             -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide part-slide">
+  <div class="slide-content">
+    <div class="part-number">Bloque 5 de 5</div>
+    <h2>Arquitectura<br>Servidor <span>Web</span></h2>
+    <p>El stack LAMP, cómo Apache sirve contenido, la separación en capas de un servidor web, y la diferencia entre HTTP y HTTPS.</p>
+  </div>
+</div>
+
+
+<!-- SLIDE 24: Stack LAMP -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number orange">24</div>
+      <h2>El stack <span class="orange">LAMP</span></h2>
+    </div>
+    <ul class="bullet-list">
+      <li><strong>LAMP</strong> es el stack web más difundido del mundo: Linux + Apache + MariaDB/MySQL + PHP.</li>
+      <li>Cada capa tiene una responsabilidad única — el sistema operativo, el servidor web, la base de datos y el lenguaje de aplicación.</li>
+      <li>Pueden instalarse en un solo servidor (como hicimos) o en servidores separados en producción.</li>
+      <li>Es la base de WordPress, Joomla, Drupal y miles de aplicaciones web.</li>
+    </ul>
+    <div class="info-box info-yellow">
+      <strong>Variante moderna:</strong> LEMP reemplaza Apache (A) por Nginx (N) — más eficiente en sitios con mucho tráfico estático.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="diagram-box">
+      <h4>Las capas del stack LAMP</h4>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div class="stack-layer" style="background:#1A1A1A;color:white;">
+          <span>L — Linux (RHEL 9)</span>
+          <span>sistema operativo</span>
+        </div>
+        <div style="text-align:center;font-size:11px;color:#aaa;">sirve de base para todo</div>
+        <div class="stack-layer" style="background:#E31E24;color:white;">
+          <span>A — Apache (httpd)</span>
+          <span>puerto 80 / 443</span>
+        </div>
+        <div style="text-align:center;font-size:11px;color:#aaa;">recibe peticiones HTTP y las enruta</div>
+        <div class="stack-layer" style="background:#0063B1;color:white;">
+          <span>M — MariaDB</span>
+          <span>puerto 3306</span>
+        </div>
+        <div style="text-align:center;font-size:11px;color:#aaa;">almacena datos estructurados</div>
+        <div class="stack-layer" style="background:#107C10;color:white;">
+          <span>P — PHP</span>
+          <span>genera HTML dinámico</span>
+        </div>
+      </div>
+      <div style="margin-top:14px;font-size:12px;color:#888;text-align:center;">
+        El navegador solo habla con Apache — las otras capas son internas.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 25: Apache en acción -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number orange">25</div>
+      <h2>Apache <span class="orange">en acción</span></h2>
+    </div>
+    <p class="slide-description">Cuatro pasos que ejecuta Gemini en el Prompt 4: instalar el paquete, activar el servicio, abrir el puerto y crear la página. Cada comando tiene partes específicas que vale la pena entender.</p>
+    <table class="theory-table" style="margin-bottom:12px;">
+      <thead>
+        <tr><th>Parte del comando</th><th>Qué hace</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>dnf install httpd</code></td>
+          <td><code>httpd</code> es el nombre del paquete Apache en RHEL — no <code>apache2</code> como en Ubuntu</td>
+        </tr>
+        <tr>
+          <td><code>-y</code></td>
+          <td>Auto-confirma sin pedir aprobación interactiva</td>
+        </tr>
+        <tr>
+          <td><code>systemctl enable --now httpd</code></td>
+          <td><code>enable</code> arranca en boot · <code>--now</code> también arranca en este instante. Dos acciones en un comando</td>
+        </tr>
+        <tr>
+          <td><code>--add-service=http --permanent</code></td>
+          <td>Abre el puerto 80 y lo persiste. Sin <code>--permanent</code> desaparece al reiniciar. Requiere <code>--reload</code></td>
+        </tr>
+        <tr>
+          <td><code>echo "..." &gt; /var/www/html/index.html</code></td>
+          <td><code>&gt;</code> crea o sobreescribe el archivo. <code>/var/www/html/</code> es el DocumentRoot por defecto de Apache</td>
+        </tr>
+        <tr>
+          <td><code>curl http://localhost</code></td>
+          <td>Prueba local: verifica que Apache responde sin necesitar el navegador ni la IP pública</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="info-box info-blue">
+      <strong>Conexión con la práctica:</strong> el Prompt 4 le pide a Gemini ejecutar exactamente esta secuencia. La validación final es <code>curl http://localhost</code> y acceder con el navegador a la IP pública de la instancia.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">bash — instalar y activar Apache (Prompt 4)</span>
+      </div>
+      <div class="console-content"><span style="color:#888;"># 1. Instalar Apache</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo dnf install httpd -y</span>
+<span style="color:#00ff00;">...
+Installed: httpd-2.4.57.el9.x86_64
+Complete!</span>
+
+<span style="color:#888;"># 2. Habilitar e iniciar en un solo comando</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo systemctl enable --now httpd</span>
+<span style="color:#00ff00;">Created symlink /etc/systemd/system/multi-user.target.wants/httpd.service</span>
+
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo systemctl is-active httpd</span>
+<span style="color:#00ff00;">active</span>
+
+<span style="color:#888;"># 3. Abrir puerto 80 en el firewall</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo firewall-cmd --add-service=http --permanent</span>
+<span style="color:#00ff00;">success</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">sudo firewall-cmd --reload</span>
+<span style="color:#00ff00;">success</span>
+
+<span style="color:#888;"># 4. Crear pagina de inicio</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">echo "&lt;h1&gt;Servidor $(hostname) activo&lt;/h1&gt;" | \
+  sudo tee /var/www/html/index.html</span>
+
+<span style="color:#888;"># 5. Verificar localmente</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">curl http://localhost</span>
+<span style="color:#00ff00;">&lt;h1&gt;Servidor SRV-01 activo&lt;/h1&gt;</span>
+
+<span style="color:#888;"># 6. Obtener IP publica para el navegador</span>
+<span style="color:#888;">[ec2-user@srv ~]$</span> <span style="color:#90EE90;">curl -s http://169.254.169.254/latest/meta-data/public-ipv4</span>
+<span style="color:#ffd700;">54.123.45.67</span>
+<span style="color:#888;"># Abrir en navegador: http://54.123.45.67</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 26: Apache y Virtual Hosts -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number orange">26</div>
+      <h2>Apache y <span class="orange">Virtual Hosts</span></h2>
+    </div>
+    <p class="slide-description">Un <strong>Virtual Host</strong> permite que un solo servidor Apache sirva múltiples sitios web en el mismo puerto. Apache distingue a cuál responder usando el header <code>Host:</code> que el navegador envía en cada petición — ese header contiene el dominio que escribió el usuario.</p>
+    <p class="slide-description">Cada sitio tiene su propio bloque de configuración en <code>/etc/httpd/conf.d/</code>. Las tres directivas esenciales son <code>ServerName</code> (a qué dominio responde), <code>DocumentRoot</code> (dónde están los archivos) y <code>ErrorLog</code> (dónde guardar los errores).</p>
+    <p class="slide-description">El sitio por defecto, sin Virtual Host configurado, sirve desde <code>/var/www/html/</code> — el <code>index.html</code> que creamos en la práctica al instalar Apache.</p>
+    <div class="info-box info-blue">
+      <strong>Validar siempre antes de recargar:</strong> <code>apachectl configtest</code> revisa la sintaxis de todos los archivos de configuración sin tocar el servicio.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="console">
+      <div class="console-header">
+        <span class="console-button red"></span>
+        <span class="console-button yellow"></span>
+        <span class="console-button green"></span>
+        <span class="console-title">/etc/httpd/conf.d/sitio.conf — Virtual Host</span>
+      </div>
+      <div class="console-content" style="font-size:11.5px;"><span style="color:#888;"># Un servidor, dos sitios en el mismo puerto 80</span>
+
+<span style="color:#87CEEB;">&lt;VirtualHost *:80&gt;</span>
+    <span style="color:#ffd700;">ServerName</span>  <span style="color:#90EE90;">www.inacap-sitio1.cl</span>
+    <span style="color:#ffd700;">DocumentRoot</span> <span style="color:#90EE90;">/var/www/sitio1</span>
+    <span style="color:#ffd700;">ErrorLog</span>    <span style="color:#90EE90;">/var/log/httpd/sitio1-error.log</span>
+<span style="color:#87CEEB;">&lt;/VirtualHost&gt;</span>
+
+<span style="color:#87CEEB;">&lt;VirtualHost *:80&gt;</span>
+    <span style="color:#ffd700;">ServerName</span>  <span style="color:#90EE90;">www.inacap-sitio2.cl</span>
+    <span style="color:#ffd700;">DocumentRoot</span> <span style="color:#90EE90;">/var/www/sitio2</span>
+    <span style="color:#ffd700;">ErrorLog</span>    <span style="color:#90EE90;">/var/log/httpd/sitio2-error.log</span>
+<span style="color:#87CEEB;">&lt;/VirtualHost&gt;</span>
+
+<span style="color:#888;"># Apache lee el header "Host:" del navegador:</span>
+<span style="color:#888;"># Host: www.inacap-sitio1.cl → sirve /var/www/sitio1</span>
+<span style="color:#888;"># Host: www.inacap-sitio2.cl → sirve /var/www/sitio2</span>
+
+<span style="color:#888;"># Verificar sintaxis antes de recargar</span>
+<span style="color:#888;">[root@srv ~]#</span> <span style="color:#90EE90;">apachectl configtest</span>
+<span style="color:#00ff00;">Syntax OK</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 27: Separación de capas -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number orange">27</div>
+      <h2>Separación de <span class="orange">capas</span></h2>
+    </div>
+    <p class="slide-description">Un servidor web bien diseñado separa tres responsabilidades: <strong>presentación</strong> (HTML/CSS que ve el usuario), <strong>lógica</strong> (PHP o Python que procesa los datos) y <strong>datos</strong> (la base de datos que los almacena). Cada capa hace una sola cosa.</p>
+    <p class="slide-description">El navegador solo habla con Apache en el puerto 80 o 443. Apache delega los archivos PHP al intérprete, que consulta MariaDB internamente en <code>127.0.0.1:3306</code>. La base de datos nunca está expuesta directamente a internet.</p>
+    <p class="slide-description">En producción, cada capa puede vivir en servidores distintos para escalar de forma independiente. Pero incluso en un solo servidor, el puerto 3306 debe estar cerrado en el firewall — la contraseña de la base de datos es una defensa, la red es otra.</p>
+    <div class="info-box info-green">
+      <strong>Principio de diseño:</strong> la base de datos no debería ser accesible desde internet aunque tenga contraseña. Tener ambas defensas es mejor que confiar en una sola.
+    </div>
+  </div>
+  <div class="slide-image">
+    <div class="diagram-box">
+      <h4>Flujo de una petición web completa</h4>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="flow-step">
+          <div class="flow-bubble blue">Navegador</div>
+          <span class="flow-arrow">→ HTTP GET /pagina.php</span>
+        </div>
+        <div style="margin-left:20px;border-left:2px solid #e0e0e0;padding-left:14px;">
+          <div class="flow-step">
+            <div class="flow-bubble red">Apache</div>
+            <span style="font-size:12px;color:#555;">recibe la petición en puerto 80</span>
+          </div>
+          <div class="flow-step">
+            <div class="flow-bubble red">Apache</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-bubble gray">PHP</div>
+            <span style="font-size:12px;color:#555;">delega archivos .php</span>
+          </div>
+          <div class="flow-step">
+            <div class="flow-bubble gray">PHP</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-bubble green">MariaDB</div>
+            <span style="font-size:12px;color:#555;">consulta datos (127.0.0.1:3306)</span>
+          </div>
+          <div class="flow-step">
+            <div class="flow-bubble green">MariaDB</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-bubble gray">PHP</div>
+            <span style="font-size:12px;color:#555;">retorna filas</span>
+          </div>
+          <div class="flow-step">
+            <div class="flow-bubble gray">PHP</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-bubble red">Apache</div>
+            <span style="font-size:12px;color:#555;">genera HTML</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-bubble red">Apache</div>
+          <span class="flow-arrow">→ respuesta HTTP 200</span>
+          <div class="flow-bubble blue">Navegador</div>
+        </div>
+        <div style="margin-top:8px;font-size:11.5px;color:#888;background:#f9f9f9;padding:8px 10px;border-radius:4px;">
+          MariaDB nunca abre conexiones hacia internet. Solo responde a PHP en localhost.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 28: HTTP vs HTTPS -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-number orange">28</div>
+      <h2>HTTP vs <span class="orange">HTTPS</span></h2>
+    </div>
+    <p class="slide-description"><strong>HTTP</strong> (puerto 80) transmite todo en texto plano. Cualquier dispositivo entre tu PC y el servidor — routers, ISPs, redes WiFi públicas — puede leer exactamente lo que envías y recibes, incluyendo contraseñas.</p>
+    <p class="slide-description"><strong>HTTPS</strong> (puerto 443) cifra la comunicación con TLS usando el mismo principio de criptografía asimétrica que vimos en SSH: las partes negocian una clave de sesión sin transmitirla. Incluso si alguien intercepta el tráfico, solo ve datos cifrados ilegibles.</p>
+    <p class="slide-description">El certificado TLS también <strong>autentica el servidor</strong> — el navegador verifica que está hablando con el servidor correcto y no con un impostor que interceptó la conexión. Por eso muestra el candado verde.</p>
+    <div class="info-box info-yellow">
+      <strong>Siguiente paso:</strong> <code>certbot</code> con Let's Encrypt entrega un certificado TLS gratuito en minutos. Solo requiere un dominio apuntando al servidor.
+    </div>
+  </div>
+  <div class="slide-image">
+    <table class="theory-table">
+      <thead>
+        <tr><th>Característica</th><th>HTTP</th><th>HTTPS</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Puerto</td>
+          <td><code>80</code></td>
+          <td><code>443</code></td>
+        </tr>
+        <tr>
+          <td>Cifrado</td>
+          <td><span class="tag red">Ninguno</span></td>
+          <td><span class="tag green">TLS 1.2 / 1.3</span></td>
+        </tr>
+        <tr>
+          <td>Autenticación del servidor</td>
+          <td><span class="tag red">No</span></td>
+          <td><span class="tag green">Sí (certificado)</span></td>
+        </tr>
+        <tr>
+          <td>Contraseñas en tránsito</td>
+          <td><span class="tag red">Texto plano</span></td>
+          <td><span class="tag green">Cifradas</span></td>
+        </tr>
+        <tr>
+          <td>Indicador en navegador</td>
+          <td>"No seguro"</td>
+          <td>Candado verde</td>
+        </tr>
+        <tr>
+          <td>SEO (Google)</td>
+          <td>Penalizado</td>
+          <td>Favorecido</td>
+        </tr>
+        <tr>
+          <td>Configuración en Apache</td>
+          <td><code>Listen 80</code></td>
+          <td><code>mod_ssl</code> + certificado</td>
+        </tr>
+        <tr>
+          <td>Certificado gratuito</td>
+          <td>—</td>
+          <td>Let's Encrypt + certbot</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<script>
+  document.querySelectorAll('.console-header').forEach(header => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copiar';
+    header.appendChild(btn);
+    btn.addEventListener('click', () => {
+      const content = btn.closest('.console').querySelector('.console-content');
+      navigator.clipboard.writeText(content.innerText.trim()).then(() => {
+        btn.textContent = 'Copiado!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copiar';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+  });
+</script>
+
+<!-- FOOTER -->
+<div style="background:#1A1A1A; color:white; padding:24px 40px; text-align:center; border-top:3px solid var(--red); scroll-snap-align: start;">
+  <p style="font-size:14px; color:rgba(255,255,255,0.7);">TI3V35 — Sistemas Operativos &nbsp;|&nbsp; INACAP Puente Alto &nbsp;|&nbsp; Michael Arjel Mayerovich</p>
+</div>
+
+</body>
+</html>
