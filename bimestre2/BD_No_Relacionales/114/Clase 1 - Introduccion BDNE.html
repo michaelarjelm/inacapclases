@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introducción a las BDNE — BD No Estructuradas</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: white;
+    font-family: 'Barlow', sans-serif;
+    color: #333;
+    overflow-x: hidden;
+    scroll-snap-type: y mandatory;
+  }
+  :root {
+    --red:   #E31E24;
+    --blue:  #0063B1;
+    --green: #107C10;
+  }
+
+  /* -- HEADER -- */
+  .header {
+    background: white;
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #EBEBEB;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-title { display: flex; align-items: center; gap: 12px; }
+  .header-title h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: #1A1A1A;
+  }
+  .header-title span { color: var(--red); }
+  .header-logo { height: 32px; opacity: 0.6; }
+
+  /* -- PART SLIDE (dark divider) -- */
+  .part-slide {
+    background: linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 80px 70px;
+    border-bottom: 5px solid var(--red);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  .part-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 16px;
+  }
+  .part-slide h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 76px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: white;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+  }
+  .part-slide h2 span { color: var(--red); }
+  .part-slide h2 span.blue  { color: #60AEFF; }
+  .part-slide h2 span.green { color: #4ADE80; }
+  .part-slide p {
+    font-size: 20px;
+    color: rgba(255,255,255,0.5);
+    max-width: 600px;
+    line-height: 1.65;
+  }
+  .part-slide .inacap-logo { height: 44px; opacity: 0.5; margin-top: 48px; filter: invert(1); }
+
+  /* -- CONTENT SLIDE -- */
+  .slide {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 40% 60%;
+    align-items: stretch;
+    border-bottom: 3px solid #EBEBEB;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  .slide-content {
+    padding: 56px 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: white;
+  }
+  .slide-image {
+    background: #F5F5F5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    overflow: hidden;
+  }
+  .slide-image.white { background: white; border-left: 1px solid #EBEBEB; }
+  .slide-image.dark  { background: #0d0d0d; }
+
+  .slide-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+  .slide-num {
+    background: var(--red);
+    color: white;
+    width: 52px;
+    height: 52px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .slide-num.blue  { background: var(--blue); }
+  .slide-num.green { background: var(--green); }
+  .slide-num.dark  { background: #1A1A1A; }
+
+  .slide-header h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #1A1A1A;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .slide-header h2 span       { color: var(--red); }
+  .slide-header h2 span.blue  { color: var(--blue); }
+  .slide-header h2 span.green { color: var(--green); }
+
+  .slide-body { font-size: 17px; line-height: 1.75; color: #444; }
+  .slide-body + .slide-body { margin-top: 14px; }
+  .slide-body strong { color: #1A1A1A; font-weight: 700; }
+
+  .bullet-list { list-style: none; margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .bullet-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 16.5px;
+    line-height: 1.6;
+    color: #444;
+  }
+  .bullet-list li::before {
+    content: '\25B8';
+    color: var(--red);
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 3px;
+    font-weight: 700;
+  }
+  .bullet-list li strong { color: #1A1A1A; }
+  .bullet-list.blue  li::before { color: var(--blue); }
+  .bullet-list.green li::before { color: var(--green); }
+
+  .sub-list { list-style: none; margin-top: 6px; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+  .sub-list li { font-size: 15px; color: #666; line-height: 1.55; padding-left: 12px; position: relative; }
+  .sub-list li::before { content: '–'; position: absolute; left: 0; color: #bbb; }
+
+  .info-box {
+    margin-top: 18px;
+    background: #FFF3F3;
+    border-left: 4px solid var(--red);
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-size: 15px;
+    line-height: 1.65;
+    color: #555;
+  }
+  .info-box strong { color: #B71C1C; font-weight: 700; }
+  .info-box.blue  { background: #EEF4FF; border-color: var(--blue); color: #0D47A1; }
+  .info-box.blue  strong { color: #0D47A1; }
+  .info-box.green { background: #F0FFF0; border-color: var(--green); color: #1B5E20; }
+  .info-box.green strong { color: #1B5E20; }
+  .info-box.yellow { background: #FFFBEA; border-color: #F59E0B; color: #78350F; }
+  .info-box.yellow strong { color: #78350F; }
+
+  /* -- CONSOLE / CODE -- */
+  .console {
+    background: #0d0d0d;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+    width: 100%;
+  }
+  .console-header {
+    background: #1a1a1a;
+    border-bottom: 1px solid #2a2a2a;
+    padding: 9px 16px;
+    display: flex;
+    gap: 7px;
+    align-items: center;
+  }
+  .c-dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+  .c-red    { background: #ff5f56; }
+  .c-yellow { background: #ffbd2e; }
+  .c-green  { background: #27c93f; }
+  .c-label  { color: #666; font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-left: 6px; }
+  .console-body {
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: #e0e0e0;
+    white-space: pre;
+    overflow-x: auto;
+    max-height: 68vh;
+    overflow-y: auto;
+  }
+  .c-comment { color: #6A9955; }
+  .c-cmd     { color: #60AEFF; }
+  .c-key     { color: #ffd700; }
+  .c-str     { color: #4ADE80; }
+  .c-num     { color: #F87171; }
+  .c-kw      { color: #C586C0; }
+
+  /* -- LOGO GRID -- */
+  .logo-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+    width: 100%;
+  }
+  .logo-grid img { max-width: 220px; max-height: 70px; object-fit: contain; filter: none; }
+  .logo-row { display: flex; gap: 24px; align-items: center; justify-content: center; flex-wrap: wrap; }
+  .logo-row img { max-width: 170px; max-height: 56px; object-fit: contain; }
+
+  /* -- TECH BADGE -- */
+  .tech-logo { max-width: 260px; max-height: 90px; object-fit: contain; }
+
+  /* -- DB ICON SVG -- */
+  .db-icon { width: 160px; height: 160px; opacity: 0.15; }
+
+  @media (max-width: 1024px) {
+    .slide { grid-template-columns: 1fr; min-height: auto; }
+    .slide-content { padding: 36px 28px; }
+    .slide-image { min-height: 260px; }
+    .part-slide h2 { font-size: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-title">
+    <h1>BD <span>No Estructuradas</span></h1>
+  </div>
+  <img src="../logo inacap.png" class="header-logo" alt="INACAP">
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 1 — PORTADA                                           -->
+<!-- ============================================================ -->
+<div class="part-slide">
+  <div class="part-eyebrow">Otoño 2026</div>
+  <h2>Bases de <span>Datos</span><br>No Estructuradas</h2>
+  <p>Unidad 1 — Introducción a las bases de datos no estructuradas</p>
+  <img src="../logo inacap.png" class="inacap-logo" alt="INACAP">
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 2 — SECCIÓN                                           -->
+<!-- ============================================================ -->
+<div class="part-slide">
+  <div class="part-eyebrow">Unidad 1</div>
+  <h2>Introducción<br>a las bases de datos<br><span>no estructuradas</span></h2>
+  <img src="../logo inacap.png" class="inacap-logo" alt="INACAP">
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 3 — ¿Qué es una base de datos?                       -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num">3</div>
+      <h2>¿Qué es una <span>base de datos</span>?</h2>
+    </div>
+    <p class="slide-body">Una <strong>Base de Datos (BD)</strong> es un conjunto organizado de datos relacionados que se almacenan de manera estructurada para facilitar su acceso, administración y actualización.</p>
+    <p class="slide-body" style="margin-top:14px;">Su propósito principal es permitir que los datos sean fácilmente recuperables y utilizables de forma eficiente.</p>
+  </div>
+  <div class="slide-image">
+    <img src="https://cpl.thalesgroup.com/sites/default/files/inline-images/nosql%20databases.png" alt="NoSQL Databases" style="max-width:75%;max-height:55vh;object-fit:contain;">
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 4 — Bases de Datos Relacionales                      -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num dark">4</div>
+      <h2>Bases de Datos <span>Relacionales</span></h2>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:15px;margin-top:4px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:36%;">Característica</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:10px 14px;border-bottom:1px solid #EBEBEB;font-weight:700;color:#1A1A1A;">Organización</td>
+          <td style="padding:10px 14px;border-bottom:1px solid #EBEBEB;color:#444;">Tablas (filas y columnas) con relaciones bien definidas entre ellas</td>
+        </tr>
+        <tr style="background:#FAFAFA;">
+          <td style="padding:10px 14px;border-bottom:1px solid #EBEBEB;font-weight:700;color:#1A1A1A;">Lenguaje</td>
+          <td style="padding:10px 14px;border-bottom:1px solid #EBEBEB;color:#444;">SQL para gestionar los datos</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 14px;border-bottom:1px solid #EBEBEB;font-weight:700;color:#1A1A1A;">Ejemplo</td>
+          <td style="padding:10px 14px;border-bottom:1px solid #EBEBEB;color:#444;">Tablas "Clientes" y "Pedidos" relacionadas por un identificador único (ID)</td>
+        </tr>
+        <tr style="background:#FAFAFA;">
+          <td style="padding:10px 14px;border-bottom:1px solid #EBEBEB;font-weight:700;color:#1A1A1A;">Ventajas</td>
+          <td style="padding:10px 14px;border-bottom:1px solid #EBEBEB;color:#444;">Estructura bien definida · Facilidad para realizar consultas complejas</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 14px;font-weight:700;color:#1A1A1A;">DBMS</td>
+          <td style="padding:10px 14px;color:#444;">MySQL · PostgreSQL · Oracle Database · Microsoft SQL Server</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image">
+    <div style="display:flex;flex-direction:column;gap:24px;align-items:center;width:100%;">
+      <div style="display:flex;gap:32px;align-items:center;justify-content:center;">
+        <img src="https://www.vectorlogo.zone/logos/mysql/mysql-ar21.svg" alt="MySQL" style="width:240px;height:90px;object-fit:contain;">
+        <img src="https://www.vectorlogo.zone/logos/postgresql/postgresql-ar21.svg" alt="PostgreSQL" style="width:240px;height:90px;object-fit:contain;">
+      </div>
+      <div style="display:flex;gap:32px;align-items:center;justify-content:center;">
+        <img src="https://www.vectorlogo.zone/logos/oracle/oracle-ar21.svg" alt="Oracle" style="width:240px;height:90px;object-fit:contain;">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 5 — Bases de Datos NO Relacionales                   -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num">5</div>
+      <h2>Bases de Datos <span>NO Relacionales</span></h2>
+    </div>
+    <p class="slide-body">Las bases de datos <strong>No Relacionales (NoSQL)</strong> son sistemas de almacenamiento de datos diseñados para gestionar grandes volúmenes de información que no se ajustan a un esquema estructurado rígido (como el de las bases de datos relacionales).</p>
+    <p class="slide-body" style="margin-top:14px;">A diferencia de las bases de datos relacionales, NoSQL <strong>no utiliza tablas con filas y columnas</strong>, sino que emplea modelos de datos más flexibles como documentos, pares clave-valor, columnas anchas o grafos.</p>
+  </div>
+  <div class="slide-image">
+    <img src="https://cpl.thalesgroup.com/sites/default/files/inline-images/nosql%20databases.png" alt="NoSQL Databases" style="max-width:75%;max-height:55vh;object-fit:contain;">
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 6 — Características principales (1)                  -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num">6</div>
+      <h2>Características <span>principales</span></h2>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:15px;margin-top:4px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:36%;">Característica</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;font-weight:700;color:#1A1A1A;vertical-align:top;">Flexibilidad del Esquema</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;color:#444;">No requieren un esquema predefinido. Pueden manejar datos semiestructurados (JSON, XML) y no estructurados (archivos de texto, imágenes, etc.).</td>
+        </tr>
+        <tr style="background:#FAFAFA;">
+          <td style="padding:12px 14px;font-weight:700;color:#1A1A1A;vertical-align:top;">Escalabilidad Horizontal</td>
+          <td style="padding:12px 14px;color:#444;">Diseñadas para escalar fácilmente <strong>agregando más servidores</strong> en lugar de aumentar la capacidad de un único servidor (escalabilidad vertical).</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image">
+    <div style="display:flex;flex-direction:column;gap:20px;width:100%;">
+      <div style="background:#E8E8E8;border-radius:8px;padding:24px 28px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#888;margin-bottom:10px;">Escalabilidad Vertical</div>
+        <div style="font-size:16px;color:#555;line-height:1.5;">Un servidor más potente (más RAM, más CPU)</div>
+        <div style="font-size:44px;text-align:center;margin-top:14px;">&#x1F4BB; &#x2192; &#x1F4BB;&#x1F4BB;</div>
+      </div>
+      <div style="background:#E8E8E8;border-radius:8px;padding:24px 28px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#555;margin-bottom:10px;">Escalabilidad Horizontal (NoSQL)</div>
+        <div style="font-size:16px;color:#555;line-height:1.5;">Más servidores colaborando en paralelo</div>
+        <div style="font-size:44px;text-align:center;margin-top:14px;">&#x1F4BB; + &#x1F4BB; + &#x1F4BB;</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 7 — Características principales (2)                  -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num">7</div>
+      <h2>Características <span>principales</span></h2>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:15px;margin-top:4px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:36%;">Característica</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;font-weight:700;color:#1A1A1A;vertical-align:top;">Alto Rendimiento</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;color:#444;">Optimizadas para operaciones de lectura/escritura de alta velocidad, especialmente en aplicaciones con grandes volúmenes de datos.</td>
+        </tr>
+        <tr style="background:#FAFAFA;">
+          <td style="padding:12px 14px;font-weight:700;color:#1A1A1A;vertical-align:top;">Distribución de Datos</td>
+          <td style="padding:12px 14px;color:#444;">Los datos suelen estar <strong>replicados y distribuidos</strong> en múltiples nodos, lo que mejora la disponibilidad y la tolerancia a fallos.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:20px;width:100%;">
+      <div style="display:flex;gap:20px;align-items:center;justify-content:center;">
+        <div style="background:#E8E8E8;border-radius:8px;padding:24px 28px;text-align:center;">
+          <div style="font-size:48px;">&#x1F5C4;</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;color:#555;margin-top:8px;">Nodo 1</div>
+        </div>
+        <div style="color:#bbb;font-size:32px;">&#x21C4;</div>
+        <div style="background:#E8E8E8;border-radius:8px;padding:24px 28px;text-align:center;">
+          <div style="font-size:48px;">&#x1F5C4;</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;color:#555;margin-top:8px;">Nodo 2</div>
+        </div>
+        <div style="color:#bbb;font-size:32px;">&#x21C4;</div>
+        <div style="background:#E8E8E8;border-radius:8px;padding:24px 28px;text-align:center;">
+          <div style="font-size:48px;">&#x1F5C4;</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;color:#555;margin-top:8px;">Nodo 3</div>
+        </div>
+      </div>
+      <div style="font-size:14px;color:#999;text-align:center;letter-spacing:0.04em;">Replicación entre nodos — alta disponibilidad</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 8 — Tipos: Clave-Valor                               -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num">8</div>
+      <h2>Tipos de BD No Relacionales<br><span>Clave-Valor</span></h2>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:15px;margin-top:4px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:36%;">Aspecto</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;font-weight:700;color:#1A1A1A;vertical-align:top;">Modelo</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;color:#444;">Cada dato se almacena como un <strong>par clave-valor</strong>, similar a un diccionario.</td>
+        </tr>
+        <tr style="background:#FAFAFA;">
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;font-weight:700;color:#1A1A1A;vertical-align:top;">Ejemplos</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;color:#444;">Redis, Amazon DynamoDB.</td>
+        </tr>
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;font-weight:700;color:#1A1A1A;vertical-align:top;">Ventaja</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;color:#444;">Extremadamente rápidas para accesos directos.</td>
+        </tr>
+        <tr style="background:#FAFAFA;">
+          <td style="padding:12px 14px;font-weight:700;color:#1A1A1A;vertical-align:top;">Analogía</td>
+          <td style="padding:12px 14px;color:#444;">Como un casillero de aeropuerto — buscas por número (clave) y obtienes el contenido (valor) instantáneamente.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image">
+    <div style="display:flex;flex-direction:column;gap:32px;align-items:center;justify-content:center;width:100%;">
+      <img src="https://www.vectorlogo.zone/logos/redis/redis-ar21.svg" alt="Redis" style="width:360px;height:140px;object-fit:contain;">
+      <img src="https://isagebrum.com/images/technology/dynamo_db-image.svg" alt="Amazon DynamoDB" style="width:340px;height:130px;object-fit:contain;">
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 9 — ¿Qué es Redis?                                   -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num">9</div>
+      <h2>¿Qué es <span>Redis</span>?</h2>
+    </div>
+    <p class="slide-body">Redis es una <strong>base de datos en memoria de tipo clave-valor</strong> (con soporte de estructuras como strings, listas, sets y hashes) diseñada para ofrecer lecturas y escrituras extremadamente rápidas y de baja latencia.</p>
+    <p class="slide-body" style="margin-top:12px;">Por eso se usa ampliamente como <strong>caché</strong>, almacenamiento de sesiones, contadores y colas simples. También puede <strong>persistir datos en disco</strong> y replicarse para alta disponibilidad, aunque su principal fortaleza es el rendimiento al trabajar con datos que se consultan con frecuencia.</p>
+  </div>
+  <div class="slide-image">
+    <img src="https://www.vectorlogo.zone/logos/redis/redis-ar21.svg" alt="Redis" style="width:420px;height:160px;object-fit:contain;">
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 10 — Un poco de Redis (setup)                        -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num">10</div>
+      <h2>¿Un poco de <span>Redis</span>?</h2>
+    </div>
+    <p class="slide-body">Vamos a este link <strong>https://rapidtoolset.com/es/tool/redis-playground</strong> y pegamos el siguiente código:</p>
+    <div class="info-box blue" style="margin-top:18px;">
+      <strong>Contexto del ejemplo:</strong> modelamos un sistema de asistencia con datos de alumnos, secciones y registros de entrada — todo con el modelo clave-valor de Redis.
+    </div>
+  </div>
+  <div class="slide-image" style="padding:28px;">
+    <div class="console" style="width:100%;">
+      <div class="console-header">
+        <span class="c-dot c-red"></span>
+        <span class="c-dot c-yellow"></span>
+        <span class="c-dot c-green"></span>
+        <span class="c-label" style="flex:1;">redis-playground</span>
+        <button onclick="copyCode(this)" style="background:#333;border:none;border-radius:4px;padding:4px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#aaa;cursor:pointer;">Copiar</button>
+      </div>
+      <div class="console-body"><span class="c-cmd">SET</span> <span class="c-key">asistencia:2026-03-01:rut:12345678-9</span> <span class="c-str">"PRESENTE|18:32"</span>
+<span class="c-cmd">SET</span> <span class="c-key">asistencia:2026-03-01:rut:98765432-1</span> <span class="c-str">"AUSENTE|--:--"</span>
+<span class="c-cmd">SET</span> <span class="c-key">asistencia:2026-03-01:rut:19283746-5</span> <span class="c-str">"PRESENTE|18:41"</span>
+<span class="c-cmd">SET</span> <span class="c-key">curso:TI3V25:modulo</span> <span class="c-str">"Modelamiento de Soluciones Informáticas"</span>
+<span class="c-cmd">SET</span> <span class="c-key">curso:TI3V25:sala</span> <span class="c-str">"Lab 3"</span>
+<span class="c-cmd">SET</span> <span class="c-key">curso:TI3V25:horario</span> <span class="c-str">"Lunes 18:30-21:50"</span>
+<span class="c-cmd">SET</span> <span class="c-key">alumno:12345678-9:nombre</span> <span class="c-str">"Camila Soto"</span>
+<span class="c-cmd">SET</span> <span class="c-key">alumno:12345678-9:seccion</span> <span class="c-str">"TI3V25"</span>
+<span class="c-cmd">SET</span> <span class="c-key">alumno:12345678-9:email</span> <span class="c-str">"camila.soto@inacapmail.cl"</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 11 — Un poco de Redis (consultas)                    -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num">11</div>
+      <h2>¿Un poco de <span>Redis</span>?</h2>
+    </div>
+    <p class="slide-body">Con esto pegado ahora ejecutamos lo siguiente:</p>
+    <div class="info-box yellow" style="margin-top:18px;">
+      <strong>Nota:</strong> Redis trabaja en memoria. Los comandos GET, KEYS y MGET son O(1) o O(n) sobre claves — extremadamente rápidos incluso con millones de entradas.
+    </div>
+  </div>
+  <div class="slide-image" style="padding:28px;">
+    <div class="console" style="width:100%;">
+      <div class="console-header">
+        <span class="c-dot c-red"></span>
+        <span class="c-dot c-yellow"></span>
+        <span class="c-dot c-green"></span>
+        <span class="c-label" style="flex:1;">redis-playground</span>
+        <button onclick="copyCode(this)" style="background:#333;border:none;border-radius:4px;padding:4px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#aaa;cursor:pointer;">Copiar</button>
+      </div>
+      <div class="console-body"><span class="c-comment"># 1) Consultar valores (GET)</span>
+<span class="c-cmd">GET</span> asistencia:2026-03-01:rut:12345678-9
+<span class="c-cmd">GET</span> curso:TI3V25:modulo
+<span class="c-cmd">GET</span> alumno:12345678-9:email
+
+<span class="c-comment"># 2) Ver si existe una clave (EXISTS)</span>
+<span class="c-cmd">EXISTS</span> asistencia:2026-03-01:rut:98765432-1
+
+<span class="c-comment"># 3) Listar claves por patrón (KEYS) (en demos sirve perfecto)</span>
+<span class="c-cmd">KEYS</span> asistencia:2026-03-01:rut:*
+<span class="c-cmd">KEYS</span> curso:TI3V25:*
+<span class="c-cmd">KEYS</span> alumno:12345678-9:*
+
+<span class="c-comment"># 4) Obtener varias claves de una vez (MGET)</span>
+<span class="c-cmd">MGET</span> curso:TI3V25:modulo curso:TI3V25:sala curso:TI3V25:horario
+<span class="c-cmd">MGET</span> alumno:12345678-9:nombre alumno:12345678-9:seccion alumno:12345678-9:email
+
+<span class="c-comment"># 5) Cambiar un valor (SET de nuevo)</span>
+<span class="c-cmd">SET</span> curso:TI3V25:sala <span class="c-str">"Lab 2"</span>
+
+<span class="c-comment"># 6) Borrar una clave (DEL)</span>
+<span class="c-cmd">DEL</span> alumno:12345678-9:email
+
+<span class="c-comment"># 7) Ver el tipo de dato almacenado (TYPE)</span>
+<span class="c-cmd">TYPE</span> curso:TI3V25:horario
+<span class="c-cmd">TYPE</span> asistencia:2026-03-01:rut:19283746-5
+
+<span class="c-comment"># 8) Poner expiración (TTL/EXPIRE) - útil para sesiones o caché</span>
+<span class="c-cmd">EXPIRE</span> asistencia:2026-03-01:rut:12345678-9 <span class="c-num">3600</span>
+<span class="c-cmd">TTL</span>    asistencia:2026-03-01:rut:12345678-9</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 12 — Tipos: Columnares                               -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num blue">12</div>
+      <h2>Tipos de BD No Relacionales<br><span class="blue">Columnares</span></h2>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:15px;margin-top:4px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:36%;">Aspecto</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;font-weight:700;color:#1A1A1A;vertical-align:top;">Modelo</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;color:#444;">Organizan los datos <strong>por columnas en lugar de filas</strong>, lo que las hace eficientes para grandes análisis de datos.</td>
+        </tr>
+        <tr style="background:#FAFAFA;">
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;font-weight:700;color:#1A1A1A;vertical-align:top;">Ejemplos</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;color:#444;">Apache Cassandra, HBase.</td>
+        </tr>
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;font-weight:700;color:#1A1A1A;vertical-align:top;">Ventaja</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #EBEBEB;color:#444;">Optimización para operaciones en big data.</td>
+        </tr>
+        <tr style="background:#FAFAFA;">
+          <td style="padding:12px 14px;font-weight:700;color:#1A1A1A;vertical-align:top;">Caso de uso</td>
+          <td style="padding:12px 14px;color:#444;">Análisis de series de tiempo, métricas de aplicaciones, registros de eventos a gran escala.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image">
+    <img src="https://www.vectorlogo.zone/logos/apache_cassandra/apache_cassandra-ar21.svg" alt="Apache Cassandra" style="width:420px;height:160px;object-fit:contain;">
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 13 — ¿Qué es Apache Cassandra?                      -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num blue">13</div>
+      <h2>¿Qué es <span class="blue">Apache Cassandra</span>?</h2>
+    </div>
+    <p class="slide-body">Apache Cassandra es una <strong>base de datos distribuida NoSQL de tipo wide-column</strong> diseñada para manejar grandes volúmenes de datos con alta disponibilidad y escalabilidad horizontal, replicando información entre múltiples nodos y centros de datos para evitar puntos únicos de falla.</p>
+    <p class="slide-body" style="margin-top:12px;">Se usa cuando se necesita <strong>baja latencia y tolerancia a fallos</strong>. Su modelo prioriza consultas por claves de partición, lo que implica <strong>diseñar las tablas según los patrones de lectura</strong> más frecuentes y, a menudo, duplicar datos en varias tablas para responder consultas específicas.</p>
+  </div>
+  <div class="slide-image">
+    <img src="https://www.vectorlogo.zone/logos/apache_cassandra/apache_cassandra-ar21.svg" alt="Apache Cassandra" style="width:420px;height:160px;object-fit:contain;">
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 14 — Un poco de Apache Cassandra                     -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num blue">14</div>
+      <h2>¿Un poco de <span class="blue">Apache Cassandra</span>?</h2>
+    </div>
+    <p class="slide-body">Vamos a este link <strong>https://onecompiler.com/cassandra/44edqduur</strong> y pegamos el siguiente código.</p>
+    <div class="info-box blue" style="margin-top:16px;">
+      <strong>Clave del modelo:</strong> en Cassandra se crean <em>múltiples tablas para la misma información</em>, cada una optimizada para un patrón de consulta distinto. No hay JOINs — el diseño reemplaza esa necesidad.
+    </div>
+  </div>
+  <div class="slide-image" style="padding:28px;">
+    <div class="console" style="width:100%;">
+      <div class="console-header">
+        <span class="c-dot c-red"></span>
+        <span class="c-dot c-yellow"></span>
+        <span class="c-dot c-green"></span>
+        <span class="c-label" style="flex:1;">cassandra — CQL</span>
+        <button onclick="copyCode(this)" style="background:#333;border:none;border-radius:4px;padding:4px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#aaa;cursor:pointer;">Copiar</button>
+      </div>
+      <div class="console-body"><span class="c-comment">-- 1) Keyspace</span>
+<span class="c-kw">CREATE KEYSPACE</span> inacap_demo
+<span class="c-kw">WITH</span> replication = {<span class="c-str">'class'</span>: <span class="c-str">'SimpleStrategy'</span>, <span class="c-str">'replication_factor'</span>: <span class="c-num">1</span>};
+<span class="c-kw">USE</span> inacap_demo;
+
+<span class="c-comment">-- 2) Tabla A: Asistencia POR FECHA</span>
+<span class="c-kw">CREATE TABLE</span> asistencia_por_fecha (
+    fecha    text,
+    seccion  text,
+    rut      text,
+    nombre   text,
+    estado   text,
+    hora     text,
+    <span class="c-kw">PRIMARY KEY</span> ((fecha), seccion, rut)
+);
+
+<span class="c-comment">-- 3) Tabla B: Asistencia POR SECCIÓN</span>
+<span class="c-kw">CREATE TABLE</span> asistencia_por_seccion (
+    seccion  text,
+    fecha    text,
+    rut      text,
+    nombre   text,
+    estado   text,
+    hora     text,
+    <span class="c-kw">PRIMARY KEY</span> ((seccion), fecha, rut)
+);
+
+<span class="c-comment">-- 4) Inserts (se repiten en ambas tablas)</span>
+<span class="c-kw">INSERT INTO</span> asistencia_por_fecha (fecha, seccion, rut, nombre, estado, hora)
+<span class="c-kw">VALUES</span> (<span class="c-str">'2026-03-01'</span>, <span class="c-str">'TI3V25'</span>, <span class="c-str">'12345678-9'</span>, <span class="c-str">'Camila Soto'</span>, <span class="c-str">'PRESENTE'</span>, <span class="c-str">'18:32'</span>);
+<span class="c-kw">INSERT INTO</span> asistencia_por_seccion (seccion, fecha, rut, nombre, estado, hora)
+<span class="c-kw">VALUES</span> (<span class="c-str">'TI3V25'</span>, <span class="c-str">'2026-03-01'</span>, <span class="c-str">'12345678-9'</span>, <span class="c-str">'Camila Soto'</span>, <span class="c-str">'PRESENTE'</span>, <span class="c-str">'18:32'</span>);
+
+<span class="c-kw">INSERT INTO</span> asistencia_por_fecha (fecha, seccion, rut, nombre, estado, hora)
+<span class="c-kw">VALUES</span> (<span class="c-str">'2026-03-01'</span>, <span class="c-str">'TI3V25'</span>, <span class="c-str">'98765432-1'</span>, <span class="c-str">'Diego Rojas'</span>, <span class="c-str">'AUSENTE'</span>, <span class="c-str">'--:--'</span>);
+<span class="c-kw">INSERT INTO</span> asistencia_por_seccion (seccion, fecha, rut, nombre, estado, hora)
+<span class="c-kw">VALUES</span> (<span class="c-str">'TI3V25'</span>, <span class="c-str">'2026-03-01'</span>, <span class="c-str">'98765432-1'</span>, <span class="c-str">'Diego Rojas'</span>, <span class="c-str">'AUSENTE'</span>, <span class="c-str">'--:--'</span>);
+
+<span class="c-kw">INSERT INTO</span> asistencia_por_fecha (fecha, seccion, rut, nombre, estado, hora)
+<span class="c-kw">VALUES</span> (<span class="c-str">'2026-03-01'</span>, <span class="c-str">'TI3V26'</span>, <span class="c-str">'19283746-5'</span>, <span class="c-str">'Sofía Pérez'</span>, <span class="c-str">'PRESENTE'</span>, <span class="c-str">'18:41'</span>);
+<span class="c-kw">INSERT INTO</span> asistencia_por_seccion (seccion, fecha, rut, nombre, estado, hora)
+<span class="c-kw">VALUES</span> (<span class="c-str">'TI3V26'</span>, <span class="c-str">'2026-03-01'</span>, <span class="c-str">'19283746-5'</span>, <span class="c-str">'Sofía Pérez'</span>, <span class="c-str">'PRESENTE'</span>, <span class="c-str">'18:41'</span>);
+
+<span class="c-comment">-- 5) Consultas de demo</span>
+<span class="c-kw">SELECT</span> seccion, rut, nombre, estado, hora
+<span class="c-kw">FROM</span>   asistencia_por_fecha
+<span class="c-kw">WHERE</span>  fecha = <span class="c-str">'2026-03-01'</span>;
+
+<span class="c-kw">SELECT</span> rut, nombre, estado, hora
+<span class="c-kw">FROM</span>   asistencia_por_seccion
+<span class="c-kw">WHERE</span>  seccion = <span class="c-str">'TI3V25'</span> <span class="c-kw">AND</span> fecha = <span class="c-str">'2026-03-01'</span>;</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 15 — Tipos: Grafos                                   -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num green">15</div>
+      <h2>Tipos de BD No Relacionales<br><span class="green">Grafos</span></h2>
+    </div>
+    <table class="info-table" style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:30%;">Concepto</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Estructura</strong></td><td>Nodos (entidades) y aristas (relaciones) con propiedades.</td></tr>
+        <tr><td><strong>Ejemplo</strong></td><td>Neo4j, Amazon Neptune.</td></tr>
+        <tr><td><strong>Ventaja</strong></td><td>Ideal para redes sociales, sistemas de recomendacion y análisis de rutas.</td></tr>
+      </tbody>
+    </table>
+    <div class="info-box green" style="margin-top:14px;">
+      <strong>Caso de uso típico:</strong> "¿qué amigos de mis amigos trabajan en la misma empresa que yo?" -- este tipo de consulta es trivial en grafos y compleja en SQL.
+    </div>
+  </div>
+  <div class="slide-image" style="display:flex;align-items:center;justify-content:center;">
+    <img src="https://www.vectorlogo.zone/logos/neo4j/neo4j-ar21.svg" alt="Neo4j" style="width:340px;height:130px;object-fit:contain;">
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 16 — ¿Qué es Neo4j?                                 -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num green">16</div>
+      <h2>¿Qué es <span class="green">Neo4j</span>?</h2>
+    </div>
+    <p class="slide-body">Neo4j es una <strong>base de datos de grafos</strong> que almacena la información como <strong>nodos</strong> (por ejemplo, personas o películas) y <strong>relaciones</strong> (por ejemplo, "ACTUÓ_EN", "DIRIGIÓ") con propiedades.</p>
+    <p class="slide-body" style="margin-top:12px;">Optimizada para recorrer conexiones de forma rápida y responder consultas sobre vínculos, rutas y patrones de relación. Se consulta principalmente con <strong>Cypher</strong>, un lenguaje orientado a grafos.</p>
+    <p class="slide-body" style="margin-top:12px;">Se usa en casos como <strong>recomendaciones, detección de fraude, análisis de redes, dependencias entre sistemas</strong> y cualquier problema donde las relaciones sean tan importantes como los datos.</p>
+  </div>
+  <div class="slide-image">
+    <img src="https://www.vectorlogo.zone/logos/neo4j/neo4j-ar21.svg" alt="Neo4j" style="width:340px;height:130px;object-fit:contain;">
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 17 — Un poco de Neo4j                               -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num green">17</div>
+      <h2>¿Un poco de <span class="green">Neo4j</span>?</h2>
+    </div>
+    <p class="slide-body">Vamos al siguiente link <strong>https://neo4j.com/sandbox/</strong>, hacemos login, seleccionamos la BD de películas y ejecutamos el siguiente código:</p>
+    <div class="info-box green" style="margin-top:16px;">
+      <strong>Cypher:</strong> el lenguaje de consultas de Neo4j. Los nodos se representan con <code style="background:#E0F7E0;padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;">(variable:Etiqueta)</code> y las relaciones con <code style="background:#E0F7E0;padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;">-[:TIPO]-></code>
+    </div>
+  </div>
+  <div class="slide-image" style="padding:20px;">
+    <div class="console" style="width:100%;">
+      <div class="console-header">
+        <span class="c-dot c-red"></span>
+        <span class="c-dot c-yellow"></span>
+        <span class="c-dot c-green"></span>
+        <span class="c-label" style="flex:1;">neo4j — Cypher</span>
+        <button onclick="copyCode(this)" style="background:#333;border:none;border-radius:4px;padding:4px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#aaa;cursor:pointer;">Copiar</button>
+      </div>
+      <div class="console-body"><span class="c-comment">// 1) Ver 25 películas con su año</span>
+<span class="c-kw">MATCH</span> (m:Movie)
+<span class="c-kw">RETURN</span> m.title <span class="c-kw">AS</span> pelicula, m.released <span class="c-kw">AS</span> anio
+<span class="c-kw">ORDER BY</span> anio <span class="c-kw">DESC</span>, pelicula
+<span class="c-kw">LIMIT</span> <span class="c-num">25</span>;
+
+<span class="c-comment">// 2) Top 10 actores con más películas</span>
+<span class="c-kw">MATCH</span> (p:Person)-[:ACTED_IN]->(m:Movie)
+<span class="c-kw">RETURN</span> p.name <span class="c-kw">AS</span> actor, count(m) <span class="c-kw">AS</span> peliculas
+<span class="c-kw">ORDER BY</span> peliculas <span class="c-kw">DESC</span>, actor
+<span class="c-kw">LIMIT</span> <span class="c-num">10</span>;
+
+<span class="c-comment">// 3) Filmografía de un actor específico</span>
+<span class="c-kw">MATCH</span> (p:Person {name: <span class="c-str">"Tom Hanks"</span>})-[:ACTED_IN]->(m:Movie)
+<span class="c-kw">RETURN</span> m.title <span class="c-kw">AS</span> pelicula, m.released <span class="c-kw">AS</span> anio
+<span class="c-kw">ORDER BY</span> anio, pelicula;
+
+<span class="c-comment">// 4) Actores de una película específica</span>
+<span class="c-kw">MATCH</span> (p:Person)-[r:ACTED_IN]->(m:Movie {title: <span class="c-str">"The Matrix"</span>})
+<span class="c-kw">RETURN</span> p.name <span class="c-kw">AS</span> actor, r.roles <span class="c-kw">AS</span> roles
+<span class="c-kw">ORDER BY</span> actor;</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 18 — Tipos: Documentales                             -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num">18</div>
+      <h2>Tipos de BD No Relacionales<br><span>Documentales</span></h2>
+    </div>
+    <table class="info-table" style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:30%;">Concepto</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Estructura</strong></td><td>Documentos en formato JSON, BSON o XML.</td></tr>
+        <tr><td><strong>Uso ideal</strong></td><td>Datos semiestructurados: perfiles de usuarios, catálogos de productos.</td></tr>
+        <tr><td><strong>Ejemplo</strong></td><td>MongoDB, CouchDB.</td></tr>
+        <tr><td><strong>Ventaja</strong></td><td>Flexibilidad para manejar datos con estructuras variables.</td></tr>
+      </tbody>
+    </table>
+    <div class="info-box" style="margin-top:14px;">
+      <strong>Foco del curso:</strong> a partir de aquí trabajaremos principalmente con <strong>MongoDB</strong> como representante del modelo documental.
+    </div>
+  </div>
+  <div class="slide-image" style="display:flex;align-items:center;justify-content:center;">
+    <img src="https://www.vectorlogo.zone/logos/mongodb/mongodb-ar21.svg" alt="MongoDB" style="width:420px;height:160px;object-fit:contain;">
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 19 — Ventajas NoSQL                                  -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num green">19</div>
+      <h2><span class="green">Ventajas</span> Bases de Datos No Relacionales</h2>
+    </div>
+    <table class="info-table" style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:30%;">Ventaja</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Adaptabilidad</strong></td><td>Soportan cambios en los requisitos de datos sin necesidad de remodelar la base.</td></tr>
+        <tr><td><strong>Escalabilidad</strong></td><td>Mejor manejo de grandes volúmenes de datos.</td></tr>
+        <tr><td><strong>Velocidad</strong></td><td>Más rápidas en operaciones específicas, como búsquedas o inserciones.</td></tr>
+        <tr><td><strong>Distribución</strong></td><td>Soportan la replicación y el particionamiento para alta disponibilidad.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image" style="display:flex;align-items:center;justify-content:center;">
+    <img src="https://www.vectorlogo.zone/logos/mongodb/mongodb-ar21.svg" alt="MongoDB" style="width:420px;height:160px;object-fit:contain;">
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 20 — Desventajas NoSQL                               -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num">20</div>
+      <h2><span>Desventajas</span> Bases de Datos No Relacionales</h2>
+    </div>
+    <table class="info-table" style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:30%;">Desventaja</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Consistencia relajada</strong></td><td>Algunas bases sacrifican consistencia a favor de disponibilidad y escalabilidad.</td></tr>
+        <tr><td><strong>Curva de aprendizaje</strong></td><td>Requieren nuevos enfoques de modelado de datos que difieren de las bases relacionales.</td></tr>
+        <tr><td><strong>Menor soporte estándar</strong></td><td>No todas tienen soporte universal para consultas complejas como SQL.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image" style="display:flex;align-items:center;justify-content:center;">
+    <img src="https://www.vectorlogo.zone/logos/mongodb/mongodb-ar21.svg" alt="MongoDB" style="width:420px;height:160px;object-fit:contain;">
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 21 — ¿Qué es MongoDB?                               -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num">21</div>
+      <h2>¿Qué es <span>MongoDB</span>?</h2>
+    </div>
+    <table class="info-table" style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:30%;">Aspecto</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Tipo</strong></td><td>Base de datos NoSQL de tipo documental, para grandes volúmenes de datos de forma flexible y eficiente.</td></tr>
+        <tr><td><strong>Almacenamiento</strong></td><td>Documentos JSON (internamente BSON), similares a objetos en lenguajes de programación.</td></tr>
+        <tr><td><strong>Popularidad</strong></td><td>Uno de los sistemas NoSQL más usados gracias a su escalabilidad, flexibilidad y facilidad de uso.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image" style="display:flex;align-items:center;justify-content:center;">
+    <img src="https://www.vectorlogo.zone/logos/mongodb/mongodb-ar21.svg" alt="MongoDB" style="width:420px;height:160px;object-fit:contain;">
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 22 — Modelo Documental (con código)                  -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num">22</div>
+      <h2>¿Características principales?<br><span>Modelo Documental</span></h2>
+    </div>
+    <p class="slide-body">Los datos se almacenan como documentos <strong>JSON</strong> (internamente <strong>BSON</strong>, una versión binaria de JSON).</p>
+    <div class="info-box" style="margin-top:20px;">
+      <strong>BSON</strong> extiende JSON con tipos adicionales: <code style="background:#FEE;padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;">Date</code>, <code style="background:#FEE;padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;">ObjectId</code>, <code style="background:#FEE;padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;">BinData</code>, entre otros. Esto permite mayor eficiencia en almacenamiento y consulta.
+    </div>
+  </div>
+  <div class="slide-image" style="padding:24px;">
+    <div class="console" style="width:100%;">
+      <div class="console-header">
+        <span class="c-dot c-red"></span>
+        <span class="c-dot c-yellow"></span>
+        <span class="c-dot c-green"></span>
+        <span class="c-label" style="flex:1;">documento MongoDB — JSON</span>
+        <button onclick="copyCode(this)" style="background:#333;border:none;border-radius:4px;padding:4px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#aaa;cursor:pointer;">Copiar</button>
+      </div>
+      <div class="console-body">{
+  <span class="c-key">"nombre"</span>: <span class="c-str">"Juan Pérez"</span>,
+  <span class="c-key">"edad"</span>:   <span class="c-num">30</span>,
+  <span class="c-key">"email"</span>:  <span class="c-str">"juan.perez@example.com"</span>,
+  <span class="c-key">"hobbies"</span>: [<span class="c-str">"fútbol"</span>, <span class="c-str">"lectura"</span>]
+}</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 23 — MongoDB: Esquema flexible + escalabilidad       -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num">23</div>
+      <h2>¿Qué es <span>MongoDB</span>?</h2>
+    </div>
+    <p class="slide-body" style="margin-top:10px;">MongoDB es una <strong>base de datos NoSQL orientada a documentos</strong>. A diferencia de las bases relacionales, no impone un esquema fijo: cada documento dentro de una colección puede tener una estructura diferente, lo que la hace ideal para datos cambiantes o semiestructurados.</p>
+    <p class="slide-body" style="margin-top:14px;">Está diseñada para <strong>escalar horizontalmente</strong> mediante <em>sharding</em>, distribuyendo los datos entre múltiples servidores para manejar grandes volúmenes con alta disponibilidad.</p>
+  </div>
+  <div class="slide-image" style="display:flex;align-items:center;justify-content:center;">
+    <img src="https://www.vectorlogo.zone/logos/mongodb/mongodb-ar21.svg" alt="MongoDB" style="width:420px;height:160px;object-fit:contain;">
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 24 — MongoDB: Drivers y compatibilidad               -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num">24</div>
+      <h2>¿Qué es <span>MongoDB</span>?<br><span style="font-size:22px;">Drivers y Compatibilidad</span></h2>
+    </div>
+    <p class="slide-body">MongoDB ofrece <strong>drivers oficiales</strong> para los principales lenguajes de programación como <strong>Python, Java y Node.js</strong>, lo que permite conectarse y operar con la base de datos desde cualquier aplicación.</p>
+  </div>
+  <div class="slide-image" style="display:flex;align-items:center;justify-content:center;">
+    <img src="https://www.vectorlogo.zone/logos/mongodb/mongodb-ar21.svg" alt="MongoDB" style="width:420px;height:160px;object-fit:contain;">
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 25 — Componentes: Base de Datos                      -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num dark">25</div>
+      <h2>Componentes <span>MongoDB</span><br><span style="font-size:22px;">Base de Datos</span></h2>
+    </div>
+    <table class="info-table" style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:30%;">Concepto</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Definición</strong></td><td>Nivel más alto de organización en MongoDB. Contiene múltiples colecciones y gestiona el acceso a los datos.</td></tr>
+        <tr><td><strong>Homologación SQL</strong></td><td>Equivalente a una base de datos relacional que contiene múltiples tablas.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image" style="display:flex;align-items:center;justify-content:center;">
+    <div style="width:100%;max-width:360px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:#aaa;margin-bottom:14px;text-align:center;">SQL vs MongoDB</div>
+      <div style="display:grid;grid-template-columns:1fr 36px 1fr;align-items:center;gap:0;">
+        <div style="background:#555;color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;text-align:center;padding:8px;border-radius:6px 0 0 0;">SQL</div>
+        <div style="background:#E8E8E8;"></div>
+        <div style="background:var(--red);color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;text-align:center;padding:8px;border-radius:0 6px 0 0;">MongoDB</div>
+        <div style="background:#1A1A1A;color:white;font-weight:700;font-size:17px;text-align:center;padding:16px 10px;border-radius:0 0 0 6px;border:2px solid var(--red);border-right:none;">Base de Datos</div>
+        <div style="background:#E8E8E8;color:#888;font-size:20px;font-weight:900;text-align:center;padding:16px 0;border-top:2px solid var(--red);border-bottom:2px solid var(--red);">=</div>
+        <div style="background:#1A1A1A;color:var(--red);font-weight:700;font-size:17px;text-align:center;padding:16px 10px;border-radius:0 0 6px 0;border:2px solid var(--red);border-left:none;">Base de Datos</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;">Tabla</div>
+        <div style="background:#F0F0F0;color:#bbb;font-size:18px;font-weight:900;text-align:center;padding:14px 0;">=</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;">Colección</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;border-radius:0 0 0 6px;">Fila</div>
+        <div style="background:#F0F0F0;color:#bbb;font-size:18px;font-weight:900;text-align:center;padding:14px 0;">=</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;border-radius:0 0 6px 0;">Documento</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 26 — Componentes: Base de Datos (características)   -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num dark">26</div>
+      <h2>Componentes <span>MongoDB</span><br><span style="font-size:22px;">Características — Base de Datos</span></h2>
+    </div>
+    <table class="info-table" style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:30%;">Característica</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Colecciones</strong></td><td>Puede contener múltiples colecciones.</td></tr>
+        <tr><td><strong>Múltiples BD</strong></td><td>Una misma instancia de MongoDB puede alojar varias bases de datos.</td></tr>
+        <tr><td><strong>Independencia</strong></td><td>Cada base de datos tiene sus propias colecciones, índices y configuración.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image" style="display:flex;align-items:center;justify-content:center;">
+    <div style="width:100%;max-width:360px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:#aaa;margin-bottom:14px;text-align:center;">SQL vs MongoDB</div>
+      <div style="display:grid;grid-template-columns:1fr 36px 1fr;align-items:center;gap:0;">
+        <div style="background:#555;color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;text-align:center;padding:8px;border-radius:6px 0 0 0;">SQL</div>
+        <div style="background:#E8E8E8;"></div>
+        <div style="background:var(--red);color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;text-align:center;padding:8px;border-radius:0 6px 0 0;">MongoDB</div>
+        <div style="background:#1A1A1A;color:white;font-weight:700;font-size:17px;text-align:center;padding:16px 10px;border-radius:0 0 0 6px;border:2px solid var(--red);border-right:none;">Base de Datos</div>
+        <div style="background:#E8E8E8;color:#888;font-size:20px;font-weight:900;text-align:center;padding:16px 0;border-top:2px solid var(--red);border-bottom:2px solid var(--red);">=</div>
+        <div style="background:#1A1A1A;color:var(--red);font-weight:700;font-size:17px;text-align:center;padding:16px 10px;border-radius:0 0 6px 0;border:2px solid var(--red);border-left:none;">Base de Datos</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;">Tabla</div>
+        <div style="background:#F0F0F0;color:#bbb;font-size:18px;font-weight:900;text-align:center;padding:14px 0;">=</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;">Colección</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;border-radius:0 0 0 6px;">Fila</div>
+        <div style="background:#F0F0F0;color:#bbb;font-size:18px;font-weight:900;text-align:center;padding:14px 0;">=</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;border-radius:0 0 6px 0;">Documento</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 27 — Componentes: Colección                          -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num dark">27</div>
+      <h2>Componentes <span>MongoDB</span><br><span style="font-size:22px;">Colección</span></h2>
+    </div>
+    <table class="info-table" style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:30%;">Concepto</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Definición</strong></td><td>Conjunto de documentos sin esquema rígido. Similar a una tabla relacional pero con estructura flexible.</td></tr>
+        <tr><td><strong>Homologación SQL</strong></td><td>Equivalente a una tabla.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image" style="display:flex;align-items:center;justify-content:center;">
+    <div style="width:100%;max-width:360px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:#aaa;margin-bottom:14px;text-align:center;">SQL vs MongoDB</div>
+      <div style="display:grid;grid-template-columns:1fr 36px 1fr;align-items:center;gap:0;">
+        <div style="background:#555;color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;text-align:center;padding:8px;border-radius:6px 0 0 0;">SQL</div>
+        <div style="background:#E8E8E8;"></div>
+        <div style="background:var(--red);color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;text-align:center;padding:8px;border-radius:0 6px 0 0;">MongoDB</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;">Base de Datos</div>
+        <div style="background:#F0F0F0;color:#bbb;font-size:18px;font-weight:900;text-align:center;padding:14px 0;">=</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;">Base de Datos</div>
+        <div style="background:#1A1A1A;color:white;font-weight:700;font-size:17px;text-align:center;padding:16px 10px;border:2px solid var(--red);border-right:none;">Tabla</div>
+        <div style="background:#E8E8E8;color:#888;font-size:20px;font-weight:900;text-align:center;padding:16px 0;border-top:2px solid var(--red);border-bottom:2px solid var(--red);">=</div>
+        <div style="background:#1A1A1A;color:var(--red);font-weight:700;font-size:17px;text-align:center;padding:16px 10px;border:2px solid var(--red);border-left:none;">Colección</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;border-radius:0 0 0 6px;">Fila</div>
+        <div style="background:#F0F0F0;color:#bbb;font-size:18px;font-weight:900;text-align:center;padding:14px 0;">=</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;border-radius:0 0 6px 0;">Documento</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 28 — Componentes: Colección (características)        -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num dark">28</div>
+      <h2>Componentes <span>MongoDB</span><br><span style="font-size:22px;">Características — Colección</span></h2>
+    </div>
+    <table class="info-table" style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:30%;">Característica</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Sin esquema fijo</strong></td><td>No requiere una estructura rígida predefinida.</td></tr>
+        <tr><td><strong>Heterogénea</strong></td><td>Puede contener documentos con diferentes estructuras de datos.</td></tr>
+        <tr><td><strong>Indexable</strong></td><td>Puede ser indexada para mejorar el rendimiento de búsqueda.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image" style="display:flex;align-items:center;justify-content:center;">
+    <div style="width:100%;max-width:360px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:#aaa;margin-bottom:14px;text-align:center;">SQL vs MongoDB</div>
+      <div style="display:grid;grid-template-columns:1fr 36px 1fr;align-items:center;gap:0;">
+        <div style="background:#555;color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;text-align:center;padding:8px;border-radius:6px 0 0 0;">SQL</div>
+        <div style="background:#E8E8E8;"></div>
+        <div style="background:var(--red);color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;text-align:center;padding:8px;border-radius:0 6px 0 0;">MongoDB</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;">Base de Datos</div>
+        <div style="background:#F0F0F0;color:#bbb;font-size:18px;font-weight:900;text-align:center;padding:14px 0;">=</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;">Base de Datos</div>
+        <div style="background:#1A1A1A;color:white;font-weight:700;font-size:17px;text-align:center;padding:16px 10px;border:2px solid var(--red);border-right:none;">Tabla</div>
+        <div style="background:#E8E8E8;color:#888;font-size:20px;font-weight:900;text-align:center;padding:16px 0;border-top:2px solid var(--red);border-bottom:2px solid var(--red);">=</div>
+        <div style="background:#1A1A1A;color:var(--red);font-weight:700;font-size:17px;text-align:center;padding:16px 10px;border:2px solid var(--red);border-left:none;">Colección</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;border-radius:0 0 0 6px;">Fila</div>
+        <div style="background:#F0F0F0;color:#bbb;font-size:18px;font-weight:900;text-align:center;padding:14px 0;">=</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;border-radius:0 0 6px 0;">Documento</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 29 — Componentes: Documento                          -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num dark">29</div>
+      <h2>Componentes <span>MongoDB</span><br><span style="font-size:22px;">Documento</span></h2>
+    </div>
+    <table class="info-table" style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:30%;">Concepto</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Definición</strong></td><td>Unidad básica de almacenamiento. Conjunto de pares clave-valor en formato BSON (Binary JSON).</td></tr>
+        <tr><td><strong>Homologación SQL</strong></td><td>Equivalente a una fila (registro) dentro de una tabla.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image" style="display:flex;align-items:center;justify-content:center;">
+    <div style="width:100%;max-width:360px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:#aaa;margin-bottom:14px;text-align:center;">SQL vs MongoDB</div>
+      <div style="display:grid;grid-template-columns:1fr 36px 1fr;align-items:center;gap:0;">
+        <div style="background:#555;color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;text-align:center;padding:8px;border-radius:6px 0 0 0;">SQL</div>
+        <div style="background:#E8E8E8;"></div>
+        <div style="background:var(--red);color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;text-align:center;padding:8px;border-radius:0 6px 0 0;">MongoDB</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;">Base de Datos</div>
+        <div style="background:#F0F0F0;color:#bbb;font-size:18px;font-weight:900;text-align:center;padding:14px 0;">=</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;">Base de Datos</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;">Tabla</div>
+        <div style="background:#F0F0F0;color:#bbb;font-size:18px;font-weight:900;text-align:center;padding:14px 0;">=</div>
+        <div style="background:#F8F8F8;color:#888;font-size:15px;text-align:center;padding:14px 10px;">Colección</div>
+        <div style="background:#1A1A1A;color:white;font-weight:700;font-size:17px;text-align:center;padding:16px 10px;border-radius:0 0 0 6px;border:2px solid var(--red);border-right:none;">Fila</div>
+        <div style="background:#E8E8E8;color:#888;font-size:20px;font-weight:900;text-align:center;padding:16px 0;border-top:2px solid var(--red);border-bottom:2px solid var(--red);">=</div>
+        <div style="background:#1A1A1A;color:var(--red);font-weight:700;font-size:17px;text-align:center;padding:16px 10px;border-radius:0 0 6px 0;border:2px solid var(--red);border-left:none;">Documento</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- LÁMINA 30 — Componentes: Documento (características)        -->
+<!-- ============================================================ -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-num dark">30</div>
+      <h2>Componentes <span>MongoDB</span><br><span style="font-size:22px;">Características — Documento</span></h2>
+    </div>
+    <table class="info-table" style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;width:30%;">Característica</th>
+          <th style="background:#1A1A1A;color:white;padding:10px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Dinámico</strong></td><td>Los documentos pueden tener estructuras dinámicas, sin esquema fijo.</td></tr>
+        <tr><td><strong>Anidado</strong></td><td>Pueden contener datos anidados dentro de arrays u otros documentos.</td></tr>
+        <tr><td><strong>Formato</strong></td><td>Se almacenan en BSON para optimizar consulta y almacenamiento.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-image" style="padding:24px;">
+    <div class="console" style="width:100%;">
+      <div class="console-header">
+        <span class="c-dot c-red"></span>
+        <span class="c-dot c-yellow"></span>
+        <span class="c-dot c-green"></span>
+        <span class="c-label" style="flex:1;">documento — estructura dinámica</span>
+        <button onclick="copyCode(this)" style="background:#333;border:none;border-radius:4px;padding:4px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#aaa;cursor:pointer;">Copiar</button>
+      </div>
+      <div class="console-body">{
+  <span class="c-key">"_id"</span>:      <span class="c-cmd">ObjectId("507f1f77bcf86cd799439011")</span>,
+  <span class="c-key">"nombre"</span>:   <span class="c-str">"María González"</span>,
+  <span class="c-key">"edad"</span>:     <span class="c-num">24</span>,
+  <span class="c-key">"direccion"</span>: {
+    <span class="c-key">"ciudad"</span>:  <span class="c-str">"Santiago"</span>,
+    <span class="c-key">"comuna"</span>:  <span class="c-str">"Ñuñoa"</span>
+  },
+  <span class="c-key">"cursos"</span>: [
+    <span class="c-str">"MongoDB"</span>,
+    <span class="c-str">"Redis"</span>,
+    <span class="c-str">"Cassandra"</span>
+  ]
+}</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- LÁMINA 31 — CIERRE                                           -->
+<!-- ============================================================ -->
+<div class="part-slide" style="align-items:center;text-align:center;">
+  <div class="part-eyebrow">Unidad 1 — Introducción</div>
+  <h2>¿Preguntas?</h2>
+  <p style="text-align:center;">Bases de Datos No Estructuradas<br>Otoño 2026</p>
+  <img src="../logo inacap.png" class="inacap-logo" alt="INACAP">
+</div>
+
+
+<script>
+function copyCode(btn) {
+  const body = btn.closest('.console-header').nextElementSibling;
+  navigator.clipboard.writeText(body.innerText).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copiado';
+    btn.style.background = '#107C10';
+    btn.style.color = 'white';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.background = '#333';
+      btn.style.color = '#aaa';
+    }, 1800);
+  });
+}
+</script>
+</body>
+</html>
