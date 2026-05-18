@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cronograma — Sistemas Operativos · 114-3A-F2</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: white;
+    font-family: 'Barlow', sans-serif;
+    color: #333;
+    overflow-x: hidden;
+    scroll-snap-type: y mandatory;
+  }
+  :root {
+    --red:   #E31E24;
+    --blue:  #0063B1;
+    --green: #107C10;
+  }
+
+  /* -- HEADER -- */
+  .header {
+    background: white;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #EBEBEB;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-title { display: flex; align-items: center; gap: 12px; }
+  .header-title h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: #1A1A1A;
+  }
+  .header-title span { color: var(--red); }
+  .header-badge {
+    background: var(--red);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .header-logo { height: 36px; opacity: 0.6; }
+
+  /* -- COVER -- */
+  .cover-slide {
+    background: linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    padding: 80px 60px;
+    border-bottom: 5px solid var(--red);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  .cover-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 16px;
+  }
+  .cover-slide h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 80px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: white;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+  }
+  .cover-slide h2 span { color: var(--red); }
+  .cover-slide p {
+    font-size: 20px;
+    color: rgba(255,255,255,0.5);
+    max-width: 520px;
+    line-height: 1.65;
+  }
+
+  /* -- UNIT SLIDE -- */
+  .unit-slide {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 42% 58%;
+    align-items: stretch;
+    border-bottom: 5px solid var(--red);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  .unit-slide.u2 { border-color: var(--blue); }
+  .unit-slide.u3 { border-color: var(--green); }
+
+  .unit-left {
+    padding: 70px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: white;
+  }
+  .unit-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 6px;
+    background: var(--red);
+    color: white;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 44px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+  }
+  .unit-slide.u2 .unit-badge { background: var(--blue); }
+  .unit-slide.u3 .unit-badge { background: var(--green); }
+
+  .unit-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 10px;
+  }
+  .unit-left h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 34px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #1A1A1A;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+  }
+  .unit-left h2 span { color: var(--red); }
+  .unit-slide.u2 .unit-left h2 span { color: var(--blue); }
+  .unit-slide.u3 .unit-left h2 span { color: var(--green); }
+
+  .unit-hours { display: flex; gap: 10px; flex-wrap: wrap; }
+  .hours-chip {
+    background: #F5F5F5;
+    border-radius: 4px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* -- CONTENT LIST (right panel) -- */
+  .unit-right {
+    background: #F8F8F8;
+    border-left: 1px solid #EBEBEB;
+    padding: 70px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .contenidos-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #E0E0E0;
+  }
+  .contenido-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+  .contenido-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: #3A3A3A;
+  }
+  .contenido-list li::before {
+    content: '';
+    display: block;
+    width: 4px;
+    min-height: 20px;
+    border-radius: 2px;
+    background: var(--red);
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .unit-slide.u2 .contenido-list li::before { background: var(--blue); }
+  .unit-slide.u3 .contenido-list li::before { background: var(--green); }
+
+  /* -- TIMELINE SLIDE -- */
+  .timeline-slide {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 70px;
+    background: white;
+    border-bottom: 5px solid var(--red);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  .timeline-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 46px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #1A1A1A;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+  .timeline-title span { color: var(--red); }
+  .timeline-subtitle {
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 44px;
+    font-weight: 500;
+  }
+
+  .timeline-months {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+  .month-block { display: flex; flex-direction: column; }
+  .month-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #bbb;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #EBEBEB;
+  }
+  .tl-sessions { display: flex; flex-direction: column; gap: 7px; }
+
+  .tl-session {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 14px;
+    border-radius: 6px;
+    background: #F8F8F8;
+    border: 1px solid #EBEBEB;
+  }
+  .tl-session.eval {
+    background: #FFF3F3;
+    border-color: #FFBCBC;
+  }
+
+  .tl-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: #D0D0D0;
+    flex-shrink: 0;
+  }
+  .tl-session.eval .tl-dot { background: var(--red); width: 11px; height: 11px; }
+
+  .tl-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #999;
+    min-width: 58px;
+    flex-shrink: 0;
+  }
+  .tl-session.eval .tl-date { color: #B71C1C; font-weight: 600; }
+
+  .tl-label {
+    font-size: 12.5px;
+    color: #555;
+    line-height: 1.3;
+    flex: 1;
+  }
+  .tl-session.eval .tl-label { color: #1A1A1A; font-weight: 600; }
+
+  .tl-pct {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--red);
+    flex-shrink: 0;
+  }
+
+  .timeline-legend {
+    display: flex;
+    gap: 24px;
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid #EBEBEB;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #666; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; }
+  .legend-dot.clase { background: #D0D0D0; }
+  .legend-dot.eval  { background: var(--red); }
+
+  @media (max-width: 1024px) {
+    .unit-slide  { grid-template-columns: 1fr; min-height: auto; }
+    .unit-left   { padding: 40px 30px; }
+    .unit-right  { padding: 40px 30px; }
+    .timeline-months { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-title">
+    <h1>Sistemas <span>Operativos</span> — Cronograma</h1>
+    <div class="header-badge">114-3A-F2</div>
+  </div>
+  <img src="../logo inacap.png" class="header-logo" alt="INACAP">
+</div>
+
+
+<!-- PORTADA -->
+<div class="cover-slide">
+  <div>
+    <div class="cover-eyebrow">Otoño 2026 · Sección 114-3A-F2</div>
+    <h2>Sistemas <span>Operativos</span></h2>
+    <p>Cronograma del semestre: distribución de unidades de aprendizaje y calendario de evaluaciones.</p>
+  </div>
+</div>
+
+
+<!-- UNIDAD 1 -->
+<div class="unit-slide">
+  <div class="unit-left">
+    <div class="unit-badge">1</div>
+    <div class="unit-eyebrow">Unidad 1 de 3</div>
+    <h2>Direccionamiento de redes basada en<br><span>protocolos TCP/IP</span></h2>
+    <div class="unit-hours">
+      <span class="hours-chip">16 horas totales</span>
+      <span class="hours-chip">10 horas presenciales</span>
+      <span class="hours-chip">6 horas online</span>
+    </div>
+  </div>
+  <div class="unit-right">
+    <div class="contenidos-label">Contenidos</div>
+    <ul class="contenido-list">
+      <li>Dirección IP v4: descripción, clases, máscaras y funcionamiento</li>
+      <li>Máscaras y cantidad de host contenidos en cada una de las redes y subredes</li>
+      <li>Cálculo de subredes con técnica FLSM</li>
+      <li>Cálculo de subredes con técnica VLSM</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- UNIDAD 2 -->
+<div class="unit-slide u2">
+  <div class="unit-left">
+    <div class="unit-badge">2</div>
+    <div class="unit-eyebrow">Unidad 2 de 3</div>
+    <h2>Sistema operativo<br><span>Windows Server</span></h2>
+    <div class="unit-hours">
+      <span class="hours-chip">28 horas totales</span>
+      <span class="hours-chip">18 horas presenciales</span>
+      <span class="hours-chip">10 horas online</span>
+    </div>
+  </div>
+  <div class="unit-right">
+    <div class="contenidos-label">Contenidos</div>
+    <ul class="contenido-list">
+      <li>Instalación y configuración básica de Sistema Operativo Windows Server</li>
+      <li>Configuración de esquemas de dominio Microsoft y gestión de objetos vía herramienta AD</li>
+      <li>Desarrollo y aplicación de GPO sobre objetos del dominio</li>
+      <li>Configuración de servicios de infraestructura como IIS, DHCP, DNS</li>
+      <li>Hardenización de sistema operativo Windows Server</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- UNIDAD 3 -->
+<div class="unit-slide u3">
+  <div class="unit-left">
+    <div class="unit-badge">3</div>
+    <div class="unit-eyebrow">Unidad 3 de 3</div>
+    <h2>Sistema operativo<br><span>Linux Server</span></h2>
+    <div class="unit-hours">
+      <span class="hours-chip">28 horas totales</span>
+      <span class="hours-chip">18 horas presenciales</span>
+      <span class="hours-chip">10 horas online</span>
+    </div>
+  </div>
+  <div class="unit-right">
+    <div class="contenidos-label">Contenidos</div>
+    <ul class="contenido-list">
+      <li>Terminología asociada al software libre: historia, evolución, licencias GPL, proyecto GNU, Copyright, Copyleft</li>
+      <li>Tipos de usuarios y comandos de ingreso / salida de sistema</li>
+      <li>File System Linux y estructura de directorios</li>
+      <li>Permisos básicos, permisos especiales, Umask</li>
+      <li>Instalación y actualización de paquetes: gestor RPM y yum</li>
+      <li>Hardenización: Antivirus, Antirootkit, Firewall y otros</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- TIMELINE -->
+<div class="timeline-slide">
+  <div class="timeline-title">Calendario de <span>clases</span></div>
+  <div class="timeline-subtitle">Sección 114-3A-F2 · Otoño 2026 · Lunes y Sábados</div>
+
+  <div class="timeline-months">
+
+    <!-- MAYO -->
+    <div class="month-block">
+      <div class="month-label">Mayo</div>
+      <div class="tl-sessions">
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">18/05 L</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">25/05 L</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">30/05 S</div>
+          <div class="tl-label">Clase</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JUNIO -->
+    <div class="month-block">
+      <div class="month-label">Junio</div>
+      <div class="tl-sessions">
+        <div class="tl-session eval">
+          <div class="tl-dot"></div>
+          <div class="tl-date">01/06 L</div>
+          <div class="tl-label">ES1 — Prueba escrita AA</div>
+          <div class="tl-pct">20%</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">08/06 L</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">13/06 S</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">15/06 L</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session eval">
+          <div class="tl-dot"></div>
+          <div class="tl-date">22/06 L</div>
+          <div class="tl-label">ES2 — Demo AWS Windows Server</div>
+          <div class="tl-pct">30%</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">27/06 S</div>
+          <div class="tl-label">Clase</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JULIO -->
+    <div class="month-block">
+      <div class="month-label">Julio</div>
+      <div class="tl-sessions">
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">06/07 L</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">13/07 L</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session eval">
+          <div class="tl-dot"></div>
+          <div class="tl-date">20/07 L</div>
+          <div class="tl-label">ES3 — Demo AWS Linux</div>
+          <div class="tl-pct">35%</div>
+        </div>
+        <div class="tl-session eval">
+          <div class="tl-dot"></div>
+          <div class="tl-date">25/07 S</div>
+          <div class="tl-label">ES4 — Semanales AAI (n-2 mejores)</div>
+          <div class="tl-pct">15%</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="timeline-legend">
+    <div class="legend-item">
+      <div class="legend-dot clase"></div>
+      <span>Clase presencial</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot eval"></div>
+      <span>Evaluación sumativa</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
