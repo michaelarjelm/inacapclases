@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA2 Sesión 1 — Primeros pasos con MongoDB</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #0063B1;
+      --green:  #107C10;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+      --code-bg:#1E1E1E;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0;
+      color: var(--text);
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100vh;
+    }
+
+    /* =====================
+       SLIDE BASE
+    ===================== */
+    .slide {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* =====================
+       SLIDE: PORTADA
+    ===================== */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white;
+      justify-content: center;
+      padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+      margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 20px;
+      color: rgba(255,255,255,0.5);
+      max-width: 580px;
+      line-height: 1.65;
+      margin-bottom: 56px;
+    }
+    .cover-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .cover-chip {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* =====================
+       SLIDE: SEPARADOR DE BLOQUE
+    ===================== */
+    .slide-separator {
+      background: var(--dark);
+      color: white;
+      justify-content: center;
+      padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 16px;
+    }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .sep-desc {
+      font-size: 20px;
+      color: rgba(255,255,255,0.45);
+      max-width: 560px;
+      line-height: 1.65;
+    }
+
+    /* =====================
+       SLIDE: CONCEPTO
+    ===================== */
+    .slide-concept {
+      background: white;
+      padding: 64px 80px;
+      border-bottom: 3px solid var(--border);
+      justify-content: center;
+    }
+    .slide-concept.blue-accent  { border-top: 6px solid var(--blue); }
+    .slide-concept.red-accent   { border-top: 6px solid var(--red); }
+    .slide-concept.green-accent { border-top: 6px solid var(--green); }
+
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      color: var(--dark);
+      margin-bottom: 32px;
+    }
+    .concept-body {
+      max-width: 800px;
+    }
+    .concept-body p {
+      font-size: 19px;
+      line-height: 1.7;
+      color: #333;
+      margin-bottom: 18px;
+    }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body ul {
+      margin-left: 24px;
+      margin-bottom: 18px;
+    }
+    .concept-body li {
+      font-size: 18px;
+      line-height: 1.7;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    .concept-body strong { color: var(--dark); }
+
+    /* =====================
+       SLIDE: COMANDO
+    ===================== */
+    .slide-code {
+      background: #141414;
+      padding: 56px 80px;
+      border-bottom: 3px solid #2A2A2A;
+      justify-content: center;
+    }
+    .code-label-top {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      margin-bottom: 20px;
+    }
+    .code-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 36px;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: white;
+      margin-bottom: 28px;
+      letter-spacing: -0.01em;
+    }
+    .code-title span { color: #DCDCAA; }
+
+    .code-box {
+      background: #1E1E1E;
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+      max-width: 900px;
+    }
+    .code-box-header {
+      background: #252526;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #333;
+    }
+    .code-box-lang {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .copy-btn {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.5);
+      font-family: 'Barlow', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.04em;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+    .copy-btn.copied { background: var(--green); border-color: var(--green); color: white; }
+
+    .code-box pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      line-height: 1.8;
+      color: #D4D4D4;
+      padding: 24px;
+      overflow-x: auto;
+      max-height: 70vh;
+      overflow-y: auto;
+      white-space: pre;
+    }
+
+    .code-explain {
+      margin-top: 24px;
+      max-width: 900px;
+    }
+    .code-explain p {
+      font-size: 17px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.65;
+      margin-bottom: 10px;
+    }
+    .code-explain p:last-child { margin-bottom: 0; }
+
+    /* =====================
+       SLIDE: RESULTADO
+    ===================== */
+    .slide-result {
+      background: #0D1117;
+      padding: 56px 80px;
+      border-bottom: 3px solid #1C2128;
+      justify-content: center;
+    }
+    .result-label-top {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      margin-bottom: 20px;
+    }
+    .result-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 36px;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: white;
+      margin-bottom: 28px;
+    }
+    .result-title span { color: #7EE787; }
+
+    .result-box {
+      background: #161B22;
+      border: 1px solid #30363D;
+      border-left: 4px solid var(--green);
+      border-radius: 8px;
+      overflow: hidden;
+      max-width: 900px;
+    }
+    .result-box-header {
+      background: #1C2128;
+      padding: 10px 18px;
+      border-bottom: 1px solid #30363D;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: rgba(255,255,255,0.25);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .result-box pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      line-height: 1.8;
+      color: #7EE787;
+      padding: 24px;
+      overflow-x: auto;
+      max-height: 60vh;
+      overflow-y: auto;
+      white-space: pre;
+    }
+
+    .result-explain {
+      margin-top: 24px;
+      max-width: 900px;
+    }
+    .result-explain p {
+      font-size: 17px;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.65;
+      margin-bottom: 10px;
+    }
+    .result-explain p:last-child { margin-bottom: 0; }
+
+    /* =====================
+       CALLOUTS
+    ===================== */
+    .callout {
+      border-radius: 6px;
+      padding: 18px 22px;
+      margin: 20px 0;
+      max-width: 800px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .callout-content p { font-size: 16px; line-height: 1.6; margin: 0; }
+
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+
+    .callout-tip { background: #F0FDF4; border: 1px solid #BBF7D0; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #14532D; }
+
+    .callout-info { background: #EFF6FF; border: 1px solid #BFDBFE; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #1E3A5F; }
+
+    /* callouts sobre fondo oscuro */
+    .on-dark .callout-important { background: rgba(227,30,36,0.12); border-color: rgba(227,30,36,0.3); }
+    .on-dark .callout-important strong { color: #FCA5A5; }
+    .on-dark .callout-important p { color: #FCA5A5; }
+
+    .on-dark .callout-tip { background: rgba(16,124,16,0.15); border-color: rgba(16,124,16,0.35); }
+    .on-dark .callout-tip strong { color: #7EE787; }
+    .on-dark .callout-tip p { color: #7EE787; }
+
+    /* =====================
+       TABLA DE TIPOS
+    ===================== */
+    .tipos-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 16px;
+    }
+    .tipos-table th {
+      background: var(--dark);
+      color: white;
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .tipos-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    .tipos-table tr:nth-child(even) td { background: #FAFAFA; }
+    .tipos-table code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      background: #EBEBEB;
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: #C0392B;
+    }
+
+    /* =====================
+       INLINE CODE
+    ===================== */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      background: #EBEBEB;
+      padding: 2px 7px;
+      border-radius: 3px;
+      color: #C0392B;
+    }
+    .slide-code code, .slide-result code {
+      background: rgba(255,255,255,0.1);
+      color: #DCDCAA;
+    }
+
+    /* =====================
+       SYNTAX COLORS
+    ===================== */
+    .kw   { color: #569CD6; }
+    .fn   { color: #DCDCAA; }
+    .str  { color: #CE9178; }
+    .num  { color: #B5CEA8; }
+    .key  { color: #9CDCFE; }
+    .cmt  { color: #6A9955; font-style: italic; }
+    .bool { color: #569CD6; }
+    .oid  { color: #C586C0; }
+
+    /* =====================
+       ÍNDICE
+    ===================== */
+    .index-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 32px;
+      max-width: 860px;
+    }
+    .index-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 18px 20px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--red);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .index-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: white;
+      line-height: 1.4;
+    }
+    .index-type {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* =====================
+       BADGE SOBRE SLIDE
+    ===================== */
+    .slide-badge {
+      position: absolute;
+      top: 24px;
+      right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+    .badge-concepto { background: #EFF6FF; color: var(--blue); border: 1px solid #BFDBFE; }
+    .badge-comando  { background: rgba(220,220,170,0.15); color: #DCDCAA; border: 1px solid rgba(220,220,170,0.25); }
+    .badge-resultado{ background: rgba(126,231,135,0.12); color: #7EE787; border: 1px solid rgba(126,231,135,0.25); }
+    .badge-cierre   { background: rgba(227,30,36,0.15); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* =====================
+       CIERRE
+    ===================== */
+    .resumen-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 28px;
+      max-width: 860px;
+    }
+    .resumen-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 16px 18px;
+    }
+    .resumen-cmd {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: #DCDCAA;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .resumen-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.4;
+    }
+    /* =====================
+       PROGRESS BAR
+    ===================== */
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; background: var(--red);
+      width: 0%; z-index: 9999;
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
+      pointer-events: none;
+    }
+
+    /* =====================
+       ANIMACIONES
+    ===================== */
+    .anim {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+<!-- ============================================================
+     SLIDE 1 — PORTADA
+     ============================================================ -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Bases de Datos No Estructuradas · TI3V32 · Unidad 2 · Sesión 1</div>
+  <div class="cover-title anim">Primeros pasos<br>con <span>MongoDB</span></div>
+  <p class="cover-desc anim">
+    Hoy comenzamos a trabajar directamente con MongoDB. Al final de la sesión
+    vas a poder crear una base de datos, insertar documentos y verificar que
+    quedaron correctamente guardados.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-3B-F2</span></span>
+    <span class="cover-chip">02 junio 2026</span>
+    <span class="cover-chip">18:30 – 22:30</span>
+    <span class="cover-chip">Herramienta: <span>Studio3T + Atlas</span></span>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SLIDE 2 — ÍNDICE
+     ============================================================ -->
+<div class="slide slide-separator">
+  <div class="sep-num">¿Qué vemos hoy?</div>
+  <div class="sep-title">Contenido<br>de la <span>sesión</span></div>
+  <div class="index-grid">
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Conexión a Atlas desde Studio3T</div>
+      <div class="index-type">Configuración</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Bases de datos y colecciones</div>
+      <div class="index-type">Concepto + comando</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Anatomía de un documento</div>
+      <div class="index-type">Concepto</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">_id y ObjectId</div>
+      <div class="index-type">Concepto clave</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Tipos de datos</div>
+      <div class="index-type">Referencia</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">06</div>
+      <div class="index-name">insertOne / insertMany</div>
+      <div class="index-type">Comando</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">07</div>
+      <div class="index-name">find() y findOne()</div>
+      <div class="index-type">Comando</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">08</div>
+      <div class="index-name">countDocuments()</div>
+      <div class="index-type">Verificación</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">09</div>
+      <div class="index-name">Resumen de comandos</div>
+      <div class="index-type">Cierre</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 01 — CONEXIÓN A ATLAS
+     ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">01 — Conexión</span>
+  <div class="sep-num">Bloque 01</div>
+  <div class="sep-title">Conexión a <span>Atlas</span><br>desde Studio3T</div>
+  <p class="sep-desc">MongoDB Atlas es la nube donde vive tu base de datos. Studio3T es la herramienta que usamos para conectarnos y trabajar con ella desde tu computador.</p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label">01 — Conexión · ¿Qué es cada cosa?</div>
+  <div class="concept-title">Atlas y Studio3T:<br>¿cuál hace qué?</div>
+  <div class="concept-body">
+    <p><strong>MongoDB Atlas</strong> es una plataforma en la nube donde vive tu base de datos. Tus datos se guardan en servidores de MongoDB en internet, no en tu computador. Ya creaste una cuenta y un clúster (un servidor) en clases anteriores.</p>
+    <p><strong>Studio3T Community</strong> es una aplicación que instalaste en tu computador. Su función es conectarse a ese servidor en la nube y permitirte ver, insertar, modificar y eliminar datos usando una interfaz gráfica y un shell de comandos.</p>
+    <p>La relación es simple: <strong>Atlas guarda los datos, Studio3T te permite trabajar con ellos.</strong> Sin conexión a Atlas, Studio3T no tiene nada que mostrar.</p>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>Analogía</strong>
+        <p>Atlas es como un servidor de correo (Gmail). Studio3T es como un cliente de correo (Outlook). El correo vive en el servidor; el cliente solo te da una interfaz para leerlo y escribirlo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label">01 — Conexión · Pasos para conectar</div>
+  <div class="concept-title">Cómo conectar<br>Studio3T a Atlas</div>
+  <div class="concept-body">
+    <p>Si ya tienes la conexión guardada de sesiones anteriores, solo haz doble clic sobre ella en el panel izquierdo de Studio3T. Si no aparece, sigue estos pasos:</p>
+    <ul>
+      <li><strong>Paso 1:</strong> Abre Studio3T. En la barra superior haz clic en <strong>Connect</strong>.</li>
+      <li><strong>Paso 2:</strong> Selecciona <strong>New Connection</strong>.</li>
+      <li><strong>Paso 3:</strong> En el campo <strong>From URI</strong>, pega tu connection string de Atlas. Tiene este formato:<br><code>mongodb+srv://usuario:contraseña@cluster0.xxxxx.mongodb.net/</code></li>
+      <li><strong>Paso 4:</strong> Haz clic en <strong>Test connection</strong>. Debe aparecer un mensaje verde de éxito.</li>
+      <li><strong>Paso 5:</strong> Haz clic en <strong>Save &amp; Connect</strong>.</li>
+    </ul>
+    <div class="callout callout-tip">
+      <span class="callout-icon">✓</span>
+      <div class="callout-content">
+        <strong>Señal de conexión exitosa</strong>
+        <p>El panel izquierdo de Studio3T muestra el nombre de tu clúster con un ícono de servidor y las bases de datos disponibles debajo.</p>
+      </div>
+    </div>
+    <div class="callout callout-important">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>Si no conecta</strong>
+        <p>Verifica que tu IP esté en la lista blanca de Atlas. En Atlas: <strong>Network Access → Add IP Address → Add Current IP Address</strong>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 02 — BASES DE DATOS Y COLECCIONES
+     ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">02 — Estructura</span>
+  <div class="sep-num">Bloque 02</div>
+  <div class="sep-title">Bases de datos<br>y <span>colecciones</span></div>
+  <p class="sep-desc">Antes de guardar cualquier dato, necesitamos entender cómo MongoDB organiza la información y crear el espacio donde vamos a trabajar.</p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label">02 — Estructura · Organización de MongoDB</div>
+  <div class="concept-title">¿Cómo organiza<br>MongoDB los datos?</div>
+  <div class="concept-body">
+    <p>MongoDB organiza la información en tres niveles, de mayor a menor:</p>
+    <ul>
+      <li><strong>Base de datos:</strong> el contenedor más grande. Agrupa colecciones relacionadas entre sí. Por ejemplo, una base de datos llamada <code>ventas_restaurante</code> contiene todo lo relacionado con ese negocio.</li>
+      <li><strong>Colección:</strong> equivale a una tabla en SQL, pero sin estructura fija. Es un conjunto de documentos del mismo tema. Por ejemplo, la colección <code>ventas</code> contiene los registros de venta.</li>
+      <li><strong>Documento:</strong> el equivalente a una fila en SQL, pero en formato JSON. Cada documento es un registro individual. Por ejemplo, una venta específica.</li>
+    </ul>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>Comparación con SQL</strong>
+        <p>Base de datos → Base de datos &nbsp;|&nbsp; Colección → Tabla &nbsp;|&nbsp; Documento → Fila &nbsp;|&nbsp; Campo → Columna</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-code">
+  <span class="slide-badge badge-comando">Comando</span>
+  <div class="code-label-top">02 — Estructura · Seleccionar base de datos</div>
+  <div class="code-title">Comando: <span>use</span></div>
+  <div class="code-box">
+    <div class="code-box-header">
+      <span class="code-box-lang">IntelliShell — Studio3T</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+    </div>
+    <pre><span class="cmt">// Selecciona la base de datos con la que vas a trabajar.
+// Si no existe, MongoDB la crea automáticamente
+// cuando insertas el primer documento.</span>
+
+<span class="kw">use</span> ventas_restaurante</pre>
+  </div>
+  <div class="code-explain">
+    <p><code>use</code> le dice a MongoDB: "a partir de ahora, todos los comandos que escriba los ejecuto sobre esta base de datos". Es como cambiar de carpeta en el sistema de archivos.</p>
+    <p>Nota importante: <strong>la base de datos no se crea físicamente en este momento</strong>. MongoDB espera a que insertes al menos un documento antes de crearla de verdad. Esto es intencional: MongoDB no crea estructuras vacías.</p>
+  </div>
+</div>
+
+<div class="slide slide-result">
+  <span class="slide-badge badge-resultado">Resultado</span>
+  <div class="result-label-top">02 — Estructura · Resultado de use</div>
+  <div class="result-title">Qué devuelve <span>use</span></div>
+  <div class="result-box">
+    <div class="result-box-header">Resultado en IntelliShell</div>
+    <pre>switched to db ventas_restaurante</pre>
+  </div>
+  <div class="result-explain">
+    <p>El mensaje <code>switched to db ventas_restaurante</code> confirma que ahora estás trabajando dentro de esa base de datos. Todos los comandos que escribas a continuación (como <code>db.ventas.find()</code>) se ejecutarán sobre <code>ventas_restaurante</code>.</p>
+    <p>En Studio3T, también puedes ver en la barra inferior o en el panel izquierdo cuál es la base de datos activa en este momento.</p>
+  </div>
+</div>
+
+<div class="slide slide-code">
+  <span class="slide-badge badge-comando">Comando</span>
+  <div class="code-label-top">02 — Estructura · Crear colección</div>
+  <div class="code-title">Comando: <span>createCollection()</span></div>
+  <div class="code-box">
+    <div class="code-box-header">
+      <span class="code-box-lang">IntelliShell — Studio3T</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+    </div>
+    <pre><span class="cmt">// Crea la colección "ventas" dentro de la base de datos activa.
+// Ejecutar DESPUÉS de haber usado "use ventas_restaurante".</span>
+
+<span class="kw">db</span>.<span class="fn">createCollection</span>(<span class="str">"ventas"</span>)</pre>
+  </div>
+  <div class="code-explain">
+    <p><code>db</code> siempre hace referencia a la base de datos activa (la que seleccionamos con <code>use</code>). <code>createCollection()</code> crea una colección vacía con el nombre que le indiques entre comillas.</p>
+    <p>Esto es útil para que la colección aparezca visible en el panel izquierdo de Studio3T antes de insertar el primer documento. También te permite verificar que estás trabajando en el lugar correcto.</p>
+  </div>
+</div>
+
+<div class="slide slide-result">
+  <span class="slide-badge badge-resultado">Resultado</span>
+  <div class="result-label-top">02 — Estructura · Resultado de createCollection()</div>
+  <div class="result-title">Qué devuelve <span>createCollection()</span></div>
+  <div class="result-box">
+    <div class="result-box-header">Resultado en IntelliShell</div>
+    <pre>{ ok: 1 }</pre>
+  </div>
+  <div class="result-explain">
+    <p><code>ok: 1</code> significa que la operación fue exitosa. En MongoDB, <code>1</code> equivale a "sí" o "verdadero" en este contexto.</p>
+    <p>Después de ejecutar este comando, ve al panel izquierdo de Studio3T, haz clic derecho sobre tu clúster y selecciona <strong>Refresh</strong>. Deberías ver la base de datos <code>ventas_restaurante</code> con la colección <code>ventas</code> dentro.</p>
+    <div class="callout on-dark callout-tip">
+      <span class="callout-icon">✓</span>
+      <div class="callout-content">
+        <strong>Si no aparece en el panel</strong>
+        <p>Haz clic derecho sobre el nombre del clúster en el panel izquierdo y selecciona <strong>Refresh</strong>. Studio3T no actualiza el panel automáticamente.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 03 — ANATOMÍA DE UN DOCUMENTO
+     ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">03 — Documentos</span>
+  <div class="sep-num">Bloque 03</div>
+  <div class="sep-title">Anatomía de<br>un <span>documento</span></div>
+  <p class="sep-desc">Un documento es la unidad básica de información en MongoDB. Antes de insertar el primero, necesitamos entender exactamente cómo está construido.</p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label">03 — Documentos · Qué es un documento</div>
+  <div class="concept-title">¿Qué es un<br>documento MongoDB?</div>
+  <div class="concept-body">
+    <p>Un documento es un objeto en formato <strong>JSON</strong> (JavaScript Object Notation). Es simplemente un conjunto de pares <strong>campo: valor</strong> encerrados entre llaves <code>{ }</code>.</p>
+    <p>Cada par campo-valor representa una característica del objeto que estás guardando. Por ejemplo, para guardar una venta de un restaurante, tendríamos campos como el nombre del restaurante, el producto vendido, el precio, etc.</p>
+    <ul>
+      <li>Los <strong>campos</strong> son los nombres de los atributos. Van entre comillas dobles: <code>"Restaurante"</code></li>
+      <li>Los <strong>valores</strong> pueden ser texto, números, fechas, booleanos, entre otros.</li>
+      <li>Cada par campo-valor se separa del siguiente con una <strong>coma</strong>.</li>
+      <li>El último par <strong>no lleva coma</strong>.</li>
+    </ul>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>A diferencia de SQL</strong>
+        <p>En SQL, todas las filas tienen exactamente las mismas columnas. En MongoDB, dos documentos de la misma colección pueden tener campos diferentes. Esta flexibilidad es una de las grandes ventajas del modelo documental.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label">03 — Documentos · Estructura real</div>
+  <div class="concept-title">El documento que<br>usaremos este semestre</div>
+  <div class="concept-body">
+    <p>Durante toda la unidad trabajaremos con ventas de restaurantes. Este es el documento base — léelo campo por campo y reconoce la estructura:</p>
+    <div class="code-box" style="max-width:100%;">
+      <div class="code-box-header">
+        <span class="code-box-lang">Estructura del documento — colección ventas</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+      </div>
+      <pre>{
+  <span class="key">"IdVenta"</span>:           <span class="num">1</span>,
+  <span class="key">"CodigoPedido"</span>:      <span class="str">"PED-2026-00001"</span>,
+  <span class="key">"FechaHoraVenta"</span>:    <span class="oid">ISODate</span>(<span class="str">"2026-01-05T16:10:00.000Z"</span>),
+  <span class="key">"Restaurante"</span>:       <span class="str">"Liguria Lastarria"</span>,
+  <span class="key">"Comuna"</span>:            <span class="str">"Santiago"</span>,
+  <span class="key">"Region"</span>:            <span class="str">"Región Metropolitana"</span>,
+  <span class="key">"TipoCocina"</span>:        <span class="str">"Chilena"</span>,
+  <span class="key">"Mesa"</span>:              <span class="num">5</span>,
+  <span class="key">"Sector"</span>:            <span class="str">"Barra"</span>,
+  <span class="key">"Mesero"</span>:            <span class="str">"Francisca Vega"</span>,
+  <span class="key">"Producto"</span>:          <span class="str">"Paila de huevos"</span>,
+  <span class="key">"CategoriaProducto"</span>: <span class="str">"Fondo"</span>,
+  <span class="key">"Cantidad"</span>:          <span class="num">1</span>,
+  <span class="key">"PrecioUnitario"</span>:    <span class="num">9200</span>,
+  <span class="key">"Subtotal"</span>:          <span class="num">9200</span>,
+  <span class="key">"DescuentoAplicado"</span>: <span class="num">460</span>,
+  <span class="key">"Propina"</span>:           <span class="num">874</span>,
+  <span class="key">"TotalPagado"</span>:       <span class="num">9614</span>,
+  <span class="key">"MedioPago"</span>:         <span class="str">"Tarjeta de crédito"</span>,
+  <span class="key">"CanalVenta"</span>:        <span class="str">"Presencial"</span>,
+  <span class="key">"EstadoPago"</span>:        <span class="str">"Pagado"</span>,
+  <span class="key">"TipoDocumento"</span>:     <span class="str">"Factura"</span>,
+  <span class="key">"NumeroDocumento"</span>:   <span class="str">"FAC-2026-00001"</span>,
+  <span class="key">"ClienteFrecuente"</span>:  <span class="str">"Sí"</span>,
+  <span class="key">"AtencionMinutos"</span>:   <span class="num">19</span>,
+  <span class="key">"CodigoDescuento"</span>:   <span class="str">"CLIENTE5"</span>
+}</pre>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 04 — _id Y ObjectId
+     ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">04 — _id</span>
+  <div class="sep-num">Bloque 04</div>
+  <div class="sep-title">El campo <span>_id</span><br>y ObjectId</div>
+  <p class="sep-desc">Cada vez que insertes un documento, MongoDB va a agregar un campo que tú no escribiste. Es el más importante de todos y aparecerá en cada operación que hagas.</p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label">04 — _id · Identificador único</div>
+  <div class="concept-title">¿Qué es el campo <span style="color:var(--red)">_id</span>?</div>
+  <div class="concept-body">
+    <p>El campo <code>_id</code> es el <strong>identificador único</strong> de cada documento dentro de una colección. MongoDB lo agrega automáticamente cuando insertas un documento, aunque tú no lo escribas.</p>
+    <p>Su función es garantizar que cada documento sea identificable de forma única e inequívoca. No pueden existir dos documentos con el mismo <code>_id</code> en la misma colección.</p>
+    <p>Es el equivalente directo de la <strong>clave primaria (PRIMARY KEY)</strong> en una base de datos relacional como SQL. Sin embargo, en MongoDB no necesitas declararlo: existe siempre, en todo documento, sin excepción.</p>
+    <div class="callout callout-important">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>Nunca ignores el _id</strong>
+        <p>Siempre que veas un resultado en MongoDB, el campo <code>_id</code> aparecerá primero. No es ruido del sistema: es el identificador que usarás para buscar, actualizar y eliminar documentos de forma precisa.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label">04 — _id · Qué es ObjectId</div>
+  <div class="concept-title">¿Qué es <span style="color:var(--red)">ObjectId</span>?</div>
+  <div class="concept-body">
+    <p>Cuando insertas un documento sin definir un <code>_id</code>, MongoDB genera automáticamente un valor de tipo <strong>ObjectId</strong>. Se ve así:</p>
+    <p><code>ObjectId('6831f4a2e3c89b4d1f20aa01')</code></p>
+    <p>Es una cadena de 24 caracteres hexadecimales (números del 0 al 9 y letras de la a a la f). No es aleatoria: está construida con:</p>
+    <ul>
+      <li><strong>4 bytes:</strong> timestamp del momento exacto en que se generó</li>
+      <li><strong>5 bytes:</strong> identificador único del proceso que lo creó</li>
+      <li><strong>3 bytes:</strong> contador incremental</li>
+    </ul>
+    <p>Esto garantiza que <strong>dos ObjectId generados en el mismo instante, en distintos servidores del mundo, nunca serán iguales</strong>. Es una propiedad crucial para bases de datos distribuidas.</p>
+    <div class="callout callout-tip">
+      <span class="callout-icon">✓</span>
+      <div class="callout-content">
+        <strong>¿Puedo definir mi propio _id?</strong>
+        <p>Sí. Puedes asignar cualquier valor único como <code>_id</code>, incluyendo un número entero. En esta unidad dejaremos que MongoDB lo genere automáticamente.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 05 — TIPOS DE DATOS
+     ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">05 — Tipos</span>
+  <div class="sep-num">Bloque 05</div>
+  <div class="sep-title">Tipos de datos<br>en <span>MongoDB</span></div>
+  <p class="sep-desc">El tipo de dato que uses para cada campo determina cómo MongoDB lo guarda y cómo puedes consultarlo. Usar el tipo incorrecto genera errores difíciles de detectar.</p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Referencia</span>
+  <div class="concept-label">05 — Tipos · Tabla de referencia</div>
+  <div class="concept-title">Tipos de datos<br>más importantes</div>
+  <div class="concept-body">
+    <table class="tipos-table">
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Ejemplo en el documento</th>
+          <th>Cuándo usarlo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>String</strong></td>
+          <td><code>"Liguria Lastarria"</code></td>
+          <td>Texto. Nombre, descripción, código, dirección.</td>
+        </tr>
+        <tr>
+          <td><strong>Integer</strong></td>
+          <td><code>5</code> &nbsp; <code>19</code></td>
+          <td>Números enteros. Mesa, cantidad, minutos.</td>
+        </tr>
+        <tr>
+          <td><strong>Double</strong></td>
+          <td><code>9200</code> &nbsp; <code>874</code></td>
+          <td>Números decimales o con cálculos. Precios, totales.</td>
+        </tr>
+        <tr>
+          <td><strong>Boolean</strong></td>
+          <td><code>true</code> &nbsp; <code>false</code></td>
+          <td>Verdadero o falso. Sin comillas, en minúscula.</td>
+        </tr>
+        <tr>
+          <td><strong>Date</strong></td>
+          <td><code>ISODate("2026-01-05T16:10:00.000Z")</code></td>
+          <td>Fecha y hora. Permite comparaciones y ordenamiento.</td>
+        </tr>
+        <tr>
+          <td><strong>Null</strong></td>
+          <td><code>null</code></td>
+          <td>Ausencia explícita de valor. Distinto a campo no existente.</td>
+        </tr>
+        <tr>
+          <td><strong>Array</strong></td>
+          <td><code>["Lunes", "Martes"]</code></td>
+          <td>Lista de valores. Lo veremos en profundidad más adelante.</td>
+        </tr>
+        <tr>
+          <td><strong>Object</strong></td>
+          <td><code>{ "clave": "valor" }</code></td>
+          <td>Documento anidado (subdocumento). También más adelante.</td>
+        </tr>
+        <tr>
+          <td><strong>ObjectId</strong></td>
+          <td><code>ObjectId('6831f4...')</code></td>
+          <td>Identificador único generado por MongoDB. Tipo del <code>_id</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>El tipo importa siempre</strong>
+        <p><code>"9200"</code> (string) y <code>9200</code> (número) son valores distintos en MongoDB. Si guardas un precio como texto, no podrás hacer comparaciones como "mayor que" o "menor que" correctamente.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 06 — insertOne / insertMany
+     ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-comando">06 — Insert</span>
+  <div class="sep-num">Bloque 06</div>
+  <div class="sep-title"><span>insertOne</span><br>insertMany</div>
+  <p class="sep-desc">Estos son los dos comandos para agregar documentos a una colección. Uno inserta un documento a la vez, el otro inserta varios en una sola operación.</p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label">06 — Insert · ¿Qué hace insertOne?</div>
+  <div class="concept-title">¿Qué hace<br><span style="color:var(--green)">insertOne()</span>?</div>
+  <div class="concept-body">
+    <p><code>insertOne()</code> inserta <strong>exactamente un documento</strong> en la colección. El documento que quieres guardar se pasa como argumento entre los paréntesis, con toda la estructura JSON que vimos antes.</p>
+    <p>La sintaxis general es:</p>
+    <p><code>db.nombreColeccion.insertOne({ campo: valor, campo: valor, ... })</code></p>
+    <ul>
+      <li><code>db</code> siempre hace referencia a la base de datos activa (la que seleccionamos con <code>use</code>).</li>
+      <li><code>nombreColeccion</code> es el nombre de la colección donde quieres insertar. En nuestro caso: <code>ventas</code>.</li>
+      <li><code>insertOne()</code> recibe el documento completo entre sus paréntesis.</li>
+    </ul>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>No necesitas declarar los campos antes</strong>
+        <p>A diferencia de SQL donde primero se define la tabla con sus columnas, en MongoDB simplemente insertas el documento. La colección acepta cualquier estructura.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-code">
+  <span class="slide-badge badge-comando">Comando</span>
+  <div class="code-label-top">06 — Insert · insertOne</div>
+  <div class="code-title">Comando: <span>insertOne()</span></div>
+  <div class="code-box">
+    <div class="code-box-header">
+      <span class="code-box-lang">IntelliShell — Studio3T</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+    </div>
+    <pre><span class="kw">db</span>.<span class="fn">ventas</span>.<span class="fn">insertOne</span>({
+  <span class="key">"IdVenta"</span>:           <span class="num">1</span>,
+  <span class="key">"CodigoPedido"</span>:      <span class="str">"PED-2026-00001"</span>,
+  <span class="key">"FechaHoraVenta"</span>:    <span class="oid">ISODate</span>(<span class="str">"2026-01-05T16:10:00.000Z"</span>),
+  <span class="key">"Restaurante"</span>:       <span class="str">"Liguria Lastarria"</span>,
+  <span class="key">"Comuna"</span>:            <span class="str">"Santiago"</span>,
+  <span class="key">"Region"</span>:            <span class="str">"Región Metropolitana"</span>,
+  <span class="key">"TipoCocina"</span>:        <span class="str">"Chilena"</span>,
+  <span class="key">"Mesa"</span>:              <span class="num">5</span>,
+  <span class="key">"Sector"</span>:            <span class="str">"Barra"</span>,
+  <span class="key">"Mesero"</span>:            <span class="str">"Francisca Vega"</span>,
+  <span class="key">"Producto"</span>:          <span class="str">"Paila de huevos"</span>,
+  <span class="key">"CategoriaProducto"</span>: <span class="str">"Fondo"</span>,
+  <span class="key">"Cantidad"</span>:          <span class="num">1</span>,
+  <span class="key">"PrecioUnitario"</span>:    <span class="num">9200</span>,
+  <span class="key">"Subtotal"</span>:          <span class="num">9200</span>,
+  <span class="key">"DescuentoAplicado"</span>: <span class="num">460</span>,
+  <span class="key">"Propina"</span>:           <span class="num">874</span>,
+  <span class="key">"TotalPagado"</span>:       <span class="num">9614</span>,
+  <span class="key">"MedioPago"</span>:         <span class="str">"Tarjeta de crédito"</span>,
+  <span class="key">"CanalVenta"</span>:        <span class="str">"Presencial"</span>,
+  <span class="key">"EstadoPago"</span>:        <span class="str">"Pagado"</span>,
+  <span class="key">"TipoDocumento"</span>:     <span class="str">"Factura"</span>,
+  <span class="key">"NumeroDocumento"</span>:   <span class="str">"FAC-2026-00001"</span>,
+  <span class="key">"ClienteFrecuente"</span>:  <span class="str">"Sí"</span>,
+  <span class="key">"AtencionMinutos"</span>:   <span class="num">19</span>,
+  <span class="key">"CodigoDescuento"</span>:   <span class="str">"CLIENTE5"</span>
+})</pre>
+  </div>
+  <div class="code-explain">
+    <p>Copia este comando, pégalo en el IntelliShell de Studio3T y presiona <strong>Ctrl + Enter</strong> para ejecutarlo.</p>
+  </div>
+</div>
+
+<div class="slide slide-result">
+  <span class="slide-badge badge-resultado">Resultado</span>
+  <div class="result-label-top">06 — Insert · Resultado de insertOne()</div>
+  <div class="result-title">Qué devuelve <span>insertOne()</span></div>
+  <div class="result-box">
+    <div class="result-box-header">Resultado en IntelliShell</div>
+    <pre>{
+  acknowledged: true,
+  insertedId: <span style="color:#C586C0;">ObjectId('6831f4a2e3c89b4d1f20aa01')</span>
+}</pre>
+  </div>
+  <div class="result-explain">
+    <p><code>acknowledged: true</code> significa que MongoDB recibió el documento y lo guardó correctamente. Si ves <code>false</code>, algo falló en la conexión.</p>
+    <p><code>insertedId</code> es el <code>_id</code> que MongoDB generó automáticamente para este documento. El valor ObjectId que ves en tu pantalla será diferente al del ejemplo porque se genera en el momento exacto de la inserción.</p>
+    <div class="callout on-dark callout-tip">
+      <span class="callout-icon">✓</span>
+      <div class="callout-content">
+        <strong>Verifica en el panel de Studio3T</strong>
+        <p>Haz doble clic sobre la colección <strong>ventas</strong> en el panel izquierdo. Deberías ver el documento insertado en Table View, Tree View o JSON View.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label">06 — Insert · ¿Qué hace insertMany?</div>
+  <div class="concept-title">¿Qué hace<br><span style="color:var(--green)">insertMany()</span>?</div>
+  <div class="concept-body">
+    <p><code>insertMany()</code> inserta <strong>múltiples documentos en una sola operación</strong>. En lugar de un documento, recibe un <strong>arreglo</strong> de documentos: una lista encerrada entre corchetes <code>[ ]</code> donde cada documento va separado por una coma.</p>
+    <p>La sintaxis general es:</p>
+    <p><code>db.nombreColeccion.insertMany([ {doc1}, {doc2}, {doc3} ])</code></p>
+    <ul>
+      <li>Los corchetes <code>[ ]</code> delimitan el arreglo completo.</li>
+      <li>Cada documento va entre llaves <code>{ }</code> separado por coma del siguiente.</li>
+      <li>El último documento no lleva coma después de su llave de cierre <code>}</code>.</li>
+    </ul>
+    <div class="callout callout-tip">
+      <span class="callout-icon">✓</span>
+      <div class="callout-content">
+        <strong>¿Por qué usar insertMany en vez de varios insertOne?</strong>
+        <p>Una sola operación de red es mucho más eficiente que ocho operaciones separadas. Para cargar un dataset inicial, siempre se prefiere <code>insertMany</code>.</p>
+      </div>
+    </div>
+    <div class="callout callout-important">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>Antes de ejecutar insertMany: limpiar la colección</strong>
+        <p>Ya insertaste un documento con <code>insertOne</code>. Para evitar duplicados, primero ejecuta: <code>db.ventas.deleteMany({})</code> — esto elimina todos los documentos de la colección.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-code">
+  <span class="slide-badge badge-comando">Comando</span>
+  <div class="code-label-top">06 — Insert · insertMany con dataset completo</div>
+  <div class="code-title">Comando: <span>insertMany()</span> — Dataset restaurante</div>
+  <div class="code-box">
+    <div class="code-box-header">
+      <span class="code-box-lang">IntelliShell — Studio3T</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+    </div>
+    <pre><span class="kw">db</span>.<span class="fn">ventas</span>.<span class="fn">insertMany</span>([
+  {
+    <span class="key">"IdVenta"</span>: <span class="num">1</span>, <span class="key">"CodigoPedido"</span>: <span class="str">"PED-2026-00001"</span>,
+    <span class="key">"FechaHoraVenta"</span>: <span class="oid">ISODate</span>(<span class="str">"2026-01-05T16:10:00.000Z"</span>),
+    <span class="key">"Restaurante"</span>: <span class="str">"Liguria Lastarria"</span>, <span class="key">"Comuna"</span>: <span class="str">"Santiago"</span>,
+    <span class="key">"Region"</span>: <span class="str">"Región Metropolitana"</span>, <span class="key">"TipoCocina"</span>: <span class="str">"Chilena"</span>,
+    <span class="key">"Mesa"</span>: <span class="num">5</span>, <span class="key">"Sector"</span>: <span class="str">"Barra"</span>, <span class="key">"Mesero"</span>: <span class="str">"Francisca Vega"</span>,
+    <span class="key">"Producto"</span>: <span class="str">"Paila de huevos"</span>, <span class="key">"CategoriaProducto"</span>: <span class="str">"Fondo"</span>,
+    <span class="key">"Cantidad"</span>: <span class="num">1</span>, <span class="key">"PrecioUnitario"</span>: <span class="num">9200</span>, <span class="key">"Subtotal"</span>: <span class="num">9200</span>,
+    <span class="key">"DescuentoAplicado"</span>: <span class="num">460</span>, <span class="key">"Propina"</span>: <span class="num">874</span>, <span class="key">"TotalPagado"</span>: <span class="num">9614</span>,
+    <span class="key">"MedioPago"</span>: <span class="str">"Tarjeta de crédito"</span>, <span class="key">"CanalVenta"</span>: <span class="str">"Presencial"</span>,
+    <span class="key">"EstadoPago"</span>: <span class="str">"Pagado"</span>, <span class="key">"TipoDocumento"</span>: <span class="str">"Factura"</span>,
+    <span class="key">"NumeroDocumento"</span>: <span class="str">"FAC-2026-00001"</span>, <span class="key">"ClienteFrecuente"</span>: <span class="str">"Sí"</span>,
+    <span class="key">"AtencionMinutos"</span>: <span class="num">19</span>, <span class="key">"CodigoDescuento"</span>: <span class="str">"CLIENTE5"</span>
+  },
+  {
+    <span class="key">"IdVenta"</span>: <span class="num">2</span>, <span class="key">"CodigoPedido"</span>: <span class="str">"PED-2026-00002"</span>,
+    <span class="key">"FechaHoraVenta"</span>: <span class="oid">ISODate</span>(<span class="str">"2026-01-05T20:45:00.000Z"</span>),
+    <span class="key">"Restaurante"</span>: <span class="str">"Liguria Lastarria"</span>, <span class="key">"Comuna"</span>: <span class="str">"Santiago"</span>,
+    <span class="key">"Region"</span>: <span class="str">"Región Metropolitana"</span>, <span class="key">"TipoCocina"</span>: <span class="str">"Chilena"</span>,
+    <span class="key">"Mesa"</span>: <span class="num">12</span>, <span class="key">"Sector"</span>: <span class="str">"Salón principal"</span>, <span class="key">"Mesero"</span>: <span class="str">"Carlos Rojas"</span>,
+    <span class="key">"Producto"</span>: <span class="str">"Cazuela de vacuno"</span>, <span class="key">"CategoriaProducto"</span>: <span class="str">"Fondo"</span>,
+    <span class="key">"Cantidad"</span>: <span class="num">2</span>, <span class="key">"PrecioUnitario"</span>: <span class="num">8900</span>, <span class="key">"Subtotal"</span>: <span class="num">17800</span>,
+    <span class="key">"DescuentoAplicado"</span>: <span class="num">0</span>, <span class="key">"Propina"</span>: <span class="num">1780</span>, <span class="key">"TotalPagado"</span>: <span class="num">19580</span>,
+    <span class="key">"MedioPago"</span>: <span class="str">"Efectivo"</span>, <span class="key">"CanalVenta"</span>: <span class="str">"Presencial"</span>,
+    <span class="key">"EstadoPago"</span>: <span class="str">"Pagado"</span>, <span class="key">"TipoDocumento"</span>: <span class="str">"Boleta"</span>,
+    <span class="key">"NumeroDocumento"</span>: <span class="str">"BOL-2026-00002"</span>, <span class="key">"ClienteFrecuente"</span>: <span class="str">"No"</span>,
+    <span class="key">"AtencionMinutos"</span>: <span class="num">34</span>, <span class="key">"CodigoDescuento"</span>: <span class="str">""</span>
+  },
+  {
+    <span class="key">"IdVenta"</span>: <span class="num">3</span>, <span class="key">"CodigoPedido"</span>: <span class="str">"PED-2026-00003"</span>,
+    <span class="key">"FechaHoraVenta"</span>: <span class="oid">ISODate</span>(<span class="str">"2026-01-08T13:20:00.000Z"</span>),
+    <span class="key">"Restaurante"</span>: <span class="str">"Liguria Providencia"</span>, <span class="key">"Comuna"</span>: <span class="str">"Providencia"</span>,
+    <span class="key">"Region"</span>: <span class="str">"Región Metropolitana"</span>, <span class="key">"TipoCocina"</span>: <span class="str">"Chilena"</span>,
+    <span class="key">"Mesa"</span>: <span class="num">3</span>, <span class="key">"Sector"</span>: <span class="str">"Terraza"</span>, <span class="key">"Mesero"</span>: <span class="str">"Valentina Mora"</span>,
+    <span class="key">"Producto"</span>: <span class="str">"Empanada de pino"</span>, <span class="key">"CategoriaProducto"</span>: <span class="str">"Entrada"</span>,
+    <span class="key">"Cantidad"</span>: <span class="num">3</span>, <span class="key">"PrecioUnitario"</span>: <span class="num">3200</span>, <span class="key">"Subtotal"</span>: <span class="num">9600</span>,
+    <span class="key">"DescuentoAplicado"</span>: <span class="num">480</span>, <span class="key">"Propina"</span>: <span class="num">912</span>, <span class="key">"TotalPagado"</span>: <span class="num">10032</span>,
+    <span class="key">"MedioPago"</span>: <span class="str">"Débito"</span>, <span class="key">"CanalVenta"</span>: <span class="str">"Presencial"</span>,
+    <span class="key">"EstadoPago"</span>: <span class="str">"Pagado"</span>, <span class="key">"TipoDocumento"</span>: <span class="str">"Boleta"</span>,
+    <span class="key">"NumeroDocumento"</span>: <span class="str">"BOL-2026-00003"</span>, <span class="key">"ClienteFrecuente"</span>: <span class="str">"Sí"</span>,
+    <span class="key">"AtencionMinutos"</span>: <span class="num">22</span>, <span class="key">"CodigoDescuento"</span>: <span class="str">"CLIENTE5"</span>
+  },
+  {
+    <span class="key">"IdVenta"</span>: <span class="num">4</span>, <span class="key">"CodigoPedido"</span>: <span class="str">"PED-2026-00004"</span>,
+    <span class="key">"FechaHoraVenta"</span>: <span class="oid">ISODate</span>(<span class="str">"2026-01-10T21:05:00.000Z"</span>),
+    <span class="key">"Restaurante"</span>: <span class="str">"El Hoyo"</span>, <span class="key">"Comuna"</span>: <span class="str">"Santiago"</span>,
+    <span class="key">"Region"</span>: <span class="str">"Región Metropolitana"</span>, <span class="key">"TipoCocina"</span>: <span class="str">"Chilena"</span>,
+    <span class="key">"Mesa"</span>: <span class="num">8</span>, <span class="key">"Sector"</span>: <span class="str">"Salón principal"</span>, <span class="key">"Mesero"</span>: <span class="str">"Roberto Díaz"</span>,
+    <span class="key">"Producto"</span>: <span class="str">"Lomo a lo pobre"</span>, <span class="key">"CategoriaProducto"</span>: <span class="str">"Fondo"</span>,
+    <span class="key">"Cantidad"</span>: <span class="num">1</span>, <span class="key">"PrecioUnitario"</span>: <span class="num">11500</span>, <span class="key">"Subtotal"</span>: <span class="num">11500</span>,
+    <span class="key">"DescuentoAplicado"</span>: <span class="num">0</span>, <span class="key">"Propina"</span>: <span class="num">1150</span>, <span class="key">"TotalPagado"</span>: <span class="num">12650</span>,
+    <span class="key">"MedioPago"</span>: <span class="str">"Tarjeta de crédito"</span>, <span class="key">"CanalVenta"</span>: <span class="str">"Presencial"</span>,
+    <span class="key">"EstadoPago"</span>: <span class="str">"Pagado"</span>, <span class="key">"TipoDocumento"</span>: <span class="str">"Factura"</span>,
+    <span class="key">"NumeroDocumento"</span>: <span class="str">"FAC-2026-00004"</span>, <span class="key">"ClienteFrecuente"</span>: <span class="str">"No"</span>,
+    <span class="key">"AtencionMinutos"</span>: <span class="num">41</span>, <span class="key">"CodigoDescuento"</span>: <span class="str">""</span>
+  },
+  {
+    <span class="key">"IdVenta"</span>: <span class="num">5</span>, <span class="key">"CodigoPedido"</span>: <span class="str">"PED-2026-00005"</span>,
+    <span class="key">"FechaHoraVenta"</span>: <span class="oid">ISODate</span>(<span class="str">"2026-01-12T14:30:00.000Z"</span>),
+    <span class="key">"Restaurante"</span>: <span class="str">"Liguria Providencia"</span>, <span class="key">"Comuna"</span>: <span class="str">"Providencia"</span>,
+    <span class="key">"Region"</span>: <span class="str">"Región Metropolitana"</span>, <span class="key">"TipoCocina"</span>: <span class="str">"Chilena"</span>,
+    <span class="key">"Mesa"</span>: <span class="num">7</span>, <span class="key">"Sector"</span>: <span class="str">"Terraza"</span>, <span class="key">"Mesero"</span>: <span class="str">"Valentina Mora"</span>,
+    <span class="key">"Producto"</span>: <span class="str">"Chorrillana"</span>, <span class="key">"CategoriaProducto"</span>: <span class="str">"Para compartir"</span>,
+    <span class="key">"Cantidad"</span>: <span class="num">1</span>, <span class="key">"PrecioUnitario"</span>: <span class="num">14900</span>, <span class="key">"Subtotal"</span>: <span class="num">14900</span>,
+    <span class="key">"DescuentoAplicado"</span>: <span class="num">745</span>, <span class="key">"Propina"</span>: <span class="num">1415</span>, <span class="key">"TotalPagado"</span>: <span class="num">15570</span>,
+    <span class="key">"MedioPago"</span>: <span class="str">"Efectivo"</span>, <span class="key">"CanalVenta"</span>: <span class="str">"Presencial"</span>,
+    <span class="key">"EstadoPago"</span>: <span class="str">"Pagado"</span>, <span class="key">"TipoDocumento"</span>: <span class="str">"Boleta"</span>,
+    <span class="key">"NumeroDocumento"</span>: <span class="str">"BOL-2026-00005"</span>, <span class="key">"ClienteFrecuente"</span>: <span class="str">"Sí"</span>,
+    <span class="key">"AtencionMinutos"</span>: <span class="num">28</span>, <span class="key">"CodigoDescuento"</span>: <span class="str">"CLIENTE5"</span>
+  },
+  {
+    <span class="key">"IdVenta"</span>: <span class="num">6</span>, <span class="key">"CodigoPedido"</span>: <span class="str">"PED-2026-00006"</span>,
+    <span class="key">"FechaHoraVenta"</span>: <span class="oid">ISODate</span>(<span class="str">"2026-01-15T19:50:00.000Z"</span>),
+    <span class="key">"Restaurante"</span>: <span class="str">"El Hoyo"</span>, <span class="key">"Comuna"</span>: <span class="str">"Santiago"</span>,
+    <span class="key">"Region"</span>: <span class="str">"Región Metropolitana"</span>, <span class="key">"TipoCocina"</span>: <span class="str">"Chilena"</span>,
+    <span class="key">"Mesa"</span>: <span class="num">2</span>, <span class="key">"Sector"</span>: <span class="str">"Barra"</span>, <span class="key">"Mesero"</span>: <span class="str">"Roberto Díaz"</span>,
+    <span class="key">"Producto"</span>: <span class="str">"Ceviche de reineta"</span>, <span class="key">"CategoriaProducto"</span>: <span class="str">"Entrada"</span>,
+    <span class="key">"Cantidad"</span>: <span class="num">2</span>, <span class="key">"PrecioUnitario"</span>: <span class="num">7800</span>, <span class="key">"Subtotal"</span>: <span class="num">15600</span>,
+    <span class="key">"DescuentoAplicado"</span>: <span class="num">0</span>, <span class="key">"Propina"</span>: <span class="num">0</span>, <span class="key">"TotalPagado"</span>: <span class="num">15600</span>,
+    <span class="key">"MedioPago"</span>: <span class="str">"Débito"</span>, <span class="key">"CanalVenta"</span>: <span class="str">"Presencial"</span>,
+    <span class="key">"EstadoPago"</span>: <span class="str">"Pagado"</span>, <span class="key">"TipoDocumento"</span>: <span class="str">"Boleta"</span>,
+    <span class="key">"NumeroDocumento"</span>: <span class="str">"BOL-2026-00006"</span>, <span class="key">"ClienteFrecuente"</span>: <span class="str">"No"</span>,
+    <span class="key">"AtencionMinutos"</span>: <span class="num">15</span>, <span class="key">"CodigoDescuento"</span>: <span class="str">""</span>
+  },
+  {
+    <span class="key">"IdVenta"</span>: <span class="num">7</span>, <span class="key">"CodigoPedido"</span>: <span class="str">"PED-2026-00007"</span>,
+    <span class="key">"FechaHoraVenta"</span>: <span class="oid">ISODate</span>(<span class="str">"2026-01-18T12:00:00.000Z"</span>),
+    <span class="key">"Restaurante"</span>: <span class="str">"Liguria Lastarria"</span>, <span class="key">"Comuna"</span>: <span class="str">"Santiago"</span>,
+    <span class="key">"Region"</span>: <span class="str">"Región Metropolitana"</span>, <span class="key">"TipoCocina"</span>: <span class="str">"Chilena"</span>,
+    <span class="key">"Mesa"</span>: <span class="num">1</span>, <span class="key">"Sector"</span>: <span class="str">"Salón principal"</span>, <span class="key">"Mesero"</span>: <span class="str">"Francisca Vega"</span>,
+    <span class="key">"Producto"</span>: <span class="str">"Pastel de choclo"</span>, <span class="key">"CategoriaProducto"</span>: <span class="str">"Fondo"</span>,
+    <span class="key">"Cantidad"</span>: <span class="num">1</span>, <span class="key">"PrecioUnitario"</span>: <span class="num">10200</span>, <span class="key">"Subtotal"</span>: <span class="num">10200</span>,
+    <span class="key">"DescuentoAplicado"</span>: <span class="num">510</span>, <span class="key">"Propina"</span>: <span class="num">969</span>, <span class="key">"TotalPagado"</span>: <span class="num">10659</span>,
+    <span class="key">"MedioPago"</span>: <span class="str">"Tarjeta de crédito"</span>, <span class="key">"CanalVenta"</span>: <span class="str">"Presencial"</span>,
+    <span class="key">"EstadoPago"</span>: <span class="str">"Pagado"</span>, <span class="key">"TipoDocumento"</span>: <span class="str">"Boleta"</span>,
+    <span class="key">"NumeroDocumento"</span>: <span class="str">"BOL-2026-00007"</span>, <span class="key">"ClienteFrecuente"</span>: <span class="str">"Sí"</span>,
+    <span class="key">"AtencionMinutos"</span>: <span class="num">26</span>, <span class="key">"CodigoDescuento"</span>: <span class="str">"CLIENTE5"</span>
+  },
+  {
+    <span class="key">"IdVenta"</span>: <span class="num">8</span>, <span class="key">"CodigoPedido"</span>: <span class="str">"PED-2026-00008"</span>,
+    <span class="key">"FechaHoraVenta"</span>: <span class="oid">ISODate</span>(<span class="str">"2026-01-20T21:30:00.000Z"</span>),
+    <span class="key">"Restaurante"</span>: <span class="str">"El Hoyo"</span>, <span class="key">"Comuna"</span>: <span class="str">"Santiago"</span>,
+    <span class="key">"Region"</span>: <span class="str">"Región Metropolitana"</span>, <span class="key">"TipoCocina"</span>: <span class="str">"Chilena"</span>,
+    <span class="key">"Mesa"</span>: <span class="num">4</span>, <span class="key">"Sector"</span>: <span class="str">"Barra"</span>, <span class="key">"Mesero"</span>: <span class="str">"Carlos Rojas"</span>,
+    <span class="key">"Producto"</span>: <span class="str">"Anticucho de corazón"</span>, <span class="key">"CategoriaProducto"</span>: <span class="str">"Entrada"</span>,
+    <span class="key">"Cantidad"</span>: <span class="num">2</span>, <span class="key">"PrecioUnitario"</span>: <span class="num">5600</span>, <span class="key">"Subtotal"</span>: <span class="num">11200</span>,
+    <span class="key">"DescuentoAplicado"</span>: <span class="num">0</span>, <span class="key">"Propina"</span>: <span class="num">1120</span>, <span class="key">"TotalPagado"</span>: <span class="num">12320</span>,
+    <span class="key">"MedioPago"</span>: <span class="str">"Efectivo"</span>, <span class="key">"CanalVenta"</span>: <span class="str">"Presencial"</span>,
+    <span class="key">"EstadoPago"</span>: <span class="str">"Pagado"</span>, <span class="key">"TipoDocumento"</span>: <span class="str">"Boleta"</span>,
+    <span class="key">"NumeroDocumento"</span>: <span class="str">"BOL-2026-00008"</span>, <span class="key">"ClienteFrecuente"</span>: <span class="str">"No"</span>,
+    <span class="key">"AtencionMinutos"</span>: <span class="num">38</span>, <span class="key">"CodigoDescuento"</span>: <span class="str">""</span>
+  }
+])</pre>
+  </div>
+</div>
+
+<div class="slide slide-result">
+  <span class="slide-badge badge-resultado">Resultado</span>
+  <div class="result-label-top">06 — Insert · Resultado de insertMany()</div>
+  <div class="result-title">Qué devuelve <span>insertMany()</span></div>
+  <div class="result-box">
+    <div class="result-box-header">Resultado en IntelliShell</div>
+    <pre>{
+  acknowledged: true,
+  insertedIds: {
+    '0': <span style="color:#C586C0;">ObjectId('...')</span>,
+    '1': <span style="color:#C586C0;">ObjectId('...')</span>,
+    '2': <span style="color:#C586C0;">ObjectId('...')</span>,
+    '3': <span style="color:#C586C0;">ObjectId('...')</span>,
+    '4': <span style="color:#C586C0;">ObjectId('...')</span>,
+    '5': <span style="color:#C586C0;">ObjectId('...')</span>,
+    '6': <span style="color:#C586C0;">ObjectId('...')</span>,
+    '7': <span style="color:#C586C0;">ObjectId('...')</span>
+  }
+}</pre>
+  </div>
+  <div class="result-explain">
+    <p><code>acknowledged: true</code> confirma que la operación fue exitosa. <code>insertedIds</code> muestra el <code>_id</code> generado para cada documento, indexados por su posición en el arreglo: <code>'0'</code> es el primer documento, <code>'1'</code> el segundo, y así sucesivamente.</p>
+    <p>Los ObjectId que verás en tu pantalla serán diferentes a los del ejemplo porque MongoDB los genera en el momento exacto de la inserción.</p>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 07 — find() y findOne()
+     ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-comando">07 — Consulta</span>
+  <div class="sep-num">Bloque 07</div>
+  <div class="sep-title"><span>find()</span><br>y findOne()</div>
+  <p class="sep-desc">Después de insertar documentos, necesitas poder verlos. Estos dos comandos son los más básicos para recuperar información de una colección.</p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label">07 — Consulta · Diferencia entre find y findOne</div>
+  <div class="concept-title">find() vs findOne():<br>¿cuál usar?</div>
+  <div class="concept-body">
+    <p><code>find()</code> devuelve <strong>todos los documentos</strong> que existan en la colección. Si tienes 8 documentos, los devuelve todos. Es el equivalente de <code>SELECT * FROM tabla</code> en SQL.</p>
+    <p><code>findOne()</code> devuelve <strong>solo el primer documento</strong> que encuentre, sin importar cuántos haya. Es útil para verificar rápidamente la estructura de los documentos sin traer toda la colección.</p>
+    <ul>
+      <li>Ambos comandos reciben un <strong>filtro</strong> como argumento. Sin filtro (o con <code>{}</code>), no aplican ninguna condición.</li>
+      <li>En las próximas sesiones aprenderemos a agregar filtros para buscar documentos específicos.</li>
+      <li>Por ahora los usamos sin filtro para ver todo lo que guardamos.</li>
+    </ul>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>¿Qué es un cursor?</strong>
+        <p><code>find()</code> no devuelve los documentos directamente sino un <strong>cursor</strong>: un puntero que apunta al resultado. Studio3T lo recorre automáticamente y te muestra los documentos. En Python, deberás iterar sobre ese cursor con un <code>for</code>. Lo veremos más adelante en la unidad.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-code">
+  <span class="slide-badge badge-comando">Comando</span>
+  <div class="code-label-top">07 — Consulta · find() y findOne()</div>
+  <div class="code-title">Comandos: <span>find()</span> y findOne()</div>
+  <div class="code-box">
+    <div class="code-box-header">
+      <span class="code-box-lang">IntelliShell — Studio3T</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+    </div>
+    <pre><span class="cmt">// Devuelve TODOS los documentos de la colección ventas</span>
+<span class="kw">db</span>.<span class="fn">ventas</span>.<span class="fn">find</span>({})
+
+<span class="cmt">// Devuelve solo el PRIMER documento que encuentre</span>
+<span class="kw">db</span>.<span class="fn">ventas</span>.<span class="fn">findOne</span>({})</pre>
+  </div>
+  <div class="code-explain">
+    <p>El argumento <code>{}</code> entre los paréntesis es el filtro vacío: le dice a MongoDB "tráeme documentos sin ninguna condición". Es como decir "dame todo".</p>
+    <p>Para ejecutar <strong>solo una de las dos líneas</strong>, selecciona esa línea antes de presionar <strong>Ctrl + Enter</strong>. De lo contrario, Studio3T ejecutará ambas.</p>
+  </div>
+</div>
+
+<div class="slide slide-result">
+  <span class="slide-badge badge-resultado">Resultado</span>
+  <div class="result-label-top">07 — Consulta · Resultado de find()</div>
+  <div class="result-title">Qué devuelve <span>find({})</span></div>
+  <div class="result-box">
+    <div class="result-box-header">Resultado en IntelliShell (primeros 2 documentos de 8)</div>
+    <pre>{
+  <span style="color:#9CDCFE;">_id</span>: <span style="color:#C586C0;">ObjectId('6831f4a2e3c89b4d1f20aa01')</span>,
+  IdVenta: 1,
+  CodigoPedido: 'PED-2026-00001',
+  FechaHoraVenta: <span style="color:#C586C0;">ISODate('2026-01-05T16:10:00.000Z')</span>,
+  Restaurante: 'Liguria Lastarria',
+  ...
+},
+{
+  <span style="color:#9CDCFE;">_id</span>: <span style="color:#C586C0;">ObjectId('6831f4a2e3c89b4d1f20aa02')</span>,
+  IdVenta: 2,
+  CodigoPedido: 'PED-2026-00002',
+  ...
+},
+<span style="color:#6A9955;font-style:italic">// ... 6 documentos más</span></pre>
+  </div>
+  <div class="result-explain">
+    <p>Observa que el campo <code>_id</code> aparece primero en cada documento, aunque tú no lo escribiste al insertar. MongoDB lo agrega automáticamente.</p>
+    <p>En Studio3T también puedes ver los resultados haciendo doble clic sobre la colección <strong>ventas</strong> en el panel izquierdo. Aparecerán en Table View, que muestra los documentos como una tabla.</p>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 08 — countDocuments()
+     ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-comando">08 — Verificación</span>
+  <div class="sep-num">Bloque 08</div>
+  <div class="sep-title"><span>countDocuments()</span></div>
+  <p class="sep-desc">Después de cualquier operación, lo primero que debes preguntarte es: ¿quedaron los documentos que esperaba? Este comando responde esa pregunta en una línea.</p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label">08 — Verificación · Por qué contar siempre</div>
+  <div class="concept-title">¿Por qué usar<br><span style="color:var(--blue)">countDocuments()</span>?</div>
+  <div class="concept-body">
+    <p><code>countDocuments()</code> devuelve el <strong>número de documentos</strong> que hay en una colección. No muestra los documentos, solo cuenta cuántos existen.</p>
+    <p>Este comando es tu herramienta principal de verificación. Después de un <code>insertMany</code> con 8 documentos, lo primero que debes hacer es ejecutar <code>countDocuments({})</code> y confirmar que el resultado es 8. Si el número es distinto, algo salió mal.</p>
+    <div class="callout callout-important">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>Instala este hábito desde hoy</strong>
+        <p>En bases de datos relacionales, los errores suelen ser visibles (la query falla con un error). En MongoDB, es posible insertar documentos con estructura incorrecta sin que aparezca ningún error. <code>countDocuments()</code> es tu primera línea de defensa.</p>
+      </div>
+    </div>
+    <p>El argumento <code>{}</code> significa "sin filtro": cuenta <strong>todos</strong> los documentos de la colección. En sesiones futuras aprenderás a pasarle un filtro para contar solo los que cumplen una condición específica.</p>
+  </div>
+</div>
+
+<div class="slide slide-code">
+  <span class="slide-badge badge-comando">Comando</span>
+  <div class="code-label-top">08 — Verificación · countDocuments()</div>
+  <div class="code-title">Comando: <span>countDocuments()</span></div>
+  <div class="code-box">
+    <div class="code-box-header">
+      <span class="code-box-lang">IntelliShell — Studio3T</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+    </div>
+    <pre><span class="cmt">// Cuenta todos los documentos de la colección</span>
+<span class="kw">db</span>.<span class="fn">ventas</span>.<span class="fn">countDocuments</span>({})
+
+<span class="cmt">// Adelanto: también puedes contar con filtro (lo veremos la próxima sesión)</span>
+<span class="cmt">// db.ventas.countDocuments({ "Restaurante": "El Hoyo" })</span></pre>
+  </div>
+  <div class="code-explain">
+    <p>Ejecuta este comando inmediatamente después de haber corrido el <code>insertMany</code>. El resultado debe ser <strong>8</strong>.</p>
+  </div>
+</div>
+
+<div class="slide slide-result">
+  <span class="slide-badge badge-resultado">Resultado</span>
+  <div class="result-label-top">08 — Verificación · Resultado de countDocuments()</div>
+  <div class="result-title">Qué devuelve <span>countDocuments({})</span></div>
+  <div class="result-box">
+    <div class="result-box-header">Resultado en IntelliShell</div>
+    <pre>8</pre>
+  </div>
+  <div class="result-explain">
+    <p>Un número simple. En este caso <code>8</code>, que confirma que los ocho documentos del dataset se insertaron correctamente.</p>
+    <p>Si el resultado fuera <code>9</code>, significaría que el documento que insertaste con <code>insertOne</code> al principio de la sesión sigue ahí y se duplicó. En ese caso, ejecuta <code>db.ventas.deleteMany({})</code> y vuelve a correr el <code>insertMany</code>.</p>
+    <div class="callout on-dark callout-tip">
+      <span class="callout-icon">✓</span>
+      <div class="callout-content">
+        <strong>Patrón que usarás toda la unidad</strong>
+        <p>insert → <code>countDocuments({})</code> → verificar número → continuar. Si el número no es el esperado, detente y revisa antes de seguir.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 09 — CIERRE
+     ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num">Bloque 09</div>
+  <div class="sep-title">Resumen de<br>la <span>sesión</span></div>
+  <p class="sep-desc">Todo lo que vimos hoy en un solo lugar. Guarda esta slide como referencia para la próxima sesión.</p>
+  <div class="resumen-grid">
+    <div class="resumen-item">
+      <div class="resumen-cmd">use &lt;nombre_bd&gt;</div>
+      <div class="resumen-desc">Selecciona la base de datos activa</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">db.createCollection("nombre")</div>
+      <div class="resumen-desc">Crea una colección vacía</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">db.col.insertOne({ ... })</div>
+      <div class="resumen-desc">Inserta un documento</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">db.col.insertMany([ ... ])</div>
+      <div class="resumen-desc">Inserta múltiples documentos</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">db.col.find({})</div>
+      <div class="resumen-desc">Devuelve todos los documentos</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">db.col.findOne({})</div>
+      <div class="resumen-desc">Devuelve el primer documento</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">db.col.countDocuments({})</div>
+      <div class="resumen-desc">Cuenta todos los documentos</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">db.col.deleteMany({})</div>
+      <div class="resumen-desc">Elimina todos los documentos</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ---- Auto-add .anim a elementos dentro de cada slide ---- */
+  const animSelectors = [
+    '.sep-num', '.sep-title', '.sep-desc', '.index-grid',
+    '.concept-label', '.concept-title', '.concept-body',
+    '.code-label-top', '.code-title', '.code-box', '.code-explain',
+    '.result-label-top', '.result-title', '.result-box', '.result-explain',
+    '.callout', '.tipos-table', '.resumen-grid'
+  ];
+
+  document.querySelectorAll('.slide').forEach(slide => {
+    animSelectors.forEach((sel, si) => {
+      slide.querySelectorAll(sel).forEach((el, ei) => {
+        el.classList.add('anim');
+        el.style.transitionDelay = (si * 80 + ei * 60) + 'ms';
+      });
+    });
+  });
+
+  /* ---- Progress bar + contador ---- */
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  /* ---- IntersectionObserver ---- */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+
+  /* ---- Primera slide visible de entrada ---- */
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  /* ---- Navegación por teclado ---- */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+
+  /* ---- Botón copiar ---- */
+  function copyCode(btn) {
+    const pre = btn.closest('.code-box').querySelector('pre');
+    const text = pre.innerText || pre.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '¡Copiado!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copiar';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>
