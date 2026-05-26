@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistemas Operativos — Clase 02 VLSM — Variable Length Subnet Masking</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ======================== TOKENS & RESET ======================== */
+:root {
+  --blue:   #E31E24;
+  --red:    #E31E24;
+  --dark:   #1A1A1A;
+  --mid:    #2A2A2A;
+  --border: #E8E8E8;
+  --text:   #333;
+  --muted:  #666;
+  --light:  #F7F7F7;
+  --ease:   cubic-bezier(0.16,1,0.3,1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Barlow', sans-serif;
+  color: var(--text); background: white;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+}
+
+/* ======================== PROGRESS BAR ======================== */
+#progress {
+  position: fixed; top: 0; left: 0;
+  height: 3px; background: var(--blue);
+  width: 0%; z-index: 1000;
+  transition: width 0.35s var(--ease);
+}
+
+/* ======================== HEADER ======================== */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: white; border-bottom: 2px solid var(--border);
+  padding: 12px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.site-header h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px; font-weight: 900;
+  text-transform: uppercase; color: var(--dark);
+  letter-spacing: -0.01em;
+}
+.site-header h1 span { color: var(--blue); }
+.header-logo { height: 26px; opacity: 0.8; }
+#counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--muted);
+}
+
+/* ======================== LAMINA BASE + ANIMATION ======================== */
+.lamina {
+  min-height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  position: relative;
+}
+.anim {
+  opacity: 0; transform: translateY(22px);
+  transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
+}
+.lamina.visible .anim                 { opacity: 1; transform: none; }
+.lamina.visible .anim:nth-child(1)    { transition-delay:   0ms; }
+.lamina.visible .anim:nth-child(2)    { transition-delay: 100ms; }
+.lamina.visible .anim:nth-child(3)    { transition-delay: 200ms; }
+.lamina.visible .anim:nth-child(4)    { transition-delay: 320ms; }
+.lamina.visible .anim:nth-child(5)    { transition-delay: 440ms; }
+.lamina.visible .anim:nth-child(6)    { transition-delay: 540ms; }
+
+/* ======================== SLIDE-COVER ======================== */
+.slide-cover {
+  background: var(--dark);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 60px;
+  border-bottom: 5px solid var(--blue);
+}
+.cover-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(255,255,255,0.3);
+  margin-bottom: 20px;
+}
+.slide-cover h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 86px; font-weight: 900; text-transform: uppercase;
+  color: white; line-height: 0.9; letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+.slide-cover h2 span { color: var(--blue); }
+.cover-sub {
+  font-size: 18px; color: rgba(255,255,255,0.4);
+  letter-spacing: 0.1em; font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; text-transform: uppercase;
+}
+.cover-logo { height: 38px; opacity: 0.7; margin-top: 52px; filter: brightness(2) saturate(1.2); }
+
+/* ======================== SLIDE-SECTION ======================== */
+.slide-section {
+  background: linear-gradient(135deg, var(--dark) 0%, var(--mid) 100%);
+  display: flex; flex-direction: column;
+  align-items: flex-start; justify-content: center;
+  padding: 80px 72px;
+  border-bottom: 5px solid var(--blue);
+}
+.sec-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(255,255,255,0.28);
+  margin-bottom: 14px;
+}
+.slide-section h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 70px; font-weight: 900; text-transform: uppercase;
+  color: white; line-height: 0.92; letter-spacing: -0.01em;
+  margin-bottom: 20px;
+}
+.slide-section h2 span { color: var(--blue); }
+.sec-desc {
+  font-size: 17px; color: rgba(255,255,255,0.4);
+  max-width: 540px; line-height: 1.65;
+}
+.section-logo { height: 38px; opacity: 0.7; margin-top: 48px; filter: brightness(2) saturate(1.2); }
+
+/* ======================== SLIDE-SPLIT ======================== */
+.slide-split {
+  display: grid; grid-template-columns: 40% 60%;
+  align-items: stretch; border-bottom: 3px solid var(--border);
+}
+.slide-split.inv { grid-template-columns: 60% 40%; }
+.slide-split.inv .content-pane { order: 2; }
+.slide-split.inv .visual-pane  { order: 1; }
+
+.content-pane {
+  padding: 52px 44px;
+  display: flex; flex-direction: column; justify-content: center;
+  background: white;
+}
+.visual-pane {
+  background: var(--light);
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px;
+}
+
+/* ======================== SLIDE-FORMULA ======================== */
+.slide-formula {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 60px 80px; background: white;
+  border-bottom: 3px solid var(--border);
+  text-align: center;
+}
+
+/* ======================== SLIDE-CONSOLE ======================== */
+.slide-console {
+  display: flex; flex-direction: column;
+  padding: 44px 56px; justify-content: center;
+  border-bottom: 3px solid var(--border);
+  background: white;
+}
+.console-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 28px; margin-top: 20px;
+}
+
+/* ======================== SLIDE-SOLUTION ======================== */
+.slide-solution {
+  display: flex; flex-direction: column;
+  padding: 44px 56px; justify-content: center;
+  border-bottom: 3px solid var(--border);
+  background: white;
+}
+
+/* ======================== CONTENT COMPONENTS ======================== */
+.slide-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--blue); margin-bottom: 6px;
+}
+.slide-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 30px; font-weight: 900; text-transform: uppercase;
+  color: var(--dark); letter-spacing: -0.01em; line-height: 1.15;
+  margin-bottom: 18px;
+}
+.slide-title span { color: var(--blue); }
+.slide-body { font-size: 18px; line-height: 1.75; color: #444; }
+.slide-body + .slide-body { margin-top: 10px; }
+.slide-body strong { color: var(--dark); font-weight: 700; }
+.mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: #E8E8E8; padding: 1px 5px; border-radius: 3px; }
+
+.bullet-list {
+  list-style: none; margin-top: 12px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.bullet-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 15.5px; line-height: 1.65; color: #444;
+}
+.bullet-list li::before {
+  content: '\25B8'; color: var(--blue);
+  font-size: 11px; flex-shrink: 0; margin-top: 4px;
+}
+.bullet-list li strong { color: var(--dark); }
+
+.info-box {
+  margin-top: 14px; background: #FFF3F3;
+  border-left: 4px solid var(--blue); border-radius: 4px;
+  padding: 11px 15px; font-size: 14px; line-height: 1.65; color: #7f0000;
+}
+.info-box.warn   { background: #FFFBEA; border-color: #F59E0B; color: #78350F; }
+.info-box.danger { background: #FFF3F3; border-color: var(--red); color: #666; }
+.info-box strong { font-weight: 700; }
+
+.info-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.info-table th {
+  background: var(--dark); color: white; padding: 9px 13px;
+  text-align: left; font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.info-table td {
+  padding: 9px 13px; border-bottom: 1px solid var(--border);
+  color: #444; vertical-align: top;
+}
+.info-table tr:last-child td { border-bottom: none; }
+.info-table tr:nth-child(even) td { background: #FAFAFA; }
+
+/* ======================== FORMULA COMPONENTS ======================== */
+.step-badge {
+  display: inline-flex; align-items: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: white;
+  background: var(--blue); border-radius: 4px;
+  padding: 5px 16px; margin-bottom: 20px;
+}
+.formula-heading {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px; font-weight: 900; text-transform: uppercase;
+  color: var(--dark); margin-bottom: 24px; max-width: 700px;
+}
+.formula-heading span { color: var(--blue); }
+.formula-network {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 50px; font-weight: 900;
+  color: var(--dark); letter-spacing: 0.02em; margin-bottom: 10px;
+}
+.formula-network .slash { color: var(--blue); }
+.formula-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 52px; font-weight: 900; color: var(--dark);
+  background: var(--light); border-radius: 10px;
+  padding: 28px 56px; margin: 16px 0;
+  border: 3px solid var(--border);
+}
+.formula-display .accent { color: var(--blue); }
+.formula-display .result { color: var(--blue); font-size: 68px; }
+.formula-note { font-size: 17px; color: var(--muted); margin-top: 10px; }
+.formula-note strong { color: var(--dark); }
+
+.bit-bar {
+  display: flex; border-radius: 8px; overflow: hidden;
+  border: 3px solid var(--dark); width: 100%; max-width: 620px;
+  margin: 20px auto; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+.net-part {
+  background: var(--blue); color: white; flex: 27;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  text-transform: uppercase; padding: 20px 24px; text-align: center;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.host-part {
+  background: var(--dark); color: white; flex: 5;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  text-transform: uppercase; padding: 20px 16px; text-align: center;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.part-label { font-size: 11px; opacity: 0.65; font-weight: 700; letter-spacing: 0.1em; }
+.part-num   { font-size: 38px; font-weight: 900; line-height: 1; }
+
+/* ======================== RANGE BOX ======================== */
+.range-box {
+  background: var(--dark); border-radius: 12px;
+  padding: 28px; width: 100%; max-width: 440px;
+  display: flex; flex-direction: column; gap: 10px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.25);
+}
+.range-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 16px; border-radius: 6px; background: var(--mid);
+}
+.range-label {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 12px;
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.4);
+}
+.range-value {
+  font-family: 'JetBrains Mono', monospace; font-size: 14px;
+  font-weight: 700; color: #FF8A80;
+}
+.range-row.is-net   .range-value { color: white; }
+.range-row.is-valid .range-value { color: #4ADE80; }
+.range-row.is-bc    .range-value { color: #F87171; }
+
+/* ======================== CONSOLE ======================== */
+.console {
+  background: #0d0d0d; border-radius: 8px;
+  overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+.console-header {
+  background: #1a1a1a; border-bottom: 1px solid #2a2a2a;
+  padding: 8px 14px; display: flex; gap: 6px; align-items: center;
+}
+.c-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.cd-r { background: #ff5f56; } .cd-y { background: #ffbd2e; } .cd-g { background: #27c93f; }
+.c-label { color: #555; font-family: 'JetBrains Mono', monospace; font-size: 10px; margin-left: 6px; flex: 1; }
+.copy-btn {
+  background: #333; border: none; border-radius: 3px;
+  padding: 3px 9px; font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; color: #777; cursor: pointer; transition: background 0.2s;
+}
+.copy-btn:hover { background: #444; color: #bbb; }
+.console-body {
+  padding: 14px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; line-height: 1.8; color: #e0e0e0;
+}
+.cline {
+  display: block;
+  opacity: 0; transform: translateX(-6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.cline.show { opacity: 1; transform: none; }
+.c-comment { color: #6A9955; } .c-cmd { color: #FF8A80; }
+.c-hi { color: #FFD700; font-weight: 700; } .c-str { color: #4ADE80; }
+.c-num { color: #F87171; } .c-key { color: #C586C0; }
+
+/* ======================== SOLUTION TABLE ======================== */
+.sol-table { width: 100%; border-collapse: collapse; font-size: 16px; margin-top: 14px; }
+.sol-table th {
+  background: var(--dark); color: white; padding: 10px 14px;
+  text-align: left; font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.sol-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: #444; vertical-align: top; }
+.sol-table tr:nth-child(even) td { background: #FAFAFA; }
+.sol-table tr:last-child td { border-bottom: none; }
+.ans { color: var(--blue); font-weight: 700; font-family: 'JetBrains Mono', monospace; font-size: 15px; }
+.q   { color: var(--muted); font-size: 15px; }
+
+/* ======================== FLSM VISUAL ======================== */
+.flsm-visual { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 14px; }
+.flsm-row { display: flex; align-items: center; gap: 12px; }
+.flsm-dept {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 12px;
+  font-weight: 700; text-transform: uppercase; color: var(--muted);
+  width: 76px; flex-shrink: 0; text-align: right;
+}
+.flsm-block {
+  flex: 1; background: var(--blue); border-radius: 6px;
+  padding: 13px 18px; display: flex; justify-content: space-between; align-items: center;
+  box-shadow: 0 3px 10px rgba(0,99,177,0.2);
+}
+.fb-net  { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: white; font-weight: 700; }
+.fb-mask { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; }
+
+/* ======================== VLSM VISUAL ======================== */
+.vlsm-visual { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 10px; }
+.vlsm-row { display: flex; align-items: center; gap: 10px; }
+.vlsm-dept {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 11px;
+  font-weight: 700; text-transform: uppercase; color: var(--muted);
+  width: 76px; flex-shrink: 0; text-align: right;
+}
+.vlsm-track { flex: 1; background: #EBEBEB; border-radius: 4px; height: 38px; overflow: hidden; }
+.vlsm-fill {
+  height: 100%; border-radius: 4px; display: flex; align-items: center;
+  padding: 0 10px; font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px; color: white; font-weight: 700; white-space: nowrap;
+}
+.vf-1 { background: #E31E24; } .vf-2 { background: #C8102E; }
+.vf-3 { background: #A80D26; } .vf-4 { background: #8C0A20; }
+
+/* ======================== SECTION NUM BADGE ======================== */
+.slide-num-badge {
+  background: var(--blue); color: white; width: 44px; height: 44px;
+  border-radius: 4px; display: flex; align-items: center; justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 900; flex-shrink: 0;
+}
+.slide-num-badge.dark { background: var(--dark); }
+.num-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+
+/* ======================== EXERCISE CARDS ======================== */
+.slide-exercise {
+  display: flex; flex-direction: column;
+  padding: 44px 56px; justify-content: center;
+  border-bottom: 3px solid var(--border);
+  background: white;
+}
+.exercise-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 32px; margin-top: 24px;
+}
+.ex-card {
+  background: var(--light); border-radius: 10px;
+  padding: 28px 32px; border: 2px solid var(--border);
+  display: flex; flex-direction: column; gap: 14px;
+}
+.ex-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.14em; color: var(--blue);
+}
+.ex-net {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px; font-weight: 700; color: var(--dark);
+  background: white; border: 1px solid var(--border);
+  border-radius: 4px; padding: 7px 12px; display: inline-block;
+}
+.ex-body { font-size: 18px; line-height: 1.75; color: #444; }
+.ex-body strong { color: var(--dark); }
+.ex-sub { list-style: none; display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
+.ex-sub li { font-size: 17px; color: #555; line-height: 1.6; padding-left: 16px; position: relative; }
+.ex-sub li::before { content: '\25B8'; color: var(--blue); position: absolute; left: 0; font-size: 11px; top: 3px; }
+
+/* ======================== SOLUTION DEVELOPMENT ======================== */
+.sol-dev {
+  display: flex; flex-direction: column;
+  gap: 7px; margin-top: 12px; width: 100%; max-width: 760px;
+}
+.sol-step {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 14px 20px; background: var(--light);
+  border-radius: 6px; border-left: 3px solid var(--border);
+}
+.sol-step.is-result { background: #FFF3F3; border-left-color: var(--blue); }
+.step-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--muted);
+  min-width: 80px; padding-top: 2px; flex-shrink: 0;
+}
+.sol-step.is-result .step-num { color: var(--blue); }
+.step-calc { font-family: 'JetBrains Mono', monospace; font-size: 15.5px; color: var(--dark); line-height: 1.65; }
+.step-calc .hi { color: var(--blue); font-weight: 700; }
+.step-calc .res { color: var(--blue); font-size: 15px; font-weight: 900; }
+.sol-q { font-size: 18px; color: var(--muted); margin-bottom: 8px; line-height: 1.6; font-style: italic; }
+.btn-answer {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: auto; padding: 9px 18px; background: var(--blue); color: white;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em; border-radius: 5px;
+  text-decoration: none; align-self: flex-start; transition: background 0.15s;
+}
+.btn-answer:hover { background: #a01015; }
+.btn-question {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 16px; padding: 9px 18px; background: transparent; color: var(--blue);
+  font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em; border-radius: 5px;
+  text-decoration: none; align-self: flex-start; transition: background 0.15s, color 0.15s;
+  border: 2px solid var(--blue);
+}
+.btn-question:hover { background: var(--blue); color: white; }
+
+/* ======================== RESPONSIVE ======================== */
+@media (max-width: 1024px) {
+  .slide-split      { grid-template-columns: 1fr; }
+  .console-grid     { grid-template-columns: 1fr; }
+  .slide-section h2 { font-size: 48px; }
+  .slide-cover h2   { font-size: 56px; }
+  .formula-display  { font-size: 36px; padding: 22px 32px; }
+  .formula-network  { font-size: 34px; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="progress"></div>
+
+<header class="site-header">
+  <h1>Sistemas <span>Operativos</span> — VLSM</h1>
+  <span id="counter">1 / 1</span>
+  <img src="../logo inacap.png" class="header-logo" alt="INACAP">
+</header>
+
+<!-- ==================== LAM 1 — PORTADA ==================== -->
+<div class="lamina slide-cover" id="lam-1">
+  <p class="anim cover-eyebrow">Otoño 2026 — Unidad 2</p>
+  <h2 class="anim">Sistemas<br><span>Operativos</span></h2>
+  <p class="anim cover-sub">VLSM &mdash; Variable Length Subnet Masking</p>
+  <img src="../logo inacap.png" class="cover-logo anim" alt="INACAP">
+</div>
+
+<!-- ==================== LAM 30 — SECCIÓN VLSM ==================== -->
+<div class="lamina slide-section" id="lam-30">
+  <p class="anim sec-eyebrow">Unidad 2</p>
+  <h2 class="anim">Variable Length<br>Subnet<br><span>Mask</span></h2>
+  <p class="anim sec-desc">VLSM — Máscara de Subred de Longitud Variable</p>
+  <img src="../logo inacap.png" class="section-logo anim" alt="INACAP">
+</div>
+
+<!-- ==================== LAM 31 — VLSM Definición ==================== -->
+<div class="lamina slide-split" id="lam-31">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">VLSM — Definición</p>
+      <h3 class="slide-title">¿Qué es <span>VLSM</span>?</h3>
+    </div>
+    <p class="slide-body anim">
+      <strong>VLSM</strong> es una técnica de subneteo que permite crear subredes
+      de <strong>diferente tamaño</strong>, usando máscaras variables según la
+      cantidad real de dispositivos que necesita cada red.
+    </p>
+    <p class="slide-body anim">
+      A diferencia de <strong>FLSM</strong>, donde todas las subredes son iguales,
+      VLSM <strong>se adapta a las necesidades específicas</strong> de cada área,
+      optimizando el uso de IPs y evitando el desperdicio.
+    </p>
+    <div class="info-box anim">
+      <strong>Principio:</strong> asignar a cada subred exactamente lo que necesita — ni más, ni menos.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="width:100%;max-width:380px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:4px;text-align:center;">FLSM vs VLSM</div>
+      <div style="background:var(--dark);border-radius:8px;overflow:hidden;">
+        <div style="background:#2A2A2A;padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.4);">FLSM — bloques iguales</div>
+        <div style="padding:10px 14px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;">
+          <div style="background:var(--blue);border-radius:3px;height:32px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:white;">/26</div>
+          <div style="background:var(--blue);border-radius:3px;height:32px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:white;">/26</div>
+          <div style="background:var(--blue);border-radius:3px;height:32px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:white;">/26</div>
+          <div style="background:var(--blue);border-radius:3px;height:32px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:white;">/26</div>
+        </div>
+      </div>
+      <div style="background:var(--dark);border-radius:8px;overflow:hidden;">
+        <div style="background:#2A2A2A;padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.4);">VLSM — bloques variables</div>
+        <div style="padding:10px 14px;display:flex;gap:4px;align-items:center;">
+          <div style="background:var(--blue);border-radius:3px;height:32px;flex:4;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:white;">/26</div>
+          <div style="background:#C8102E;border-radius:3px;height:32px;flex:2;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:white;">/27</div>
+          <div style="background:#A80D26;border-radius:3px;height:32px;flex:1;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:white;">/28</div>
+          <div style="background:#8C0A20;border-radius:3px;height:32px;flex:0.4;min-width:28px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:8px;color:white;">/30</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 32 — VLSM Ejemplo ==================== -->
+<div class="lamina slide-split inv" id="lam-32">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">VLSM — Ejemplo</p>
+      <h3 class="slide-title">4 departamentos, <span>distintas necesidades</span></h3>
+    </div>
+    <p class="slide-body anim">
+      Cada área puede recibir una subred <strong>ajustada a su tamaño</strong>,
+      sin usar más direcciones de las necesarias.
+    </p>
+    <div class="info-box anim">
+      <strong>Regla:</strong> ordenar de mayor a menor necesidad antes de asignar bloques.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <table class="info-table" style="max-width:420px;width:100%;">
+      <thead><tr><th>Área</th><th>Dispositivos</th><th>Máscara mínima</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Finanzas</strong></td><td>50</td><td><span class="ans">/26</span> <span style="color:var(--muted);font-size:12px;">(62 válidos)</span></td></tr>
+        <tr><td><strong>TI</strong></td><td>20</td><td><span class="ans">/27</span> <span style="color:var(--muted);font-size:12px;">(30 válidos)</span></td></tr>
+        <tr><td><strong>Gerencia</strong></td><td>10</td><td><span class="ans">/28</span> <span style="color:var(--muted);font-size:12px;">(14 válidos)</span></td></tr>
+        <tr><td><strong>Seguridad</strong></td><td>2</td><td><span class="ans">/30</span> <span style="color:var(--muted);font-size:12px;">(2 válidos)</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== LAM 33 — VLSM Paso 1 ==================== -->
+<div class="lamina slide-split" id="lam-33">
+  <div class="content-pane">
+    <div class="anim">
+      <div class="step-badge" style="margin-bottom:14px;">Paso 1 de 3</div>
+      <h3 class="slide-title">Red base e <span>identificación</span></h3>
+    </div>
+    <ul class="bullet-list anim">
+      <li>Red base: <span class="mono">192.168.1.0/24</span> — 256 direcciones.</li>
+      <li>Identificar cuántos dispositivos necesita cada subred.</li>
+      <li><strong>Ordenar de mayor a menor</strong> para asignar bloques sin solapar.</li>
+    </ul>
+    <div class="info-box anim">
+      Siempre empezar por la subred más grande. Asignar en orden descendente de tamaño.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="width:100%;max-width:380px;background:var(--dark);border-radius:12px;padding:24px;box-shadow:0 12px 36px rgba(0,0,0,0.25);">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.3);margin-bottom:14px;text-align:center;">Orden de asignación</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="background:var(--blue);border-radius:6px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,0.7);">1° Finanzas</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:14px;color:white;font-weight:700;">50 disp.</span>
+        </div>
+        <div style="background:#C8102E;border-radius:6px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,0.7);">2° TI</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:14px;color:white;font-weight:700;">20 disp.</span>
+        </div>
+        <div style="background:#A80D26;border-radius:6px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,0.7);">3° Gerencia</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:14px;color:white;font-weight:700;">10 disp.</span>
+        </div>
+        <div style="background:#8C0A20;border-radius:6px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,0.7);">4° Seguridad</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:14px;color:white;font-weight:700;">2 disp.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 34 — VLSM Paso 2a Finanzas ==================== -->
+<div class="lamina slide-formula" id="lam-34">
+  <div class="step-badge anim">Paso 2 — Finanzas (50 disp.)</div>
+  <div class="formula-heading anim">Calcular máscara <span>mínima necesaria</span></div>
+  <div class="formula-display anim">
+    2<sup style="font-size:0.5em;">6</sup> &minus; 2
+    &nbsp;<span class="accent">=</span>&nbsp;
+    <span class="result">62</span>
+    <span style="font-size:0.45em;color:var(--muted);"> válidos</span>
+  </div>
+  <p class="formula-note anim"><strong>n = 6</strong> bits de host &nbsp;·&nbsp; 32 − 6 = <strong>/26</strong></p>
+  <div class="info-box anim" style="max-width:520px;margin-top:20px;">
+    Finanzas necesita 50 → la subred mínima que cubre es <span class="mono">/26</span> con <strong>62 hosts válidos</strong>.
+    Se asigna <span class="mono">192.168.1.0/26</span>.
+  </div>
+</div>
+
+<!-- ==================== LAM 35 — VLSM Paso 2b TI ==================== -->
+<div class="lamina slide-formula" id="lam-35">
+  <div class="step-badge anim">Paso 2 — TI (20 disp.)</div>
+  <div class="formula-heading anim">Calcular máscara <span>mínima necesaria</span></div>
+  <div class="formula-display anim">
+    2<sup style="font-size:0.5em;">5</sup> &minus; 2
+    &nbsp;<span class="accent">=</span>&nbsp;
+    <span class="result">30</span>
+    <span style="font-size:0.45em;color:var(--muted);"> válidos</span>
+  </div>
+  <p class="formula-note anim"><strong>n = 5</strong> bits de host &nbsp;·&nbsp; 32 − 5 = <strong>/27</strong></p>
+  <div class="info-box anim" style="max-width:520px;margin-top:20px;">
+    TI necesita 20 → la subred mínima que cubre es <span class="mono">/27</span> con <strong>30 hosts válidos</strong>.
+    Se asigna <span class="mono">192.168.1.64/27</span> (continúa donde terminó Finanzas).
+  </div>
+</div>
+
+<!-- ==================== LAM 36 — VLSM Paso 2c Gerencia ==================== -->
+<div class="lamina slide-formula" id="lam-36">
+  <div class="step-badge anim">Paso 2 — Gerencia (10 disp.)</div>
+  <div class="formula-heading anim">Calcular máscara <span>mínima necesaria</span></div>
+  <div class="formula-display anim">
+    2<sup style="font-size:0.5em;">4</sup> &minus; 2
+    &nbsp;<span class="accent">=</span>&nbsp;
+    <span class="result">14</span>
+    <span style="font-size:0.45em;color:var(--muted);"> válidos</span>
+  </div>
+  <p class="formula-note anim"><strong>n = 4</strong> bits de host &nbsp;·&nbsp; 32 − 4 = <strong>/28</strong></p>
+  <div class="info-box anim" style="max-width:520px;margin-top:20px;">
+    Gerencia necesita 10 → la subred mínima es <span class="mono">/28</span> con <strong>14 hosts válidos</strong>.
+    Se asigna <span class="mono">192.168.1.96/28</span> (continúa donde terminó TI en .95).
+  </div>
+</div>
+
+<!-- ==================== LAM 37 — VLSM Paso 2d Seguridad ==================== -->
+<div class="lamina slide-formula" id="lam-37">
+  <div class="step-badge anim">Paso 2 — Seguridad (2 disp.)</div>
+  <div class="formula-heading anim">Calcular máscara <span>mínima necesaria</span></div>
+  <div class="formula-display anim">
+    2<sup style="font-size:0.5em;">2</sup> &minus; 2
+    &nbsp;<span class="accent">=</span>&nbsp;
+    <span class="result">2</span>
+    <span style="font-size:0.45em;color:var(--muted);"> válidos</span>
+  </div>
+  <p class="formula-note anim"><strong>n = 2</strong> bits de host &nbsp;·&nbsp; 32 − 2 = <strong>/30</strong></p>
+  <div class="info-box anim" style="max-width:520px;margin-top:20px;">
+    Seguridad necesita solo 2 → subred mínima <span class="mono">/30</span> con <strong>2 hosts válidos</strong>.
+    Se asigna <span class="mono">192.168.1.112/30</span> (continúa donde terminó Gerencia en .111).
+  </div>
+</div>
+
+<!-- ==================== LAM 38 — VLSM Asignación final ==================== -->
+<div class="lamina slide-split" id="lam-38">
+  <div class="content-pane">
+    <div class="anim">
+      <div class="step-badge" style="margin-bottom:14px;">Paso 3 de 3</div>
+      <h3 class="slide-title">Asignación <span>final de bloques</span></h3>
+    </div>
+    <p class="slide-body anim">
+      Cada subred recibe exactamente lo que necesita.
+      <strong>Sin superposición, sin desperdicio.</strong>
+    </p>
+    <div class="info-box anim">
+      Desde <span class="mono">192.168.1.0/24</span> se usaron solo
+      <strong>116 de 256 direcciones</strong>. Quedan 140 disponibles para crecer.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div class="vlsm-visual">
+      <div class="vlsm-row">
+        <span class="vlsm-dept">Finanzas</span>
+        <div class="vlsm-track">
+          <div class="vlsm-fill vf-1" style="width:25%;">192.168.1.0/26</div>
+        </div>
+      </div>
+      <div class="vlsm-row">
+        <span class="vlsm-dept">TI</span>
+        <div class="vlsm-track">
+          <div class="vlsm-fill vf-2" style="width:12.5%;margin-left:25%;">192.168.1.64/27</div>
+        </div>
+      </div>
+      <div class="vlsm-row">
+        <span class="vlsm-dept">Gerencia</span>
+        <div class="vlsm-track">
+          <div class="vlsm-fill vf-3" style="width:6.25%;margin-left:37.5%;">192.168.1.96/28</div>
+        </div>
+      </div>
+      <div class="vlsm-row">
+        <span class="vlsm-dept">Seguridad</span>
+        <div class="vlsm-track">
+          <div class="vlsm-fill vf-4" style="width:1.56%;min-width:56px;margin-left:43.75%;">.112/30</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);text-align:center;">
+        Cada bloque empieza donde termina el anterior
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 39 — VLSM Ejercicios 1–2 ==================== -->
+<div class="lamina slide-exercise" id="lam-39">
+  <div class="anim">
+    <p class="slide-eyebrow">VLSM — Ejercicios</p>
+    <h3 class="slide-title">Asignación por <span>área</span></h3>
+  </div>
+  <div class="exercise-grid anim">
+    <div class="ex-card">
+      <span class="ex-num">Ejercicio 1</span>
+      <span class="ex-net">192.168.10.0/24</span>
+      <p class="ex-body">Asigna a cada área la máscara mínima necesaria:</p>
+      <ul class="ex-sub">
+        <li>Finanzas — 60 dispositivos</li>
+        <li>Recursos Humanos — 30 dispositivos</li>
+        <li>Gerencia — 10 dispositivos</li>
+        <li>Seguridad — 2 dispositivos</li>
+      </ul>
+      <a href="#lam-44" class="btn-answer">Ir a la respuesta &rarr;</a>
+    </div>
+    <div class="ex-card">
+      <span class="ex-num">Ejercicio 2</span>
+      <span class="ex-net">10.0.0.0/24</span>
+      <p class="ex-body">Calcula máscaras y direcciones de red para cada bloque:</p>
+      <ul class="ex-sub">
+        <li>Servidores — 50 hosts</li>
+        <li>Administración — 25 hosts</li>
+        <li>Almacén — 8 hosts</li>
+        <li>Control acceso — 2 hosts</li>
+      </ul>
+      <a href="#lam-45" class="btn-answer">Ir a la respuesta &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 40 — VLSM Ejercicios 3–4 ==================== -->
+<div class="lamina slide-exercise" id="lam-40">
+  <div class="anim">
+    <p class="slide-eyebrow">VLSM — Ejercicios</p>
+    <h3 class="slide-title">Sucursales y <span>bloques ajustados</span></h3>
+  </div>
+  <div class="exercise-grid anim">
+    <div class="ex-card">
+      <span class="ex-num">Ejercicio 3</span>
+      <span class="ex-net">172.16.0.0/24</span>
+      <p class="ex-body">Crea subredes para cada sucursal:</p>
+      <ul class="ex-sub">
+        <li>Sucursal 1 — 120 dispositivos</li>
+        <li>Sucursal 2 — 60 dispositivos</li>
+        <li>Sucursal 3 — 25 dispositivos</li>
+        <li>Sucursal 4 — 5 dispositivos</li>
+      </ul>
+      <a href="#lam-46" class="btn-answer">Ir a la respuesta &rarr;</a>
+    </div>
+    <div class="ex-card">
+      <span class="ex-num">Ejercicio 4</span>
+      <span class="ex-net">192.168.100.0/25</span>
+      <p class="ex-body">¿Cabe todo en ese bloque? ¿Qué máscaras usarías?</p>
+      <ul class="ex-sub">
+        <li>Call center — 50 puestos</li>
+        <li>Soporte técnico — 20 puestos</li>
+        <li>Dirección — 5 puestos</li>
+      </ul>
+      <a href="#lam-47" class="btn-answer">Ir a la respuesta &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 41 — VLSM Ejercicios 5–6 ==================== -->
+<div class="lamina slide-exercise" id="lam-41">
+  <div class="anim">
+    <p class="slide-eyebrow">VLSM — Ejercicios</p>
+    <h3 class="slide-title">Oficinas y <span>producción</span></h3>
+  </div>
+  <div class="exercise-grid anim">
+    <div class="ex-card">
+      <span class="ex-num">Ejercicio 5</span>
+      <span class="ex-net">192.168.1.0/24</span>
+      <p class="ex-body">Diseña el esquema completo:</p>
+      <ul class="ex-sub">
+        <li>Oficina principal — 100 dispositivos</li>
+        <li>Oficina secundaria — 40 dispositivos</li>
+        <li>Oficina remota — 12 dispositivos</li>
+        <li>Red cámaras IP — 8 dispositivos</li>
+        <li>Enlace punto a punto — 2 dispositivos</li>
+      </ul>
+      <a href="#lam-48" class="btn-answer">Ir a la respuesta &rarr;</a>
+    </div>
+    <div class="ex-card">
+      <span class="ex-num">Ejercicio 6</span>
+      <span class="ex-net">192.168.200.0/24</span>
+      <p class="ex-body">Muestra red y broadcast de cada subred:</p>
+      <ul class="ex-sub">
+        <li>Producción — 80 hosts</li>
+        <li>Ventas — 25 hosts</li>
+        <li>RRHH — 10 hosts</li>
+        <li>Estaciones temporales — 4 hosts</li>
+      </ul>
+      <a href="#lam-49" class="btn-answer">Ir a la respuesta &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 42 — VLSM Ejercicios 7–8 ==================== -->
+<div class="lamina slide-exercise" id="lam-42">
+  <div class="anim">
+    <p class="slide-eyebrow">VLSM — Ejercicios</p>
+    <h3 class="slide-title">Áreas y <span>desarrollo</span></h3>
+  </div>
+  <div class="exercise-grid anim">
+    <div class="ex-card">
+      <span class="ex-num">Ejercicio 7</span>
+      <span class="ex-net">192.168.50.0/24</span>
+      <p class="ex-body">Sin superponer bloques, asigna:</p>
+      <ul class="ex-sub">
+        <li>Área A — 100 hosts</li>
+        <li>Área B — 50 hosts</li>
+        <li>Área C — 10 hosts</li>
+        <li>Área D — 2 hosts</li>
+      </ul>
+      <a href="#lam-50" class="btn-answer">Ir a la respuesta &rarr;</a>
+    </div>
+    <div class="ex-card">
+      <span class="ex-num">Ejercicio 8</span>
+      <span class="ex-net">192.168.10.0/24</span>
+      <p class="ex-body">Planifica con VLSM, muestra el uso eficiente del espacio:</p>
+      <ul class="ex-sub">
+        <li>Desarrollo — 40 hosts</li>
+        <li>QA — 15 hosts</li>
+        <li>Administración — 8 hosts</li>
+        <li>Red de respaldo — 4 hosts</li>
+      </ul>
+      <a href="#lam-51" class="btn-answer">Ir a la respuesta &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 43 — VLSM Ejercicio 9 ==================== -->
+<div class="lamina slide-exercise" id="lam-43">
+  <div class="anim">
+    <p class="slide-eyebrow">VLSM — Ejercicios</p>
+    <h3 class="slide-title">Campus <span>universitario</span></h3>
+  </div>
+  <div class="exercise-grid anim">
+    <div class="ex-card">
+      <span class="ex-num">Ejercicio 9</span>
+      <span class="ex-net">10.1.1.0/24</span>
+      <p class="ex-body">Distribuye subredes para el campus:</p>
+      <ul class="ex-sub">
+        <li>Campus 1 — 60 PCs</li>
+        <li>Campus 2 — 20 PCs</li>
+        <li>Biblioteca — 6 PCs</li>
+        <li>Enlace entre routers — 2 dispositivos</li>
+      </ul>
+      <a href="#lam-52" class="btn-answer">Ir a la respuesta &rarr;</a>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;background:var(--light);border-radius:10px;padding:24px;border:2px solid var(--border);">
+      <div style="text-align:center;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:14px;">Recuerda el proceso</div>
+        <div style="display:flex;flex-direction:column;gap:8px;text-align:left;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dark);">1. Ordenar de mayor a menor</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dark);">2. Calcular mascara minima</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dark);">3. Asignar desde .0 en orden</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dark);">4. Verificar sin superposicion</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 44 — VLSM Soluciones 1 ==================== -->
+<div class="lamina slide-solution" id="lam-44">
+  <div class="anim">
+    <p class="slide-eyebrow">VLSM — Solución · Ejercicio 1</p>
+    <h3 class="slide-title">Áreas de <span>192.168.10.0/24</span></h3>
+  </div>
+  <p class="sol-q anim">Finanzas(60) · RRHH(30) · Gerencia(10) · Seguridad(2) — asignar máscara mínima a cada área</p>
+  <div class="sol-dev anim">
+    <div class="sol-step">
+      <span class="step-num">Ordenar</span>
+      <span class="step-calc">Finanzas <span class="hi">60</span> &gt; RRHH <span class="hi">30</span> &gt; Gerencia <span class="hi">10</span> &gt; Seguridad <span class="hi">2</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Finanzas<br>60 hosts</span>
+      <span class="step-calc">n=6 &rarr; 2^6 = <span class="hi">64</span> &ge; 62 &rarr; máscara <span class="hi">/26</span> &rarr; bloque 64</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 1</span>
+      <span class="step-calc"><span class="res">192.168.10.0/26</span> &rarr; válidas .1–.62 &rarr; BC: <span class="hi">.63</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">RRHH<br>30 hosts</span>
+      <span class="step-calc">n=5 &rarr; 2^5 = <span class="hi">32</span> &ge; 32 &rarr; máscara <span class="hi">/27</span> &rarr; bloque 32</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 2</span>
+      <span class="step-calc"><span class="res">192.168.10.64/27</span> &rarr; válidas .65–.94 &rarr; BC: <span class="hi">.95</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Gerencia<br>10 hosts</span>
+      <span class="step-calc">n=4 &rarr; 2^4 = <span class="hi">16</span> &ge; 12 &rarr; máscara <span class="hi">/28</span> &rarr; bloque 16</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 3</span>
+      <span class="step-calc"><span class="res">192.168.10.96/28</span> &rarr; válidas .97–.110 &rarr; BC: <span class="hi">.111</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Seguridad<br>2 hosts</span>
+      <span class="step-calc">n=2 &rarr; 2^2 = <span class="hi">4</span> &ge; 4 &rarr; máscara <span class="hi">/30</span> &rarr; bloque 4</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 4</span>
+      <span class="step-calc"><span class="res">192.168.10.112/30</span> &rarr; válidas .113–.114 &rarr; BC: <span class="hi">.115</span></span>
+    </div>
+  </div>
+  <a href="#lam-39" class="btn-question">&larr; Ir a la pregunta</a>
+</div>
+
+<!-- ==================== LAM 45 — VLSM Soluciones 2 ==================== -->
+<div class="lamina slide-solution" id="lam-45">
+  <div class="anim">
+    <p class="slide-eyebrow">VLSM — Solución · Ejercicio 2</p>
+    <h3 class="slide-title">Redes de <span>10.0.0.0/24</span></h3>
+  </div>
+  <p class="sol-q anim">Servidores(50) · Administración(25) · Almacén(8) · Control acceso(2) — máscaras y direcciones de red</p>
+  <div class="sol-dev anim">
+    <div class="sol-step">
+      <span class="step-num">Ordenar</span>
+      <span class="step-calc">Servidores <span class="hi">50</span> &gt; Administración <span class="hi">25</span> &gt; Almacén <span class="hi">8</span> &gt; Control acceso <span class="hi">2</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Servidores<br>50 hosts</span>
+      <span class="step-calc">n=6 &rarr; 2^6 = <span class="hi">64</span> &ge; 52 &rarr; máscara <span class="hi">/26</span> &rarr; bloque 64</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 1</span>
+      <span class="step-calc"><span class="res">10.0.0.0/26</span> &rarr; válidas .1–.62 &rarr; BC: <span class="hi">.63</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Administración<br>25 hosts</span>
+      <span class="step-calc">n=5 &rarr; 2^5 = <span class="hi">32</span> &ge; 27 &rarr; máscara <span class="hi">/27</span> &rarr; bloque 32</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 2</span>
+      <span class="step-calc"><span class="res">10.0.0.64/27</span> &rarr; válidas .65–.94 &rarr; BC: <span class="hi">.95</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Almacén<br>8 hosts</span>
+      <span class="step-calc">n=4 &rarr; 2^4 = <span class="hi">16</span> &ge; 10 &rarr; máscara <span class="hi">/28</span> &rarr; bloque 16</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 3</span>
+      <span class="step-calc"><span class="res">10.0.0.96/28</span> &rarr; válidas .97–.110 &rarr; BC: <span class="hi">.111</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Control acc.<br>2 hosts</span>
+      <span class="step-calc">n=2 &rarr; 2^2 = <span class="hi">4</span> &ge; 4 &rarr; máscara <span class="hi">/30</span> &rarr; bloque 4</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 4</span>
+      <span class="step-calc"><span class="res">10.0.0.112/30</span> &rarr; válidas .113–.114 &rarr; BC: <span class="hi">.115</span></span>
+    </div>
+  </div>
+  <a href="#lam-39" class="btn-question">&larr; Ir a la pregunta</a>
+</div>
+
+<!-- ==================== LAM 46 — VLSM Soluciones 3 ==================== -->
+<div class="lamina slide-solution" id="lam-46">
+  <div class="anim">
+    <p class="slide-eyebrow">VLSM — Solución · Ejercicio 3</p>
+    <h3 class="slide-title">Sucursales de <span>172.16.0.0/24</span></h3>
+  </div>
+  <p class="sol-q anim">Sucursal 1(120) · Sucursal 2(60) · Sucursal 3(25) · Sucursal 4(5) — subredes sin superposición</p>
+  <div class="sol-dev anim">
+    <div class="sol-step">
+      <span class="step-num">Ordenar</span>
+      <span class="step-calc">Suc.1 <span class="hi">120</span> &gt; Suc.2 <span class="hi">60</span> &gt; Suc.3 <span class="hi">25</span> &gt; Suc.4 <span class="hi">5</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Sucursal 1<br>120 hosts</span>
+      <span class="step-calc">n=7 &rarr; 2^7 = <span class="hi">128</span> &ge; 122 &rarr; máscara <span class="hi">/25</span> &rarr; bloque 128</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 1</span>
+      <span class="step-calc"><span class="res">172.16.0.0/25</span> &rarr; válidas .1–.126 &rarr; BC: <span class="hi">.127</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Sucursal 2<br>60 hosts</span>
+      <span class="step-calc">n=6 &rarr; 2^6 = <span class="hi">64</span> &ge; 62 &rarr; máscara <span class="hi">/26</span> &rarr; bloque 64</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 2</span>
+      <span class="step-calc"><span class="res">172.16.0.128/26</span> &rarr; válidas .129–.190 &rarr; BC: <span class="hi">.191</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Sucursal 3<br>25 hosts</span>
+      <span class="step-calc">n=5 &rarr; 2^5 = <span class="hi">32</span> &ge; 27 &rarr; máscara <span class="hi">/27</span> &rarr; bloque 32</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 3</span>
+      <span class="step-calc"><span class="res">172.16.0.192/27</span> &rarr; válidas .193–.222 &rarr; BC: <span class="hi">.223</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Sucursal 4<br>5 hosts</span>
+      <span class="step-calc">n=3 &rarr; 2^3 = <span class="hi">8</span> &ge; 7 &rarr; máscara <span class="hi">/29</span> &rarr; bloque 8</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 4</span>
+      <span class="step-calc"><span class="res">172.16.0.224/29</span> &rarr; válidas .225–.230 &rarr; BC: <span class="hi">.231</span></span>
+    </div>
+  </div>
+  <a href="#lam-40" class="btn-question">&larr; Ir a la pregunta</a>
+</div>
+
+<!-- ==================== LAM 47 — VLSM Soluciones 4 ==================== -->
+<div class="lamina slide-solution" id="lam-47">
+  <div class="anim">
+    <p class="slide-eyebrow">VLSM — Solución · Ejercicio 4</p>
+    <h3 class="slide-title">Call center en <span>192.168.100.0/25</span></h3>
+  </div>
+  <p class="sol-q anim">Call center(50) · Soporte técnico(20) · Dirección(5) — ¿cabe en /25? ¿qué máscaras usar?</p>
+  <div class="sol-dev anim">
+    <div class="sol-step">
+      <span class="step-num">Verificar</span>
+      <span class="step-calc">Total: 50+20+5 = <span class="hi">75 hosts</span>  |  /25 tiene 2^7−2 = <span class="hi">126 válidos</span>  &rarr; sí cabe</span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Ordenar</span>
+      <span class="step-calc">Call center <span class="hi">50</span> &gt; Soporte <span class="hi">20</span> &gt; Dirección <span class="hi">5</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Call center<br>50 hosts</span>
+      <span class="step-calc">n=6 &rarr; 2^6 = <span class="hi">64</span> &ge; 52 &rarr; máscara <span class="hi">/26</span> &rarr; bloque 64</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 1</span>
+      <span class="step-calc"><span class="res">192.168.100.0/26</span> &rarr; válidas .1–.62 &rarr; BC: <span class="hi">.63</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Soporte<br>20 hosts</span>
+      <span class="step-calc">n=5 &rarr; 2^5 = <span class="hi">32</span> &ge; 22 &rarr; máscara <span class="hi">/27</span> &rarr; bloque 32</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 2</span>
+      <span class="step-calc"><span class="res">192.168.100.64/27</span> &rarr; válidas .65–.94 &rarr; BC: <span class="hi">.95</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Dirección<br>5 hosts</span>
+      <span class="step-calc">n=3 &rarr; 2^3 = <span class="hi">8</span> &ge; 7 &rarr; máscara <span class="hi">/29</span> &rarr; bloque 8</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 3</span>
+      <span class="step-calc"><span class="res">192.168.100.96/29</span> &rarr; válidas .97–.102 &rarr; BC: <span class="hi">.103</span></span>
+    </div>
+  </div>
+  <a href="#lam-40" class="btn-question">&larr; Ir a la pregunta</a>
+</div>
+
+<!-- ==================== LAM 48 — VLSM Soluciones 5 ==================== -->
+<div class="lamina slide-solution" id="lam-48">
+  <div class="anim">
+    <p class="slide-eyebrow">VLSM — Solución · Ejercicio 5</p>
+    <h3 class="slide-title">Oficinas en <span>192.168.1.0/24</span></h3>
+  </div>
+  <p class="sol-q anim">Of. principal(100) · Of. secundaria(40) · Of. remota(12) · Cámaras IP(8) · Enlace P2P(2)</p>
+  <div class="sol-dev anim">
+    <div class="sol-step">
+      <span class="step-num">Ordenar</span>
+      <span class="step-calc">Principal <span class="hi">100</span> &gt; Secundaria <span class="hi">40</span> &gt; Remota <span class="hi">12</span> &gt; Cámaras <span class="hi">8</span> &gt; P2P <span class="hi">2</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Of. principal<br>100 hosts</span>
+      <span class="step-calc">n=7 &rarr; 2^7 = <span class="hi">128</span> &ge; 102 &rarr; máscara <span class="hi">/25</span> &rarr; bloque 128</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 1</span>
+      <span class="step-calc"><span class="res">192.168.1.0/25</span> &rarr; válidas .1–.126 &rarr; BC: <span class="hi">.127</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Of. secundaria<br>40 hosts</span>
+      <span class="step-calc">n=6 &rarr; 2^6 = <span class="hi">64</span> &ge; 42 &rarr; máscara <span class="hi">/26</span> &rarr; bloque 64</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 2</span>
+      <span class="step-calc"><span class="res">192.168.1.128/26</span> &rarr; válidas .129–.190 &rarr; BC: <span class="hi">.191</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Of. remota<br>12 hosts</span>
+      <span class="step-calc">n=4 &rarr; 2^4 = <span class="hi">16</span> &ge; 14 &rarr; máscara <span class="hi">/28</span> &rarr; bloque 16</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 3</span>
+      <span class="step-calc"><span class="res">192.168.1.192/28</span> &rarr; válidas .193–.206 &rarr; BC: <span class="hi">.207</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Cámaras IP<br>8 hosts</span>
+      <span class="step-calc">n=4 &rarr; 2^4 = <span class="hi">16</span> &ge; 10 &rarr; máscara <span class="hi">/28</span> &rarr; bloque 16</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 4</span>
+      <span class="step-calc"><span class="res">192.168.1.208/28</span> &rarr; válidas .209–.222 &rarr; BC: <span class="hi">.223</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Enlace P2P<br>2 hosts</span>
+      <span class="step-calc">n=2 &rarr; 2^2 = <span class="hi">4</span> &ge; 4 &rarr; máscara <span class="hi">/30</span> &rarr; bloque 4</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 5</span>
+      <span class="step-calc"><span class="res">192.168.1.224/30</span> &rarr; válidas .225–.226 &rarr; BC: <span class="hi">.227</span></span>
+    </div>
+  </div>
+  <a href="#lam-41" class="btn-question">&larr; Ir a la pregunta</a>
+</div>
+
+<!-- ==================== LAM 49 — VLSM Soluciones 6 ==================== -->
+<div class="lamina slide-solution" id="lam-49">
+  <div class="anim">
+    <p class="slide-eyebrow">VLSM — Solución · Ejercicio 6</p>
+    <h3 class="slide-title">Producción en <span>192.168.200.0/24</span></h3>
+  </div>
+  <p class="sol-q anim">Producción(80) · Ventas(25) · RRHH(10) · Estaciones temporales(4) — mostrar red y broadcast</p>
+  <div class="sol-dev anim">
+    <div class="sol-step">
+      <span class="step-num">Ordenar</span>
+      <span class="step-calc">Producción <span class="hi">80</span> &gt; Ventas <span class="hi">25</span> &gt; RRHH <span class="hi">10</span> &gt; Temporales <span class="hi">4</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Producción<br>80 hosts</span>
+      <span class="step-calc">n=7 &rarr; 2^7 = <span class="hi">128</span> &ge; 82 &rarr; máscara <span class="hi">/25</span> &rarr; bloque 128</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 1</span>
+      <span class="step-calc"><span class="res">192.168.200.0/25</span> &rarr; válidas .1–.126 &rarr; BC: <span class="hi">.127</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Ventas<br>25 hosts</span>
+      <span class="step-calc">n=5 &rarr; 2^5 = <span class="hi">32</span> &ge; 27 &rarr; máscara <span class="hi">/27</span> &rarr; bloque 32</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 2</span>
+      <span class="step-calc"><span class="res">192.168.200.128/27</span> &rarr; válidas .129–.158 &rarr; BC: <span class="hi">.159</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">RRHH<br>10 hosts</span>
+      <span class="step-calc">n=4 &rarr; 2^4 = <span class="hi">16</span> &ge; 12 &rarr; máscara <span class="hi">/28</span> &rarr; bloque 16</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 3</span>
+      <span class="step-calc"><span class="res">192.168.200.160/28</span> &rarr; válidas .161–.174 &rarr; BC: <span class="hi">.175</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Temporales<br>4 hosts</span>
+      <span class="step-calc">n=3 &rarr; 2^3 = <span class="hi">8</span> &ge; 6 &rarr; máscara <span class="hi">/29</span> &rarr; bloque 8</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 4</span>
+      <span class="step-calc"><span class="res">192.168.200.176/29</span> &rarr; válidas .177–.182 &rarr; BC: <span class="hi">.183</span></span>
+    </div>
+  </div>
+  <a href="#lam-41" class="btn-question">&larr; Ir a la pregunta</a>
+</div>
+
+<!-- ==================== LAM 50 — VLSM Soluciones 7 ==================== -->
+<div class="lamina slide-solution" id="lam-50">
+  <div class="anim">
+    <p class="slide-eyebrow">VLSM — Solución · Ejercicio 7</p>
+    <h3 class="slide-title">Áreas en <span>192.168.50.0/24</span></h3>
+  </div>
+  <p class="sol-q anim">Área A(100) · Área B(50) · Área C(10) · Área D(2) — asignar sin superponer bloques</p>
+  <div class="sol-dev anim">
+    <div class="sol-step">
+      <span class="step-num">Ordenar</span>
+      <span class="step-calc">Área A <span class="hi">100</span> &gt; Área B <span class="hi">50</span> &gt; Área C <span class="hi">10</span> &gt; Área D <span class="hi">2</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Área A<br>100 hosts</span>
+      <span class="step-calc">n=7 &rarr; 2^7 = <span class="hi">128</span> &ge; 102 &rarr; máscara <span class="hi">/25</span> &rarr; bloque 128</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 1</span>
+      <span class="step-calc"><span class="res">192.168.50.0/25</span> &rarr; válidas .1–.126 &rarr; BC: <span class="hi">.127</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Área B<br>50 hosts</span>
+      <span class="step-calc">n=6 &rarr; 2^6 = <span class="hi">64</span> &ge; 52 &rarr; máscara <span class="hi">/26</span> &rarr; bloque 64</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 2</span>
+      <span class="step-calc"><span class="res">192.168.50.128/26</span> &rarr; válidas .129–.190 &rarr; BC: <span class="hi">.191</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Área C<br>10 hosts</span>
+      <span class="step-calc">n=4 &rarr; 2^4 = <span class="hi">16</span> &ge; 12 &rarr; máscara <span class="hi">/28</span> &rarr; bloque 16</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 3</span>
+      <span class="step-calc"><span class="res">192.168.50.192/28</span> &rarr; válidas .193–.206 &rarr; BC: <span class="hi">.207</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Área D<br>2 hosts</span>
+      <span class="step-calc">n=2 &rarr; 2^2 = <span class="hi">4</span> &ge; 4 &rarr; máscara <span class="hi">/30</span> &rarr; bloque 4</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 4</span>
+      <span class="step-calc"><span class="res">192.168.50.208/30</span> &rarr; válidas .209–.210 &rarr; BC: <span class="hi">.211</span></span>
+    </div>
+  </div>
+  <a href="#lam-42" class="btn-question">&larr; Ir a la pregunta</a>
+</div>
+
+<!-- ==================== LAM 51 — VLSM Soluciones 8 ==================== -->
+<div class="lamina slide-solution" id="lam-51">
+  <div class="anim">
+    <p class="slide-eyebrow">VLSM — Solución · Ejercicio 8</p>
+    <h3 class="slide-title">Desarrollo en <span>192.168.10.0/24</span></h3>
+  </div>
+  <p class="sol-q anim">Desarrollo(40) · QA(15) · Administración(8) · Red de respaldo(4) — uso eficiente del espacio</p>
+  <div class="sol-dev anim">
+    <div class="sol-step">
+      <span class="step-num">Ordenar</span>
+      <span class="step-calc">Desarrollo <span class="hi">40</span> &gt; QA <span class="hi">15</span> &gt; Administración <span class="hi">8</span> &gt; Respaldo <span class="hi">4</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Desarrollo<br>40 hosts</span>
+      <span class="step-calc">n=6 &rarr; 2^6 = <span class="hi">64</span> &ge; 42 &rarr; máscara <span class="hi">/26</span> &rarr; bloque 64</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 1</span>
+      <span class="step-calc"><span class="res">192.168.10.0/26</span> &rarr; válidas .1–.62 &rarr; BC: <span class="hi">.63</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">QA<br>15 hosts</span>
+      <span class="step-calc">n=5 &rarr; 2^5 = <span class="hi">32</span> &ge; 17 &rarr; máscara <span class="hi">/27</span> &rarr; bloque 32</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 2</span>
+      <span class="step-calc"><span class="res">192.168.10.64/27</span> &rarr; válidas .65–.94 &rarr; BC: <span class="hi">.95</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Administración<br>8 hosts</span>
+      <span class="step-calc">n=4 &rarr; 2^4 = <span class="hi">16</span> &ge; 10 &rarr; máscara <span class="hi">/28</span> &rarr; bloque 16</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 3</span>
+      <span class="step-calc"><span class="res">192.168.10.96/28</span> &rarr; válidas .97–.110 &rarr; BC: <span class="hi">.111</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Respaldo<br>4 hosts</span>
+      <span class="step-calc">n=3 &rarr; 2^3 = <span class="hi">8</span> &ge; 6 &rarr; máscara <span class="hi">/29</span> &rarr; bloque 8</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 4</span>
+      <span class="step-calc"><span class="res">192.168.10.112/29</span> &rarr; válidas .113–.118 &rarr; BC: <span class="hi">.119</span></span>
+    </div>
+  </div>
+  <a href="#lam-42" class="btn-question">&larr; Ir a la pregunta</a>
+</div>
+
+<!-- ==================== LAM 52 — VLSM Soluciones 9 ==================== -->
+<div class="lamina slide-solution" id="lam-52">
+  <div class="anim">
+    <p class="slide-eyebrow">VLSM — Solución · Ejercicio 9</p>
+    <h3 class="slide-title">Campus en <span>10.1.1.0/24</span></h3>
+  </div>
+  <p class="sol-q anim">Campus 1(60) · Campus 2(20) · Biblioteca(6) · Enlace entre routers(2)</p>
+  <div class="sol-dev anim">
+    <div class="sol-step">
+      <span class="step-num">Ordenar</span>
+      <span class="step-calc">Campus 1 <span class="hi">60</span> &gt; Campus 2 <span class="hi">20</span> &gt; Biblioteca <span class="hi">6</span> &gt; Enlace <span class="hi">2</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Campus 1<br>60 hosts</span>
+      <span class="step-calc">n=6 &rarr; 2^6 = <span class="hi">64</span> &ge; 62 &rarr; máscara <span class="hi">/26</span> &rarr; bloque 64</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 1</span>
+      <span class="step-calc"><span class="res">10.1.1.0/26</span> &rarr; válidas .1–.62 &rarr; BC: <span class="hi">.63</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Campus 2<br>20 hosts</span>
+      <span class="step-calc">n=5 &rarr; 2^5 = <span class="hi">32</span> &ge; 22 &rarr; máscara <span class="hi">/27</span> &rarr; bloque 32</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 2</span>
+      <span class="step-calc"><span class="res">10.1.1.64/27</span> &rarr; válidas .65–.94 &rarr; BC: <span class="hi">.95</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Biblioteca<br>6 hosts</span>
+      <span class="step-calc">n=3 &rarr; 2^3 = <span class="hi">8</span> &ge; 8 &rarr; máscara <span class="hi">/29</span> &rarr; bloque 8</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 3</span>
+      <span class="step-calc"><span class="res">10.1.1.96/29</span> &rarr; válidas .97–.102 &rarr; BC: <span class="hi">.103</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Enlace<br>2 hosts</span>
+      <span class="step-calc">n=2 &rarr; 2^2 = <span class="hi">4</span> &ge; 4 &rarr; máscara <span class="hi">/30</span> &rarr; bloque 4</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Red 4</span>
+      <span class="step-calc"><span class="res">10.1.1.104/30</span> &rarr; válidas .105–.106 &rarr; BC: <span class="hi">.107</span></span>
+    </div>
+  </div>
+  <a href="#lam-43" class="btn-question">&larr; Ir a la pregunta</a>
+</div>
+
+<!-- ==================== LAM 52b — Comparativa CIDR / FLSM / VLSM ==================== -->
+<div class="lamina slide-formula" id="lam-52b">
+  <p class="anim slide-eyebrow">Resumen</p>
+  <div class="formula-heading anim">CIDR · FLSM · <span>VLSM</span> — ¿cuándo usar cada uno?</div>
+  <div class="anim" style="width:100%;max-width:820px;margin-top:8px;">
+    <table class="info-table">
+      <thead>
+        <tr><th>Característica</th><th>CIDR</th><th>FLSM</th><th>VLSM</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Tamaño de subredes</strong></td>
+          <td>Personalizado</td>
+          <td>Igual (fijo)</td>
+          <td>Variable</td>
+        </tr>
+        <tr>
+          <td><strong>Eficiencia en IPs</strong></td>
+          <td>Media</td>
+          <td>Baja</td>
+          <td class="ans">Alta</td>
+        </tr>
+        <tr>
+          <td><strong>Complejidad</strong></td>
+          <td>Baja</td>
+          <td>Media</td>
+          <td>Alta</td>
+        </tr>
+        <tr>
+          <td><strong>Orden de asignación</strong></td>
+          <td>Libre</td>
+          <td>Libre</td>
+          <td class="ans">Mayor &rarr; menor</td>
+        </tr>
+        <tr>
+          <td><strong>¿Cuándo usar?</strong></td>
+          <td>Calcular una subred puntual</td>
+          <td>Todos los segmentos necesitan la misma cantidad de hosts</td>
+          <td>Cada área tiene una necesidad distinta de hosts</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="info-box anim" style="max-width:820px;margin-top:20px;">
+    <strong>Regla práctica:</strong> si los departamentos tienen distinto tamaño &rarr; <strong>VLSM</strong>.
+    Si son todos iguales &rarr; <strong>FLSM</strong>. Si solo necesitas una subred &rarr; <strong>CIDR directo</strong>.
+  </div>
+</div>
+
+<!-- ==================== LAM 53 — CIERRE ==================== -->
+<div class="lamina slide-cover" id="lam-53" style="border-bottom:none;">
+  <p class="anim cover-eyebrow">Unidad 2 — CIDR · FLSM · VLSM</p>
+  <h2 class="anim">¿<span>Preguntas</span>?</h2>
+  <p class="anim cover-sub">Sistemas Operativos · Otoño 2026</p>
+  <img src="../logo inacap.png" class="cover-logo anim" alt="INACAP">
+</div>
+
+<script>
+const slides   = document.querySelectorAll('.lamina');
+const total    = slides.length;
+const progress = document.getElementById('progress');
+const counter  = document.getElementById('counter');
+let current    = 0;
+
+/* IntersectionObserver */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+    e.target.classList.add('visible');
+    current = [...slides].indexOf(e.target);
+    progress.style.width = ((current + 1) / total * 100) + '%';
+    counter.textContent  = (current + 1) + ' / ' + total;
+    animateConsoles(e.target);
+  });
+}, { threshold: 0.4 });
+
+slides.forEach(s => obs.observe(s));
+
+/* Animate console lines on exercise slides */
+function animateConsoles(lamina) {
+  lamina.querySelectorAll('.console.exercise .cline').forEach((line, i) => {
+    setTimeout(() => line.classList.add('show'), 280 + i * 55);
+  });
+}
+
+/* Keyboard navigation */
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault(); goTo(Math.max(current - 1, 0));
+  } else if (e.key === 'Home') { goTo(0); }
+    else if (e.key === 'End')  { goTo(total - 1); }
+    else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+});
+
+function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+
+function toggleFS() {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+
+/* Copy buttons */
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const text = btn.closest('.console').querySelector('.console-body').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copiado';
+      setTimeout(() => btn.textContent = 'Copiar', 1800);
+    });
+  });
+});
+
+/* Init first slide */
+slides[0].classList.add('visible');
+progress.style.width = (1 / total * 100) + '%';
+</script>
+</body>
+</html>
