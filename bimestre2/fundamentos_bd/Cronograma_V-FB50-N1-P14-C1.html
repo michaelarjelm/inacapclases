@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cronograma — Fundamentos de Base de Datos · V-FB50-N1-P14-C1</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ======================== TOKENS & RESET ======================== */
+:root {
+  --red:    #E31E24;
+  --blue:   #0063B1;
+  --green:  #107C10;
+  --dark:   #1A1A1A;
+  --mid:    #2A2A2A;
+  --border: #E8E8E8;
+  --text:   #333;
+  --muted:  #666;
+  --light:  #F7F7F7;
+  --ease:   cubic-bezier(0.16,1,0.3,1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Barlow', sans-serif;
+  color: var(--text); background: white;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+}
+
+/* ======================== PROGRESS BAR ======================== */
+#progress {
+  position: fixed; top: 0; left: 0;
+  height: 3px; background: var(--red);
+  width: 0%; z-index: 1000;
+  transition: width 0.35s var(--ease);
+}
+
+/* ======================== HEADER ======================== */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: white; border-bottom: 2px solid var(--border);
+  padding: 12px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.site-header h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px; font-weight: 900;
+  text-transform: uppercase; color: var(--dark);
+  letter-spacing: -0.01em;
+}
+.site-header h1 span { color: var(--red); }
+.header-right { display: flex; align-items: center; gap: 20px; }
+.header-logo { height: 26px; opacity: 0.8; }
+#counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--muted);
+}
+
+/* ======================== LAMINA BASE + ANIMATION ======================== */
+.lamina {
+  min-height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  position: relative;
+}
+.anim {
+  opacity: 0; transform: translateY(22px);
+  transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
+}
+.lamina.visible .anim                { opacity: 1; transform: none; }
+.lamina.visible .anim:nth-child(1)   { transition-delay:   0ms; }
+.lamina.visible .anim:nth-child(2)   { transition-delay: 100ms; }
+.lamina.visible .anim:nth-child(3)   { transition-delay: 200ms; }
+.lamina.visible .anim:nth-child(4)   { transition-delay: 320ms; }
+.lamina.visible .anim:nth-child(5)   { transition-delay: 440ms; }
+.lamina.visible .anim:nth-child(6)   { transition-delay: 540ms; }
+
+/* ======================== COVER ======================== */
+.slide-cover {
+  background: linear-gradient(135deg, var(--dark) 0%, var(--mid) 100%);
+  color: white;
+  display: flex; align-items: center;
+  padding: 80px 72px;
+  border-bottom: 5px solid var(--red);
+}
+.cover-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(255,255,255,0.3);
+  margin-bottom: 20px;
+}
+.slide-cover h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 86px; font-weight: 900; text-transform: uppercase;
+  color: white; line-height: 0.9; letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+.slide-cover h2 span { color: var(--red); }
+.cover-sub {
+  font-size: 18px; color: rgba(255,255,255,0.4);
+  letter-spacing: 0.06em; font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; text-transform: uppercase;
+}
+
+/* ======================== UNIT SLIDE ======================== */
+.slide-unit {
+  display: grid; grid-template-columns: 42% 58%;
+  align-items: stretch;
+  border-bottom: 5px solid var(--red);
+}
+.slide-unit.u2 { border-color: var(--blue); }
+.slide-unit.u3 { border-color: var(--green); }
+
+.unit-left {
+  padding: 70px 50px;
+  display: flex; flex-direction: column; justify-content: center;
+  background: white;
+}
+.unit-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 72px; height: 72px; border-radius: 6px;
+  background: var(--red); color: white;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 44px; font-weight: 900; line-height: 1;
+  margin-bottom: 24px; flex-shrink: 0;
+}
+.slide-unit.u2 .unit-badge { background: var(--blue); }
+.slide-unit.u3 .unit-badge { background: var(--green); }
+
+.unit-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #aaa; margin-bottom: 10px;
+}
+.unit-left h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 34px; font-weight: 900; text-transform: uppercase;
+  color: var(--dark); line-height: 1.15; letter-spacing: -0.01em;
+  margin-bottom: 28px;
+}
+.unit-left h2 span                 { color: var(--red);   }
+.slide-unit.u2 .unit-left h2 span  { color: var(--blue);  }
+.slide-unit.u3 .unit-left h2 span  { color: var(--green); }
+
+.unit-hours { display: flex; gap: 10px; flex-wrap: wrap; }
+.hours-chip {
+  background: #F5F5F5; border-radius: 4px;
+  padding: 6px 14px; font-size: 13px; font-weight: 600; color: #555;
+  font-family: 'Barlow Condensed', sans-serif;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+/* ======================== CONTENT PANEL ======================== */
+.unit-right {
+  background: #F8F8F8; border-left: 1px solid var(--border);
+  padding: 70px 50px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.contenidos-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; color: #aaa;
+  margin-bottom: 20px; padding-bottom: 12px;
+  border-bottom: 2px solid #E0E0E0;
+}
+.contenido-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+.contenido-list li {
+  display: flex; align-items: flex-start; gap: 14px;
+  font-size: 19px; line-height: 1.55; color: #3A3A3A;
+}
+.contenido-list li::before {
+  content: '';
+  display: block; width: 4px; min-height: 20px; border-radius: 2px;
+  background: var(--red); flex-shrink: 0; margin-top: 3px;
+}
+.slide-unit.u2 .contenido-list li::before { background: var(--blue);  }
+.slide-unit.u3 .contenido-list li::before { background: var(--green); }
+
+/* ======================== TIMELINE ======================== */
+.slide-timeline {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 60px 70px; background: white;
+  border-bottom: 5px solid var(--red);
+}
+.timeline-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 46px; font-weight: 900; text-transform: uppercase;
+  color: var(--dark); letter-spacing: -0.01em; margin-bottom: 6px;
+}
+.timeline-title span { color: var(--red); }
+.timeline-subtitle {
+  font-size: 14px; color: #999; margin-bottom: 44px; font-weight: 500;
+}
+.timeline-months {
+  display: grid; grid-template-columns: 1fr 2fr 2fr;
+  gap: 28px; align-items: start;
+}
+.month-block { display: flex; flex-direction: column; }
+.month-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.14em; color: #bbb;
+  margin-bottom: 12px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+}
+.tl-sessions { display: flex; flex-direction: column; gap: 7px; }
+.tl-session {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 14px; border-radius: 6px;
+  background: #F8F8F8; border: 1px solid var(--border);
+}
+.tl-session.eval    { background: #FFF3F3; border-color: #FFBCBC; }
+.tl-session.eval-u2 { background: #EFF6FF; border-color: #BFDBFE; }
+.tl-session.eval-u3 { background: #F0FDF4; border-color: #BBF7D0; }
+
+.tl-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: #D0D0D0; flex-shrink: 0;
+}
+.tl-session.eval    .tl-dot { background: var(--red);   width: 11px; height: 11px; }
+.tl-session.eval-u2 .tl-dot { background: var(--blue);  width: 11px; height: 11px; }
+.tl-session.eval-u3 .tl-dot { background: var(--green); width: 11px; height: 11px; }
+
+.tl-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: #999; min-width: 58px; flex-shrink: 0;
+}
+.tl-session.eval    .tl-date { color: #B71C1C; font-weight: 600; }
+.tl-session.eval-u2 .tl-date { color: #1D4ED8; font-weight: 600; }
+.tl-session.eval-u3 .tl-date { color: #15803D; font-weight: 600; }
+
+.tl-label { font-size: 12.5px; color: #555; line-height: 1.3; flex: 1; }
+.tl-session.eval    .tl-label { color: var(--dark); font-weight: 600; }
+.tl-session.eval-u2 .tl-label { color: var(--dark); font-weight: 600; }
+.tl-session.eval-u3 .tl-label { color: var(--dark); font-weight: 600; }
+
+.tl-pct {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px; font-weight: 900; flex-shrink: 0;
+}
+.tl-session.eval    .tl-pct { color: var(--red);   }
+.tl-session.eval-u2 .tl-pct { color: var(--blue);  }
+.tl-session.eval-u3 .tl-pct { color: var(--green); }
+
+.timeline-legend {
+  display: flex; gap: 24px; margin-top: 36px;
+  padding-top: 20px; border-top: 1px solid var(--border);
+}
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #666; }
+.legend-dot { width: 9px; height: 9px; border-radius: 50%; }
+.legend-dot.clase { background: #D0D0D0; }
+.legend-dot.u1    { background: var(--red);   }
+.legend-dot.u2    { background: var(--blue);  }
+.legend-dot.u3    { background: var(--green); }
+
+@media (max-width: 1024px) {
+  .slide-unit     { grid-template-columns: 1fr; min-height: auto; }
+  .unit-left      { padding: 40px 30px; }
+  .unit-right     { padding: 40px 30px; }
+  .timeline-months { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <h1>Fundamentos de <span>Base de Datos</span> — Cronograma</h1>
+  <div class="header-right">
+    <span id="counter">1 / 5</span>
+    <img src="../logo inacap.png" class="header-logo" alt="INACAP">
+  </div>
+</header>
+
+
+<!-- PORTADA -->
+<div class="lamina slide-cover">
+  <div>
+    <div class="cover-eyebrow anim">Otoño 2026 · Sección V-FB50-N1-P14-C1</div>
+    <h2 class="anim">Fundamentos de<br><span>Base de Datos</span></h2>
+    <p class="cover-sub anim">Distribución de unidades de aprendizaje · Calendario de evaluaciones</p>
+  </div>
+</div>
+
+
+<!-- UNIDAD 1 -->
+<div class="lamina slide-unit">
+  <div class="unit-left">
+    <div class="unit-badge anim">1</div>
+    <div class="unit-eyebrow anim">Unidad 1 de 3</div>
+    <h2 class="anim">Introducción a las bases de datos<br>y <span>arquitectura de un DBMS</span></h2>
+    <div class="unit-hours anim">
+      <span class="hours-chip">16 horas totales</span>
+      <span class="hours-chip">12 hrs presenciales</span>
+      <span class="hours-chip">4 hrs online</span>
+    </div>
+  </div>
+  <div class="unit-right">
+    <div class="contenidos-label anim">Contenidos</div>
+    <ul class="contenido-list">
+      <li class="anim">Conceptos de dato, información, procesamiento de datos y base de datos</li>
+      <li class="anim">Evolución histórica de las bases de datos</li>
+      <li class="anim">Modelos de bases de datos: relacional, clave-valor, documental, de grafo y orientado a objetos</li>
+      <li class="anim">Arquitectura de los Sistemas de Gestión de Base de Datos (DBMS) y aspectos de seguridad</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- UNIDAD 2 -->
+<div class="lamina slide-unit u2">
+  <div class="unit-left">
+    <div class="unit-badge anim">2</div>
+    <div class="unit-eyebrow anim">Unidad 2 de 3</div>
+    <h2 class="anim">Modelamiento de<br><span>bases de datos</span></h2>
+    <div class="unit-hours anim">
+      <span class="hours-chip">24 horas totales</span>
+      <span class="hours-chip">18 hrs presenciales</span>
+      <span class="hours-chip">6 hrs online</span>
+    </div>
+  </div>
+  <div class="unit-right">
+    <div class="contenidos-label anim">Contenidos</div>
+    <ul class="contenido-list">
+      <li class="anim">Características del modelo conceptual: entidad, atributo y relación. Notación de Chen</li>
+      <li class="anim">Características del modelo lógico y notación de Barker</li>
+      <li class="anim">Elementos avanzados del modelo lógico: relaciones con identificación y subtipos</li>
+      <li class="anim">Características del modelo relacional o físico y normalización (1FN, 2FN, 3FN)</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- UNIDAD 3 -->
+<div class="lamina slide-unit u3">
+  <div class="unit-left">
+    <div class="unit-badge anim">3</div>
+    <div class="unit-eyebrow anim">Unidad 3 de 3</div>
+    <h2 class="anim">Definición, manipulación<br>y consulta de datos con <span>SQL</span></h2>
+    <div class="unit-hours anim">
+      <span class="hours-chip">32 horas totales</span>
+      <span class="hours-chip">24 hrs presenciales</span>
+      <span class="hours-chip">8 hrs online</span>
+    </div>
+  </div>
+  <div class="unit-right">
+    <div class="contenidos-label anim">Contenidos</div>
+    <ul class="contenido-list">
+      <li class="anim">Sentencias SQL para la definición de datos (DDL): CREATE, ALTER, DROP</li>
+      <li class="anim">Sentencias SQL para la manipulación de datos (DML): INSERT, UPDATE, DELETE</li>
+      <li class="anim">Sentencias SQL para el control de transacciones (TCL): COMMIT, ROLLBACK</li>
+      <li class="anim">Consultas básicas con SELECT, filtrado (WHERE) y ordenamiento (ORDER BY)</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- TIMELINE -->
+<div class="lamina slide-timeline">
+  <div class="timeline-title anim">Calendario de <span>clases</span></div>
+  <div class="timeline-subtitle anim">Sección V-FB50-N1-P14-C1 · Otoño 2026 · Miércoles y Jueves</div>
+
+  <div class="timeline-months anim">
+
+    <!-- MAYO -->
+    <div class="month-block">
+      <div class="month-label">Mayo</div>
+      <div class="tl-sessions">
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">27/05 X</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">28/05 J</div>
+          <div class="tl-label">Clase</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JUNIO -->
+    <div class="month-block">
+      <div class="month-label">Junio</div>
+      <div class="tl-sessions">
+        <div class="tl-session eval">
+          <div class="tl-dot"></div>
+          <div class="tl-date">03/06 X</div>
+          <div class="tl-label">ES1 — duplas 1 a 7</div>
+          <div class="tl-pct">20%</div>
+        </div>
+        <div class="tl-session eval">
+          <div class="tl-dot"></div>
+          <div class="tl-date">04/06 J</div>
+          <div class="tl-label">ES1 — duplas 8 a 14</div>
+          <div class="tl-pct">20%</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">10/06 X</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">11/06 J</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">17/06 X</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">18/06 J</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">24/06 X</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session eval-u2">
+          <div class="tl-dot"></div>
+          <div class="tl-date">25/06 J</div>
+          <div class="tl-label">ES2 — Entrega portafolio</div>
+          <div class="tl-pct">35%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JULIO -->
+    <div class="month-block">
+      <div class="month-label">Julio</div>
+      <div class="tl-sessions">
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">01/07 X</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">02/07 J</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">08/07 X</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">09/07 J</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session">
+          <div class="tl-dot"></div>
+          <div class="tl-date">22/07 X</div>
+          <div class="tl-label">Clase</div>
+        </div>
+        <div class="tl-session eval-u3">
+          <div class="tl-dot"></div>
+          <div class="tl-date">23/07 J</div>
+          <div class="tl-label">ES3 — Script SQL individual</div>
+          <div class="tl-pct">35%</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="timeline-legend anim">
+    <div class="legend-item"><div class="legend-dot clase"></div><span>Clase presencial</span></div>
+    <div class="legend-item"><div class="legend-dot u1"></div><span>ES1 — UA1 (20%)</span></div>
+    <div class="legend-item"><div class="legend-dot u2"></div><span>ES2 — UA2 (35%)</span></div>
+    <div class="legend-item"><div class="legend-dot u3"></div><span>ES3 — UA3 (35%)</span></div>
+  </div>
+</div>
+
+
+<script>
+const slides   = document.querySelectorAll('.lamina');
+const total    = slides.length;
+const progress = document.getElementById('progress');
+const counter  = document.getElementById('counter');
+let current    = 0;
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+    e.target.classList.add('visible');
+    current = [...slides].indexOf(e.target);
+    progress.style.width = ((current + 1) / total * 100) + '%';
+    counter.textContent  = (current + 1) + ' / ' + total;
+  });
+}, { threshold: 0.4 });
+
+slides.forEach(s => obs.observe(s));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault(); goTo(Math.max(current - 1, 0));
+  } else if (e.key === 'Home') { goTo(0); }
+    else if (e.key === 'End')  { goTo(total - 1); }
+    else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+});
+
+function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+
+function toggleFS() {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+
+slides[0].classList.add('visible');
+progress.style.width = (1 / total * 100) + '%';
+</script>
+</body>
+</html>
