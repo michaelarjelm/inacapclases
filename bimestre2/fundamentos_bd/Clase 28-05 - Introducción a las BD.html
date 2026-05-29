@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamentos de BD — Unidad 1: Introducción a las BD y DBMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ======================== TOKENS & RESET ======================== */
+:root {
+  --blue:   #E31E24;
+  --red:    #E31E24;
+  --dark:   #1A1A1A;
+  --mid:    #2A2A2A;
+  --border: #E8E8E8;
+  --text:   #333;
+  --muted:  #666;
+  --light:  #F7F7F7;
+  --ease:   cubic-bezier(0.16,1,0.3,1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: 'Barlow', sans-serif; color: var(--text); background: white; overflow-x: hidden; scroll-snap-type: y mandatory; }
+
+/* ======================== PROGRESS BAR ======================== */
+#progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--blue); width: 0%; z-index: 1000; transition: width 0.35s var(--ease); }
+
+/* ======================== HEADER ======================== */
+.site-header { position: sticky; top: 0; z-index: 100; background: white; border-bottom: 2px solid var(--border); padding: 12px 40px; display: flex; align-items: center; justify-content: space-between; }
+.site-header h1 { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 900; text-transform: uppercase; color: var(--dark); letter-spacing: -0.01em; }
+.site-header h1 span { color: var(--blue); }
+.header-logo { height: 26px; opacity: 0.8; }
+#counter { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+
+/* ======================== LAMINA BASE + ANIMATION ======================== */
+.lamina { min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always; position: relative; }
+.anim { opacity: 0; transform: translateY(22px); transition: opacity 0.55s var(--ease), transform 0.55s var(--ease); }
+.lamina.visible .anim                { opacity: 1; transform: none; }
+.lamina.visible .anim:nth-child(1)   { transition-delay:   0ms; }
+.lamina.visible .anim:nth-child(2)   { transition-delay: 100ms; }
+.lamina.visible .anim:nth-child(3)   { transition-delay: 200ms; }
+.lamina.visible .anim:nth-child(4)   { transition-delay: 320ms; }
+.lamina.visible .anim:nth-child(5)   { transition-delay: 440ms; }
+.lamina.visible .anim:nth-child(6)   { transition-delay: 540ms; }
+
+/* ======================== SLIDE-COVER ======================== */
+.slide-cover { background: var(--dark); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px; border-bottom: 5px solid var(--blue); }
+.cover-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 20px; }
+.slide-cover h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 86px; font-weight: 900; text-transform: uppercase; color: white; line-height: 0.9; letter-spacing: -0.02em; margin-bottom: 24px; }
+.slide-cover h2 span { color: var(--blue); }
+.cover-sub { font-size: 18px; color: rgba(255,255,255,0.4); letter-spacing: 0.1em; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; text-transform: uppercase; }
+.cover-logo { height: 38px; opacity: 0.9; margin-top: 52px; filter: brightness(0) invert(1); }
+
+/* ======================== SLIDE-SECTION ======================== */
+.slide-section { background: linear-gradient(135deg, var(--dark) 0%, var(--mid) 100%); display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 80px 72px; border-bottom: 5px solid var(--blue); }
+.sec-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.28); margin-bottom: 14px; }
+.slide-section h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 70px; font-weight: 900; text-transform: uppercase; color: white; line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 20px; }
+.slide-section h2 span { color: var(--blue); }
+.sec-desc { font-size: 21px; color: rgba(255,255,255,0.4); max-width: 540px; line-height: 1.65; }
+.section-logo { height: 38px; opacity: 0.9; margin-top: 48px; filter: brightness(0) invert(1); }
+
+/* ======================== SLIDE-SPLIT ======================== */
+.slide-split { display: grid; grid-template-columns: 40% 60%; align-items: stretch; border-bottom: 3px solid var(--border); }
+.slide-split.inv { grid-template-columns: 60% 40%; }
+.slide-split.inv .content-pane { order: 2; }
+.slide-split.inv .visual-pane  { order: 1; }
+.content-pane { padding: 52px 44px; display: flex; flex-direction: column; justify-content: center; background: white; }
+.visual-pane  { background: var(--light); display: flex; align-items: center; justify-content: center; padding: 40px; }
+
+/* ======================== SLIDE-FORMULA ======================== */
+.slide-formula { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 80px; background: white; border-bottom: 3px solid var(--border); text-align: center; }
+
+/* ======================== SLIDE-SOLUTION ======================== */
+.slide-solution { display: flex; flex-direction: column; padding: 44px 56px; justify-content: center; border-bottom: 3px solid var(--border); background: white; }
+
+/* ======================== SLIDE-EXERCISE ======================== */
+.slide-exercise { display: flex; flex-direction: column; padding: 44px 56px; justify-content: center; border-bottom: 3px solid var(--border); background: white; }
+.exercise-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px; }
+.ex-card { background: var(--light); border-radius: 10px; padding: 24px 28px; border: 2px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
+.ex-num  { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--blue); }
+.ex-tag  { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 900; text-transform: uppercase; color: var(--dark); background: white; border: 2px solid var(--border); border-radius: 5px; padding: 5px 12px; display: inline-block; letter-spacing: 0.02em; }
+.ex-body { font-size: 17px; line-height: 1.75; color: #444; }
+.ex-body strong { color: var(--dark); }
+.ex-sub  { list-style: none; display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
+.ex-sub li { font-size: 16px; color: #555; line-height: 1.6; padding-left: 16px; position: relative; }
+.ex-sub li::before { content: '\25B8'; color: var(--blue); position: absolute; left: 0; font-size: 11px; top: 3px; }
+
+/* ======================== SOLUTION DEVELOPMENT ======================== */
+.sol-dev { display: flex; flex-direction: column; gap: 7px; margin-top: 12px; width: 100%; max-width: 780px; }
+.sol-step { display: flex; align-items: flex-start; gap: 16px; padding: 10px 16px; background: var(--light); border-radius: 6px; border-left: 3px solid var(--border); }
+.sol-step.is-result { background: #FFF3F3; border-left-color: var(--blue); }
+.step-num { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); min-width: 80px; padding-top: 2px; flex-shrink: 0; }
+.sol-step.is-result .step-num { color: var(--blue); }
+.step-calc { font-size: 17px; color: var(--dark); line-height: 1.65; }
+.step-calc .hi  { color: var(--blue); font-weight: 700; }
+.step-calc .res { color: var(--blue); font-size: 15px; font-weight: 900; font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; letter-spacing: 0.04em; }
+.sol-q { font-size: 18px; color: var(--muted); margin-bottom: 6px; line-height: 1.6; font-style: italic; }
+
+/* ======================== BUTTONS ======================== */
+.btn-answer   { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; padding: 7px 14px; background: var(--blue); color: white; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 5px; text-decoration: none; align-self: flex-start; transition: background 0.15s; }
+.btn-answer:hover { background: #a01015; }
+.btn-question { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; padding: 7px 14px; background: transparent; color: var(--blue); font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 5px; text-decoration: none; align-self: flex-start; transition: background 0.15s, color 0.15s; border: 2px solid var(--blue); }
+.btn-question:hover { background: var(--blue); color: white; }
+
+/* ======================== CONTENT COMPONENTS ======================== */
+.slide-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue); margin-bottom: 6px; }
+.slide-title   { font-family: 'Barlow Condensed', sans-serif; font-size: 36px; font-weight: 900; text-transform: uppercase; color: var(--dark); letter-spacing: -0.01em; line-height: 1.15; margin-bottom: 18px; }
+.slide-title span { color: var(--blue); }
+.slide-body  { font-size: 19px; line-height: 1.75; color: #444; }
+.slide-body + .slide-body { margin-top: 10px; }
+.slide-body strong { color: var(--dark); font-weight: 700; }
+.bullet-list { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.bullet-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 18px; line-height: 1.65; color: #444; }
+.bullet-list li::before { content: '\25B8'; color: var(--blue); font-size: 11px; flex-shrink: 0; margin-top: 4px; }
+.bullet-list li strong { color: var(--dark); }
+.info-box { margin-top: 14px; background: #FFF3F3; border-left: 4px solid var(--blue); border-radius: 4px; padding: 11px 15px; font-size: 17px; line-height: 1.65; color: #7f0000; }
+.info-box.warn   { background: #FFFBEA; border-color: #F59E0B; color: #78350F; }
+.info-box.danger { background: #FFF3F3; border-color: var(--red); color: #7f0000; }
+.info-box strong { font-weight: 700; }
+.info-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.info-table th { background: var(--dark); color: white; padding: 9px 13px; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+.info-table td { padding: 9px 13px; border-bottom: 1px solid var(--border); color: #444; vertical-align: top; font-size: 16px; }
+.info-table tr:last-child td { border-bottom: none; }
+.info-table tr:nth-child(even) td { background: #FAFAFA; }
+.formula-heading { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 900; text-transform: uppercase; color: var(--dark); margin-bottom: 24px; max-width: 780px; }
+.formula-heading span { color: var(--blue); }
+
+/* ======================== AGENDA ======================== */
+.agenda-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 28px; width: 100%; max-width: 820px; }
+.ag-card { background: var(--light); border: 2px solid var(--border); border-radius: 10px; padding: 28px 28px 24px; display: flex; flex-direction: column; gap: 8px; }
+.ag-num  { font-family: 'Barlow Condensed', sans-serif; font-size: 40px; font-weight: 900; color: var(--border); line-height: 1; }
+.ag-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 900; text-transform: uppercase; color: var(--dark); letter-spacing: 0.01em; }
+.ag-desc  { font-size: 16px; color: var(--muted); line-height: 1.6; }
+
+/* ======================== DATO / INFORMACIÓN / CONOCIMIENTO ======================== */
+.dik-flow { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 380px; }
+.dik-step { border-radius: 10px; padding: 16px 20px; }
+.dik-step.d1 { background: #E8F0FE; }
+.dik-step.d2 { background: #BBDEFB; margin-left: 20px; }
+.dik-step.d3 { background: var(--blue); margin-left: 40px; }
+.dik-label   { font-family: 'Barlow Condensed', sans-serif; font-size: 19px; font-weight: 900; text-transform: uppercase; color: var(--dark); }
+.dik-step.d3 .dik-label { color: white; }
+.dik-example { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--muted); margin-top: 4px; }
+.dik-step.d3 .dik-example { color: rgba(255,255,255,0.65); }
+.dik-arrow   { text-align: center; margin-left: 32px; color: var(--blue); font-size: 18px; opacity: 0.4; }
+
+/* ======================== PROCESS FLOW ======================== */
+.proc-flow  { display: flex; align-items: center; gap: 0; width: 100%; max-width: 400px; }
+.proc-box   { flex: 1; border-radius: 8px; padding: 20px 14px; text-align: center; }
+.proc-box.in  { background: #E8F0FE; }
+.proc-box.mid { background: var(--blue); }
+.proc-box.out { background: #E8F5E9; }
+.proc-label { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; }
+.proc-box.mid .proc-label { color: white; }
+.proc-sub   { font-size: 13px; margin-top: 6px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+.proc-box.mid .proc-sub { color: rgba(255,255,255,0.6); }
+.proc-arrow { font-size: 20px; color: var(--border); margin: 0 4px; flex-shrink: 0; }
+
+/* ======================== MODEL VISUALS ======================== */
+/* Relacional */
+.model-rel { width: 100%; max-width: 380px; border-radius: 8px; overflow: hidden; border: 2px solid var(--border); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.model-rel-head { background: var(--dark); display: flex; }
+.model-rel-head span { flex: 1; padding: 8px 10px; font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.6); }
+.model-rel-head span.pk { color: #60AEFF; }
+.model-rel-row { display: flex; border-bottom: 1px solid var(--border); }
+.model-rel-row:last-child { border-bottom: none; }
+.model-rel-row span { flex: 1; padding: 8px 10px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #444; }
+.model-rel-row span.pk { color: var(--blue); font-weight: 700; }
+.model-rel-row:nth-child(even) { background: #FAFAFA; }
+.model-title { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 10px; }
+
+/* Clave-Valor */
+.model-kv { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 8px; }
+.kv-row   { display: flex; align-items: center; gap: 10px; background: white; border: 1.5px solid var(--border); border-radius: 6px; padding: 10px 14px; }
+.kv-key   { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--blue); flex-shrink: 0; }
+.kv-sep   { font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--muted); flex-shrink: 0; }
+.kv-val   { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #444; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Documental */
+.model-doc { width: 100%; max-width: 380px; background: #0d0d0d; border-radius: 8px; padding: 18px 20px; font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.9; }
+.doc-line  { display: block; }
+.doc-brace { color: #e0e0e0; }
+.doc-key   { color: #FF8A80; }
+.doc-str   { color: #4ADE80; }
+.doc-num   { color: #F87171; }
+.doc-arr   { color: #FFD700; }
+.doc-indent { padding-left: 20px; }
+
+/* Grafo */
+.model-graph { width: 200px; height: 180px; position: relative; flex-shrink: 0; }
+.g-node { position: absolute; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; text-align: center; line-height: 1.2; }
+.g-node.blue  { background: var(--blue); color: white; }
+.g-node.dark  { background: var(--dark); color: white; }
+.g-node.light { background: #E8F0FE; color: var(--blue); border: 2px solid var(--blue); }
+.g-edge { position: absolute; background: var(--border); transform-origin: left center; height: 2px; }
+.g-label { position: absolute; font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--muted); letter-spacing: 0.06em; }
+
+/* OO */
+.model-oo { width: 100%; max-width: 280px; border: 2px solid var(--dark); border-radius: 4px; overflow: hidden; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.oo-head  { background: var(--dark); color: white; padding: 8px 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 900; text-transform: uppercase; text-align: center; letter-spacing: 0.04em; }
+.oo-section { border-top: 1.5px solid var(--dark); padding: 10px 14px; display: flex; flex-direction: column; gap: 4px; font-size: 15px; }
+.oo-attr { color: #444; }
+.oo-attr .oo-type { color: var(--blue); margin-right: 6px; }
+.oo-method { color: var(--muted); }
+.oo-method .oo-name { color: var(--dark); }
+
+/* ======================== TIMELINE ======================== */
+.timeline-wrap { width: 100%; max-width: 1100px; }
+.timeline { display: flex; position: relative; padding-top: 56px; }
+.timeline::before { content: ''; position: absolute; top: 63px; left: 0; right: 0; height: 3px; background: var(--border); }
+.tl-item  { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; padding: 0 6px; }
+.tl-year  { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--blue); position: absolute; top: -30px; white-space: nowrap; }
+.tl-dot   { width: 20px; height: 20px; border-radius: 50%; background: var(--blue); border: 4px solid white; box-shadow: 0 0 0 3px var(--blue); position: relative; z-index: 1; flex-shrink: 0; }
+.tl-label { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 900; color: var(--dark); text-align: center; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.3; }
+.tl-sub   { font-size: 15px; color: var(--muted); text-align: center; margin-top: 7px; line-height: 1.5; }
+
+/* ======================== ARCHITECTURE ======================== */
+.arch-stack { width: 100%; max-width: 400px; border-radius: 10px; overflow: hidden; border: 2px solid var(--border); box-shadow: 0 6px 24px rgba(0,0,0,0.08); }
+.arch-layer { padding: 18px 22px; display: flex; align-items: center; gap: 16px; transition: opacity 0.3s; }
+.arch-layer.ext { background: #FFF3F3; border-bottom: 2px solid var(--border); }
+.arch-layer.con { background: #E8F5E9; border-bottom: 2px solid var(--border); }
+.arch-layer.int { background: #FFF8E1; }
+.arch-layer.dimmed { opacity: 0.18; }
+.arch-dbms-bar { background: var(--dark); padding: 7px 22px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.arch-dbms-bar span { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.45); }
+.arch-dbms-bar .dbms-name { color: white; font-size: 13px; }
+.arch-badge { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 900; color: white; flex-shrink: 0; }
+.arch-text-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 900; text-transform: uppercase; color: var(--dark); letter-spacing: 0.02em; }
+.arch-text-sub   { font-size: 15px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+/* ======================== SEGURIDAD ======================== */
+.sec-list { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+.sec-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; border-radius: 8px; border: 1.5px solid var(--border); background: white; }
+.sec-icon { width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.sec-icon.red   { background: #FFF3F3; }
+.sec-icon.green { background: #E8F5E9; }
+.sec-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 900; text-transform: uppercase; color: var(--dark); }
+.sec-desc  { font-size: 16px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+
+/* ======================== RESPONSIVE ======================== */
+@media (max-width: 1024px) {
+  .slide-split      { grid-template-columns: 1fr; }
+  .slide-section h2 { font-size: 48px; }
+  .slide-cover h2   { font-size: 56px; }
+  .agenda-grid      { grid-template-columns: 1fr; }
+  .exercise-grid    { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<header class="site-header">
+  <h1>Fundamentos de <span>Base de Datos</span></h1>
+  <span id="counter">1 / 30</span>
+  <img src="../logo inacap.png" class="header-logo" alt="INACAP">
+</header>
+
+<!-- ==================== LAM 1 — PORTADA ==================== -->
+<div class="lamina slide-cover" id="lam-1">
+  <p class="anim cover-eyebrow">Otoño 2026 — Unidad 1</p>
+  <h2 class="anim">Introducción<br>a las <span>Bases</span><br>de Datos</h2>
+  <p class="anim cover-sub">TI3V12 · Fundamentos de Base de Datos</p>
+  <img src="../logo inacap.png" class="cover-logo anim" alt="INACAP">
+</div>
+
+<!-- ==================== LAM 2 — AGENDA ==================== -->
+<div class="lamina slide-formula" id="lam-2">
+  <p class="anim slide-eyebrow">Unidad 1 — Contenidos</p>
+  <div class="formula-heading anim">¿Qué veremos <span>hoy</span>?</div>
+  <div class="agenda-grid anim">
+    <div class="ag-card">
+      <div class="ag-num">01</div>
+      <div class="ag-title">Conceptos fundamentales</div>
+      <div class="ag-desc">Dato, información, conocimiento, qué es una BD, integridad de datos y diseño con DER.</div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-num">02</div>
+      <div class="ag-title">Evolución histórica</div>
+      <div class="ag-desc">De los archivos secuenciales al cloud y las BD distribuidas.</div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-num">03</div>
+      <div class="ag-title">Modelos de bases de datos</div>
+      <div class="ag-desc">Relacional (ACID), clave-valor, documental, grafo, orientado a objetos y vectorial. Teorema CAP y SQL básico.</div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-num">04</div>
+      <div class="ag-title">Arquitectura DBMS y seguridad</div>
+      <div class="ag-desc">Los 3 niveles ANSI/SPARC, roles en BD y buenas prácticas de seguridad.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 3 — SECCIÓN CONCEPTOS ==================== -->
+<div class="lamina slide-section" id="lam-3">
+  <p class="anim sec-eyebrow">Unidad 1 — Bloque 01</p>
+  <h2 class="anim">Conceptos<br><span>Fundamentales</span></h2>
+  <p class="anim sec-desc">Dato, información, conocimiento y base de datos.</p>
+  <img src="../logo inacap.png" class="section-logo anim" alt="INACAP">
+</div>
+
+<!-- ==================== LAM 4 — DATO / INFORMACIÓN / CONOCIMIENTO ==================== -->
+<div class="lamina slide-split" id="lam-4">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Conceptos fundamentales</p>
+      <h3 class="slide-title">Dato, información y <span>conocimiento</span></h3>
+    </div>
+    <p class="slide-body anim">Tres conceptos relacionados pero distintos que forman la base de cualquier sistema de información.</p>
+    <ul class="bullet-list anim">
+      <li><strong>Dato:</strong> hecho crudo, sin contexto ni significado por sí solo.</li>
+      <li><strong>Información:</strong> datos procesados y organizados con un contexto que les da significado.</li>
+      <li><strong>Conocimiento:</strong> información interpretada y aplicada para tomar decisiones.</li>
+    </ul>
+    <div class="info-box anim">
+      <strong>Clave:</strong> los datos son la materia prima. Sin procesamiento, no generan valor por sí solos.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div class="dik-flow">
+      <div class="dik-step d1">
+        <div class="dik-label">Dato</div>
+        <div class="dik-example">"25"</div>
+      </div>
+      <div class="dik-arrow">&#8595;</div>
+      <div class="dik-step d2">
+        <div class="dik-label">Información</div>
+        <div class="dik-example">"25°C en Santiago, 27-05-2026"</div>
+      </div>
+      <div class="dik-arrow">&#8595;</div>
+      <div class="dik-step d3">
+        <div class="dik-label">Conocimiento</div>
+        <div class="dik-example">"Hoy hace calor — llevar ropa ligera"</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 5 — PROCESAMIENTO ==================== -->
+<div class="lamina slide-split inv" id="lam-5">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Conceptos fundamentales</p>
+      <h3 class="slide-title">Procesamiento de <span>datos</span></h3>
+    </div>
+    <p class="slide-body anim">El <strong>procesamiento de datos</strong> es el conjunto de operaciones que transforman datos crudos en información útil para una organización.</p>
+    <ul class="bullet-list anim">
+      <li><strong>Recolección:</strong> captura de datos desde sensores, formularios, transacciones.</li>
+      <li><strong>Almacenamiento:</strong> persistencia organizada y accesible.</li>
+      <li><strong>Procesamiento:</strong> cálculo, filtrado, agregación, transformación.</li>
+      <li><strong>Distribución:</strong> entrega de la información al usuario correcto.</li>
+    </ul>
+    <div class="info-box anim">
+      El <strong>DBMS</strong> (Sistema Gestor de BD) es el software que automatiza todo este ciclo.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px;">
+      <div class="proc-flow">
+        <div class="proc-box in">
+          <div class="proc-label">Entrada</div>
+          <div class="proc-sub">datos crudos</div>
+        </div>
+        <div class="proc-arrow">&#8594;</div>
+        <div class="proc-box mid">
+          <div class="proc-label">Proceso</div>
+          <div class="proc-sub">DBMS</div>
+        </div>
+        <div class="proc-arrow">&#8594;</div>
+        <div class="proc-box out">
+          <div class="proc-label">Salida</div>
+          <div class="proc-sub">información</div>
+        </div>
+      </div>
+      <div style="background:white;border:1.5px solid var(--border);border-radius:8px;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#444;line-height:1.9;">
+        <span style="color:#6A9955;">-- entrada</span><br>
+        INSERT INTO ventas VALUES (...);<br>
+        <span style="color:#6A9955;">-- proceso / consulta</span><br>
+        SELECT SUM(total) FROM ventas<br>
+        &nbsp;&nbsp;WHERE fecha = TODAY();<br>
+        <span style="color:#6A9955;">-- salida</span><br>
+        <span style="color:#4ADE80;">&#8594; $1.240.000</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 6 — ¿QUÉ ES UNA BD? ==================== -->
+<div class="lamina slide-split" id="lam-6">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Conceptos fundamentales</p>
+      <h3 class="slide-title">¿Qué es una <span>Base de Datos</span>?</h3>
+    </div>
+    <p class="slide-body anim">Una <strong>base de datos</strong> es una colección de datos <strong>organizada, persistente y relacionada</strong>, diseñada para ser consultada y modificada de forma eficiente por múltiples usuarios o sistemas.</p>
+    <ul class="bullet-list anim">
+      <li><strong>Organizada:</strong> estructura definida (tablas, documentos, grafos…)</li>
+      <li><strong>Persistente:</strong> los datos sobreviven al apagado del sistema.</li>
+      <li><strong>Compartida:</strong> múltiples usuarios acceden simultáneamente.</li>
+      <li><strong>Controlada:</strong> con reglas de integridad y permisos de acceso.</li>
+    </ul>
+  </div>
+  <div class="visual-pane anim">
+    <div style="width:100%;max-width:360px;display:flex;flex-direction:column;gap:12px;">
+      <div class="model-title">Tabla: clientes</div>
+      <div class="model-rel">
+        <div class="model-rel-head">
+          <span class="pk">id</span><span>nombre</span><span>ciudad</span><span>saldo</span>
+        </div>
+        <div class="model-rel-row"><span class="pk">1</span><span>Ana Torres</span><span>Santiago</span><span>$420.000</span></div>
+        <div class="model-rel-row"><span class="pk">2</span><span>Juan Pérez</span><span>Valparaíso</span><span>$185.000</span></div>
+        <div class="model-rel-row"><span class="pk">3</span><span>María Soto</span><span>Santiago</span><span>$730.000</span></div>
+      </div>
+      <div class="info-box" style="margin-top:0;">
+        <strong>PK</strong> (clave primaria) identifica cada fila de forma única.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 6b — INSTANCIA VS ESQUEMA ==================== -->
+<div class="lamina slide-split inv" id="lam-6b">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Conceptos fundamentales</p>
+      <h3 class="slide-title">Instancia vs <span>Esquema</span></h3>
+    </div>
+    <p class="slide-body anim">Dos conceptos que describen la misma base de datos desde perspectivas distintas — uno es permanente, el otro cambia constantemente.</p>
+    <ul class="bullet-list anim">
+      <li><strong>Esquema:</strong> la definición estructural de la BD — tablas, columnas, tipos de dato y restricciones. Cambia raramente. Es el "plano del edificio".</li>
+      <li><strong>Instancia:</strong> el contenido actual de la BD en un momento dado. Cambia con cada INSERT, UPDATE o DELETE. Es "el edificio habitado".</li>
+    </ul>
+    <div class="info-box anim">
+      <strong>Analogía:</strong> el esquema es el molde, la instancia es el chocolate que hay dentro en este momento.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="display:flex;flex-direction:column;gap:16px;width:100%;max-width:380px;">
+      <div>
+        <div class="model-title">Esquema (estructura fija)</div>
+        <div class="model-rel">
+          <div class="model-rel-head">
+            <span class="pk">id: INT</span><span>nombre: VARCHAR</span><span>saldo: DECIMAL</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="model-title">Instancia a las 10:00 hrs</div>
+        <div class="model-rel">
+          <div class="model-rel-head"><span class="pk">id</span><span>nombre</span><span>saldo</span></div>
+          <div class="model-rel-row"><span class="pk">1</span><span>Ana Torres</span><span>$420.000</span></div>
+          <div class="model-rel-row"><span class="pk">2</span><span>Juan Pérez</span><span>$185.000</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="model-title">Instancia a las 10:05 hrs (tras transferencia)</div>
+        <div class="model-rel">
+          <div class="model-rel-head"><span class="pk">id</span><span>nombre</span><span>saldo</span></div>
+          <div class="model-rel-row"><span class="pk">1</span><span>Ana Torres</span><span style="color:#E31E24;font-weight:700;">$370.000</span></div>
+          <div class="model-rel-row"><span class="pk">2</span><span>Juan Pérez</span><span style="color:#2E7D32;font-weight:700;">$235.000</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 6c — INTEGRIDAD DE DATOS ==================== -->
+<div class="lamina slide-formula" id="lam-6c">
+  <p class="anim slide-eyebrow">Conceptos fundamentales</p>
+  <div class="formula-heading anim">Cuatro tipos de <span>Integridad</span></div>
+  <div class="anim" style="width:100%;max-width:880px;margin-top:8px;">
+    <table class="info-table">
+      <thead>
+        <tr><th>Tipo</th><th>¿Qué garantiza?</th><th>Mecanismo SQL</th><th>Ejemplo práctico</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>De entidad</strong></td>
+          <td>Cada fila es única e identificable</td>
+          <td style="font-family:'JetBrains Mono',monospace;font-size:12px;">PRIMARY KEY · NOT NULL</td>
+          <td>El <em>id</em> de un cliente no puede repetirse ni ser nulo</td>
+        </tr>
+        <tr>
+          <td><strong>Referencial</strong></td>
+          <td>Las relaciones entre tablas son consistentes</td>
+          <td style="font-family:'JetBrains Mono',monospace;font-size:12px;">FOREIGN KEY</td>
+          <td>Un pedido no puede referenciar un cliente inexistente</td>
+        </tr>
+        <tr>
+          <td><strong>De dominio</strong></td>
+          <td>Los valores pertenecen a rangos o conjuntos válidos</td>
+          <td style="font-family:'JetBrains Mono',monospace;font-size:12px;">CHECK · tipo de dato</td>
+          <td>edad &gt; 0 · estado IN ('activo', 'inactivo')</td>
+        </tr>
+        <tr>
+          <td><strong>De usuario</strong></td>
+          <td>Reglas de negocio propias de la organización</td>
+          <td style="font-family:'JetBrains Mono',monospace;font-size:12px;">TRIGGER · CHECK compuesto</td>
+          <td>saldo_final = saldo_inicial – monto_debitado</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="info-box anim" style="max-width:880px;margin-top:14px;">
+    <strong>Importante:</strong> una BD puede almacenar datos técnicamente correctos pero <strong>semánticamente incorrectos</strong> si no se definen restricciones. La integridad es responsabilidad del <strong>diseñador</strong>, no del sistema.
+  </div>
+</div>
+
+<!-- ==================== LAM 7 — BD vs ARCHIVOS ==================== -->
+<div class="lamina slide-formula" id="lam-7">
+  <p class="anim slide-eyebrow">Conceptos fundamentales</p>
+  <div class="formula-heading anim">Base de Datos vs <span>Sistema de Archivos</span></div>
+  <div class="anim" style="width:100%;max-width:820px;margin-top:8px;">
+    <table class="info-table">
+      <thead>
+        <tr><th>Característica</th><th>Sistema de Archivos</th><th>Base de Datos (DBMS)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Redundancia de datos</strong></td><td>Alta — datos duplicados entre archivos</td><td>Controlada mediante normalización</td></tr>
+        <tr><td><strong>Integridad</strong></td><td>Debe manejarse manualmente</td><td>Reglas declarativas (PK, FK, CHECK)</td></tr>
+        <tr><td><strong>Acceso concurrente</strong></td><td>Problemas de conflicto entre procesos</td><td>Gestionado con transacciones y locks</td></tr>
+        <tr><td><strong>Consultas complejas</strong></td><td>Requiere código personalizado</td><td>SQL estándar y optimizador de consultas</td></tr>
+        <tr><td><strong>Seguridad</strong></td><td>Solo a nivel de sistema operativo</td><td>Roles, permisos y auditoría integrados</td></tr>
+        <tr><td><strong>Recuperación ante fallos</strong></td><td>Manual, propensa a corrupción</td><td>Automática con logs y rollback</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== LAM 7b — DISEÑO: DER BÁSICO ==================== -->
+<div class="lamina slide-split" id="lam-7b">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Conceptos fundamentales — Diseño</p>
+      <h3 class="slide-title">Diagrama <span>Entidad-Relación</span></h3>
+    </div>
+    <p class="slide-body anim">Antes de crear tablas se diseña el modelo. El <strong>DER</strong> representa visualmente qué datos existen y cómo se relacionan, de forma independiente del DBMS.</p>
+    <ul class="bullet-list anim">
+      <li><strong>Entidad:</strong> objeto del mundo real con existencia propia (Cliente, Pedido, Producto).</li>
+      <li><strong>Atributo:</strong> característica de la entidad. El atributo marcado como <strong>PK</strong> es la clave primaria.</li>
+      <li><strong>Relación:</strong> vínculo semántico entre entidades (el rombo).</li>
+      <li><strong>Cardinalidad:</strong> cuántas instancias participan en cada extremo — <strong>1:1 · 1:N · N:M</strong>.</li>
+    </ul>
+    <div class="info-box anim">
+      El DER se diseña primero en papel → luego se traduce a tablas SQL. Es el <strong>plano del edificio</strong> antes de construirlo.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="display:flex;flex-direction:column;gap:20px;width:100%;max-width:420px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);">Ejemplo: sistema de ventas</div>
+
+      <!-- CLIENTE →realiza→ PEDIDO (1:N) -->
+      <div style="display:flex;align-items:center;gap:5px;justify-content:center;">
+        <div style="border:2.5px solid var(--dark);border-radius:4px;overflow:hidden;min-width:112px;">
+          <div style="background:var(--dark);color:white;padding:6px 12px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;text-align:center;">CLIENTE</div>
+          <div style="padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);font-weight:700;background:#FFF3F3;border-bottom:1px solid var(--border);">PK id_cliente</div>
+          <div style="padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#444;border-bottom:1px solid var(--border);">nombre</div>
+          <div style="padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#444;">email</div>
+        </div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;color:var(--muted);flex-shrink:0;">1</div>
+        <div style="height:2px;width:12px;background:var(--border);flex-shrink:0;"></div>
+        <div style="width:48px;height:48px;border:2.5px solid var(--blue);transform:rotate(45deg);background:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span style="transform:rotate(-45deg);font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;text-transform:uppercase;color:var(--blue);text-align:center;line-height:1.2;display:block;">rea&shy;liza</span>
+        </div>
+        <div style="height:2px;width:12px;background:var(--border);flex-shrink:0;"></div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;color:var(--muted);flex-shrink:0;">N</div>
+        <div style="border:2.5px solid var(--dark);border-radius:4px;overflow:hidden;min-width:112px;">
+          <div style="background:var(--dark);color:white;padding:6px 12px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;text-align:center;">PEDIDO</div>
+          <div style="padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);font-weight:700;background:#FFF3F3;border-bottom:1px solid var(--border);">PK id_pedido</div>
+          <div style="padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#2E7D32;font-weight:700;background:#E8F5E9;border-bottom:1px solid var(--border);">FK id_cliente</div>
+          <div style="padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#444;border-bottom:1px solid var(--border);">fecha</div>
+          <div style="padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#444;">total</div>
+        </div>
+      </div>
+
+      <!-- PEDIDO →contiene→ PRODUCTO (N:M) -->
+      <div style="display:flex;align-items:center;gap:5px;justify-content:center;">
+        <div style="border:2.5px solid var(--dark);border-radius:4px;overflow:hidden;min-width:112px;">
+          <div style="background:var(--dark);color:white;padding:6px 12px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;text-align:center;">PEDIDO</div>
+          <div style="padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);font-weight:700;background:#FFF3F3;border-bottom:1px solid var(--border);">PK id_pedido</div>
+          <div style="padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#444;">fecha</div>
+        </div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;color:var(--muted);flex-shrink:0;">N</div>
+        <div style="height:2px;width:12px;background:var(--border);flex-shrink:0;"></div>
+        <div style="width:48px;height:48px;border:2.5px solid var(--blue);transform:rotate(45deg);background:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span style="transform:rotate(-45deg);font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;text-transform:uppercase;color:var(--blue);text-align:center;line-height:1.2;display:block;">con&shy;tiene</span>
+        </div>
+        <div style="height:2px;width:12px;background:var(--border);flex-shrink:0;"></div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;color:var(--muted);flex-shrink:0;">M</div>
+        <div style="border:2.5px solid var(--dark);border-radius:4px;overflow:hidden;min-width:112px;">
+          <div style="background:var(--dark);color:white;padding:6px 12px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;text-align:center;">PRODUCTO</div>
+          <div style="padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);font-weight:700;background:#FFF3F3;border-bottom:1px solid var(--border);">PK id_producto</div>
+          <div style="padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#444;border-bottom:1px solid var(--border);">nombre</div>
+          <div style="padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#444;">precio</div>
+        </div>
+      </div>
+
+      <!-- Leyenda -->
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;padding:10px 14px;background:var(--light);border-radius:6px;border:1.5px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#444;"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);font-weight:700;background:#FFF3F3;padding:2px 6px;border-radius:2px;">PK</span>Clave primaria</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#444;"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#2E7D32;font-weight:700;background:#E8F5E9;padding:2px 6px;border-radius:2px;">FK</span>Clave foránea</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#444;"><span style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;color:var(--muted);">N:M</span>Tabla intermedia al implementar</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 8 — SECCIÓN EVOLUCIÓN ==================== -->
+<div class="lamina slide-section" id="lam-8">
+  <p class="anim sec-eyebrow">Unidad 1 — Bloque 02</p>
+  <h2 class="anim">Evolución<br><span>Histórica</span></h2>
+  <p class="anim sec-desc">De las cintas magnéticas a las bases de datos distribuidas en la nube.</p>
+  <img src="../logo inacap.png" class="section-logo anim" alt="INACAP">
+</div>
+
+<!-- ==================== LAM 9 — TIMELINE ==================== -->
+<div class="lamina slide-formula" id="lam-9" style="padding: 48px 60px; justify-content: center;">
+  <p class="anim slide-eyebrow">Evolución histórica</p>
+  <div class="formula-heading anim" style="margin-bottom: 8px;">Hitos en el desarrollo de las <span>bases de datos</span></div>
+  <div class="timeline-wrap anim">
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">1950s</div>
+        <div class="tl-dot"></div>
+        <div class="tl-label">Archivos secuenciales</div>
+        <div class="tl-sub">Cintas magnéticas, acceso lineal. IBM.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1960s</div>
+        <div class="tl-dot"></div>
+        <div class="tl-label">Modelo jerárquico y en red</div>
+        <div class="tl-sub">IMS de IBM. Punteros entre registros.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1970s</div>
+        <div class="tl-dot"></div>
+        <div class="tl-label">Modelo relacional + SQL</div>
+        <div class="tl-sub">E.F. Codd (IBM). SEQUEL/IBM 1974 · ANSI SQL 1986.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1980s</div>
+        <div class="tl-dot"></div>
+        <div class="tl-label">RDBMS comerciales</div>
+        <div class="tl-sub">Oracle, DB2, Sybase, SQL Server.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1990s</div>
+        <div class="tl-dot"></div>
+        <div class="tl-label">Internet + BD orientadas a obj.</div>
+        <div class="tl-sub">MySQL, PostgreSQL. Open source.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2000s</div>
+        <div class="tl-dot"></div>
+        <div class="tl-label">NoSQL — Big Data</div>
+        <div class="tl-sub">MongoDB, Redis, Cassandra, Neo4j.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2010s</div>
+        <div class="tl-dot"></div>
+        <div class="tl-label">NewSQL + Cloud DB</div>
+        <div class="tl-sub">Google Spanner, AWS Aurora, CockroachDB.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year" style="color:var(--blue);font-weight:900;">2020s</div>
+        <div class="tl-dot" style="width:26px;height:26px;background:var(--blue);box-shadow:0 0 0 4px rgba(227,30,36,0.25),0 0 0 3px var(--blue);"></div>
+        <div class="tl-label" style="color:var(--blue);">BD Vectoriales + IA</div>
+        <div class="tl-sub">Embeddings, RAG, pgvector, Pinecone.<br>ChatGPT, Claude, Gemini.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 10 — SECCIÓN MODELOS ==================== -->
+<div class="lamina slide-section" id="lam-10">
+  <p class="anim sec-eyebrow">Unidad 1 — Bloque 03</p>
+  <h2 class="anim">Modelos de<br><span>Bases de Datos</span></h2>
+  <p class="anim sec-desc">Cinco formas distintas de estructurar y relacionar los datos.</p>
+  <img src="../logo inacap.png" class="section-logo anim" alt="INACAP">
+</div>
+
+<!-- ==================== LAM 11 — MODELO RELACIONAL ==================== -->
+<div class="lamina slide-split" id="lam-11">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Modelos de BD — 01</p>
+      <h3 class="slide-title">Modelo <span>Relacional</span></h3>
+    </div>
+    <p class="slide-body anim">Organiza los datos en <strong>tablas (relaciones)</strong> con filas y columnas. Las tablas se conectan mediante <strong>claves foráneas</strong>. Es el modelo dominante en sistemas empresariales.</p>
+    <ul class="bullet-list anim">
+      <li><strong>Estructura:</strong> tablas con esquema fijo.</li>
+      <li><strong>Integridad:</strong> restricciones PK, FK, UNIQUE, CHECK.</li>
+      <li><strong>Lenguaje:</strong> SQL estándar.</li>
+      <li><strong>Transacciones:</strong> propiedades ACID garantizadas.</li>
+    </ul>
+    <div class="info-box anim">
+      <strong>Ejemplos:</strong> PostgreSQL, MySQL, Oracle, SQL Server, MariaDB.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="display:flex;flex-direction:column;gap:16px;width:100%;max-width:380px;">
+      <div>
+        <div class="model-title">Tabla: pedidos</div>
+        <div class="model-rel">
+          <div class="model-rel-head">
+            <span class="pk">id</span><span>cliente_id</span><span>total</span><span>estado</span>
+          </div>
+          <div class="model-rel-row"><span class="pk">101</span><span>1</span><span>$45.000</span><span>pagado</span></div>
+          <div class="model-rel-row"><span class="pk">102</span><span>3</span><span>$98.000</span><span>pendiente</span></div>
+          <div class="model-rel-row"><span class="pk">103</span><span>1</span><span>$12.000</span><span>pagado</span></div>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:0;font-size:12px;">
+        <strong>cliente_id</strong> es FK que referencia la tabla <strong>clientes</strong>.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 11b — PROPIEDADES ACID ==================== -->
+<div class="lamina slide-split inv" id="lam-11b">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Modelo Relacional — Fundamento</p>
+      <h3 class="slide-title">Propiedades <span>ACID</span></h3>
+    </div>
+    <p class="slide-body anim">Las propiedades ACID son las garantías que todo DBMS relacional ofrece para que las <strong>transacciones</strong> sean confiables incluso ante fallos de hardware o accesos concurrentes.</p>
+    <div class="anim" style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+      <div style="display:flex;gap:14px;align-items:flex-start;padding:10px 14px;background:#fafafa;border-left:4px solid var(--blue);border-radius:0 6px 6px 0;">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--blue);min-width:24px;line-height:1;">A</span>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;text-transform:uppercase;color:var(--dark);margin-bottom:2px;">Atomicidad</div>
+          <div style="font-size:16px;color:#444;line-height:1.55;">La transacción es "todo o nada" — si falla un paso, se deshacen <em>todos</em> los cambios.</div>
+          <div style="font-size:12px;color:var(--blue);margin-top:4px;">→ Si el débito a Ana falla, el crédito a Pedro jamás ocurre.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start;padding:10px 14px;background:#fafafa;border-left:4px solid var(--blue);border-radius:0 6px 6px 0;">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--blue);min-width:24px;line-height:1;">C</span>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;text-transform:uppercase;color:var(--dark);margin-bottom:2px;">Consistencia</div>
+          <div style="font-size:16px;color:#444;line-height:1.55;">La BD siempre pasa de un estado válido a otro, respetando todas las reglas de integridad.</div>
+          <div style="font-size:12px;color:var(--blue);margin-top:4px;">→ La suma de saldos de Ana + Pedro es idéntica antes y después de la transferencia.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start;padding:10px 14px;background:#fafafa;border-left:4px solid var(--blue);border-radius:0 6px 6px 0;">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--blue);min-width:24px;line-height:1;">I</span>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;text-transform:uppercase;color:var(--dark);margin-bottom:2px;">Aislamiento</div>
+          <div style="font-size:16px;color:#444;line-height:1.55;">Las transacciones concurrentes no se ven entre sí hasta que terminan por completo.</div>
+          <div style="font-size:12px;color:var(--blue);margin-top:4px;">→ Nadie ve la cuenta de Ana descontada sin que Pedro ya haya recibido el dinero.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start;padding:10px 14px;background:#fafafa;border-left:4px solid var(--blue);border-radius:0 6px 6px 0;">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--blue);min-width:24px;line-height:1;">D</span>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;text-transform:uppercase;color:var(--dark);margin-bottom:2px;">Durabilidad</div>
+          <div style="font-size:16px;color:#444;line-height:1.55;">Una vez confirmado el COMMIT, el cambio persiste aunque el sistema falle inmediatamente después.</div>
+          <div style="font-size:12px;color:var(--blue);margin-top:4px;">→ Tras el COMMIT, aunque el servidor caiga, la transferencia quedó registrada para siempre.</div>
+        </div>
+      </div>
+    </div>
+<div class="info-box anim">
+      <strong>Transacción:</strong> secuencia de operaciones que se ejecutan como una unidad indivisible. Empieza con <code style="font-family:'JetBrains Mono',monospace;">BEGIN</code> y termina con <code style="font-family:'JetBrains Mono',monospace;">COMMIT</code> (confirmar) o <code style="font-family:'JetBrains Mono',monospace;">ROLLBACK</code> (deshacer).
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="width:100%;max-width:380px;display:flex;flex-direction:column;gap:10px;">
+      <div style="margin-bottom:10px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:#1A1A1A;line-height:1.2;margin-bottom:4px;">Ana transfiere $50.000 a Pedro</div>
+        <div style="font-size:13px;color:#555;line-height:1.45;">Dos operaciones, una sola unidad — si falla el paso 2, el paso 1 se deshace.</div>
+      </div>
+      <div style="background:#0d0d0d;border-radius:8px;padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:2;margin-bottom:4px;">
+        <span style="color:#90A4AE;">-- inicio de transacción</span><br>
+        <span style="color:#FFD700;">BEGIN</span><span style="color:#FFFFFF;">;</span><br>
+        <span style="color:#4FC3F7;">UPDATE</span> <span style="color:#69F0AE;">cuentas</span> <span style="color:#4FC3F7;">SET</span> <span style="color:#FFFFFF;">saldo = saldo</span> <span style="color:#FF6E6E;">- 50000</span><br>
+        &nbsp;&nbsp;<span style="color:#4FC3F7;">WHERE</span> <span style="color:#FFFFFF;">id =</span> <span style="color:#FFAB40;">1</span><span style="color:#FFFFFF;">;</span><br>
+        <span style="color:#4FC3F7;">UPDATE</span> <span style="color:#69F0AE;">cuentas</span> <span style="color:#4FC3F7;">SET</span> <span style="color:#FFFFFF;">saldo = saldo</span> <span style="color:#69F0AE;">+ 50000</span><br>
+        &nbsp;&nbsp;<span style="color:#4FC3F7;">WHERE</span> <span style="color:#FFFFFF;">id =</span> <span style="color:#FFAB40;">2</span><span style="color:#FFFFFF;">;</span><br>
+        <span style="color:#FFD700;">COMMIT</span><span style="color:#FFFFFF;">;</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="padding:10px 12px;border-radius:6px;background:#FFF3F3;border-left:3px solid var(--blue);">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;color:var(--blue);">A — Atomicidad</div>
+          <div style="font-size:11px;color:#7f0000;margin-top:3px;line-height:1.4;">Si falla el 2° UPDATE → ROLLBACK del 1°</div>
+        </div>
+        <div style="padding:10px 12px;border-radius:6px;background:#E8F5E9;border-left:3px solid #2E7D32;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;color:#2E7D32;">C — Consistencia</div>
+          <div style="font-size:11px;color:#1B5E20;margin-top:3px;line-height:1.4;">Suma total de saldos igual antes y después</div>
+        </div>
+        <div style="padding:10px 12px;border-radius:6px;background:#E8F0FE;border-left:3px solid #1565C0;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;color:#1565C0;">I — Aislamiento</div>
+          <div style="font-size:11px;color:#0D47A1;margin-top:3px;line-height:1.4;">Otra sesión no ve el débito sin el crédito</div>
+        </div>
+        <div style="padding:10px 12px;border-radius:6px;background:#FFF8E1;border-left:3px solid #F59E0B;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;color:#E65100;">D — Durabilidad</div>
+          <div style="font-size:11px;color:#78350F;margin-top:3px;line-height:1.4;">Tras COMMIT, persiste aunque caiga el servidor</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 12 — MODELO CLAVE-VALOR ==================== -->
+<div class="lamina slide-split inv" id="lam-12">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Modelos de BD — 02</p>
+      <h3 class="slide-title">Modelo <span>Clave-Valor</span></h3>
+    </div>
+    <p class="slide-body anim">La estructura más simple: cada dato se almacena como un <strong>par clave única → valor</strong>. El valor puede ser cualquier cosa (string, número, JSON, imagen binaria).</p>
+    <ul class="bullet-list anim">
+      <li><strong>Fortaleza:</strong> velocidad extrema de lectura/escritura.</li>
+      <li><strong>Debilidad:</strong> no permite consultas complejas sobre el valor.</li>
+      <li><strong>Uso ideal:</strong> caché, sesiones de usuario, contadores en tiempo real.</li>
+    </ul>
+    <div class="info-box anim">
+      <strong>Ejemplos:</strong> Redis, DynamoDB, Riak, Memcached.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:380px;">
+      <div class="model-title">Almacén Redis (ejemplo)</div>
+      <div class="model-kv">
+        <div class="kv-row"><span class="kv-key">session:u1042</span><span class="kv-sep">&#8594;</span><span class="kv-val">{"user":"ana","rol":"admin"}</span></div>
+        <div class="kv-row"><span class="kv-key">contador:visitas</span><span class="kv-sep">&#8594;</span><span class="kv-val">48291</span></div>
+        <div class="kv-row"><span class="kv-key">cache:prod:55</span><span class="kv-sep">&#8594;</span><span class="kv-val">{"nombre":"Laptop","precio":499}</span></div>
+        <div class="kv-row"><span class="kv-key">token:reset:abc9</span><span class="kv-sep">&#8594;</span><span class="kv-val">expires:1748390400</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 13 — MODELO DOCUMENTAL ==================== -->
+<div class="lamina slide-split" id="lam-13">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Modelos de BD — 03</p>
+      <h3 class="slide-title">Modelo <span>Documental</span></h3>
+    </div>
+    <p class="slide-body anim">Los datos se almacenan como <strong>documentos semi-estructurados</strong> (JSON, BSON, XML). Cada documento puede tener una estructura distinta, sin esquema rígido.</p>
+    <ul class="bullet-list anim">
+      <li><strong>Fortaleza:</strong> esquema flexible, fácil de escalar horizontalmente.</li>
+      <li><strong>Debilidad:</strong> integridad referencial manual, sin JOINs nativos eficientes.</li>
+      <li><strong>Uso ideal:</strong> catálogos de productos, CMS, perfiles de usuario.</li>
+    </ul>
+    <div class="info-box anim">
+      <strong>Ejemplos:</strong> MongoDB, CouchDB, Firestore, Amazon DocumentDB.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="width:100%;max-width:380px;">
+      <div class="model-title">Documento MongoDB (colección: productos)</div>
+      <div class="model-doc">
+        <span class="doc-line doc-brace">{</span>
+        <span class="doc-line doc-indent"><span class="doc-key">"_id"</span>: <span class="doc-str">"prod_0042"</span>,</span>
+        <span class="doc-line doc-indent"><span class="doc-key">"nombre"</span>: <span class="doc-str">"Laptop Pro 15"</span>,</span>
+        <span class="doc-line doc-indent"><span class="doc-key">"precio"</span>: <span class="doc-num">899990</span>,</span>
+        <span class="doc-line doc-indent"><span class="doc-key">"especificaciones"</span>: {</span>
+        <span class="doc-line" style="padding-left:40px;"><span class="doc-key">"ram"</span>: <span class="doc-str">"16GB"</span>,</span>
+        <span class="doc-line" style="padding-left:40px;"><span class="doc-key">"ssd"</span>: <span class="doc-str">"512GB"</span></span>
+        <span class="doc-line doc-indent">},</span>
+        <span class="doc-line doc-indent"><span class="doc-key">"tags"</span>: <span class="doc-arr">["electronico","oferta"]</span></span>
+        <span class="doc-line doc-brace">}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 14 — MODELO DE GRAFO ==================== -->
+<div class="lamina slide-split inv" id="lam-14">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Modelos de BD — 04</p>
+      <h3 class="slide-title">Modelo de <span>Grafo</span></h3>
+    </div>
+    <p class="slide-body anim">Los datos se representan como <strong>nodos</strong> (entidades) y <strong>aristas</strong> (relaciones). Cada nodo y arista pueden tener propiedades adicionales.</p>
+    <ul class="bullet-list anim">
+      <li><strong>Fortaleza:</strong> traversal eficiente de relaciones complejas y profundas.</li>
+      <li><strong>Debilidad:</strong> consultas simples son más complejas de expresar.</li>
+      <li><strong>Uso ideal:</strong> redes sociales, motores de recomendación, detección de fraude.</li>
+    </ul>
+    <div class="info-box anim">
+      <strong>Ejemplos:</strong> Neo4j, Amazon Neptune, ArangoDB, TigerGraph.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px;">
+      <div class="model-title" style="text-align:center;">Red social (nodos y aristas)</div>
+      <div style="position:relative;width:360px;height:270px;">
+        <!-- Nodos -->
+        <div class="g-node blue" style="top:105px;left:10px;">Ana</div>
+        <div class="g-node blue" style="top:15px;left:155px;">Luis</div>
+        <div class="g-node blue" style="top:175px;left:270px;">María</div>
+        <div class="g-node dark" style="top:90px;left:280px;font-size:9px;">Spotify</div>
+        <!-- Etiquetas de aristas -->
+        <div class="g-label" style="top:68px;left:88px;">SIGUE</div>
+        <div class="g-label" style="top:115px;left:188px;">SIGUE</div>
+        <div class="g-label" style="top:100px;left:265px;font-size:8px;">USA</div>
+        <!-- SVG para las líneas -->
+        <svg style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;">
+          <line x1="34" y1="129" x2="179" y2="39" stroke="#E8E8E8" stroke-width="2"/>
+          <line x1="179" y1="39" x2="294" y2="199" stroke="#E8E8E8" stroke-width="2"/>
+          <line x1="294" y1="199" x2="304" y2="114" stroke="#E8E8E8" stroke-width="2"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 15 — MODELO ORIENTADO A OBJETOS ==================== -->
+<div class="lamina slide-split" id="lam-15">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Modelos de BD — 05</p>
+      <h3 class="slide-title">Modelo Orientado a <span>Objetos</span></h3>
+    </div>
+    <p class="slide-body anim">Los datos se almacenan como <strong>objetos</strong> con atributos y métodos, siguiendo el paradigma de la POO. Soporta herencia, encapsulamiento y polimorfismo directamente en la BD.</p>
+    <ul class="bullet-list anim">
+      <li><strong>Fortaleza:</strong> mapeo directo entre BD y código orientado a objetos.</li>
+      <li><strong>Debilidad:</strong> menor adopción, pocas herramientas maduras.</li>
+      <li><strong>Uso ideal:</strong> CAD/CAM, multimedia, ingeniería, simulaciones.</li>
+    </ul>
+    <div class="info-box anim">
+      <strong>Ejemplos:</strong> ObjectDB, db4o, Versant, GemStone.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center;">
+      <div class="model-title">Clase almacenada en BD-OO</div>
+      <div class="model-oo">
+        <div class="oo-head">Empleado</div>
+        <div class="oo-section">
+          <div class="oo-attr"><span class="oo-type">int</span> id</div>
+          <div class="oo-attr"><span class="oo-type">String</span> nombre</div>
+          <div class="oo-attr"><span class="oo-type">float</span> salario</div>
+          <div class="oo-attr"><span class="oo-type">Cargo</span> cargo</div>
+        </div>
+        <div class="oo-section">
+          <div class="oo-method"><span class="oo-name">calcularBono()</span>: float</div>
+          <div class="oo-method"><span class="oo-name">promover(cargo)</span>: void</div>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:0;font-size:12px;max-width:280px;">
+        La clase <strong>Cargo</strong> se almacena por referencia — herencia directa.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 15b — MODELO VECTORIAL ==================== -->
+<div class="lamina slide-split" id="lam-15b">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Modelos de BD — 06 · Emergente</p>
+      <h3 class="slide-title">Modelo <span>Vectorial</span></h3>
+    </div>
+    <p class="slide-body anim">Los datos se almacenan como <strong>vectores numéricos de alta dimensión</strong> (embeddings) que representan el significado semántico de textos, imágenes o audio. La búsqueda no es por igualdad exacta, sino por <strong>similitud</strong>.</p>
+    <ul class="bullet-list anim">
+      <li><strong>Fortaleza:</strong> búsqueda semántica — "encuentra documentos con significado similar a esta pregunta".</li>
+      <li><strong>Debilidad:</strong> no reemplaza consultas transaccionales ni relacionales.</li>
+      <li><strong>Uso ideal:</strong> sistemas RAG de IA generativa, búsqueda semántica, reconocimiento facial, recomendaciones por contenido.</li>
+    </ul>
+    <div class="info-box anim">
+      <strong>Ejemplos:</strong> Pinecone, Weaviate, Chroma, Qdrant, pgvector (extensión de PostgreSQL). ChatGPT, Claude y Gemini los usan para memoria y búsqueda de contexto.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="display:flex;flex-direction:column;gap:14px;width:100%;max-width:390px;">
+      <div class="model-title">¿Cómo funciona un embedding?</div>
+
+      <!-- Texto → Vector -->
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="background:white;border:2px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--dark);font-style:italic;flex:1;">"El gato duerme en el sofá"</div>
+        <div style="color:var(--blue);font-size:20px;flex-shrink:0;">&#8594;</div>
+        <div style="background:#0d0d0d;border-radius:8px;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#FF8A80;flex:1;line-height:1.7;">[0.23, -0.71,<br> 0.44, 0.12,<br> -0.38, ...]<br><span style="color:#555;">1536 dimensiones</span></div>
+      </div>
+
+      <!-- Búsqueda por similitud -->
+      <div style="background:var(--light);border:2px solid var(--border);border-radius:8px;padding:14px 16px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:10px;">Búsqueda semántica (distancia coseno)</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;background:white;border-radius:5px;padding:7px 10px;border:1.5px solid var(--blue);">
+            <span style="font-size:12px;color:var(--dark);">"Los gatos duermen mucho"</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--blue);">0.97</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;background:white;border-radius:5px;padding:7px 10px;border:1.5px solid var(--border);">
+            <span style="font-size:12px;color:var(--dark);">"Mi mascota descansa aquí"</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">0.81</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;background:white;border-radius:5px;padding:7px 10px;border:1.5px solid var(--border);">
+            <span style="font-size:12px;color:var(--dark);">"SQL fue creado en 1974"</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">0.04</span>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;">1.0 = idéntico · 0.0 = sin relación semántica</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 16 — COMPARATIVA ==================== -->
+<div class="lamina slide-formula" id="lam-16">
+  <p class="anim slide-eyebrow">Modelos de BD — Resumen</p>
+  <div class="formula-heading anim">¿Cuándo usar <span>cada modelo</span>?</div>
+  <div class="anim" style="width:100%;max-width:900px;margin-top:8px;">
+    <table class="info-table">
+      <thead>
+        <tr><th>Modelo</th><th>Estructura</th><th>Fortaleza clave</th><th>Uso ideal</th><th>Ejemplo</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Relacional</strong></td><td>Tablas + filas</td><td>Integridad / ACID</td><td>Sistemas transaccionales, ERP, banca</td><td>PostgreSQL, Oracle</td></tr>
+        <tr><td><strong>Clave-Valor</strong></td><td>Par K → V</td><td>Velocidad extrema</td><td>Caché, sesiones, contadores</td><td>Redis, DynamoDB</td></tr>
+        <tr><td><strong>Documental</strong></td><td>JSON / BSON</td><td>Esquema flexible</td><td>Catálogos, CMS, perfiles</td><td>MongoDB, Firestore</td></tr>
+        <tr><td><strong>Grafo</strong></td><td>Nodos + aristas</td><td>Traversal de relaciones</td><td>Redes sociales, recomendaciones</td><td>Neo4j, Neptune</td></tr>
+        <tr><td><strong>Orientado a Obj.</strong></td><td>Objetos + métodos</td><td>Mapeo OO directo</td><td>CAD/CAM, multimedia, simulaciones</td><td>ObjectDB, db4o</td></tr>
+        <tr><td><strong>Vectorial</strong></td><td>Vectores / Embeddings</td><td>Búsqueda semántica</td><td>IA generativa, RAG, motores de búsqueda</td><td>Pinecone, pgvector</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== LAM 16b — TEOREMA CAP ==================== -->
+<div class="lamina slide-split" id="lam-16b">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Modelos de BD — ¿Por qué tantos tipos?</p>
+      <h3 class="slide-title">Teorema <span>CAP</span></h3>
+    </div>
+    <p class="slide-body anim">En un sistema de BD <strong>distribuido</strong>, es imposible garantizar simultáneamente las tres propiedades del teorema CAP. Solo se pueden elegir <strong>dos de tres</strong>.</p>
+    <ul class="bullet-list anim">
+      <li><strong>Consistencia (C):</strong> todos los nodos ven exactamente los mismos datos al mismo tiempo.</li>
+      <li><strong>Disponibilidad (A):</strong> toda consulta recibe una respuesta, aunque no sea la más reciente.</li>
+      <li><strong>Tolerancia a particiones (P):</strong> el sistema funciona aunque fallen conexiones entre nodos.</li>
+    </ul>
+    <div class="info-box anim">
+      En la práctica, las redes fallan — por eso <strong>P es obligatoria</strong> en sistemas distribuidos. La elección real es entre <strong>C+P</strong> (consistente, puede rechazar lecturas) o <strong>A+P</strong> (siempre responde, puede dar datos levemente desactualizados).
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:380px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);">Elige solo 2 de 3</div>
+      <div style="position:relative;width:300px;height:256px;">
+        <svg viewBox="0 0 300 256" style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;">
+          <polygon points="150,16 16,236 284,236" fill="none" stroke="#E8E8E8" stroke-width="2.5"/>
+          <line x1="150" y1="16" x2="16" y2="236" stroke="var(--blue)" stroke-width="2.5" opacity="0.5"/>
+          <line x1="150" y1="16" x2="284" y2="236" stroke="#2E7D32" stroke-width="2.5" opacity="0.5"/>
+          <line x1="16" y1="236" x2="284" y2="236" stroke="#F59E0B" stroke-width="2.5" opacity="0.5"/>
+          <!-- Zone labels -->
+          <text x="72" y="148" font-family="Barlow Condensed" font-size="11" font-weight="700" fill="var(--blue)" text-anchor="middle" letter-spacing="1">C+P</text>
+          <text x="72" y="162" font-family="JetBrains Mono" font-size="9" fill="#888" text-anchor="middle">PostgreSQL</text>
+          <text x="72" y="174" font-family="JetBrains Mono" font-size="9" fill="#888" text-anchor="middle">MongoDB</text>
+          <text x="228" y="148" font-family="Barlow Condensed" font-size="11" font-weight="700" fill="#2E7D32" text-anchor="middle" letter-spacing="1">A+P</text>
+          <text x="228" y="162" font-family="JetBrains Mono" font-size="9" fill="#888" text-anchor="middle">Cassandra</text>
+          <text x="228" y="174" font-family="JetBrains Mono" font-size="9" fill="#888" text-anchor="middle">DynamoDB</text>
+          <text x="150" y="222" font-family="Barlow Condensed" font-size="11" font-weight="700" fill="#78350F" text-anchor="middle" letter-spacing="1">C+A</text>
+          <text x="150" y="234" font-family="JetBrains Mono" font-size="9" fill="#888" text-anchor="middle">solo nodo único</text>
+        </svg>
+        <!-- Vértice C (top) -->
+        <div style="position:absolute;top:0;left:50%;transform:translate(-50%,-4px);text-align:center;">
+          <div style="background:var(--dark);color:white;padding:4px 12px;border-radius:5px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;white-space:nowrap;">Consistencia</div>
+        </div>
+        <!-- Vértice P (bottom-left) -->
+        <div style="position:absolute;bottom:4px;left:0;transform:translateX(-16px);text-align:center;">
+          <div style="background:var(--dark);color:white;padding:4px 10px;border-radius:5px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;text-transform:uppercase;white-space:nowrap;">Tolerancia P.</div>
+        </div>
+        <!-- Vértice A (bottom-right) -->
+        <div style="position:absolute;bottom:4px;right:0;transform:translateX(16px);text-align:center;">
+          <div style="background:var(--dark);color:white;padding:4px 10px;border-radius:5px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;text-transform:uppercase;white-space:nowrap;">Disponibilidad</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 16c-trans — TRANSICIÓN RELACIONAL ==================== -->
+<div class="lamina slide-section" id="lam-16c-trans">
+  <p class="anim sec-eyebrow">Unidad 1 — Bloque 03</p>
+  <h2 class="anim">Nuestro foco:<br><span>Modelo Relacional</span></h2>
+  <p class="anim sec-desc">De todos los modelos vistos, el relacional es el más extendido en la industria — banca, ERP, sistemas académicos, salud. Aprender a consultarlo con <strong style="color:rgba(255,255,255,0.75);">SQL</strong> es la habilidad base de cualquier profesional TI.</p>
+  <img src="../logo inacap.png" class="section-logo anim" alt="INACAP">
+</div>
+
+<!-- ==================== LAM 16c — SQL BÁSICO ==================== -->
+<div class="lamina slide-formula" id="lam-16c">
+  <p class="anim slide-eyebrow">Lenguaje de consulta — DML</p>
+  <div class="formula-heading anim">Las 4 operaciones <span>SQL fundamentales</span></div>
+  <div class="anim" style="width:100%;max-width:920px;display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;">
+
+    <div style="background:var(--light);border-radius:8px;padding:18px 20px;border:2px solid var(--border);">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;text-transform:uppercase;color:var(--blue);margin-bottom:8px;">SELECT — Consultar datos</div>
+      <div style="background:#0d0d0d;border-radius:6px;padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.9;">
+        <span style="color:#9CDCFE;">SELECT</span> <span style="color:#4ADE80;">nombre, saldo</span><br>
+        <span style="color:#9CDCFE;">FROM</span> <span style="color:#4ADE80;">clientes</span><br>
+        <span style="color:#9CDCFE;">WHERE</span> ciudad = <span style="color:#FF8A80;">'Santiago'</span><br>
+        <span style="color:#9CDCFE;">ORDER BY</span> saldo <span style="color:#9CDCFE;">DESC</span>;
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5;">Devuelve filas que cumplen la condición, en el orden indicado.</div>
+    </div>
+
+    <div style="background:var(--light);border-radius:8px;padding:18px 20px;border:2px solid var(--border);">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;text-transform:uppercase;color:#2E7D32;margin-bottom:8px;">INSERT — Agregar datos</div>
+      <div style="background:#0d0d0d;border-radius:6px;padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.9;">
+        <span style="color:#9CDCFE;">INSERT INTO</span> <span style="color:#4ADE80;">clientes</span><br>
+        &nbsp;&nbsp;(id, nombre, ciudad, saldo)<br>
+        <span style="color:#9CDCFE;">VALUES</span><br>
+        &nbsp;&nbsp;(4, <span style="color:#FF8A80;">'Luis Vega'</span>, <span style="color:#FF8A80;">'Temuco'</span>, <span style="color:#FFD700;">320000</span>);
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5;">Agrega una nueva fila a la tabla.</div>
+    </div>
+
+    <div style="background:var(--light);border-radius:8px;padding:18px 20px;border:2px solid var(--border);">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;text-transform:uppercase;color:#E65100;margin-bottom:8px;">UPDATE — Modificar datos</div>
+      <div style="background:#0d0d0d;border-radius:6px;padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.9;">
+        <span style="color:#9CDCFE;">UPDATE</span> <span style="color:#4ADE80;">clientes</span><br>
+        <span style="color:#9CDCFE;">SET</span> saldo = saldo + <span style="color:#4ADE80;">50000</span>,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;ciudad = <span style="color:#FF8A80;">'Valdivia'</span><br>
+        <span style="color:#9CDCFE;">WHERE</span> id = <span style="color:#FFD700;">4</span>;
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5;">Modifica filas existentes que cumplen la condición.</div>
+    </div>
+
+    <div style="background:var(--light);border-radius:8px;padding:18px 20px;border:2px solid var(--border);">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;text-transform:uppercase;color:var(--blue);margin-bottom:8px;">DELETE — Eliminar datos</div>
+      <div style="background:#0d0d0d;border-radius:6px;padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.9;">
+        <span style="color:#9CDCFE;">DELETE FROM</span> <span style="color:#4ADE80;">clientes</span><br>
+        <span style="color:#9CDCFE;">WHERE</span> id = <span style="color:#FFD700;">4</span>;<br>
+        <br>
+        <span style="color:#6A9955;">-- ¡sin WHERE elimina TODAS las filas!</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5;">Elimina filas. <strong>Siempre usar WHERE</strong> en producción.</div>
+    </div>
+
+  </div>
+  <div class="info-box anim" style="max-width:920px;margin-top:12px;">
+    <strong>DML vs DDL:</strong> SELECT / INSERT / UPDATE / DELETE son comandos <strong>DML</strong> (manipulación de datos). CREATE TABLE, ALTER TABLE y DROP TABLE son <strong>DDL</strong> (definición de estructura) — los veremos en detalle en la próxima unidad.
+  </div>
+</div>
+
+<!-- ==================== LAM 17 — SECCIÓN REFLEXIÓN ==================== -->
+<div class="lamina slide-section" id="lam-17">
+  <p class="anim sec-eyebrow">Unidad 1 — Práctica</p>
+  <h2 class="anim">¿Qué modelo<br><span>usarías</span>?</h2>
+  <p class="anim sec-desc">Tres casos reales. Analiza el requerimiento y elige el modelo más adecuado.</p>
+  <img src="../logo inacap.png" class="section-logo anim" alt="INACAP">
+</div>
+
+<!-- ==================== LAM 18 — EJERCICIOS CASOS 1-2 ==================== -->
+<div class="lamina slide-exercise" id="lam-ej-1">
+  <div class="anim">
+    <p class="slide-eyebrow">Reflexión — Ejercicios</p>
+    <h3 class="slide-title">Elige el <span>modelo adecuado</span></h3>
+  </div>
+  <div class="exercise-grid anim">
+    <div class="ex-card">
+      <span class="ex-num">Caso 1</span>
+      <span class="ex-tag">Plataforma Musical</span>
+      <p class="ex-body">Una plataforma tipo Spotify conecta millones de <strong>usuarios, artistas, canciones y géneros</strong>.</p>
+      <ul class="ex-sub">
+        <li>Los usuarios siguen artistas y crean playlists.</li>
+        <li>Las canciones pertenecen a álbumes y múltiples géneros.</li>
+        <li>El motor de recomendación cruza estas relaciones.</li>
+        <li>¿Qué modelo permite traversar estas conexiones eficientemente?</li>
+      </ul>
+      <a href="#lam-sol-1" class="btn-answer">Ir a la respuesta &rarr;</a>
+    </div>
+    <div class="ex-card">
+      <span class="ex-num">Caso 2</span>
+      <span class="ex-tag">Tienda Online</span>
+      <p class="ex-body">Una tienda vende libros, ropa y electrónicos. <strong>Cada categoría tiene atributos completamente distintos.</strong></p>
+      <ul class="ex-sub">
+        <li>Libros: ISBN, autor, editorial, páginas.</li>
+        <li>Ropa: talla, color, material, temporada.</li>
+        <li>Electrónico: voltaje, peso, garantía, specs técnicas.</li>
+        <li>¿Qué modelo permite esquema flexible por producto?</li>
+      </ul>
+      <a href="#lam-sol-2" class="btn-answer">Ir a la respuesta &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 19 — EJERCICIO CASO 3 ==================== -->
+<div class="lamina slide-exercise" id="lam-ej-2">
+  <div class="anim">
+    <p class="slide-eyebrow">Reflexión — Ejercicios</p>
+    <h3 class="slide-title">Elige el <span>modelo adecuado</span></h3>
+  </div>
+  <div class="exercise-grid anim">
+    <div class="ex-card">
+      <span class="ex-num">Caso 3</span>
+      <span class="ex-tag">Sistema Bancario</span>
+      <p class="ex-body">Un banco maneja <strong>cuentas, clientes y transferencias</strong> con requisitos críticos de integridad.</p>
+      <ul class="ex-sub">
+        <li>Una transferencia debe debitar una cuenta Y acreditar otra.</li>
+        <li>Si falla en algún paso, ningún cambio debe quedar guardado.</li>
+        <li>Los saldos nunca pueden ser inconsistentes entre sí.</li>
+        <li>¿Qué modelo garantiza estas propiedades transaccionales?</li>
+      </ul>
+      <a href="#lam-sol-3" class="btn-answer">Ir a la respuesta &rarr;</a>
+    </div>
+    <div style="background:var(--light);border-radius:10px;padding:28px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;">
+      <div style="text-align:center;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:16px;">Para analizar cada caso</div>
+        <div style="display:flex;flex-direction:column;gap:10px;text-align:left;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dark);">1. ¿Qué tipo de dato predomina?</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dark);">2. ¿Cuál es el requerimiento clave?</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dark);">3. ¿Velocidad, flexibilidad o integridad?</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dark);">4. ¿Relaciones simples o complejas?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 20 — SOLUCIÓN CASO 1 ==================== -->
+<div class="lamina slide-solution" id="lam-sol-1">
+  <div class="anim">
+    <p class="slide-eyebrow">Reflexión — Solución · Caso 1</p>
+    <h3 class="slide-title">Plataforma musical: <span>Modelo de Grafo</span></h3>
+  </div>
+  <p class="sol-q anim">¿Qué modelo permite representar y traversar las relaciones entre usuarios, artistas, canciones y géneros de forma eficiente?</p>
+  <div class="sol-dev anim">
+    <div class="sol-step">
+      <span class="step-num">Tipo de dato</span>
+      <span class="step-calc">Entidades (<span class="hi">Usuario, Artista, Canción, Género</span>) + relaciones (<span class="hi">SIGUE, LANZÓ, PERTENECE_A</span>)</span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Req. clave</span>
+      <span class="step-calc">Traversal profundo: "usuarios que siguen artistas que colaboraron con artistas que el usuario también escucha" — <span class="hi">relaciones son el foco</span></span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">¿Por qué no relacional?</span>
+      <span class="step-calc">Con SQL necesitaría múltiples JOINs anidados que degradan en rendimiento a escala de millones de nodos</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Respuesta</span>
+      <span class="step-calc"><span class="res">Modelo de Grafo</span> — Neo4j, Amazon Neptune &nbsp;·&nbsp; Las relaciones son ciudadanos de primera clase</span>
+    </div>
+  </div>
+  <a href="#lam-ej-1" class="btn-question">&larr; Ir a la pregunta</a>
+</div>
+
+<!-- ==================== LAM 21 — SOLUCIÓN CASO 2 ==================== -->
+<div class="lamina slide-solution" id="lam-sol-2">
+  <div class="anim">
+    <p class="slide-eyebrow">Reflexión — Solución · Caso 2</p>
+    <h3 class="slide-title">Tienda online: <span>Modelo Documental</span></h3>
+  </div>
+  <p class="sol-q anim">¿Qué modelo permite almacenar productos con estructuras de datos radicalmente distintas entre categorías?</p>
+  <div class="sol-dev anim">
+    <div class="sol-step">
+      <span class="step-num">Tipo de dato</span>
+      <span class="step-calc">Documentos semi-estructurados con <span class="hi">esquema variable por producto</span> — cada ítem tiene atributos únicos</span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Req. clave</span>
+      <span class="step-calc"><span class="hi">Flexibilidad de esquema</span>: agregar la categoría "bicicletas" no debe obligar a modificar la estructura de las demás</span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">¿Por qué no relacional?</span>
+      <span class="step-calc">El modelo relacional requeriría tablas separadas por categoría o columnas nulas — ambas soluciones escalan mal con decenas de categorías</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Respuesta</span>
+      <span class="step-calc"><span class="res">Modelo Documental</span> — MongoDB, Firestore &nbsp;·&nbsp; Cada producto es un documento JSON independiente</span>
+    </div>
+  </div>
+  <a href="#lam-ej-1" class="btn-question">&larr; Ir a la pregunta</a>
+</div>
+
+<!-- ==================== LAM 22 — SOLUCIÓN CASO 3 ==================== -->
+<div class="lamina slide-solution" id="lam-sol-3">
+  <div class="anim">
+    <p class="slide-eyebrow">Reflexión — Solución · Caso 3</p>
+    <h3 class="slide-title">Sistema bancario: <span>Modelo Relacional</span></h3>
+  </div>
+  <p class="sol-q anim">¿Qué modelo garantiza que las transferencias sean atómicas y los saldos siempre consistentes?</p>
+  <div class="sol-dev anim">
+    <div class="sol-step">
+      <span class="step-num">Tipo de dato</span>
+      <span class="step-calc">Entidades estructuradas (<span class="hi">Cuenta, Cliente, Transacción</span>) con relaciones definidas y esquema fijo</span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">Req. clave</span>
+      <span class="step-calc">Propiedades <span class="hi">ACID</span> — Atomicidad (todo o nada), Consistencia, Aislamiento, Durabilidad</span>
+    </div>
+    <div class="sol-step">
+      <span class="step-num">¿Por qué no NoSQL?</span>
+      <span class="step-calc">La mayoría de BD NoSQL sacrifican consistencia por disponibilidad (Teorema CAP) — inaceptable en transacciones financieras</span>
+    </div>
+    <div class="sol-step is-result">
+      <span class="step-num">Respuesta</span>
+      <span class="step-calc"><span class="res">Modelo Relacional</span> — PostgreSQL, Oracle &nbsp;·&nbsp; ACID + integridad referencial con claves foráneas</span>
+    </div>
+  </div>
+  <a href="#lam-ej-2" class="btn-question">&larr; Ir a la pregunta</a>
+</div>
+
+<!-- ==================== LAM 23 — SECCIÓN ARQUITECTURA ==================== -->
+<div class="lamina slide-section" id="lam-23">
+  <p class="anim sec-eyebrow">Unidad 1 — Bloque 04</p>
+  <h2 class="anim">Arquitectura<br><span>DBMS</span></h2>
+  <p class="anim sec-desc">El modelo ANSI/SPARC de tres niveles y cómo el DBMS media entre ellos.</p>
+  <img src="../logo inacap.png" class="section-logo anim" alt="INACAP">
+</div>
+
+<!-- ==================== LAM 23b — FUNCIONES DEL DBMS ==================== -->
+<div class="lamina slide-split" id="lam-23b">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Arquitectura DBMS</p>
+      <h3 class="slide-title">¿Qué hace un <span>DBMS</span>?</h3>
+    </div>
+    <p class="slide-body anim">Un <strong>DBMS</strong> (Database Management System) es el software que gestiona el almacenamiento, acceso, seguridad y consistencia de los datos. No es la base de datos — es el motor que la administra.</p>
+    <ul class="bullet-list anim">
+      <li><strong>Procesa consultas:</strong> analiza, optimiza y ejecuta sentencias SQL.</li>
+      <li><strong>Gestiona transacciones:</strong> garantiza propiedades ACID.</li>
+      <li><strong>Controla concurrencia:</strong> múltiples usuarios sin conflictos.</li>
+      <li><strong>Recuperación ante fallos:</strong> logs y rollback automático.</li>
+      <li><strong>Gestiona usuarios:</strong> autenticación, roles y permisos.</li>
+    </ul>
+    <div class="info-box anim">
+      El DBMS expone sus funciones a través del <strong>catálogo del sistema</strong> — un repositorio interno de metadatos sobre todas las tablas, columnas, índices y usuarios.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="width:100%;max-width:360px;display:flex;flex-direction:column;gap:8px;">
+      <div style="background:var(--dark);border-radius:8px;padding:12px 18px;text-align:center;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.4);margin-bottom:2px;">Aplicación / Cliente</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;color:white;margin-bottom:6px;">SQL Developer</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#FF8A80;">SELECT * FROM clientes WHERE ciudad = 'Santiago'</div>
+      </div>
+      <div style="text-align:center;color:var(--blue);font-size:20px;">&#8595;</div>
+      <div style="border:2px solid var(--blue);border-radius:8px;overflow:hidden;">
+        <div style="background:var(--blue);padding:8px 16px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;color:white;text-align:center;">DBMS — Oracle Database</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);">
+          <div style="background:white;padding:10px 12px;font-size:12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;color:var(--dark);">&#128269; Analizador SQL</div>
+          <div style="background:white;padding:10px 12px;font-size:12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;color:var(--dark);">&#9889; Optimizador</div>
+          <div style="background:white;padding:10px 12px;font-size:12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;color:var(--dark);">&#128260; Gestor Transacc.</div>
+          <div style="background:white;padding:10px 12px;font-size:12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;color:var(--dark);">&#128190; Gestor Buffer</div>
+          <div style="background:white;padding:10px 12px;font-size:12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;color:var(--dark);">&#128737; Control Acceso</div>
+          <div style="background:white;padding:10px 12px;font-size:12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;color:var(--dark);">&#128203; Catálogo</div>
+        </div>
+      </div>
+      <div style="text-align:center;color:var(--blue);font-size:20px;">&#8595;</div>
+      <div style="background:#FFF8E1;border:2px solid #F59E0B;border-radius:8px;padding:12px 18px;text-align:center;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:#78350F;">Almacenamiento físico</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#92400E;margin-top:2px;">Archivos en disco (.dbf, .log)</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#B45309;margin-top:3px;">archivos · índices · logs</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 24 — NIVEL EXTERNO ==================== -->
+<div class="lamina slide-split" id="lam-24">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Arquitectura DBMS — Nivel 3</p>
+      <h3 class="slide-title">Nivel <span>Externo</span></h3>
+    </div>
+    <p class="slide-body anim">Es la <strong>capa más cercana al usuario</strong>. Cada usuario o aplicación ve solo la parte de la base de datos que le corresponde — una <strong>vista personalizada</strong> del esquema.</p>
+    <ul class="bullet-list anim">
+      <li>Un vendedor ve precios y stock, pero no costos de producción.</li>
+      <li>Un contador ve transacciones pero no datos personales de clientes.</li>
+      <li>Las vistas aíslan a los usuarios de la complejidad interna.</li>
+    </ul>
+    <div class="info-box anim">
+      Puede existir <strong>n vistas distintas</strong> del mismo esquema conceptual, una por rol de usuario.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div class="arch-stack">
+      <div class="arch-layer ext">
+        <div class="arch-badge" style="background:var(--blue);">3</div>
+        <div>
+          <div class="arch-text-title">Nivel Externo</div>
+          <div class="arch-text-sub">Vistas de usuario &amp; aplicaciones</div>
+        </div>
+      </div>
+      <div class="arch-dbms-bar"><span>&#8595; DBMS &#8595;</span></div>
+      <div class="arch-layer con dimmed">
+        <div class="arch-badge" style="background:#ccc;">2</div>
+        <div>
+          <div class="arch-text-title">Nivel Conceptual</div>
+          <div class="arch-text-sub">Esquema lógico global</div>
+        </div>
+      </div>
+      <div class="arch-dbms-bar"><span>&#8595; DBMS &#8595;</span></div>
+      <div class="arch-layer int dimmed">
+        <div class="arch-badge" style="background:#ccc;">1</div>
+        <div>
+          <div class="arch-text-title">Nivel Interno</div>
+          <div class="arch-text-sub">Almacenamiento físico</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 25 — NIVEL CONCEPTUAL ==================== -->
+<div class="lamina slide-split inv" id="lam-25">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Arquitectura DBMS — Nivel 2</p>
+      <h3 class="slide-title">Nivel <span>Conceptual</span></h3>
+    </div>
+    <p class="slide-body anim">Define <strong>qué datos existen y cómo se relacionan</strong> lógicamente, sin preocuparse por cómo se almacenan físicamente. Es el esquema compartido por toda la organización.</p>
+    <ul class="bullet-list anim">
+      <li>Contiene entidades, atributos, relaciones y restricciones.</li>
+      <li>Es independiente del hardware y del DBMS subyacente.</li>
+      <li>Cambios en el almacenamiento físico no afectan este nivel.</li>
+    </ul>
+    <div class="info-box anim">
+      En bases de datos relacionales, el esquema conceptual son las <strong>tablas, columnas, PK y FK</strong>.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div class="arch-stack">
+      <div class="arch-layer ext dimmed">
+        <div class="arch-badge" style="background:#aaa;">3</div>
+        <div>
+          <div class="arch-text-title">Nivel Externo</div>
+          <div class="arch-text-sub">Vistas de usuario &amp; aplicaciones</div>
+        </div>
+      </div>
+      <div class="arch-dbms-bar"><span>&#8595; DBMS &#8595;</span></div>
+      <div class="arch-layer con">
+        <div class="arch-badge" style="background:#2E7D32;">2</div>
+        <div>
+          <div class="arch-text-title">Nivel Conceptual</div>
+          <div class="arch-text-sub">Esquema lógico global</div>
+        </div>
+      </div>
+      <div class="arch-dbms-bar"><span>&#8595; DBMS &#8595;</span></div>
+      <div class="arch-layer int dimmed">
+        <div class="arch-badge" style="background:#ccc;">1</div>
+        <div>
+          <div class="arch-text-title">Nivel Interno</div>
+          <div class="arch-text-sub">Almacenamiento físico</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 26 — NIVEL INTERNO ==================== -->
+<div class="lamina slide-split" id="lam-26">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Arquitectura DBMS — Nivel 1</p>
+      <h3 class="slide-title">Nivel <span>Interno</span></h3>
+    </div>
+    <p class="slide-body anim">Describe <strong>cómo se almacenan físicamente los datos</strong>: archivos en disco, estructuras de índices, métodos de acceso y organización de páginas.</p>
+    <ul class="bullet-list anim">
+      <li>Gestiona índices (B-Tree, Hash) para acelerar consultas.</li>
+      <li>Define la organización de archivos y páginas de datos.</li>
+      <li>Transparente al usuario y al nivel conceptual.</li>
+    </ul>
+    <div class="info-box anim">
+      El <strong>DBMS</strong> actúa como mediador entre los tres niveles — garantiza independencia lógica y física de los datos.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div class="arch-stack">
+      <div class="arch-layer ext">
+        <div class="arch-badge" style="background:var(--blue);">3</div>
+        <div>
+          <div class="arch-text-title">Nivel Externo</div>
+          <div class="arch-text-sub">Vistas de usuario &amp; aplicaciones</div>
+        </div>
+      </div>
+      <div class="arch-dbms-bar"><span class="dbms-name">DBMS</span><span>&#8597; mapeo</span></div>
+      <div class="arch-layer con">
+        <div class="arch-badge" style="background:#2E7D32;">2</div>
+        <div>
+          <div class="arch-text-title">Nivel Conceptual</div>
+          <div class="arch-text-sub">Esquema lógico global</div>
+        </div>
+      </div>
+      <div class="arch-dbms-bar"><span class="dbms-name">DBMS</span><span>&#8597; mapeo</span></div>
+      <div class="arch-layer int">
+        <div class="arch-badge" style="background:#E65100;">1</div>
+        <div>
+          <div class="arch-text-title">Nivel Interno</div>
+          <div class="arch-text-sub">Almacenamiento físico</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 26b — INDEPENDENCIA DE DATOS ==================== -->
+<div class="lamina slide-split inv" id="lam-26b">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Arquitectura DBMS — Beneficio clave</p>
+      <h3 class="slide-title">Independencia de <span>datos</span></h3>
+    </div>
+    <p class="slide-body anim">La razón de fondo por la que existen los 3 niveles ANSI/SPARC. La independencia de datos permite <strong>modificar un nivel sin afectar los niveles superiores</strong>.</p>
+    <ul class="bullet-list anim">
+      <li><strong>Independencia física:</strong> puedo cambiar cómo se almacenan los datos (migrar de HDD a SSD, reorganizar índices, cambiar de servidor) sin modificar el esquema lógico ni las aplicaciones.</li>
+      <li><strong>Independencia lógica:</strong> puedo agregar una nueva columna o tabla al esquema lógico sin romper las vistas de usuario ni las aplicaciones existentes.</li>
+    </ul>
+    <div class="info-box anim">
+      Sin independencia de datos, <strong>cada cambio de hardware o estructura obligaría a reescribir todas las aplicaciones</strong> que acceden a la BD.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="width:100%;max-width:380px;display:flex;flex-direction:column;gap:14px;">
+      <div style="background:white;border:2px solid var(--border);border-radius:8px;padding:18px 20px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:var(--blue);margin-bottom:10px;">Independencia física</div>
+        <div style="font-size:13px;color:#444;line-height:1.6;margin-bottom:8px;">El DBA migra el servidor de MySQL 5.7 a PostgreSQL 16.</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div style="background:#FFF3F3;border:1.5px solid #FECACA;border-radius:5px;padding:6px 10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#7f0000;flex:1;text-align:center;">nivel interno<br>&#8594; cambia</div>
+          <div style="font-size:18px;color:var(--border);">&#8594;</div>
+          <div style="background:#E8F5E9;border:1.5px solid #A5D6A7;border-radius:5px;padding:6px 10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#1B5E20;flex:1;text-align:center;">aplicaciones<br>&#10003; sin cambios</div>
+        </div>
+      </div>
+      <div style="background:white;border:2px solid var(--border);border-radius:8px;padding:18px 20px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:var(--blue);margin-bottom:10px;">Independencia lógica</div>
+        <div style="font-size:13px;color:#444;line-height:1.6;margin-bottom:8px;">Se agrega la columna <span style="font-family:'JetBrains Mono',monospace;font-size:11px;background:#E8E8E8;padding:1px 4px;border-radius:2px;">fecha_nacimiento</span> a la tabla clientes.</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div style="background:#FFF3F3;border:1.5px solid #FECACA;border-radius:5px;padding:6px 10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#7f0000;flex:1;text-align:center;">esquema lógico<br>&#8594; cambia</div>
+          <div style="font-size:18px;color:var(--border);">&#8594;</div>
+          <div style="background:#E8F5E9;border:1.5px solid #A5D6A7;border-radius:5px;padding:6px 10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#1B5E20;flex:1;text-align:center;">vistas y apps<br>&#10003; sin cambios</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 26c — DIAGRAMA INTEGRADOR ANSI/SPARC ==================== -->
+<div class="lamina slide-formula" id="lam-26c">
+  <p class="anim slide-eyebrow">Arquitectura DBMS — Visión completa</p>
+  <div class="formula-heading anim">El <span>DBMS</span> como mediador entre niveles</div>
+  <div class="anim" style="display:flex;align-items:stretch;gap:0;width:100%;max-width:860px;margin-top:12px;border-radius:12px;overflow:hidden;border:2px solid var(--border);">
+
+    <!-- Columna izquierda: actores -->
+    <div style="display:flex;flex-direction:column;justify-content:space-around;background:var(--light);padding:20px 18px;gap:12px;min-width:180px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:4px;">¿Quién interactúa?</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:18px;">&#128100;</span>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;color:var(--dark);">Usuario Final</div>
+          <div style="font-size:11px;color:var(--muted);">App, formulario web</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:18px;">&#128187;</span>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;color:var(--dark);">Desarrollador</div>
+          <div style="font-size:11px;color:var(--muted);">SQL Developer, pgAdmin</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:18px;">&#128737;</span>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;color:var(--dark);">DBA</div>
+          <div style="font-size:11px;color:var(--muted);">Acceso total al sistema</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flecha derecha de actores -->
+    <div style="display:flex;align-items:center;background:white;padding:0 6px;">
+      <div style="color:var(--blue);font-size:22px;">&#8594;</div>
+    </div>
+
+    <!-- Niveles ANSI/SPARC -->
+    <div style="flex:1;display:flex;flex-direction:column;background:white;">
+
+      <!-- Nivel Externo -->
+      <div style="flex:1;display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:2px dashed var(--border);">
+        <div style="width:32px;height:32px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:white;flex-shrink:0;">3</div>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;color:var(--blue);">Nivel Externo</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">Vistas personalizadas por rol — cada usuario ve solo lo que le corresponde.</div>
+        </div>
+      </div>
+
+      <!-- DBMS mediador 1 -->
+      <div style="background:var(--blue);padding:6px 20px;display:flex;align-items:center;gap:8px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.7);">DBMS</div>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.3);"></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.6);">mapeo externo/conceptual &#8597;</div>
+      </div>
+
+      <!-- Nivel Conceptual -->
+      <div style="flex:1;display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:2px dashed var(--border);">
+        <div style="width:32px;height:32px;border-radius:8px;background:#2E7D32;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:white;flex-shrink:0;">2</div>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;color:#2E7D32;">Nivel Conceptual</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">Esquema lógico global — tablas, columnas, PK, FK y restricciones.</div>
+        </div>
+      </div>
+
+      <!-- DBMS mediador 2 -->
+      <div style="background:#2E7D32;padding:6px 20px;display:flex;align-items:center;gap:8px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.7);">DBMS</div>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.3);"></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.6);">mapeo conceptual/interno &#8597;</div>
+      </div>
+
+      <!-- Nivel Interno -->
+      <div style="flex:1;display:flex;align-items:center;gap:14px;padding:14px 20px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:#E65100;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:white;flex-shrink:0;">1</div>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;color:#E65100;">Nivel Interno</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">Almacenamiento físico — archivos .dbf, índices B-Tree, logs de transacciones.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Flecha derecha de niveles -->
+    <div style="display:flex;align-items:center;background:white;padding:0 6px;">
+      <div style="color:#E65100;font-size:22px;">&#8594;</div>
+    </div>
+
+    <!-- Columna derecha: almacenamiento -->
+    <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;background:#FFF8E1;padding:20px 18px;gap:10px;min-width:140px;text-align:center;">
+      <span style="font-size:32px;">&#128436;</span>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:#78350F;">Disco</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#92400E;line-height:1.8;">.dbf<br>.log<br>índices</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== LAM 23c — ROLES EN UN SISTEMA DE BD ==================== -->
+<div class="lamina slide-split" id="lam-23c">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Arquitectura DBMS — Actores</p>
+      <h3 class="slide-title">Roles en un <span>sistema de BD</span></h3>
+    </div>
+    <p class="slide-body anim">Un sistema de base de datos no es solo software — involucra <strong>personas con responsabilidades distintas</strong> que interactúan con el DBMS en niveles diferentes. Cada rol tiene acceso solo a lo que necesita: es el principio de <strong>mínimo privilegio</strong>.</p>
+    <div class="info-box anim">
+      En equipos pequeños una misma persona puede cubrir varios roles. En organizaciones grandes, son cargos separados con responsabilidades y contratos distintos.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:400px;">
+
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-radius:8px;border:1.5px solid var(--border);background:white;">
+        <div style="width:38px;height:38px;border-radius:8px;background:#FFF3F3;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#128737;</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;color:var(--dark);">DBA <span style="font-size:10px;font-weight:400;color:var(--muted);text-transform:none;">Database Administrator</span></div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5;">Diseña el esquema, gestiona usuarios, optimiza rendimiento y controla la seguridad. Acceso total.</div>
+          <div style="margin-top:5px;"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--light);border:1px solid var(--border);padding:2px 6px;border-radius:3px;color:var(--blue);">CREATE · DROP · GRANT · BACKUP</span></div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-radius:8px;border:1.5px solid var(--border);background:white;">
+        <div style="width:38px;height:38px;border-radius:8px;background:#E8F0FE;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#128187;</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;color:var(--dark);">Desarrollador</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5;">Escribe consultas, crea vistas y lógica de negocio. Acceso controlado en entornos de desarrollo.</div>
+          <div style="margin-top:5px;"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--light);border:1px solid var(--border);padding:2px 6px;border-radius:3px;color:#1565C0;">SELECT · INSERT · UPDATE · DELETE</span></div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-radius:8px;border:1.5px solid var(--border);background:white;">
+        <div style="width:38px;height:38px;border-radius:8px;background:#E8F5E9;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#128100;</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;color:var(--dark);">Usuario Final</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5;">Interactúa a través de una aplicación, sin escribir SQL. Ve solo la vista que le corresponde.</div>
+          <div style="margin-top:5px;"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--light);border:1px solid var(--border);padding:2px 6px;border-radius:3px;color:#2E7D32;">SELECT (sobre vistas restringidas)</span></div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-radius:8px;border:1.5px solid var(--border);background:white;">
+        <div style="width:38px;height:38px;border-radius:8px;background:#FFF8E1;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#128202;</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;color:var(--dark);">Analista de Datos</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5;">Realiza consultas complejas y reportes. Solo lectura sobre producción o réplica analítica.</div>
+          <div style="margin-top:5px;"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--light);border:1px solid var(--border);padding:2px 6px;border-radius:3px;color:#78350F;">SELECT · GROUP BY · JOIN · HAVING</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAM 27 — SECCIÓN SEGURIDAD ==================== -->
+<div class="lamina slide-section" id="lam-27">
+  <p class="anim sec-eyebrow">Unidad 1 — Bloque 04</p>
+  <h2 class="anim">Seguridad en<br><span>Bases de Datos</span></h2>
+  <p class="anim sec-desc">Amenazas comunes y buenas prácticas para proteger los datos de una organización.</p>
+  <img src="../logo inacap.png" class="section-logo anim" alt="INACAP">
+</div>
+
+<!-- ==================== LAM 28 — AMENAZAS ==================== -->
+<div class="lamina slide-split" id="lam-28">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Seguridad — Amenazas</p>
+      <h3 class="slide-title">Principales <span>amenazas</span></h3>
+    </div>
+    <p class="slide-body anim">Conocer las amenazas es el primer paso para proteger una base de datos. No todas son externas.</p>
+    <div class="info-box danger anim" style="margin-top:16px;">
+      <strong>Regla 80/20:</strong> la mayoría de las brechas de datos involucran acceso interno no autorizado o credenciales comprometidas, no ataques externos sofisticados.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <ul class="sec-list" style="width:100%;max-width:400px;">
+      <li class="sec-item">
+        <div class="sec-icon red">&#128274;</div>
+        <div>
+          <div class="sec-title">Inyección SQL</div>
+          <div class="sec-desc">Código malicioso en campos de entrada que manipula o extrae datos de la BD.</div>
+        </div>
+      </li>
+      <li class="sec-item">
+        <div class="sec-icon red">&#128100;</div>
+        <div>
+          <div class="sec-title">Acceso no autorizado</div>
+          <div class="sec-desc">Usuarios con más permisos de los necesarios o credenciales débiles/comprometidas.</div>
+        </div>
+      </li>
+      <li class="sec-item">
+        <div class="sec-icon red">&#128293;</div>
+        <div>
+          <div class="sec-title">Pérdida o corrupción</div>
+          <div class="sec-desc">Fallos de hardware, errores de software o eliminación accidental sin respaldo.</div>
+        </div>
+      </li>
+      <li class="sec-item">
+        <div class="sec-icon red">&#128270;</div>
+        <div>
+          <div class="sec-title">Intercepción de datos</div>
+          <div class="sec-desc">Tráfico no cifrado entre la aplicación y la BD capturado por terceros.</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- ==================== LAM 29 — CONTRAMEDIDAS ==================== -->
+<div class="lamina slide-split inv" id="lam-29">
+  <div class="content-pane">
+    <div class="anim">
+      <p class="slide-eyebrow">Seguridad — Contramedidas</p>
+      <h3 class="slide-title">Buenas <span>prácticas</span></h3>
+    </div>
+    <p class="slide-body anim">La seguridad en BD es una capa, no un interruptor. Se construye combinando múltiples controles complementarios.</p>
+    <div class="info-box anim">
+      <strong>Principio de mínimo privilegio:</strong> cada usuario o aplicación debe tener solo los permisos estrictamente necesarios para su función.
+    </div>
+  </div>
+  <div class="visual-pane anim">
+    <ul class="sec-list" style="width:100%;max-width:400px;">
+      <li class="sec-item">
+        <div class="sec-icon green">&#128737;</div>
+        <div>
+          <div class="sec-title">Control de acceso por roles</div>
+          <div class="sec-desc">Asignar permisos (SELECT, INSERT, UPDATE) por rol, no por usuario individual.</div>
+        </div>
+      </li>
+      <li class="sec-item">
+        <div class="sec-icon green">&#128272;</div>
+        <div>
+          <div class="sec-title">Cifrado de datos</div>
+          <div class="sec-desc">En reposo (columnas sensibles) y en tránsito (TLS entre app y BD).</div>
+        </div>
+      </li>
+      <li class="sec-item">
+        <div class="sec-icon green">&#128190;</div>
+        <div>
+          <div class="sec-title">Copias de respaldo (backups)</div>
+          <div class="sec-desc">Backup periódico con prueba de restauración verificada. Regla 3-2-1.</div>
+        </div>
+      </li>
+      <li class="sec-item">
+        <div class="sec-icon green">&#128203;</div>
+        <div>
+          <div class="sec-title">Auditoría y logs</div>
+          <div class="sec-desc">Registrar quién accede a qué y cuándo — trazabilidad ante incidentes.</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- ==================== LAM 29c — NORMATIVA LEGAL ==================== -->
+<div class="lamina slide-formula" id="lam-29c">
+  <p class="anim slide-eyebrow">Seguridad — Marco Legal en Chile</p>
+  <div class="formula-heading anim">Ley <span>19.628</span> y Ley <span>21.719</span></div>
+  <div class="anim" style="width:100%;max-width:900px;margin-top:8px;">
+    <table class="info-table">
+      <thead>
+        <tr>
+          <th style="width:18%;">Aspecto</th>
+          <th>Ley 19.628 <span style="font-weight:400;font-size:10px;">(1999 — vigente)</span></th>
+          <th>Ley 21.719 <span style="font-weight:400;font-size:10px;">(2024 — modernización)</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>¿Qué es?</strong></td>
+          <td>Primera ley chilena de protección de datos personales. Regula su recolección, almacenamiento y uso por entidades públicas y privadas.</td>
+          <td>Nueva ley que moderniza la legislación chilena acercándola al estándar GDPR europeo. Crea la Agencia de Protección de Datos Personales.</td>
+        </tr>
+        <tr>
+          <td><strong>Derechos</strong></td>
+          <td>Acceso, modificación, cancelación y bloqueo de datos personales (derechos ARCB).</td>
+          <td>Amplía a: acceso, rectificación, supresión, portabilidad, oposición y a no ser objeto de decisiones automatizadas.</td>
+        </tr>
+        <tr>
+          <td><strong>Brechas</strong></td>
+          <td>No establece obligación de notificar brechas de seguridad.</td>
+          <td>Obliga a notificar brechas a la Agencia y a los afectados en un plazo máximo de <strong>72 horas</strong>.</td>
+        </tr>
+        <tr>
+          <td><strong>Sanciones</strong></td>
+          <td>Sanciones limitadas, poco disuasivas en la práctica.</td>
+          <td>Multas de hasta <strong>10.000 UTM</strong> por infracción grave. Sanciones proporcionales al daño y tamaño de la organización.</td>
+        </tr>
+        <tr>
+          <td><strong>Relevancia BD</strong></td>
+          <td colspan="2">Toda base de datos que almacene datos personales de ciudadanos chilenos debe cumplir con esta normativa — independiente del sector. El DBA es responsable de implementar los controles técnicos.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="info-box anim" style="max-width:900px;margin-top:14px;">
+    <strong>Para la evaluación:</strong> identifica qué datos personales gestiona tu sector asignado y qué obligaciones impone la Ley 21.719 a las organizaciones de ese sector.
+  </div>
+</div>
+
+<!-- ==================== LAM 29b — RESUMEN UA1 ==================== -->
+<div class="lamina slide-formula" id="lam-29b">
+  <p class="anim slide-eyebrow">Unidad 1 — Síntesis</p>
+  <div class="formula-heading anim">Lo que aprendimos en la <span>Unidad 1</span></div>
+  <div class="agenda-grid anim" style="max-width:860px;">
+    <div class="ag-card">
+      <div class="ag-num" style="color:var(--blue);opacity:1;">01</div>
+      <div class="ag-title">Conceptos fundamentales</div>
+      <div class="ag-desc">Dato, información, conocimiento, procesamiento, qué es una BD, instancia vs esquema.</div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-num" style="color:var(--blue);opacity:1;">02</div>
+      <div class="ag-title">Evolución histórica</div>
+      <div class="ag-desc">De archivos secuenciales (1950s) al modelo relacional (1970s), NoSQL (2000s) y cloud DB (2010s+).</div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-num" style="color:var(--blue);opacity:1;">03</div>
+      <div class="ag-title">Modelos de bases de datos</div>
+      <div class="ag-desc">Relacional, clave-valor, documental, grafo, orientado a objetos y vectorial — cuándo usar cada uno.</div>
+    </div>
+    <div class="ag-card">
+      <div class="ag-num" style="color:var(--blue);opacity:1;">04</div>
+      <div class="ag-title">Arquitectura DBMS y seguridad</div>
+      <div class="ag-desc">Funciones del DBMS, 3 niveles ANSI/SPARC, independencia de datos y buenas prácticas de seguridad.</div>
+    </div>
+  </div>
+  <div class="info-box anim" style="max-width:860px;margin-top:0;font-size:15px;">
+    <strong>Evaluación UA1 (20%) — miércoles 03 y jueves 04 de junio:</strong> Presentación oral en duplas. Cada dupla recibe un <strong>sector de la industria</strong> (Banca, Retail, Salud, Gobierno, Educación, Logística o RRHH) y responde un pool de 6 preguntas aplicadas a su sector. Las respuestas deben explicarse con sus propias palabras. Se evaluará con rúbrica.
+  </div>
+</div>
+
+<!-- ==================== LAM 30 — CIERRE ==================== -->
+<div class="lamina slide-cover" id="lam-30" style="border-bottom:none;">
+  <p class="anim cover-eyebrow">Unidad 1 — Introducción a las BD y DBMS</p>
+  <h2 class="anim">¿<span>Preguntas</span>?</h2>
+  <p class="anim cover-sub">Fundamentos de Base de Datos · TI3V12 · Otoño 2026</p>
+  <img src="../logo inacap.png" class="cover-logo anim" alt="INACAP">
+</div>
+
+<script>
+const slides   = document.querySelectorAll('.lamina');
+const total    = slides.length;
+const progress = document.getElementById('progress');
+const counter  = document.getElementById('counter');
+let current    = 0;
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+    e.target.classList.add('visible');
+    current = [...slides].indexOf(e.target);
+    progress.style.width = ((current + 1) / total * 100) + '%';
+    counter.textContent  = (current + 1) + ' / ' + total;
+  });
+}, { threshold: 0.4 });
+
+slides.forEach(s => obs.observe(s));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault(); goTo(Math.max(current - 1, 0));
+  } else if (e.key === 'Home') { goTo(0); }
+    else if (e.key === 'End')  { goTo(total - 1); }
+    else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+});
+
+function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+function toggleFS() {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+
+slides[0].classList.add('visible');
+progress.style.width = (1 / total * 100) + '%';
+</script>
+</body>
+</html>
