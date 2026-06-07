@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA2 Sesión 1 — Introducción a AWS Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #0063B1;
+      --green:  #107C10;
+      --orange: #D97706;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+      --code-bg:#1E1E1E;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0;
+      color: var(--text);
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white;
+      justify-content: center;
+      padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+      margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 20px;
+      color: rgba(255,255,255,0.5);
+      max-width: 580px;
+      line-height: 1.65;
+      margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark);
+      color: white;
+      justify-content: center;
+      padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 16px;
+    }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .sep-desc {
+      font-size: 20px;
+      color: rgba(255,255,255,0.45);
+      max-width: 560px;
+      line-height: 1.65;
+    }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white;
+      padding: 64px 80px;
+      border-bottom: 3px solid var(--border);
+      justify-content: center;
+    }
+    .slide-concept.blue-accent  { border-top: 6px solid var(--blue); }
+    .slide-concept.red-accent   { border-top: 6px solid var(--red); }
+    .slide-concept.green-accent { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      color: var(--dark);
+      margin-bottom: 32px;
+    }
+    .concept-body { max-width: 800px; }
+    .concept-body p { font-size: 19px; line-height: 1.7; color: #333; margin-bottom: 18px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body ul { margin-left: 24px; margin-bottom: 18px; }
+    .concept-body li { font-size: 18px; line-height: 1.7; color: #333; margin-bottom: 8px; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px;
+      padding: 18px 22px;
+      margin: 20px 0;
+      max-width: 800px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .callout-content p { font-size: 16px; line-height: 1.6; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F0FDF4; border: 1px solid #BBF7D0; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #14532D; }
+    .callout-info { background: #EFF6FF; border: 1px solid #BFDBFE; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #1E3A5F; }
+
+    /* RUTA DE PASOS */
+    .ruta { display: flex; flex-direction: column; max-width: 740px; margin-top: 20px; }
+    .ruta-step { display: flex; align-items: flex-start; gap: 18px; }
+    .ruta-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .ruta-num {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--blue); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ruta-line { width: 2px; flex: 1; min-height: 16px; background: #BFDBFE; margin: 4px 0; }
+    .ruta-content { padding-bottom: 18px; padding-top: 4px; }
+    .ruta-title { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .ruta-title code {
+      font-size: 13px; background: #EBEBEB;
+      padding: 1px 6px; border-radius: 3px; color: var(--blue);
+    }
+    .ruta-desc { font-size: 15px; color: #555; line-height: 1.5; }
+
+    /* SCREENSHOT PLACEHOLDER */
+    .screenshot-placeholder {
+      background: #F8FAFC;
+      border: 2px dashed #CBD5E1;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 40px 24px;
+      margin: 24px 0;
+      max-width: 860px;
+      min-height: 260px;
+      color: #94A3B8;
+    }
+    .screenshot-placeholder .ss-icon { font-size: 40px; opacity: 0.5; }
+    .screenshot-placeholder .ss-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #94A3B8;
+    }
+    .screenshot-placeholder .ss-desc {
+      font-size: 15px;
+      color: #B0BEC5;
+      text-align: center;
+      max-width: 500px;
+      line-height: 1.5;
+    }
+
+    /* LAYOUT 2 COLUMNAS */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 900px;
+      margin-top: 20px;
+    }
+    .two-col .screenshot-placeholder { min-height: 200px; margin: 0; }
+
+    /* ÍNDICE */
+    .index-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 32px;
+      max-width: 860px;
+    }
+    .index-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 18px 20px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 32px; font-weight: 900;
+      color: var(--red); line-height: 1; margin-bottom: 8px;
+    }
+    .index-name { font-size: 15px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #EFF6FF; color: var(--blue); border: 1px solid #BFDBFE; }
+    .badge-pasos    { background: #F0FDF4; color: var(--green); border: 1px solid #BBF7D0; }
+    .badge-cierre   { background: rgba(227,30,36,0.15); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* RESUMEN */
+    .resumen-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px; margin-top: 28px; max-width: 860px;
+    }
+    .resumen-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .resumen-cmd { font-size: 15px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 14px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* INLINE CODE */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; background: #EBEBEB;
+      padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+
+    /* IMAGENES REALES */
+    .screenshot-img {
+      max-width: 860px;
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #CBD5E1;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      margin: 24px 0;
+      display: block;
+    }
+    /* PROGRESS BAR */
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; background: var(--red);
+      width: 0%; z-index: 9999;
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
+      pointer-events: none;
+    }
+
+    /* ANIMACIONES */
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- ============================================================
+     SLIDE 1 — PORTADA
+============================================================ -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Sistemas Operativos · TI3V35 · Unidad 2 · Sesión 1</div>
+  <div class="cover-title anim">Introducción a<br><span>AWS Academy</span></div>
+  <p class="cover-desc anim">
+    Hoy comenzamos a trabajar con la plataforma que usaremos durante toda la unidad.
+    Al final de la sesión vas a poder acceder a AWS Academy, iniciar un laboratorio
+    y lanzar tu primera instancia Windows Server en la nube.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-3A-F2</span></span>
+    <span class="cover-chip">08 junio 2026</span>
+    <span class="cover-chip">19:50 – 22:30</span>
+    <span class="cover-chip">Lab <span>A408</span></span>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SLIDE 2 — ÍNDICE
+============================================================ -->
+<div class="slide slide-separator">
+  <div class="sep-num anim">¿Qué vemos hoy?</div>
+  <div class="sep-title anim">Contenido<br>de la <span>sesión</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">¿Qué es AWS Academy?</div>
+      <div class="index-type">Concepto</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Acceder a la plataforma</div>
+      <div class="index-type">Pasos</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Iniciar el laboratorio</div>
+      <div class="index-type">Pasos</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Consola de AWS</div>
+      <div class="index-type">Navegación</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Lanzar instancia Windows Server</div>
+      <div class="index-type">Pasos</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">06</div>
+      <div class="index-name">Conectarse via RDP</div>
+      <div class="index-type">Pasos</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 01 — ¿QUÉ ES AWS ACADEMY?
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">01 — Concepto</span>
+  <div class="sep-num anim">Bloque 01</div>
+  <div class="sep-title anim">¿Qué es<br><span>AWS Academy</span>?</div>
+  <p class="sep-desc anim">Antes de tocar cualquier servidor, necesitamos entender la plataforma que vamos a usar durante toda la unidad.</p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">01 — ¿Qué es AWS Academy?</div>
+  <div class="concept-title anim">La plataforma que<br>usaremos este semestre</div>
+  <div class="concept-body anim">
+    <p><strong>AWS Academy</strong> es un programa educativo de Amazon Web Services que entrega acceso gratuito a la infraestructura en la nube de AWS para uso académico. Cada alumno tiene una cuenta personal con créditos para usar durante el semestre.</p>
+    <p>En términos simples: es como tener un datacenter en la nube disponible para practicar, sin pagar nada. Dentro de AWS Academy podrás crear servidores reales, configurarlos y destruirlos sin consecuencias económicas.</p>
+    <ul>
+      <li><strong>Learner Lab:</strong> el laboratorio donde crearás y gestionarás tus servidores.</li>
+      <li><strong>Consola de AWS:</strong> la interfaz web desde donde controlas todos tus recursos.</li>
+      <li><strong>Créditos:</strong> cada laboratorio tiene un tiempo limitado de sesión. Al cerrar, los recursos se detienen pero no se eliminan.</li>
+    </ul>
+    <div class="callout callout-important">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>El laboratorio tiene tiempo límite por sesión</strong>
+        <p>Cada vez que inicies el laboratorio tienes un tiempo activo. Al expirar, las instancias se detienen automáticamente. La próxima sesión debes volver a iniciarlo y las instancias se reanudan.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">01 — ¿Qué es AWS Academy? · Componentes clave</div>
+  <div class="concept-title anim">¿Qué voy a ver<br>cuando entre?</div>
+  <div class="concept-body anim">
+    <p>Al ingresar a AWS Academy encontrarás tres áreas principales:</p>
+    <img src="https://i.ibb.co/GvPFYm9y/Que-voy-a-ver-cuando-entre.png" class="screenshot-img" alt="Que voy a ver cuando entre">
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>Canvas es la plataforma base</strong>
+        <p>AWS Academy funciona sobre Canvas (el mismo LMS que usa INACAP). Si ya tienes cuenta en INACAP, el acceso es por invitación directa al correo institucional.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 02 — ACCEDER A LA PLATAFORMA
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-pasos">02 — Acceso</span>
+  <div class="sep-num anim">Bloque 02</div>
+  <div class="sep-title anim">Acceder a<br><span>la plataforma</span></div>
+  <p class="sep-desc anim">El acceso fue enviado a tu correo institucional. Sigue estos pasos la primera vez que entras.</p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Pasos</span>
+  <div class="concept-label anim">02 — Acceso · Primera vez</div>
+  <div class="concept-title anim">Cómo ingresar<br>por primera vez</div>
+  <div class="concept-body anim">
+    <div class="ruta">
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">1</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Revisa tu correo institucional</div>
+          <div class="ruta-desc">Busca un correo de AWS Academy con el asunto "Course Invitation". Si no lo encuentras, revisa la carpeta de spam.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">2</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Haz clic en el enlace de la invitación</div>
+          <div class="ruta-desc">El enlace te lleva directamente a AWS Academy para crear tu contraseña y activar tu cuenta.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">3</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Crea tu contraseña y confirma tu cuenta</div>
+          <div class="ruta-desc">Elige una contraseña segura. Esta cuenta es tuya durante todo el semestre.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">4</div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Ingresa al curso asignado</div>
+          <div class="ruta-desc">Una vez dentro verás el curso de la asignatura. Haz clic para entrar.</div>
+        </div>
+      </div>
+    </div>
+    <img src="https://i.ibb.co/Z6tvLLhz/Como-ingresar-por-primera-vez.png" class="screenshot-img" alt="Como ingresar por primera vez">
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Pasos</span>
+  <div class="concept-label anim">02 — Acceso · Ingresos siguientes</div>
+  <div class="concept-title anim">Cómo ingresar<br>en clases siguientes</div>
+  <div class="concept-body anim">
+    <p>A partir de la segunda vez el acceso es directo. No necesitas el correo de invitación.</p>
+    <div class="ruta">
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">1</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Ve a <code>awsacademy.instructure.com</code></div>
+          <div class="ruta-desc">Es la URL de AWS Academy. Guárdala en favoritos.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">2</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Ingresa con tu correo y contraseña</div>
+          <div class="ruta-desc">Usa el correo institucional con el que recibiste la invitación.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">3</div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Selecciona el curso de la asignatura</div>
+          <div class="ruta-desc">Aparece en el panel principal. Haz clic para entrar.</div>
+        </div>
+      </div>
+    </div>
+    <img src="https://i.ibb.co/GvPFYm9y/Que-voy-a-ver-cuando-entre.png" class="screenshot-img" alt="Como ingresar en clases siguientes">
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 03 — INICIAR EL LABORATORIO
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-pasos">03 — Laboratorio</span>
+  <div class="sep-num anim">Bloque 03</div>
+  <div class="sep-title anim">Iniciar el<br><span>laboratorio</span></div>
+  <p class="sep-desc anim">El laboratorio es el espacio donde tendrás acceso real a AWS. Debes iniciarlo cada vez que comiences a trabajar.</p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Pasos</span>
+  <div class="concept-label anim">03 — Laboratorio · Cómo iniciarlo</div>
+  <div class="concept-title anim">Iniciar el<br>Learner Lab</div>
+  <div class="concept-body anim">
+    <div class="ruta">
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">1</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Dentro del curso, ve al módulo <strong>Learner Lab</strong></div>
+          <div class="ruta-desc">Aparece en el menú lateral izquierdo del curso.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">2</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Haz clic en <strong>Start Lab</strong></div>
+          <div class="ruta-desc">El indicador en la parte superior pasará de rojo a amarillo mientras carga, y luego a verde cuando esté listo.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">3</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Espera que el indicador se ponga <strong>verde</strong></div>
+          <div class="ruta-desc">Puede demorar entre 1 y 3 minutos. No cierres la ventana durante este proceso.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">4</div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Haz clic en <strong>AWS</strong> (el enlace junto al indicador verde)</div>
+          <div class="ruta-desc">Esto abre la Consola de AWS en una nueva pestaña. Desde ahí controlas todos tus recursos.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-important">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>No cierres la pestaña del laboratorio</strong>
+        <p>Si cierras la pestaña de AWS Academy mientras el laboratorio está activo, el tiempo sigue corriendo. Para finalizar correctamente usa el botón <strong>End Lab</strong>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Referencia</span>
+  <div class="concept-label anim">03 — Laboratorio · Interfaz</div>
+  <div class="concept-title anim">Interfaz del<br>Learner Lab</div>
+  <div class="concept-body anim">
+    <img src="https://i.ibb.co/GN5RhHF/Interfaz-del-Learner-Lab.png" class="screenshot-img" alt="Interfaz del Learner Lab">
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>El temporizador muestra el tiempo restante</strong>
+        <p>Cuando quede poco tiempo verás una advertencia. Puedes extender el laboratorio haciendo clic en <strong>Start Lab</strong> nuevamente sin perder tus recursos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 04 — CONSOLA DE AWS
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">04 — Consola</span>
+  <div class="sep-num anim">Bloque 04</div>
+  <div class="sep-title anim">La consola<br>de <span>AWS</span></div>
+  <p class="sep-desc anim">Desde aquí controlas todo. Es la interfaz web principal para gestionar tus recursos en la nube.</p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Navegación</span>
+  <div class="concept-label anim">04 — Consola · Orientación inicial</div>
+  <div class="concept-title anim">Recorrido por<br>la consola de AWS</div>
+  <div class="concept-body anim">
+    <p>Al abrir la consola de AWS por primera vez puede parecer abrumadora. Hay cientos de servicios disponibles. Para esta unidad usaremos principalmente <strong>EC2</strong>, que es el servicio que nos permite crear y gestionar servidores virtuales.</p>
+    <img src="https://i.ibb.co/G409ZXSw/Recorrido-por-la-consola-de-AWS.png" class="screenshot-img" alt="Recorrido por la consola de AWS">
+    <div class="callout callout-tip">
+      <span class="callout-icon">✓</span>
+      <div class="callout-content">
+        <strong>Forma más rápida de llegar a EC2</strong>
+        <p>Usa la barra de búsqueda superior y escribe "EC2". Aparecerá como primer resultado. Haz clic para entrar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Navegación</span>
+  <div class="concept-label anim">04 — Consola · Panel EC2</div>
+  <div class="concept-title anim">El panel de <span style="color:var(--blue)">EC2</span></div>
+  <div class="concept-body anim">
+    <p><strong>EC2 (Elastic Compute Cloud)</strong> es el servicio de AWS para crear servidores virtuales. Desde su panel podrás ver, iniciar, detener y eliminar tus instancias.</p>
+    <img src="https://i.ibb.co/hJgbC21T/El-panel-de-EC2.png" class="screenshot-img" alt="El panel de EC2">
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>Verifica la región</strong>
+        <p>En la esquina superior derecha aparece la región de AWS donde estás trabajando (ej: <code>us-east-1</code>). Todos los recursos que crees quedan en esa región. No la cambies durante el semestre o no verás tus instancias.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 05 — LANZAR INSTANCIA WINDOWS SERVER
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-pasos">05 — Instancia</span>
+  <div class="sep-num anim">Bloque 05</div>
+  <div class="sep-title anim">Lanzar instancia<br><span>Windows Server</span></div>
+  <p class="sep-desc anim">Una instancia es un servidor virtual en la nube. Vamos a crear uno con Windows Server, el sistema operativo que configuraremos durante esta unidad.</p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Pasos</span>
+  <div class="concept-label anim">05 — Instancia · Launch Instance</div>
+  <div class="concept-title anim">Crear la instancia:<br>parte 1</div>
+  <div class="concept-body anim">
+    <div class="ruta">
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">1</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">En EC2, haz clic en <strong>Launch Instance</strong></div>
+          <div class="ruta-desc">Botón naranja en la esquina superior derecha del panel de instancias.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">2</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Asigna un nombre a la instancia</div>
+          <div class="ruta-desc">Ejemplo: <code>WinServer-Manual</code>. Usar nombres descriptivos es una buena práctica.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">3</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Selecciona la AMI: <strong>Windows Server 2019 Base</strong></div>
+          <div class="ruta-desc">En la sección "Application and OS Images". Busca "Windows Server 2019" y selecciona la imagen base gratuita (Free tier eligible).</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">4</div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Tipo de instancia: <strong>t2.micro</strong></div>
+          <div class="ruta-desc">Es la opción gratuita (Free tier). Suficiente para las prácticas del curso.</div>
+        </div>
+      </div>
+    </div>
+    <img src="https://i.ibb.co/cSRmw0Z9/Crear-la-instancia-parte-1.png" class="screenshot-img" alt="Crear la instancia parte 1">
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Pasos</span>
+  <div class="concept-label anim">05 — Instancia · Launch Instance</div>
+  <div class="concept-title anim">Crear la instancia:<br>parte 2</div>
+  <div class="concept-body anim">
+    <div class="ruta">
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">5</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Key pair: <strong>Proceed without a key pair</strong></div>
+          <div class="ruta-desc">Para Windows Server obtendremos la contraseña de otra forma. Selecciona esta opción para simplificar.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">6</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Network settings: habilitar <strong>RDP (puerto 3389)</strong></div>
+          <div class="ruta-desc">Marca la casilla "Allow RDP traffic from" y selecciona "Anywhere". Esto permite conectarse al servidor desde cualquier IP.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">7</div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Haz clic en <strong>Launch Instance</strong></div>
+          <div class="ruta-desc">AWS comenzará a crear tu servidor. El proceso tarda entre 3 y 5 minutos. El estado inicial será "pending" y luego cambiará a "running".</div>
+        </div>
+      </div>
+    </div>
+    <img src="https://i.ibb.co/3YWfSb8W/Crear-la-instancia-parte-2.png" class="screenshot-img" alt="Crear la instancia parte 2">
+    <div class="callout callout-tip">
+      <span class="callout-icon">✓</span>
+      <div class="callout-content">
+        <strong>Verifica el estado en el panel de instancias</strong>
+        <p>Ve a <strong>EC2 → Instances</strong>. Tu instancia aparecerá en la lista. Espera hasta que el estado diga <strong>Running</strong> y los checks de estado sean 2/2 antes de intentar conectarte.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 06 — CONECTARSE VIA RDP
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-pasos">06 — RDP</span>
+  <div class="sep-num anim">Bloque 06</div>
+  <div class="sep-title anim">Conectarse<br>via <span>RDP</span></div>
+  <p class="sep-desc anim">RDP (Remote Desktop Protocol) es la forma estándar de conectarse a un servidor Windows de forma remota. Es como sentarse frente al servidor desde tu computador.</p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Pasos</span>
+  <div class="concept-label anim">06 — RDP · Obtener credenciales</div>
+  <div class="concept-title anim">Obtener la contraseña<br>del servidor</div>
+  <div class="concept-body anim">
+    <div class="ruta">
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">1</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Selecciona tu instancia en EC2 → clic derecho → <strong>Connect</strong></div>
+          <div class="ruta-desc">O usa el botón "Connect" en la barra superior cuando la instancia está seleccionada.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">2</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Pestaña <strong>RDP client</strong> → <strong>Get password</strong></div>
+          <div class="ruta-desc">AWS generó una contraseña automática para el administrador del servidor.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">3</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Copia la <strong>IP pública</strong>, el <strong>usuario</strong> y la <strong>contraseña</strong></div>
+          <div class="ruta-desc">Usuario por defecto: <code>Administrator</code>. Guarda estos datos, los necesitarás para conectarte.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">4</div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Descarga el archivo <strong>.rdp</strong></div>
+          <div class="ruta-desc">AWS genera un archivo de conexión listo para usar. Descárgalo y ábrelo directamente.</div>
+        </div>
+      </div>
+    </div>
+    <img src="https://i.ibb.co/FL8vnrgc/Obtener-la-contrase-a-del-servidor.png" class="screenshot-img" alt="Obtener la contrasena del servidor">
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Pasos</span>
+  <div class="concept-label anim">06 — RDP · Conexión desde Windows</div>
+  <div class="concept-title anim">Abrir la conexión<br>RDP</div>
+  <div class="concept-body anim">
+    <div class="ruta">
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">1</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Abre el archivo <strong>.rdp</strong> descargado</div>
+          <div class="ruta-desc">Windows abrirá automáticamente la aplicación de "Conexión a Escritorio Remoto".</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">2</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Acepta la advertencia de certificado</div>
+          <div class="ruta-desc">Es normal para entornos de laboratorio. Haz clic en <strong>Sí</strong> o <strong>Conectar de todas formas</strong>.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">3</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Ingresa las credenciales</div>
+          <div class="ruta-desc">Usuario: <code>Administrator</code> | Contraseña: la que copiaste desde AWS. Haz clic en <strong>Aceptar</strong>.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">4</div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">¡Estás dentro del servidor!</div>
+          <div class="ruta-desc">Verás el escritorio de Windows Server. La primera vez puede tardar unos segundos en cargar completamente.</div>
+        </div>
+      </div>
+    </div>
+    <img src="https://i.ibb.co/j9SS3Lyx/RDP.jpg" class="screenshot-img" alt="Conexion RDP exitosa - Escritorio Windows Server">
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SLIDE CIERRE
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen</div>
+  <div class="sep-title anim">Lo que hicimos<br><span>hoy</span></div>
+  <p class="sep-desc anim">Si llegaste hasta aquí, tienes un servidor Windows Server corriendo en la nube y una conexión RDP activa. Eso es un datacenter en tu escritorio.</p>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">AWS Academy</div>
+      <div class="resumen-desc">Plataforma educativa de Amazon para practicar con infraestructura real</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Learner Lab</div>
+      <div class="resumen-desc">Laboratorio con tiempo activo. Siempre iniciarlo antes de trabajar</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">EC2 → Launch Instance</div>
+      <div class="resumen-desc">Crear un servidor virtual con Windows Server 2019</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">RDP</div>
+      <div class="resumen-desc">Conectarse al servidor de forma remota desde Windows</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Administrator</div>
+      <div class="resumen-desc">Usuario por defecto del servidor. Contraseña generada por AWS</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Estado: Running + 2/2</div>
+      <div class="resumen-desc">La instancia debe tener este estado antes de intentar conectarse</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Próxima lámina</span>
+  <div class="sep-num anim">UA2 — Sesión 1 continúa</div>
+  <div class="sep-title anim">Lo que viene<br><span>después</span></div>
+  <p class="sep-desc anim">Ya tienes el servidor creado y la conexión activa. En la siguiente lámina comenzamos a configurarlo.</p>
+  <div class="index-grid anim" style="margin-top: 32px;">
+    <div class="index-item">
+      <div class="index-num" style="font-size: 20px;">Hostname</div>
+      <div class="index-name">Cambiar el nombre del servidor</div>
+      <div class="index-type">Configuración básica</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num" style="font-size: 20px;">IP fija</div>
+      <div class="index-name">Asignar dirección IP estática</div>
+      <div class="index-type">Configuración básica</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num" style="font-size: 20px;">Firewall</div>
+      <div class="index-name">Configurar reglas de firewall</div>
+      <div class="index-type">Configuración básica</div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const animSelectors = [
+    '.sep-num', '.sep-title', '.sep-desc', '.index-grid',
+    '.concept-label', '.concept-title', '.concept-body',
+    '.callout', '.ruta', '.screenshot-placeholder', '.resumen-grid'
+  ];
+
+  document.querySelectorAll('.slide').forEach(slide => {
+    animSelectors.forEach((sel, si) => {
+      slide.querySelectorAll(sel).forEach((el, ei) => {
+        el.classList.add('anim');
+        el.style.transitionDelay = (si * 80 + ei * 60) + 'ms';
+      });
+    });
+  });
+
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
