@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA2 Sesión 1 — Configuración con IA (Antigravity CLI)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #0063B1;
+      --green:  #107C10;
+      --orange: #D97706;
+      --purple: #7C3AED;
+      --dark:   #1A1A1A;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0;
+      color: var(--text);
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #0F0F1A 0%, #1A1028 100%);
+      color: white;
+      justify-content: center;
+      padding: 80px;
+      border-bottom: 6px solid var(--purple);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900;
+      text-transform: uppercase; line-height: 0.92;
+      letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--purple); }
+    .cover-desc { font-size: 20px; color: rgba(255,255,255,0.5); max-width: 600px; line-height: 1.65; margin-bottom: 56px; }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--purple);
+    }
+    .slide-separator.blue-sep  { border-bottom-color: var(--blue); }
+    .slide-separator.green-sep { border-bottom-color: var(--green); }
+    .slide-separator.red-sep   { border-bottom-color: var(--red); }
+    .slide-separator.orange-sep{ border-bottom-color: var(--orange); }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--purple); margin-bottom: 16px;
+    }
+    .sep-num.blue   { color: var(--blue); }
+    .sep-num.green  { color: var(--green); }
+    .sep-num.red    { color: var(--red); }
+    .sep-num.orange { color: var(--orange); }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900;
+      text-transform: uppercase; line-height: 0.92;
+      letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span.purple { color: var(--purple); }
+    .sep-title span.blue   { color: var(--blue); }
+    .sep-title span.green  { color: var(--green); }
+    .sep-title span.red    { color: var(--red); }
+    .sep-title span.orange { color: var(--orange); }
+    .sep-desc { font-size: 20px; color: rgba(255,255,255,0.45); max-width: 560px; line-height: 1.65; }
+
+    /* ÍNDICE */
+    .index-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-top: 32px; max-width: 860px;
+    }
+    .index-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 18px 20px;
+    }
+    .index-num { font-family: 'Barlow Condensed', sans-serif; font-size: 32px; font-weight: 900; color: var(--purple); line-height: 1; margin-bottom: 8px; }
+    .index-name { font-size: 15px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 64px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.purple-accent { border-top: 6px solid var(--purple); }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 900;
+      text-transform: uppercase; line-height: 0.95;
+      letter-spacing: -0.01em; color: var(--dark); margin-bottom: 32px;
+    }
+    .concept-body { max-width: 860px; }
+    .concept-body p { font-size: 19px; line-height: 1.7; color: #333; margin-bottom: 18px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body ul { margin-left: 24px; margin-bottom: 18px; }
+    .concept-body li { font-size: 18px; line-height: 1.7; color: #333; margin-bottom: 8px; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 18px 22px; margin: 20px 0;
+      max-width: 860px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content strong { display: block; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .callout-content p { font-size: 16px; line-height: 1.6; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F0FDF4; border: 1px solid #BBF7D0; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #14532D; }
+    .callout-info { background: #EFF6FF; border: 1px solid #BFDBFE; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #1E3A5F; }
+    .callout-warning { background: #FFFBEB; border: 1px solid #FDE68A; }
+    .callout-warning strong { color: var(--orange); }
+    .callout-warning p { color: #92400E; }
+    .callout-ai { background: #F5F3FF; border: 1px solid #DDD6FE; }
+    .callout-ai strong { color: var(--purple); }
+    .callout-ai p { color: #3B1F8C; }
+
+    /* RUTA */
+    .ruta { display: flex; flex-direction: column; max-width: 860px; margin-top: 20px; }
+    .ruta-step { display: flex; align-items: flex-start; gap: 18px; }
+    .ruta-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .ruta-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--purple); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 17px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ruta-num.blue   { background: var(--blue); }
+    .ruta-num.green  { background: var(--green); }
+    .ruta-num.orange { background: var(--orange); }
+    .ruta-num.red    { background: var(--red); }
+    .ruta-line { width: 2px; flex: 1; min-height: 16px; background: #DDD6FE; margin: 4px 0; }
+    .ruta-line.blue   { background: #BFDBFE; }
+    .ruta-line.green  { background: #BBF7D0; }
+    .ruta-line.orange { background: #FDE68A; }
+    .ruta-content { padding-bottom: 20px; padding-top: 4px; }
+    .ruta-title { font-size: 17px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .ruta-desc { font-size: 15px; color: #555; line-height: 1.6; }
+
+    /* COMPARATIVA */
+    .compare-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 20px; max-width: 860px; margin-top: 20px;
+    }
+    .compare-card { border-radius: 8px; padding: 20px 22px; }
+    .compare-card.before { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .compare-card.after  { background: #F5F3FF; border: 1px solid #DDD6FE; }
+    .compare-card-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .compare-card.before .compare-card-label { color: var(--red); }
+    .compare-card.after  .compare-card-label { color: var(--purple); }
+    .compare-card p { font-size: 15px; line-height: 1.65; color: #444; font-family: 'JetBrains Mono', monospace; }
+
+    /* BLOQUES DE CÓDIGO */
+    .prompt-block {
+      background: #0F0F1A; border: 1px solid #3B2F6B;
+      border-radius: 10px; padding: 24px 28px;
+      margin: 20px 0; max-width: 860px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; line-height: 1.8; color: #C4B5FD;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .prompt-block .prompt-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: #7C3AED; margin-bottom: 12px; display: block;
+    }
+
+    .code-block {
+      background: #1A1A2E; border: 1px solid #2D2D4E;
+      border-radius: 8px; padding: 18px 22px;
+      margin: 16px 0; max-width: 860px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px; color: #A5F3FC;
+    }
+    .code-block .code-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: #475569; margin-bottom: 8px; display: block;
+    }
+    .code-block.scrollable {
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    /* TERMINAL SIMULADA */
+    .terminal-block {
+      background: #0D0D0D; border: 1px solid #2D2D2D;
+      border-radius: 8px; padding: 20px 24px;
+      margin: 16px 0; max-width: 860px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; line-height: 2; color: #CBD5E1;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .terminal-block .t-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: #475569; margin-bottom: 10px; display: block;
+      white-space: normal;
+    }
+    .t-ps  { color: #475569; }
+    .t-sh  { color: #4ADE80; }
+    .t-cmd { color: #A5F3FC; }
+    .t-out { color: #94A3B8; }
+    .t-ok  { color: #86EFAC; }
+    .t-url { color: #FCD34D; }
+    .t-dim { color: #374151; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #EFF6FF; color: var(--blue); border: 1px solid #BFDBFE; }
+    .badge-pasos    { background: #F0FDF4; color: var(--green); border: 1px solid #BBF7D0; }
+    .badge-alerta   { background: #FFFBEB; color: var(--orange); border: 1px solid #FDE68A; }
+    .badge-ia       { background: #F5F3FF; color: var(--purple); border: 1px solid #DDD6FE; }
+    .badge-cierre   { background: rgba(227,30,36,0.12); color: var(--red); border: 1px solid rgba(227,30,36,0.25); }
+
+    /* RESUMEN */
+    .resumen-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 28px; max-width: 860px; }
+    .resumen-item { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 16px 18px; }
+    .resumen-cmd { font-size: 15px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 14px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; background: #EBEBEB;
+      padding: 2px 7px; border-radius: 3px; color: #5B21B6;
+    }
+
+    /* BOTÓN COPIAR */
+    .copyable { position: relative; }
+    .copy-btn {
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.5);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 4px;
+      cursor: pointer; transition: all 0.2s ease;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .copy-btn:hover {
+      background: rgba(124,58,237,0.3);
+      border-color: rgba(124,58,237,0.6);
+      color: #C4B5FD;
+    }
+    .copy-btn.copied {
+      background: rgba(16,124,16,0.25);
+      border-color: rgba(16,124,16,0.5);
+      color: #86EFAC;
+    }
+
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; background: var(--purple);
+      width: 0%; z-index: 9999;
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
+      pointer-events: none;
+    }
+
+    .anim { opacity: 0; transform: translateY(22px); transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1); }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- ============================================================ PORTADA ============================================================ -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Sistemas Operativos · TI3V35 · Unidad 2 · Sesión 1</div>
+  <div class="cover-title anim">Configuración<br>con <span>IA</span></div>
+  <p class="cover-desc anim">
+    Las mismas configuraciones de la sesión anterior, pero asistidas por un agente de IA. Conexión remota via SSH, instalación sin RDP y configuración en lenguaje natural.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-3A-F2</span></span>
+    <span class="cover-chip">08 junio 2026</span>
+    <span class="cover-chip">19:50 – 22:30</span>
+    <span class="cover-chip">Modalidad <span>Antigravity CLI</span></span>
+  </div>
+</div>
+
+
+<!-- ============================================================ ÍNDICE ============================================================ -->
+<div class="slide slide-separator">
+  <div class="sep-num anim">¿Qué veremos hoy?</div>
+  <div class="sep-title anim">Contenido<br>de la <span class="purple">lámina</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">¿Qué es Antigravity CLI?</div>
+      <div class="index-type">Concepto + por qué lo usamos</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Prompts, tokens y modelos</div>
+      <div class="index-type">Fundamentos de IA generativa</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Buenas prácticas</div>
+      <div class="index-type">Cómo pedir bien</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Conexión SSH</div>
+      <div class="index-type">Windows y Linux</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Instalación</div>
+      <div class="index-type">Via PowerShell remoto</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">06</div>
+      <div class="index-name">Configuración básica</div>
+      <div class="index-type">Prompts al agente</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ BLOQUE 01 — QUÉ ES ANTIGRAVITY CLI ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-ia">01 — Antigravity CLI</span>
+  <div class="sep-num anim">Bloque 01</div>
+  <div class="sep-title anim">¿Qué es<br><span class="purple">Antigravity CLI?</span></div>
+  <p class="sep-desc anim">La herramienta de terminal de Google que reemplaza a Gemini CLI. Te permite dar instrucciones a agentes de IA directamente desde la línea de comandos.</p>
+</div>
+
+<div class="slide slide-concept purple-accent">
+  <span class="slide-badge badge-ia">Concepto</span>
+  <div class="concept-label anim">01 — Antigravity CLI · Qué es</div>
+  <div class="concept-title anim">El sucesor de<br>Gemini CLI</div>
+  <div class="concept-body anim">
+    <p><strong>Antigravity CLI</strong> (comando: <code>agy</code>) es la interfaz de línea de comandos de Google para interactuar con agentes de IA. Reemplaza a Gemini CLI, que dejó de funcionar el 18 de junio de 2026.</p>
+    <p>Está construido en Go, es más rápido y soporta múltiples agentes trabajando en paralelo. Lo que mantiene de Gemini CLI: Skills, Hooks, Subagentes y Plugins.</p>
+    <div class="compare-grid anim">
+      <div class="compare-card before">
+        <div class="compare-card-label">Gemini CLI (descontinuado)</div>
+        <p>gemini --model gemini-pro<br>"haz esto en el servidor"<br><br>Un agente, una tarea, síncrono.</p>
+      </div>
+      <div class="compare-card after">
+        <div class="compare-card-label">Antigravity CLI (actual)</div>
+        <p>agy<br>"haz esto en el servidor"<br><br>Múltiples agentes, tareas paralelas, asíncrono.</p>
+      </div>
+    </div>
+    <div class="callout callout-ai">
+      <span class="callout-icon">🤖</span>
+      <div class="callout-content">
+        <strong>¿Por qué lo usamos en sysadmin?</strong>
+        <p>Porque convierte tareas repetitivas (actualizar, configurar firewall, preparar AD DS) en instrucciones en lenguaje natural. El agente sabe qué comandos ejecutar — tú solo describes el resultado que quieres.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept purple-accent">
+  <span class="slide-badge badge-ia">Concepto</span>
+  <div class="concept-label anim">01 — Antigravity CLI · Modo de trabajo</div>
+  <div class="concept-title anim">¿Cómo trabaja<br>el agente?</div>
+  <div class="concept-body anim">
+    <p>El agente de Antigravity CLI opera en <strong>dos modos</strong>. En esta sesión trabajaremos en modo reactivo:</p>
+    <ul>
+      <li><strong>Modo reactivo:</strong> tú escribes una instrucción, el agente la ejecuta y reporta el resultado. Tú tienes el control total en todo momento.</li>
+      <li><strong>Modo autónomo:</strong> defines un objetivo o un evento y el agente actúa solo cuando se cumple la condición. Lo veremos en sesiones futuras.</li>
+    </ul>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>La diferencia clave</strong>
+        <p>En modo reactivo <strong>tú eres el director</strong> y el agente es quien ejecuta. En modo autónomo el agente toma decisiones dentro de los límites que tú le definiste. Hoy empezamos como directores.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ BLOQUE 02 — PROMPTS, TOKENS Y MODELOS ============================================================ -->
+<div class="slide slide-separator blue-sep">
+  <span class="slide-badge badge-concepto">02 — Fundamentos</span>
+  <div class="sep-num blue anim">Bloque 02</div>
+  <div class="sep-title anim">Prompts,<br>tokens y <span class="blue">modelos</span></div>
+  <p class="sep-desc anim">Antes de usar el agente, es importante entender cómo funciona por dentro. Tres conceptos que explican el 80% de su comportamiento.</p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">02 — Fundamentos · Prompt</div>
+  <div class="concept-title anim">¿Qué es<br>un prompt?</div>
+  <div class="concept-body anim">
+    <p>Un <strong>prompt</strong> es la instrucción que le das al agente. Es texto en lenguaje natural — no necesitas saber programar para escribirlo. El modelo lo interpreta y decide qué acciones tomar.</p>
+    <p>Hay dos tipos de prompt que usaremos:</p>
+    <ul>
+      <li><strong>Prompt de sistema (context):</strong> define quién es el agente, qué puede hacer y cuáles son sus restricciones. Se escribe una vez al construir el agente.</li>
+      <li><strong>Prompt de usuario:</strong> la instrucción que le das en cada conversación. "Actualiza el servidor", "Crea una regla de firewall para el puerto 443".</li>
+    </ul>
+    <div class="callout callout-ai">
+      <span class="callout-icon">🤖</span>
+      <div class="callout-content">
+        <strong>El prompt de sistema es el más importante</strong>
+        <p>Es la diferencia entre un agente genérico que puede hacer cualquier cosa y un administrador de servidores especializado que sabe exactamente qué servidor gestiona, qué puede hacer y qué no.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">02 — Fundamentos · Tokens y modelos</div>
+  <div class="concept-title anim">Tokens<br>y modelos</div>
+  <div class="concept-body anim">
+    <p>Un <strong>token</strong> es la unidad de texto que procesa el modelo. Aproximadamente 1 token = 4 caracteres en inglés, algo menos en español. Todo lo que escribes — y todo lo que responde el agente — consume tokens.</p>
+    <p>Un <strong>modelo</strong> es el motor de IA detrás del agente. Antigravity CLI usa los modelos de Google. Los más relevantes para sysadmin:</p>
+    <ul>
+      <li><strong>Gemini 2.5 Pro:</strong> el más capaz. Ideal para tareas complejas, análisis de logs, planificación de AD DS.</li>
+      <li><strong>Gemini 2.5 Flash:</strong> más rápido y liviano. Suficiente para tareas operativas como actualizar o configurar firewall.</li>
+    </ul>
+    <div class="callout callout-warning">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>Contexto limitado por tokens</strong>
+        <p>Cada modelo tiene un límite de tokens por conversación (context window). Si la conversación se vuelve muy larga, el agente puede "olvidar" instrucciones anteriores. Por eso el prompt de sistema debe ser conciso y preciso.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ BLOQUE 03 — BUENAS PRÁCTICAS ============================================================ -->
+<div class="slide slide-separator green-sep">
+  <span class="slide-badge badge-pasos">03 — Buenas prácticas</span>
+  <div class="sep-num green anim">Bloque 03</div>
+  <div class="sep-title anim">Cómo pedir<span class="green"><br>bien</span></div>
+  <p class="sep-desc anim">La calidad de la respuesta del agente depende directamente de la calidad de la instrucción. Estas prácticas marcan la diferencia entre un agente útil y uno que hace lo incorrecto.</p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Buenas prácticas</span>
+  <div class="concept-label anim">03 — Buenas prácticas · Cómo escribir prompts efectivos</div>
+  <div class="concept-title anim">Las 4 reglas<br>del buen prompt</div>
+  <div class="concept-body anim">
+    <div class="ruta anim">
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num green">1</div><div class="ruta-line green"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Sé específico — describe el resultado, no el proceso</div>
+          <div class="ruta-desc">
+            ❌ "Haz cosas de seguridad en el servidor"<br>
+            ✅ "Crea una regla de firewall de entrada que permita TCP en el puerto 443, nómbrala HTTPS-443"
+          </div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num green">2</div><div class="ruta-line green"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Incluye el contexto necesario</div>
+          <div class="ruta-desc">
+            ❌ "Actualiza"<br>
+            ✅ "Verifica si hay actualizaciones pendientes en Windows Update, instálalas todas y avísame si necesita reiniciar antes de hacerlo"
+          </div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num green">3</div><div class="ruta-line green"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Define el formato de respuesta</div>
+          <div class="ruta-desc">
+            ✅ "Al terminar, muéstrame: qué hiciste, resultado obtenido y próximo paso recomendado"
+          </div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num green">4</div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Establece restricciones explícitas cuando importan</div>
+          <div class="ruta-desc">
+            ✅ "No reinicies sin pedirme confirmación primero"<br>
+            ✅ "No elimines reglas de firewall existentes"
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ BLOQUE 04 — CONEXIÓN SSH ============================================================ -->
+<div class="slide slide-separator blue-sep">
+  <span class="slide-badge badge-pasos">04 — SSH</span>
+  <div class="sep-num blue anim">Bloque 04</div>
+  <div class="sep-title anim">Conectar<br><span class="blue">via SSH</span></div>
+  <p class="sep-desc anim">Sin RDP. Un solo comando desde tu terminal — Windows o Linux — y tienes una sesión PowerShell completa dentro del servidor.</p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Paso previo</span>
+  <div class="concept-label anim">04 — SSH · Habilitar en Windows Server</div>
+  <div class="concept-title anim">Habilitar SSH<br>en el servidor</div>
+  <div class="concept-body anim">
+    <p>Este paso se hace <strong>una sola vez</strong>, desde RDP. Abre PowerShell como administrador dentro del servidor y ejecuta:</p>
+    <div class="code-block anim">
+      <span class="code-label">PowerShell — dentro del servidor (RDP)</span>Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0</div>
+    <div class="code-block anim">
+      <span class="code-label">PowerShell — iniciar el servicio y dejarlo automático</span>Start-Service sshd
+Set-Service -Name sshd -StartupType Automatic</div>
+    <p>Luego, desde la consola de AWS, abre el puerto 22 en el <strong>Security Group</strong> de la instancia:</p>
+    <div class="ruta anim">
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num blue">1</div><div class="ruta-line blue"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">EC2 → Instancia → Security → Security Groups</div>
+          <div class="ruta-desc">Haz clic en el Security Group vinculado a tu instancia.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num blue">2</div><div class="ruta-line blue"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Inbound Rules → Edit inbound rules → Add rule</div>
+          <div class="ruta-desc">Tipo: <strong>SSH</strong> — Puerto: <strong>22</strong> — Source: <strong>My IP</strong> (o 0.0.0.0/0 para cualquier origen).</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num blue">3</div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Save rules</div>
+          <div class="ruta-desc">El puerto 22 queda abierto y el servidor acepta conexiones SSH desde ese momento.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-info anim">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>Esta es la última vez que usas RDP</strong>
+        <p>Una vez habilitado SSH, todas las sesiones siguientes son desde tu terminal. No necesitas volver a abrir RDP.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Conexión</span>
+  <div class="concept-label anim">04 — SSH · Permisos y conexión</div>
+  <div class="concept-title anim">Preparar la clave<br>y conectar</div>
+  <div class="concept-body anim">
+    <p>Antes de conectar, el archivo <code>.pem</code> necesita permisos restringidos — SSH rechaza claves con permisos abiertos.</p>
+
+    <div class="compare-grid anim">
+      <div class="compare-card" style="background:#EFF6FF; border:1px solid #BFDBFE;">
+        <div class="compare-card-label" style="color:var(--blue)">Windows — PowerShell</div>
+        <p>icacls "SRV-001.pem" /inheritance:r<br>/grant:r "%USERNAME%:R"</p>
+      </div>
+      <div class="compare-card" style="background:#F0FDF4; border:1px solid #BBF7D0;">
+        <div class="compare-card-label" style="color:var(--green)">Linux / macOS — Terminal</div>
+        <p>chmod 400 SRV-001.pem</p>
+      </div>
+    </div>
+
+    <p>Luego conecta — el comando es el mismo en ambos sistemas:</p>
+    <div class="code-block anim">
+      <span class="code-label">PowerShell / Terminal</span>ssh -i SRV-001.pem Administrator@&lt;IP-del-servidor&gt;
+    </div>
+
+    <div class="terminal-block anim"><span class="t-label">Sesión SSH exitosa — ejemplo</span><span class="t-ps">PS C:\Users\Mike&gt; </span><span class="t-cmd">ssh -i SRV-001.pem Administrator@100.31.109.52</span>
+<span class="t-out">Administrator@100.31.109.52's password: </span><span class="t-dim">············</span>
+
+<span class="t-ok">Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.</span>
+
+<span class="t-ps">PS C:\Users\Administrator&gt; </span><span class="t-dim">_</span></div>
+
+    <div class="callout callout-info anim">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>La contraseña no se ve mientras la escribes</strong>
+        <p>SSH no muestra asteriscos ni caracteres al tipear. Escribe la contraseña de Administrator y presiona Enter — aunque la pantalla esté en blanco, sí la está recibiendo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ BLOQUE 05 — INSTALACIÓN VIA SSH ============================================================ -->
+<div class="slide slide-separator orange-sep">
+  <span class="slide-badge badge-pasos">05 — Instalación</span>
+  <div class="sep-num orange anim">Bloque 05</div>
+  <div class="sep-title anim">Instalar<br><span class="orange">Antigravity CLI</span></div>
+  <p class="sep-desc anim">Con la sesión SSH activa, el servidor es tuyo. Instalas desde la terminal remota — sin tocar RDP.</p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Instalación</span>
+  <div class="concept-label anim">05 — Instalación · Instalar y autenticar</div>
+  <div class="concept-title anim">Instalar agy<br>y autenticar</div>
+  <div class="concept-body anim">
+    <p>Desde la sesión SSH, ejecuta el instalador oficial de Google:</p>
+    <div class="code-block anim">
+      <span class="code-label">PowerShell — sesión SSH activa</span>irm https://antigravity.google/cli/install.ps1 | iex
+    </div>
+    <p>El instalador actualiza el PATH del sistema pero no el de la sesión actual. Recárgalo sin cerrar la conexión:</p>
+    <div class="code-block scrollable anim">
+      <span class="code-label">PowerShell — recargar PATH en la sesión</span>$env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine")+";"+[System.Environment]::GetEnvironmentVariable("PATH","User")
+    </div>
+    <div class="code-block anim">
+      <span class="code-label">PowerShell — verificar</span>agy --version
+    </div>
+    <p>Luego inicia la autenticación con Google:</p>
+    <div class="terminal-block anim"><span class="t-label">Autenticación OAuth — lo que verás en pantalla</span><span class="t-ps">PS C:\Users\Administrator&gt; </span><span class="t-cmd">agy auth login</span>
+
+<span class="t-out">Visita este enlace en tu navegador para autenticarte:
+
+  </span><span class="t-url">https://accounts.google.com/o/oauth2/auth?client_id=agy...</span>
+
+<span class="t-out">Ingresa el código de autorización:
+&gt; </span><span class="t-dim">██████████████████████</span>
+<span class="t-ok">Autenticación completada. Bienvenido, estudiante@gmail.com</span>
+
+<span class="t-ps">PS C:\Users\Administrator&gt; </span><span class="t-cmd">agy</span>
+<span class="t-ok">Antigravity CLI  ·  agy 1.2.0  ·  Gemini 2.5 Flash</span>
+
+<span class="t-out">&gt; </span><span class="t-dim">_</span></div>
+    <div class="callout callout-warning anim">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>El enlace se abre en tu navegador local, no en el servidor</strong>
+        <p>Copia la URL que aparece en la terminal SSH, ábrela en el navegador de tu computador, inicia sesión con Google, copia el código y pégalo de vuelta en la terminal.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ BLOQUE 06 — CONFIGURACIÓN BÁSICA ============================================================ -->
+<div class="slide slide-separator red-sep">
+  <span class="slide-badge badge-ia">06 — Con IA</span>
+  <div class="sep-num red anim">Bloque 06</div>
+  <div class="sep-title anim">Configuración<br><span class="red">básica</span></div>
+  <p class="sep-desc anim">El agente ya está activo. Las mismas cinco configuraciones de la sesión anterior — ahora en lenguaje natural.</p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-ia">Prompts</span>
+  <div class="concept-label anim">06 — Configuración · Hostname, idioma e IP</div>
+  <div class="concept-title anim">Hostname,<br>idioma e IP</div>
+  <div class="concept-body anim">
+    <div class="prompt-block anim">
+      <span class="prompt-label">Prompt — Hostname</span>Cambia el nombre de este servidor a JPS-WinSRV.
+Avísame cuando esté listo para reiniciar
+y espera mi confirmación antes de hacerlo.
+    </div>
+    <div class="prompt-block anim">
+      <span class="prompt-label">Prompt — Idioma</span>Instala el paquete de idioma Español (Chile)
+y configúralo como idioma de pantalla del sistema.
+Avísame cuando necesite cerrar sesión para aplicar el cambio.
+    </div>
+    <div class="prompt-block anim">
+      <span class="prompt-label">Prompt — IP estática</span>Voy a configurar la IP de este servidor de forma estática.
+Antes de ejecutar nada, pídeme uno por uno los siguientes datos:
+IP address, Máscara de subred, Gateway predeterminado, DNS preferido y DNS alternativo.
+Espera mi respuesta a cada uno antes de continuar.
+Cuando tengas todos, muéstramelos y pide mi confirmación final.
+Recién ahí aplica el cambio.
+    </div>
+    <div class="callout callout-important anim">
+      <span class="callout-icon">⚡</span>
+      <div class="callout-content">
+        <strong>La sesión SSH caerá — es normal y esperado</strong>
+        <p>Al cambiar el adaptador de DHCP a estático, Windows interrumpe la conexión TCP activa. El servidor <strong>no se daña</strong>: la IP privada es la misma que tenía antes.<br><br>
+        <strong>Qué hacer:</strong> espera 15-20 segundos y reconecta con el mismo comando de siempre:<br>
+        <code>ssh -i SRV-001.pem Administrator@&lt;IP-publica-EC2&gt;</code><br><br>
+        Si no reconecta después de 30 segundos, detén e inicia la instancia desde la consola de AWS (Stop → Start).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-ia">Prompts</span>
+  <div class="concept-label anim">06 — Configuración · Updates y Firewall</div>
+  <div class="concept-title anim">Updates<br>y Firewall</div>
+  <div class="concept-body anim">
+    <div class="prompt-block anim">
+      <span class="prompt-label">Prompt — Windows Update</span>Verifica si hay actualizaciones pendientes en Windows Update
+e instálalas todas. Si necesitas reiniciar, avísame primero
+y espera mi confirmación.
+Al terminar, dime qué instalaste y cuánto tardó.
+    </div>
+    <div class="prompt-block anim">
+      <span class="prompt-label">Prompt — Firewall (dos reglas)</span>Crea dos reglas de firewall de entrada:
+- Puerto TCP 80, nombre HTTP-80
+- Puerto TCP 443, nombre HTTPS-443
+Confírmame cuando ambas estén activas.
+    </div>
+    <div class="callout callout-ai anim">
+      <span class="callout-icon">🤖</span>
+      <div class="callout-content">
+        <strong>Observa la diferencia</strong>
+        <p>En la sesión anterior ejecutaste cada comando manualmente. Aquí escribiste una instrucción y el agente decidió los comandos, los ejecutó y te reportó el resultado.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ ACTIVIDAD PRÁCTICA ============================================================ -->
+<div class="slide slide-separator" style="border-bottom-color: var(--orange);">
+  <span class="slide-badge" style="background: rgba(217,119,6,0.15); color: var(--orange); border: 1px solid rgba(217,119,6,0.3);">Actividad</span>
+  <div class="sep-num orange anim">Ahora tú</div>
+  <div class="sep-title anim">Actividad<br><span style="color: var(--orange);">práctica</span></div>
+  <p class="sep-desc anim">Conecta al servidor via SSH, instala Antigravity CLI y realiza las mismas configuraciones que hiciste manualmente — esta vez dirigiendo al agente.</p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-alerta">Actividad práctica</span>
+  <div class="concept-label anim">Actividad — Pasos</div>
+  <div class="concept-title anim">Configura tu<br>servidor con IA</div>
+  <div class="concept-body anim">
+    <div class="callout callout-warning">
+      <span class="callout-icon">⏱</span>
+      <div class="callout-content">
+        <strong>Tiempo estimado: 40-50 minutos</strong>
+        <p>La mayor parte la consumen las actualizaciones de Windows. Avanza con hostname, idioma e IP mientras esperan.</p>
+      </div>
+    </div>
+    <div class="ruta anim">
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num orange">1</div><div class="ruta-line orange"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Conecta al servidor via SSH</div>
+          <div class="ruta-desc">Ajusta los permisos del <code>.pem</code> y conecta: <code>ssh -i SRV-001.pem Administrator@&lt;IP&gt;</code></div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num orange">2</div><div class="ruta-line orange"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Instala Antigravity CLI y autentica</div>
+          <div class="ruta-desc">Instalador → recargar PATH → <code>agy --version</code> → <code>agy auth login</code> → <code>agy</code></div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num orange">3</div><div class="ruta-line orange"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Pide al agente las 5 configuraciones</div>
+          <div class="ruta-desc">Hostname → Idioma → IP estática → Windows Update → Firewall (HTTP-80 y HTTPS-443)<br><strong>Nota:</strong> al configurar la IP, la sesión SSH caerá — es normal. Reconecta con el mismo comando después de 15-20 seg.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num orange">4</div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Pide un resumen final al agente</div>
+          <div class="ruta-desc">"Dame un resumen del estado actual del servidor: nombre, IP, actualizaciones y reglas de firewall activas."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-alerta">Evidencia</span>
+  <div class="concept-label anim">Actividad — Entrega</div>
+  <div class="concept-title anim">¿Qué debes<br>mostrar?</div>
+  <div class="concept-body anim">
+    <div class="ruta anim">
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num orange">E1</div><div class="ruta-line orange"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">El resumen que entregó el agente al final</div>
+          <div class="ruta-desc">El reporte en la sesión SSH mostrando el estado completo del servidor.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num orange">E2</div><div class="ruta-line orange"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Verificación desde la sesión SSH</div>
+          <div class="ruta-desc"><code>hostname</code> → nuevo nombre. <code>Get-NetFirewallRule -DisplayName "HTTP*","HTTPS*"</code> → reglas activas.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num orange">E3</div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Reflexión: ¿qué fue más rápido y por qué?</div>
+          <div class="ruta-desc">Una respuesta oral de 1 minuto comparando el proceso manual vs. el proceso con IA.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-ai">
+      <span class="callout-icon">🤖</span>
+      <div class="callout-content">
+        <strong>La reflexión es lo más importante</strong>
+        <p>No se trata solo de que el agente haga el trabajo más rápido. Se trata de entender cuándo conviene usar un agente, cuándo no, y qué riesgos tiene delegar una tarea a la IA sin supervisión.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ CIERRE ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen</div>
+  <div class="sep-title anim">Lo que<br><span class="purple">aprendimos</span></div>
+  <p class="sep-desc anim">En la próxima sesión: instalar AD DS, promover a controlador de dominio y configurar el DNS del dominio — con y sin IA.</p>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">ssh -i clave.pem Administrator@IP</div>
+      <div class="resumen-desc">Acceso remoto sin RDP. Mismo comando en Windows y Linux</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">chmod 400 / icacls</div>
+      <div class="resumen-desc">Permisos restringidos en el .pem — paso obligatorio antes de conectar</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">irm .../install.ps1 | iex</div>
+      <div class="resumen-desc">Instalador de Antigravity CLI via PowerShell remoto. PATH se recarga en sesión</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">agy auth login</div>
+      <div class="resumen-desc">OAuth via enlace en el navegador local. El código se pega en la terminal SSH</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Prompt = instrucción</div>
+      <div class="resumen-desc">Específico, con contexto, con formato de respuesta y con restricciones</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Modo reactivo</div>
+      <div class="resumen-desc">Tú diriges, el agente ejecuta. Control total en cada paso</div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  document.querySelectorAll('.code-block, .prompt-block').forEach(block => {
+    block.classList.add('copyable');
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.innerHTML = '⎘ Copiar';
+    btn.addEventListener('click', () => {
+      const clone = block.cloneNode(true);
+      clone.querySelectorAll('.code-label, .prompt-label, .copy-btn').forEach(el => el.remove());
+      const text = clone.innerText.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        btn.innerHTML = '✓ Copiado';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.innerHTML = '⎘ Copiar'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+    block.appendChild(btn);
+  });
+
+  const animSelectors = [
+    '.sep-num', '.sep-title', '.sep-desc', '.index-grid',
+    '.concept-label', '.concept-title', '.concept-body',
+    '.callout', '.ruta', '.compare-grid', '.prompt-block',
+    '.code-block', '.terminal-block', '.resumen-grid'
+  ];
+
+  document.querySelectorAll('.slide').forEach(slide => {
+    animSelectors.forEach((sel, si) => {
+      slide.querySelectorAll(sel).forEach((el, ei) => {
+        if (!el.classList.contains('anim')) {
+          el.classList.add('anim');
+          el.style.transitionDelay = (si * 70 + ei * 55) + 'ms';
+        }
+      });
+    });
+  });
+
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+</body>
+</html>
