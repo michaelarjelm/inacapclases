@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ejercicios — Métodos y Slicing en Python · TI3011</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #0063B1;
+      --green:  #107C10;
+      --orange: #D97706;
+      --dark:   #1A1A1A;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0;
+      color: var(--text);
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #0B2545 100%);
+      color: white;
+      justify-content: center;
+      padding: 80px;
+      border-bottom: 6px solid var(--blue);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900;
+      text-transform: uppercase; line-height: 0.92;
+      letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: #4ADE80; }
+    .cover-desc { font-size: 20px; color: rgba(255,255,255,0.5); max-width: 620px; line-height: 1.65; margin-bottom: 56px; }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--blue);
+    }
+    .slide-separator.sep-red    { border-bottom-color: var(--red); }
+    .slide-separator.sep-green  { border-bottom-color: var(--green); }
+    .slide-separator.sep-orange { border-bottom-color: var(--orange); }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--blue); margin-bottom: 16px;
+    }
+    .sep-num.red    { color: var(--red); }
+    .sep-num.green  { color: var(--green); }
+    .sep-num.orange { color: var(--orange); }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900;
+      text-transform: uppercase; line-height: 0.92;
+      letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title .blue   { color: var(--blue); }
+    .sep-title .red    { color: var(--red); }
+    .sep-title .green  { color: #4ADE80; }
+    .sep-title .orange { color: var(--orange); }
+    .sep-desc { font-size: 18px; color: rgba(255,255,255,0.45); max-width: 580px; line-height: 1.65; }
+
+    /* MÉTODO PILLS en separador */
+    .method-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    .method-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 600;
+      padding: 5px 12px; border-radius: 4px;
+    }
+    .pill-blue   { background: rgba(0,99,177,0.3);  color: #93C5FD; border: 1px solid rgba(0,99,177,0.4); }
+    .pill-red    { background: rgba(227,30,36,0.25); color: #FCA5A5; border: 1px solid rgba(227,30,36,0.3); }
+    .pill-green  { background: rgba(16,124,16,0.3);  color: #86EFAC; border: 1px solid rgba(16,124,16,0.4); }
+    .pill-orange { background: rgba(217,119,6,0.25); color: #FCD34D; border: 1px solid rgba(217,119,6,0.3); }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 52px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 10px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 46px; font-weight: 900;
+      text-transform: uppercase; line-height: 0.95;
+      letter-spacing: -0.01em; color: var(--dark); margin-bottom: 24px;
+    }
+    .concept-body { max-width: 860px; }
+    .concept-body p { font-size: 17px; line-height: 1.7; color: #333; margin-bottom: 12px; }
+    .concept-body ul { margin-left: 22px; margin-bottom: 12px; }
+    .concept-body li { font-size: 16px; line-height: 1.65; color: #333; margin-bottom: 5px; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 14px 18px; margin: 14px 0;
+      max-width: 860px; display: flex; gap: 12px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content strong {
+      display: block; font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;
+    }
+    .callout-content p { font-size: 14px; line-height: 1.6; margin: 0; }
+    .callout-info { background: #EFF6FF; border: 1px solid #BFDBFE; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #1E3A5F; }
+    .callout-tip { background: #F0FDF4; border: 1px solid #BBF7D0; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #14532D; }
+    .callout-warning { background: #FFFBEB; border: 1px solid #FDE68A; }
+    .callout-warning strong { color: var(--orange); }
+    .callout-warning p { color: #92400E; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto  { background: #EFF6FF; color: var(--blue);   border: 1px solid #BFDBFE; }
+    .badge-ejercicio { background: #F0FDF4; color: var(--green);  border: 1px solid #BBF7D0; }
+    .badge-ref       { background: #FFFBEB; color: var(--orange); border: 1px solid #FDE68A; }
+    .badge-cierre    { background: rgba(16,124,16,0.12); color: var(--green); border: 1px solid rgba(16,124,16,0.25); }
+
+    /* ÍNDICE */
+    .index-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 14px; margin-top: 28px; max-width: 720px;
+    }
+    .index-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .index-num { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 900; color: #4ADE80; line-height: 1; margin-bottom: 6px; }
+    .index-name { font-size: 15px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 4px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.03em; }
+
+    /* RESUMEN (cierre) */
+    .resumen-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 24px; max-width: 860px; }
+    .resumen-item { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 12px 14px; }
+    .resumen-cmd { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #6EE7B7; margin-bottom: 5px; font-weight: 600; }
+    .resumen-desc { font-size: 12px; color: rgba(255,255,255,0.38); line-height: 1.4; }
+
+    /* REFERENCIA DE MÉTODOS */
+    .methods-ref {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      max-width: 860px;
+      margin-top: 18px;
+    }
+    .mref-item {
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      padding: 10px 13px;
+    }
+    .mref-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 600;
+      color: var(--blue); margin-bottom: 3px;
+    }
+    .mref-desc { font-size: 12px; color: #475569; line-height: 1.45; }
+
+    /* GRID DE EJERCICIOS */
+    .ej-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      max-width: 860px;
+      margin-top: 18px;
+    }
+    .ej-grid.one-col { grid-template-columns: 1fr; }
+
+    /* TARJETA DE EJERCICIO */
+    .ej-card {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 15px 17px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .ej-card.blue-top   { border-top: 3px solid var(--blue); }
+    .ej-card.red-top    { border-top: 3px solid var(--red); }
+    .ej-card.green-top  { border-top: 3px solid var(--green); }
+    .ej-card.orange-top { border-top: 3px solid var(--orange); }
+
+    .ej-header { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .ej-num {
+      background: #1E293B; color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 800;
+      padding: 3px 8px; border-radius: 3px; letter-spacing: 0.05em;
+    }
+    .ej-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 600;
+      padding: 2px 7px; border-radius: 3px;
+    }
+    .ej-tag.blue   { background: #EFF6FF; color: var(--blue); }
+    .ej-tag.red    { background: #FFF1F2; color: var(--red); }
+    .ej-tag.green  { background: #F0FDF4; color: var(--green); }
+    .ej-tag.orange { background: #FFFBEB; color: var(--orange); }
+
+    .ej-title { font-size: 13px; font-weight: 700; color: var(--dark); line-height: 1.4; }
+    .ej-desc  { font-size: 12.5px; color: #475569; line-height: 1.58; }
+
+    .ej-code {
+      background: #1E293B;
+      border-radius: 5px;
+      padding: 9px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px; line-height: 1.65;
+      color: #CBD5E1;
+      white-space: pre;
+      overflow-x: auto;
+      flex: 1;
+    }
+    .py-cmt { color: #6A9955; }
+    .py-str { color: #CE9178; }
+    .py-kw  { color: #569CD6; }
+    .py-fn  { color: #DCDCAA; }
+    .py-num { color: #B5CEA8; }
+
+    /* BLOQUE DE CÓDIGO GRANDE (análisis slicing) */
+    .code-block {
+      background: #1E293B;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 14px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; line-height: 1.75;
+      color: #E2E8F0;
+      max-width: 860px;
+      white-space: pre;
+      overflow-x: auto;
+      border-left: 4px solid var(--blue);
+    }
+    .code-block.green-border  { border-left-color: var(--green); }
+    .code-block.orange-border { border-left-color: var(--orange); }
+
+    /* SLICING VISUAL */
+    .slice-visual {
+      display: flex; gap: 0; margin: 14px 0; max-width: 860px;
+      border: 1px solid #CBD5E1; border-radius: 8px; overflow: hidden;
+    }
+    .sv-item {
+      flex: 1; text-align: center; padding: 12px 6px;
+      border-right: 1px solid #CBD5E1;
+    }
+    .sv-item:last-child { border-right: none; }
+    .sv-val  { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: var(--dark); }
+    .sv-idx  { font-size: 11px; color: #94A3B8; margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+    .sv-nidx { font-size: 11px; color: #CBD5E1; margin-top: 1px; font-family: 'JetBrains Mono', monospace; }
+    .sv-item.highlighted { background: #EFF6FF; }
+    .sv-item.highlighted .sv-val { color: var(--blue); }
+
+    code { font-family: 'JetBrains Mono', monospace; font-size: 13px; background: #EBEBEB; padding: 2px 6px; border-radius: 3px; color: #C0392B; }
+
+    /* PROGRESS */
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; background: var(--blue);
+      width: 0%; z-index: 9999;
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
+      pointer-events: none;
+    }
+
+    /* ANIMACIONES */
+    .anim { opacity: 0; transform: translateY(22px); transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1); }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 200ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 310ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 420ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 520ms; }
+    .slide.visible .anim:nth-child(7) { transition-delay: 610ms; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- ============================================================ PORTADA ============================================================ -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Introducción a la Programación Segura · TI3011</div>
+  <div class="cover-title anim">Métodos y<br><span>slicing</span><br>en Python</div>
+  <p class="cover-desc anim">
+    30 ejercicios con contextos reales de negocio. Cada ejercicio incluye el enunciado, el código Python y el resultado esperado. Cubre listas, diccionarios, strings y slicing.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Listas <span>9 métodos</span></span>
+    <span class="cover-chip">Diccionarios <span>popitem</span></span>
+    <span class="cover-chip">Strings <span>split</span></span>
+    <span class="cover-chip">Slicing <span>indices + pasos</span></span>
+    <span class="cover-chip"><span>30 ejercicios</span></span>
+  </div>
+</div>
+
+
+<!-- ============================================================ ÍNDICE ============================================================ -->
+<div class="slide slide-separator">
+  <div class="sep-num anim">Contenido</div>
+  <div class="sep-title anim">¿Qué<br>practicamos <span class="green">hoy?</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Listas — Agregar y Buscar</div>
+      <div class="index-type">append · count · index</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Listas — Eliminar</div>
+      <div class="index-type">pop · remove</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Listas — Organizar y Resetear</div>
+      <div class="index-type">reverse · sort · copy · clear</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Diccionarios y Strings</div>
+      <div class="index-type">popitem · split</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Slicing de Listas</div>
+      <div class="index-type">[inicio:fin] · [-n:] · [::paso] · [::-1]</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ SEP 01 — LISTAS AGREGAR Y BUSCAR ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Bloque 01</span>
+  <div class="sep-num anim">Listas — Agregar y Buscar</div>
+  <div class="sep-title anim">append<br>count · <span class="blue">index</span></div>
+  <p class="sep-desc anim">Tres de los métodos más usados al trabajar con listas. Permiten agregar elementos al final, contar cuántas veces aparece un valor y encontrar en qué posición está un elemento.</p>
+  <div class="method-pills anim">
+    <span class="method-pill pill-blue">.append(x)</span>
+    <span class="method-pill pill-blue">.count(x)</span>
+    <span class="method-pill pill-blue">.index(x)</span>
+  </div>
+</div>
+
+
+<!-- ============================================================ REF: MÉTODOS DE LISTA ============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-ref">Referencia rápida</span>
+  <div class="concept-label anim">Sintaxis de los 9 métodos de lista</div>
+  <div class="concept-title anim">Cheatsheet<br>de métodos</div>
+  <div class="concept-body anim">
+    <div class="methods-ref">
+      <div class="mref-item">
+        <div class="mref-name">.append(x)</div>
+        <div class="mref-desc">Agrega x al final de la lista</div>
+      </div>
+      <div class="mref-item">
+        <div class="mref-name">.count(x)</div>
+        <div class="mref-desc">Retorna cuántas veces aparece x</div>
+      </div>
+      <div class="mref-item">
+        <div class="mref-name">.index(x)</div>
+        <div class="mref-desc">Retorna el índice de la primera ocurrencia de x</div>
+      </div>
+      <div class="mref-item">
+        <div class="mref-name">.pop()</div>
+        <div class="mref-desc">Elimina y retorna el último elemento. .pop(i) elimina el índice i</div>
+      </div>
+      <div class="mref-item">
+        <div class="mref-name">.remove(x)</div>
+        <div class="mref-desc">Elimina la primera ocurrencia de x por valor</div>
+      </div>
+      <div class="mref-item">
+        <div class="mref-name">.reverse()</div>
+        <div class="mref-desc">Invierte el orden de la lista en su lugar</div>
+      </div>
+      <div class="mref-item">
+        <div class="mref-name">.sort()</div>
+        <div class="mref-desc">Ordena la lista ascendente. .sort(reverse=True) descendente</div>
+      </div>
+      <div class="mref-item">
+        <div class="mref-name">.copy()</div>
+        <div class="mref-desc">Retorna una copia independiente de la lista</div>
+      </div>
+      <div class="mref-item">
+        <div class="mref-name">.clear()</div>
+        <div class="mref-desc">Elimina todos los elementos dejando la lista vacía</div>
+      </div>
+    </div>
+    <div class="callout callout-info" style="margin-top:18px;">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>Métodos que modifican en su lugar vs. los que retornan valor</strong>
+        <p><code>sort()</code>, <code>reverse()</code>, <code>append()</code>, <code>remove()</code>, <code>clear()</code> modifican la lista original y retornan <code>None</code>. <code>pop()</code>, <code>count()</code>, <code>index()</code> y <code>copy()</code> retornan un valor útil.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ E01 + E02 — append ============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-ejercicio">Ejercicios</span>
+  <div class="concept-label anim">01 — append · Agregar elementos al final de una lista</div>
+  <div class="concept-title anim">.append(x)</div>
+  <div class="concept-body anim">
+    <div class="ej-grid">
+
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E01</span>
+          <span class="ej-tag blue">.append()</span>
+        </div>
+        <div class="ej-title">Farmacia — registro de llegada de medicamentos</div>
+        <div class="ej-desc">Una farmacia registra los medicamentos que llegan al turno de la tarde. El sistema debe agregarlos al inventario conforme van llegando.</div>
+        <pre class="ej-code"><span class="py-cmt"># Inventario al inicio del turno</span>
+inventario = [<span class="py-str">"Paracetamol"</span>, <span class="py-str">"Ibuprofeno"</span>, <span class="py-str">"Amoxicilina"</span>]
+
+<span class="py-cmt"># Llegan nuevos productos</span>
+inventario.append(<span class="py-str">"Omeprazol"</span>)
+inventario.append(<span class="py-str">"Metformina"</span>)
+
+<span class="py-fn">print</span>(inventario)
+<span class="py-cmt"># ['Paracetamol', 'Ibuprofeno', 'Amoxicilina',
+#  'Omeprazol', 'Metformina']</span>
+<span class="py-fn">print</span>(<span class="py-str">f"Total productos: {len(inventario)}"</span>)
+<span class="py-cmt"># Total productos: 5</span></pre>
+      </div>
+
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E02</span>
+          <span class="ej-tag blue">.append()</span>
+        </div>
+        <div class="ej-title">Call center — cola de tickets en tiempo real</div>
+        <div class="ej-desc">Un call center registra en tiempo real los tickets de soporte abiertos durante el turno. Cada nuevo ticket debe agregarse al final de la cola.</div>
+        <pre class="ej-code"><span class="py-cmt"># Cola de tickets al inicio</span>
+tickets = [<span class="py-num">1042</span>, <span class="py-num">1043</span>, <span class="py-num">1044</span>]
+
+<span class="py-cmt"># Nuevos tickets entrantes</span>
+tickets.append(<span class="py-num">1045</span>)
+tickets.append(<span class="py-num">1046</span>)
+
+<span class="py-fn">print</span>(<span class="py-str">f"Cola actual: {tickets}"</span>)
+<span class="py-cmt"># Cola actual: [1042, 1043, 1044, 1045, 1046]</span>
+<span class="py-fn">print</span>(<span class="py-str">f"Tickets en espera: {len(tickets)}"</span>)
+<span class="py-cmt"># Tickets en espera: 5</span></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ E03 + E04 — count ============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-ejercicio">Ejercicios</span>
+  <div class="concept-label anim">01 — count · Contar ocurrencias de un valor</div>
+  <div class="concept-title anim">.count(x)</div>
+  <div class="concept-body anim">
+    <div class="ej-grid">
+
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E03</span>
+          <span class="ej-tag blue">.count()</span>
+        </div>
+        <div class="ej-title">Control de calidad — contar productos defectuosos</div>
+        <div class="ej-desc">Un inspector registra el resultado de cada producto revisado en línea. Al cierre del turno necesita saber cuántos salieron defectuosos.</div>
+        <pre class="ej-code"><span class="py-cmt"># Resultados del turno</span>
+resultados = [<span class="py-str">"OK"</span>, <span class="py-str">"DEFECTO"</span>, <span class="py-str">"OK"</span>, <span class="py-str">"OK"</span>,
+              <span class="py-str">"DEFECTO"</span>, <span class="py-str">"OK"</span>, <span class="py-str">"DEFECTO"</span>]
+
+defectuosos = resultados.count(<span class="py-str">"DEFECTO"</span>)
+total = <span class="py-fn">len</span>(resultados)
+tasa = (defectuosos / total) * <span class="py-num">100</span>
+
+<span class="py-fn">print</span>(<span class="py-str">f"Defectuosos: {defectuosos} de {total}"</span>)
+<span class="py-fn">print</span>(<span class="py-str">f"Tasa de error: {tasa:.1f}%"</span>)
+<span class="py-cmt"># Defectuosos: 3 de 7
+# Tasa de error: 42.9%</span></pre>
+      </div>
+
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E04</span>
+          <span class="ej-tag blue">.count()</span>
+        </div>
+        <div class="ej-title">Encuesta de satisfacción — calcular porcentaje</div>
+        <div class="ej-desc">Una encuesta recopila respuestas de clientes tras la atención. El sistema calcula cuántos respondieron "Muy satisfecho" y su porcentaje.</div>
+        <pre class="ej-code"><span class="py-cmt"># Respuestas del día</span>
+respuestas = [<span class="py-str">"Satisfecho"</span>, <span class="py-str">"Muy satisfecho"</span>,
+              <span class="py-str">"Insatisfecho"</span>, <span class="py-str">"Muy satisfecho"</span>,
+              <span class="py-str">"Satisfecho"</span>, <span class="py-str">"Muy satisfecho"</span>]
+
+muy_sat = respuestas.count(<span class="py-str">"Muy satisfecho"</span>)
+pct = (muy_sat / <span class="py-fn">len</span>(respuestas)) * <span class="py-num">100</span>
+
+<span class="py-fn">print</span>(<span class="py-str">f"Muy satisfechos: {muy_sat} ({pct:.1f}%)"</span>)
+<span class="py-cmt"># Muy satisfechos: 3 (50.0%)</span></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ E05 + E06 — index ============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-ejercicio">Ejercicios</span>
+  <div class="concept-label anim">01 — index · Encontrar la posición de un elemento</div>
+  <div class="concept-title anim">.index(x)</div>
+  <div class="concept-body anim">
+    <div class="ej-grid">
+
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E05</span>
+          <span class="ej-tag blue">.index()</span>
+        </div>
+        <div class="ej-title">Banco — posición del cliente en la fila</div>
+        <div class="ej-desc">Un cajero necesita saber en qué posición está un cliente para informarle cuántos turnos le faltan antes de ser atendido.</div>
+        <pre class="ej-code"><span class="py-cmt"># Fila de atención</span>
+fila = [<span class="py-str">"Lopez"</span>, <span class="py-str">"Martinez"</span>, <span class="py-str">"Garcia"</span>,
+        <span class="py-str">"Rodriguez"</span>, <span class="py-str">"Fernandez"</span>]
+
+pos = fila.index(<span class="py-str">"Garcia"</span>)
+
+<span class="py-fn">print</span>(<span class="py-str">f"Garcia esta en posicion: {pos}"</span>)
+<span class="py-fn">print</span>(<span class="py-str">f"Personas delante: {pos}"</span>)
+<span class="py-cmt"># Garcia esta en posicion: 2
+# Personas delante: 2</span>
+
+<span class="py-cmt"># Nota: los índices parten en 0</span></pre>
+      </div>
+
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E06</span>
+          <span class="ej-tag blue">.index()</span>
+        </div>
+        <div class="ej-title">Almacén — ubicar producto en pasillo</div>
+        <div class="ej-desc">El sistema de búsqueda de un supermercado debe indicar en qué posición del pasillo se encuentra un artículo para guiar al cliente.</div>
+        <pre class="ej-code"><span class="py-cmt"># Productos en orden de estante</span>
+pasillo_B = [<span class="py-str">"Arroz"</span>, <span class="py-str">"Fideos"</span>, <span class="py-str">"Lentejas"</span>,
+             <span class="py-str">"Garbanzos"</span>, <span class="py-str">"Porotos"</span>]
+
+articulo = <span class="py-str">"Lentejas"</span>
+estante = pasillo_B.index(articulo)
+
+<span class="py-fn">print</span>(<span class="py-str">f"{articulo} -> Estante {estante}, Pasillo B"</span>)
+<span class="py-cmt"># Lentejas -> Estante 2, Pasillo B</span></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ SEP 02 — ELIMINAR ============================================================ -->
+<div class="slide slide-separator sep-red">
+  <span class="slide-badge" style="background:rgba(227,30,36,0.15);color:var(--red);border:1px solid rgba(227,30,36,0.3);">Bloque 02</span>
+  <div class="sep-num red anim">Listas — Eliminar elementos</div>
+  <div class="sep-title anim">pop<br>· <span class="red">remove</span></div>
+  <p class="sep-desc anim">Dos formas de eliminar elementos de una lista con comportamientos distintos: <strong>pop</strong> elimina por posición (índice) y retorna el elemento eliminado; <strong>remove</strong> elimina por valor la primera coincidencia.</p>
+  <div class="method-pills anim">
+    <span class="method-pill pill-red">.pop()</span>
+    <span class="method-pill pill-red">.pop(i)</span>
+    <span class="method-pill pill-red">.remove(x)</span>
+  </div>
+</div>
+
+
+<!-- ============================================================ E07 + E08 — pop ============================================================ -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-ejercicio">Ejercicios</span>
+  <div class="concept-label anim">02 — pop · Eliminar por índice y recuperar el valor</div>
+  <div class="concept-title anim">.pop() y .pop(i)</div>
+  <div class="concept-body anim">
+    <div class="ej-grid">
+
+      <div class="ej-card red-top">
+        <div class="ej-header">
+          <span class="ej-num">E07</span>
+          <span class="ej-tag red">.pop()</span>
+        </div>
+        <div class="ej-title">Cocina de restaurante — LIFO (último en entrar, primero en salir)</div>
+        <div class="ej-desc">El chef prepara el último pedido ingresado primero. Debe extraerlo de la cola y comenzar con él de inmediato.</div>
+        <pre class="ej-code"><span class="py-cmt"># Pedidos en cola de cocina</span>
+pedidos = [<span class="py-str">"Mesa3-Pasta"</span>, <span class="py-str">"Mesa1-Pizza"</span>,
+           <span class="py-str">"Mesa7-Ensalada"</span>, <span class="py-str">"Mesa2-Risotto"</span>]
+
+pedido_actual = pedidos.pop()
+<span class="py-fn">print</span>(<span class="py-str">f"Preparando: {pedido_actual}"</span>)
+<span class="py-cmt"># Preparando: Mesa2-Risotto</span>
+
+<span class="py-fn">print</span>(<span class="py-str">f"Pendientes: {pedidos}"</span>)
+<span class="py-cmt"># Pendientes: ['Mesa3-Pasta', 'Mesa1-Pizza',
+#              'Mesa7-Ensalada']</span></pre>
+      </div>
+
+      <div class="ej-card red-top">
+        <div class="ej-header">
+          <span class="ej-num">E08</span>
+          <span class="ej-tag red">.pop(0)</span>
+        </div>
+        <div class="ej-title">Cola de impresión — FIFO (primero en entrar, primero en salir)</div>
+        <div class="ej-desc">Una impresora de oficina atiende documentos en orden de llegada. El sistema extrae el primer documento de la cola para imprimirlo.</div>
+        <pre class="ej-code"><span class="py-cmt"># Documentos en cola</span>
+cola = [<span class="py-str">"Factura_001.pdf"</span>, <span class="py-str">"Informe.pdf"</span>,
+        <span class="py-str">"Contrato.pdf"</span>]
+
+archivo = cola.pop(<span class="py-num">0</span>)  <span class="py-cmt"># índice 0 = primero</span>
+<span class="py-fn">print</span>(<span class="py-str">f"Imprimiendo: {archivo}"</span>)
+<span class="py-cmt"># Imprimiendo: Factura_001.pdf</span>
+
+<span class="py-fn">print</span>(<span class="py-str">f"En espera: {cola}"</span>)
+<span class="py-cmt"># En espera: ['Informe.pdf', 'Contrato.pdf']</span></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ E09 + E10 — remove ============================================================ -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-ejercicio">Ejercicios</span>
+  <div class="concept-label anim">02 — remove · Eliminar por valor</div>
+  <div class="concept-title anim">.remove(x)</div>
+  <div class="concept-body anim">
+    <div class="ej-grid">
+
+      <div class="ej-card red-top">
+        <div class="ej-header">
+          <span class="ej-num">E09</span>
+          <span class="ej-tag red">.remove()</span>
+        </div>
+        <div class="ej-title">Evento corporativo — cancelación de asistente</div>
+        <div class="ej-desc">Una persona canceló su asistencia a un evento corporativo. Debe ser removida de la lista para no reservarle asiento ni menú.</div>
+        <pre class="ej-code"><span class="py-cmt"># Lista de asistentes confirmados</span>
+asistentes = [<span class="py-str">"Ana Perez"</span>, <span class="py-str">"Carlos Ruiz"</span>,
+              <span class="py-str">"Maria Gonzalez"</span>, <span class="py-str">"Pedro Torres"</span>]
+
+asistentes.remove(<span class="py-str">"Carlos Ruiz"</span>)
+
+<span class="py-fn">print</span>(<span class="py-str">f"Confirmados: {asistentes}"</span>)
+<span class="py-cmt"># Confirmados: ['Ana Perez', 'Maria Gonzalez',
+#               'Pedro Torres']</span>
+<span class="py-fn">print</span>(<span class="py-str">f"Total: {len(asistentes)}"</span>)
+<span class="py-cmt"># Total: 3</span></pre>
+      </div>
+
+      <div class="ej-card red-top">
+        <div class="ej-header">
+          <span class="ej-num">E10</span>
+          <span class="ej-tag red">.remove()</span>
+        </div>
+        <div class="ej-title">Seguridad de red — desbloquear una IP autorizada</div>
+        <div class="ej-desc">El administrador recibe autorización para liberar una dirección IP que fue bloqueada por error. Debe removerla de la lista negra.</div>
+        <pre class="ej-code"><span class="py-cmt"># IPs actualmente bloqueadas</span>
+ips_bloqueadas = [<span class="py-str">"192.168.1.50"</span>, <span class="py-str">"10.0.0.45"</span>,
+                  <span class="py-str">"172.16.8.22"</span>]
+
+ip_libre = <span class="py-str">"10.0.0.45"</span>
+ips_bloqueadas.remove(ip_libre)
+
+<span class="py-fn">print</span>(<span class="py-str">f"IP {ip_libre} desbloqueada"</span>)
+<span class="py-cmt"># IP 10.0.0.45 desbloqueada</span>
+<span class="py-fn">print</span>(<span class="py-str">f"Aun bloqueadas: {ips_bloqueadas}"</span>)
+<span class="py-cmt"># Aun bloqueadas: ['192.168.1.50', '172.16.8.22']</span></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ SEP 03 — ORGANIZAR ============================================================ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge" style="background:rgba(16,124,16,0.15);color:var(--green);border:1px solid rgba(16,124,16,0.3);">Bloque 03</span>
+  <div class="sep-num green anim">Listas — Organizar y Resetear</div>
+  <div class="sep-title anim">reverse · sort<br>copy · <span class="green">clear</span></div>
+  <p class="sep-desc anim">Métodos para ordenar, invertir, copiar y limpiar listas. <strong>sort</strong> y <strong>reverse</strong> modifican la lista en su lugar. <strong>copy</strong> es clave para no afectar la lista original al modificar. <strong>clear</strong> deja la lista vacía.</p>
+  <div class="method-pills anim">
+    <span class="method-pill pill-green">.reverse()</span>
+    <span class="method-pill pill-green">.sort()</span>
+    <span class="method-pill pill-green">.copy()</span>
+    <span class="method-pill pill-green">.clear()</span>
+  </div>
+</div>
+
+
+<!-- ============================================================ E11 + E12 — reverse ============================================================ -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-ejercicio">Ejercicios</span>
+  <div class="concept-label anim">03 — reverse · Invertir el orden de la lista</div>
+  <div class="concept-title anim">.reverse()</div>
+  <div class="concept-body anim">
+    <div class="ej-grid">
+
+      <div class="ej-card green-top">
+        <div class="ej-header">
+          <span class="ej-num">E11</span>
+          <span class="ej-tag green">.reverse()</span>
+        </div>
+        <div class="ej-title">Competencia deportiva — premiación del último al primero</div>
+        <div class="ej-desc">Para la ceremonia, el presentador anuncia desde el último lugar al primer lugar. La lista está en orden de clasificación y debe invertirse.</div>
+        <pre class="ej-code"><span class="py-cmt"># Clasificación final (1er lugar primero)</span>
+clasificacion = [<span class="py-str">"Equipo A"</span>, <span class="py-str">"Equipo B"</span>,
+                 <span class="py-str">"Equipo C"</span>, <span class="py-str">"Equipo D"</span>, <span class="py-str">"Equipo E"</span>]
+
+clasificacion.reverse()
+
+<span class="py-fn">print</span>(<span class="py-str">"Orden de premiacion:"</span>)
+<span class="py-kw">for</span> i, equipo <span class="py-kw">in</span> <span class="py-fn">enumerate</span>(clasificacion, <span class="py-num">1</span>):
+    <span class="py-fn">print</span>(<span class="py-str">f"  {i}. {equipo}"</span>)
+<span class="py-cmt"># 1. Equipo E
+# 2. Equipo D
+# 3. Equipo C ...</span></pre>
+      </div>
+
+      <div class="ej-card green-top">
+        <div class="ej-header">
+          <span class="ej-num">E12</span>
+          <span class="ej-tag green">.reverse()</span>
+        </div>
+        <div class="ej-title">Estado de cuenta — movimientos más recientes primero</div>
+        <div class="ej-desc">Las transacciones se registran en orden cronológico, pero el estado de cuenta debe mostrar las más recientes al inicio (orden descendente).</div>
+        <pre class="ej-code"><span class="py-cmt"># Transacciones en orden cronológico</span>
+transacciones = [<span class="py-str">"Compra $45.000"</span>,
+                 <span class="py-str">"Transferencia $200.000"</span>,
+                 <span class="py-str">"Pago servicio $35.000"</span>,
+                 <span class="py-str">"Compra farmacia $12.500"</span>]
+
+transacciones.reverse()
+<span class="py-fn">print</span>(<span class="py-str">"Ultimos movimientos:"</span>)
+<span class="py-kw">for</span> t <span class="py-kw">in</span> transacciones:
+    <span class="py-fn">print</span>(<span class="py-str">f"  - {t}"</span>)
+<span class="py-cmt"># - Compra farmacia $12.500
+# - Pago servicio $35.000
+# ...</span></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ E13 + E14 — sort ============================================================ -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-ejercicio">Ejercicios</span>
+  <div class="concept-label anim">03 — sort · Ordenar la lista</div>
+  <div class="concept-title anim">.sort()</div>
+  <div class="concept-body anim">
+    <div class="ej-grid">
+
+      <div class="ej-card green-top">
+        <div class="ej-header">
+          <span class="ej-num">E13</span>
+          <span class="ej-tag green">.sort()</span>
+        </div>
+        <div class="ej-title">E-commerce — ordenar productos de menor a mayor precio</div>
+        <div class="ej-desc">La tienda online tiene un filtro "precio: menor a mayor". Al activarlo, la lista de precios debe reordenarse ascendentemente.</div>
+        <pre class="ej-code"><span class="py-cmt"># Precios desordenados</span>
+precios = [<span class="py-num">89990</span>, <span class="py-num">45000</span>, <span class="py-num">129990</span>,
+           <span class="py-num">32000</span>, <span class="py-num">75000</span>, <span class="py-num">199990</span>]
+
+precios.sort()
+<span class="py-fn">print</span>(<span class="py-str">"Precio min a max:"</span>)
+<span class="py-fn">print</span>(precios)
+<span class="py-cmt"># [32000, 45000, 75000, 89990, 129990, 199990]</span>
+
+<span class="py-cmt"># Para mayor a menor:</span>
+precios.sort(reverse=<span class="py-kw">True</span>)
+<span class="py-fn">print</span>(precios)
+<span class="py-cmt"># [199990, 129990, 89990, 75000, 45000, 32000]</span></pre>
+      </div>
+
+      <div class="ej-card green-top">
+        <div class="ej-header">
+          <span class="ej-num">E14</span>
+          <span class="ej-tag green">.sort()</span>
+        </div>
+        <div class="ej-title">RRHH — directorio de empleados en orden alfabético</div>
+        <div class="ej-desc">El departamento necesita generar el directorio de empleados ordenado alfabéticamente por apellido para la reunión mensual.</div>
+        <pre class="ej-code"><span class="py-cmt"># Empleados sin orden</span>
+empleados = [<span class="py-str">"Torres, Roberto"</span>, <span class="py-str">"Garcia, Ana"</span>,
+             <span class="py-str">"Munoz, Felipe"</span>, <span class="py-str">"Alvarado, Carla"</span>,
+             <span class="py-str">"Vega, Diego"</span>]
+
+empleados.sort()
+<span class="py-fn">print</span>(<span class="py-str">"Directorio del departamento:"</span>)
+<span class="py-kw">for</span> emp <span class="py-kw">in</span> empleados:
+    <span class="py-fn">print</span>(<span class="py-str">f"  {emp}"</span>)
+<span class="py-cmt"># Alvarado, Carla
+# Garcia, Ana
+# Munoz, Felipe
+# Torres, Roberto
+# Vega, Diego</span></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ E15 + E16 — copy ============================================================ -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-ejercicio">Ejercicios</span>
+  <div class="concept-label anim">03 — copy · Crear una copia independiente</div>
+  <div class="concept-title anim">.copy()</div>
+  <div class="concept-body anim">
+    <div class="callout callout-warning anim" style="margin-bottom:14px;">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>¿Por qué usar .copy() y no solo lista2 = lista1?</strong>
+        <p>Si haces <code>b = a</code> ambas variables apuntan a la <strong>misma</strong> lista. Modificar b también modifica a. Con <code>b = a.copy()</code> obtienes una lista independiente.</p>
+      </div>
+    </div>
+    <div class="ej-grid anim">
+
+      <div class="ej-card green-top">
+        <div class="ej-header">
+          <span class="ej-num">E15</span>
+          <span class="ej-tag green">.copy()</span>
+        </div>
+        <div class="ej-title">Inventario — backup antes de aplicar cambios</div>
+        <div class="ej-desc">El sistema hace una copia del stock actual antes de aplicar los descuentos de fin de mes, para comparar el antes y el después.</div>
+        <pre class="ej-code"><span class="py-cmt"># Stock actual</span>
+stock = [<span class="py-str">"Notebook"</span>, <span class="py-str">"Mouse"</span>, <span class="py-str">"Teclado"</span>, <span class="py-str">"Monitor"</span>]
+
+backup = stock.copy()  <span class="py-cmt"># copia independiente</span>
+
+stock.remove(<span class="py-str">"Mouse"</span>)      <span class="py-cmt"># vendido</span>
+stock.append(<span class="py-str">"Audifonos"</span>)  <span class="py-cmt"># ingresado</span>
+
+<span class="py-fn">print</span>(<span class="py-str">f"Backup: {backup}"</span>)
+<span class="py-cmt"># Backup: ['Notebook', 'Mouse', 'Teclado', 'Monitor']</span>
+<span class="py-fn">print</span>(<span class="py-str">f"Actual: {stock}"</span>)
+<span class="py-cmt"># Actual: ['Notebook', 'Teclado', 'Monitor', 'Audifonos']</span></pre>
+      </div>
+
+      <div class="ej-card green-top">
+        <div class="ej-header">
+          <span class="ej-num">E16</span>
+          <span class="ej-tag green">.copy()</span>
+        </div>
+        <div class="ej-title">Clínica — plantilla de horario semanal</div>
+        <div class="ej-desc">Una clínica usa una plantilla base cada semana. Cada lunes se copia y se modifica según ausencias, sin alterar la plantilla original.</div>
+        <pre class="ej-code"><span class="py-cmt"># Plantilla base (no se modifica nunca)</span>
+plantilla = [<span class="py-str">"08:00-Recepcion"</span>,
+             <span class="py-str">"09:00-Consulta"</span>,
+             <span class="py-str">"10:00-Laboratorio"</span>]
+
+turno_lunes = plantilla.copy()
+turno_lunes.remove(<span class="py-str">"10:00-Laboratorio"</span>)
+turno_lunes.append(<span class="py-str">"10:00-Urgencias"</span>)
+
+<span class="py-fn">print</span>(<span class="py-str">f"Plantilla: {plantilla}"</span>)
+<span class="py-cmt"># Plantilla: ['08:00-Recepcion', '09:00-Consulta',
+#             '10:00-Laboratorio']  <- sin cambios</span>
+<span class="py-fn">print</span>(<span class="py-str">f"Lunes:     {turno_lunes}"</span>)
+<span class="py-cmt"># Lunes: [..., '10:00-Urgencias']</span></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ E17 + E18 — clear ============================================================ -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-ejercicio">Ejercicios</span>
+  <div class="concept-label anim">03 — clear · Vaciar la lista completamente</div>
+  <div class="concept-title anim">.clear()</div>
+  <div class="concept-body anim">
+    <div class="ej-grid">
+
+      <div class="ej-card green-top">
+        <div class="ej-header">
+          <span class="ej-num">E17</span>
+          <span class="ej-tag green">.clear()</span>
+        </div>
+        <div class="ej-title">E-commerce — vaciar carrito tras confirmar pago</div>
+        <div class="ej-desc">Una vez que el sistema confirma y procesa el pago exitosamente, el carrito de compras del usuario debe quedar vacío para la próxima compra.</div>
+        <pre class="ej-code"><span class="py-cmt"># Carrito con productos</span>
+carrito = [<span class="py-str">"Camisa M"</span>, <span class="py-str">"Pantalon 32"</span>,
+           <span class="py-str">"Zapatos 42"</span>, <span class="py-str">"Cinturon"</span>]
+
+<span class="py-fn">print</span>(<span class="py-str">f"Procesando {len(carrito)} articulos..."</span>)
+<span class="py-cmt"># Procesando 4 articulos...</span>
+
+carrito.clear()
+
+<span class="py-fn">print</span>(<span class="py-str">"Pago exitoso."</span>)
+<span class="py-fn">print</span>(<span class="py-str">f"Carrito: {carrito}"</span>)
+<span class="py-cmt"># Pago exitoso.
+# Carrito: []</span></pre>
+      </div>
+
+      <div class="ej-card green-top">
+        <div class="ej-header">
+          <span class="ej-num">E18</span>
+          <span class="ej-tag green">.clear()</span>
+        </div>
+        <div class="ej-title">Monitoreo de red — reiniciar log al iniciar turno</div>
+        <div class="ej-desc">El sistema guarda temporalmente los errores del turno actual. Al iniciar cada turno nuevo, la lista debe reiniciarse para no mezclar registros.</div>
+        <pre class="ej-code"><span class="py-cmt"># Errores del turno anterior</span>
+errores = [<span class="py-str">"Timeout servidor"</span>,
+           <span class="py-str">"Conexion caida"</span>,
+           <span class="py-str">"Alta latencia"</span>]
+
+<span class="py-fn">print</span>(<span class="py-str">f"Turno anterior: {len(errores)} errores"</span>)
+<span class="py-cmt"># Turno anterior: 3 errores</span>
+
+errores.clear()
+<span class="py-fn">print</span>(<span class="py-str">"Nuevo turno iniciado."</span>)
+<span class="py-fn">print</span>(<span class="py-str">f"Errores activos: {errores}"</span>)
+<span class="py-cmt"># Nuevo turno iniciado.
+# Errores activos: []</span></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ SEP 04 — DICCIONARIOS Y STRINGS ============================================================ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge" style="background:rgba(217,119,6,0.15);color:var(--orange);border:1px solid rgba(217,119,6,0.3);">Bloque 04</span>
+  <div class="sep-num orange anim">Diccionarios y Strings</div>
+  <div class="sep-title anim">popitem<br>· <span class="orange">split</span></div>
+  <p class="sep-desc anim"><strong>popitem()</strong> es un método de diccionarios que extrae y retorna el último par clave-valor como tupla. <strong>split()</strong> es un método de strings que divide el texto en una lista usando un separador.</p>
+  <div class="method-pills anim">
+    <span class="method-pill pill-orange">dict.popitem()</span>
+    <span class="method-pill pill-orange">str.split(sep)</span>
+    <span class="method-pill pill-orange">str.split()</span>
+  </div>
+</div>
+
+
+<!-- ============================================================ E19 + E20 — popitem ============================================================ -->
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-ejercicio">Ejercicios</span>
+  <div class="concept-label anim">04 — dict.popitem() · Extraer el último par clave-valor</div>
+  <div class="concept-title anim">dict.popitem()</div>
+  <div class="concept-body anim">
+    <div class="callout callout-info anim" style="margin-bottom:14px;">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>popitem() retorna una tupla (clave, valor)</strong>
+        <p>Desde Python 3.7 los diccionarios mantienen orden de inserción, por lo que <code>popitem()</code> siempre extrae el último ítem ingresado.</p>
+      </div>
+    </div>
+    <div class="ej-grid anim">
+
+      <div class="ej-card orange-top">
+        <div class="ej-header">
+          <span class="ej-num">E19</span>
+          <span class="ej-tag orange">.popitem()</span>
+        </div>
+        <div class="ej-title">Registro médico — archivar el último turno del día</div>
+        <div class="ej-desc">Al cerrar el día, el sistema extrae y archiva el último registro de turnos para procesarlo por separado antes de cerrar sesión.</div>
+        <pre class="ej-code"><span class="py-cmt"># Turnos activos</span>
+turnos = {<span class="py-str">"Dr. Soto"</span>: <span class="py-str">"Sala 1"</span>,
+          <span class="py-str">"Dra. Vega"</span>: <span class="py-str">"Sala 3"</span>,
+          <span class="py-str">"Dr. Reyes"</span>: <span class="py-str">"Sala 2"</span>}
+
+ultimo = turnos.popitem()
+<span class="py-fn">print</span>(<span class="py-str">f"Turno archivado: {ultimo}"</span>)
+<span class="py-cmt"># Turno archivado: ('Dr. Reyes', 'Sala 2')</span>
+
+<span class="py-fn">print</span>(<span class="py-str">f"Turnos activos: {turnos}"</span>)
+<span class="py-cmt"># Turnos activos: {'Dr. Soto': 'Sala 1',
+#                  'Dra. Vega': 'Sala 3'}</span></pre>
+      </div>
+
+      <div class="ej-card orange-top">
+        <div class="ej-header">
+          <span class="ej-num">E20</span>
+          <span class="ej-tag orange">.popitem()</span>
+        </div>
+        <div class="ej-title">Configuración del sistema — verificar el último parámetro</div>
+        <div class="ej-desc">Un desarrollador extrae el último parámetro de configuración temporal para verificar que se ingresó correctamente antes de aplicarlo.</div>
+        <pre class="ej-code"><span class="py-cmt"># Parámetros de configuración</span>
+config = {<span class="py-str">"max_conexiones"</span>: <span class="py-num">100</span>,
+          <span class="py-str">"timeout"</span>: <span class="py-num">30</span>,
+          <span class="py-str">"modo_debug"</span>: <span class="py-kw">True</span>}
+
+clave, valor = config.popitem()
+<span class="py-fn">print</span>(<span class="py-str">f"Ultimo param: '{clave}' = {valor}"</span>)
+<span class="py-cmt"># Ultimo param: 'modo_debug' = True</span>
+
+<span class="py-fn">print</span>(<span class="py-str">f"Config restante: {config}"</span>)
+<span class="py-cmt"># Config restante: {'max_conexiones': 100,
+#                   'timeout': 30}</span></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ E21 + E22 + E23 — split ============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-ejercicio">Ejercicios</span>
+  <div class="concept-label anim">04 — str.split() · Dividir un string en lista</div>
+  <div class="concept-title anim">.split(sep)</div>
+  <div class="concept-body anim">
+    <div class="ej-grid anim">
+
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E21</span>
+          <span class="ej-tag blue">.split(",")</span>
+        </div>
+        <div class="ej-title">Formulario de RRHH — procesar datos ingresados como texto</div>
+        <div class="ej-desc">Un operador ingresa los datos de un nuevo empleado en un campo de texto, separando cada dato con coma. El sistema debe dividirlos para guardarlos por separado.</div>
+        <pre class="ej-code"><span class="py-cmt"># Texto ingresado por el operador</span>
+datos = <span class="py-str">"12345678,Juan Perez,Dev,1850000"</span>
+campos = datos.split(<span class="py-str">","</span>)
+
+<span class="py-fn">print</span>(<span class="py-str">f"RUT:    {campos[0]}"</span>)
+<span class="py-fn">print</span>(<span class="py-str">f"Nombre: {campos[1]}"</span>)
+<span class="py-fn">print</span>(<span class="py-str">f"Cargo:  {campos[2]}"</span>)
+<span class="py-fn">print</span>(<span class="py-str">f"Sueldo: ${campos[3]}"</span>)
+<span class="py-cmt"># RUT:    12345678
+# Nombre: Juan Perez
+# Cargo:  Dev
+# Sueldo: $1850000</span></pre>
+      </div>
+
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E22</span>
+          <span class="ej-tag blue">.split()</span>
+        </div>
+        <div class="ej-title">RRHH — generar usuario desde nombre completo</div>
+        <div class="ej-desc">La plataforma genera automáticamente el nombre de usuario a partir del nombre completo: inicial del nombre + apellido paterno en minúsculas.</div>
+        <pre class="ej-code"><span class="py-cmt"># Nombre completo desde el formulario</span>
+nombre_completo = <span class="py-str">"Valentina Torres Espinoza"</span>
+partes = nombre_completo.split()
+
+primer_nombre = partes[<span class="py-num">0</span>]
+apellido = partes[<span class="py-num">1</span>]
+usuario = (primer_nombre[<span class="py-num">0</span>] + apellido).lower()
+
+<span class="py-fn">print</span>(<span class="py-str">f"Nombre:  {primer_nombre}"</span>)
+<span class="py-fn">print</span>(<span class="py-str">f"Apellido: {apellido}"</span>)
+<span class="py-fn">print</span>(<span class="py-str">f"Usuario: {usuario}"</span>)
+<span class="py-cmt"># Nombre:  Valentina
+# Apellido: Torres
+# Usuario: vtorres</span></pre>
+      </div>
+
+    </div>
+
+    <div class="ej-grid anim" style="margin-top:14px;">
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E23</span>
+          <span class="ej-tag blue">.split(",")</span>
+        </div>
+        <div class="ej-title">Sistema de acceso — verificar permiso en string de permisos</div>
+        <div class="ej-desc">Los permisos de cada rol se almacenan como un string separado por comas. El sistema los convierte en lista para verificar si un permiso específico está autorizado.</div>
+        <pre class="ej-code"><span class="py-cmt"># Permisos del rol "admin" almacenados en BD</span>
+permisos_str = <span class="py-str">"leer,escribir,eliminar,exportar,configurar"</span>
+permisos = permisos_str.split(<span class="py-str">","</span>)
+
+<span class="py-fn">print</span>(<span class="py-str">f"Total permisos: {len(permisos)}"</span>)
+<span class="py-cmt"># Total permisos: 5</span>
+
+permiso_solicitado = <span class="py-str">"exportar"</span>
+<span class="py-kw">if</span> permiso_solicitado <span class="py-kw">in</span> permisos:
+    <span class="py-fn">print</span>(<span class="py-str">f"Permiso '{permiso_solicitado}': AUTORIZADO"</span>)
+<span class="py-kw">else</span>:
+    <span class="py-fn">print</span>(<span class="py-str">f"Permiso '{permiso_solicitado}': DENEGADO"</span>)
+<span class="py-cmt"># Permiso 'exportar': AUTORIZADO</span></pre>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:center; background:#F1F5F9; border-radius:8px; border:1px dashed #CBD5E1; padding:20px;">
+        <div style="text-align:center;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:28px; color:#94A3B8; margin-bottom:8px;">"leer,escribir,eliminar"</div>
+          <div style="font-size:24px; color:#CBD5E1; margin:8px 0;">↓ .split(",")</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:20px; color:var(--blue); font-weight:700;">["leer", "escribir", "eliminar"]</div>
+          <div style="font-size:13px; color:#94A3B8; margin-top:10px;">string → lista</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ SEP 05 — SLICING ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Bloque 05</span>
+  <div class="sep-num anim">Slicing de Listas</div>
+  <div class="sep-title anim">lista<br>[<span class="blue">inicio:fin</span>]</div>
+  <p class="sep-desc anim">El slicing permite extraer sublistas usando índices. No modifica la lista original, retorna una nueva lista. Acepta índices positivos, negativos, y un paso opcional.</p>
+  <div class="method-pills anim">
+    <span class="method-pill pill-blue">lista[1:3]</span>
+    <span class="method-pill pill-blue">lista[-2:]</span>
+    <span class="method-pill pill-blue">lista[1:-1]</span>
+    <span class="method-pill pill-blue">lista[::2]</span>
+    <span class="method-pill pill-blue">lista[::-1]</span>
+  </div>
+</div>
+
+
+<!-- ============================================================ CONCEPTO: SLICING ============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">05 — Slicing · Cómo funciona</div>
+  <div class="concept-title anim">Anatomía del<br>slicing</div>
+  <div class="concept-body anim">
+    <p><code>lista[inicio:fin:paso]</code> — retorna los elementos desde el índice <code>inicio</code> hasta <code>fin - 1</code>. Si se omite <code>inicio</code> usa el principio; si se omite <code>fin</code> usa el final.</p>
+
+    <p style="font-weight:700; font-size:15px; margin-bottom:6px;">Lista de ejemplo: <code>miLista = [1, 2, 3, 4]</code></p>
+    <div class="slice-visual">
+      <div class="sv-item">
+        <div class="sv-val">1</div>
+        <div class="sv-idx">índice 0</div>
+        <div class="sv-nidx">índice -4</div>
+      </div>
+      <div class="sv-item">
+        <div class="sv-val">2</div>
+        <div class="sv-idx">índice 1</div>
+        <div class="sv-nidx">índice -3</div>
+      </div>
+      <div class="sv-item">
+        <div class="sv-val">3</div>
+        <div class="sv-idx">índice 2</div>
+        <div class="sv-nidx">índice -2</div>
+      </div>
+      <div class="sv-item">
+        <div class="sv-val">4</div>
+        <div class="sv-idx">índice 3</div>
+        <div class="sv-nidx">índice -1</div>
+      </div>
+    </div>
+
+    <div class="ej-grid" style="margin-top:14px;">
+      <div style="background:#F1F5F9; border-radius:8px; padding:14px 16px; border:1px solid #CBD5E1;">
+        <div style="font-size:13px; font-weight:700; margin-bottom:10px; color:var(--dark);">Reglas clave</div>
+        <ul style="margin-left:18px;">
+          <li style="font-size:13px; margin-bottom:5px; color:#334155;"><code>fin</code> no se incluye: <code>[1:3]</code> da índices 1 y 2</li>
+          <li style="font-size:13px; margin-bottom:5px; color:#334155;">Índice negativo cuenta desde el final</li>
+          <li style="font-size:13px; margin-bottom:5px; color:#334155;">Si <code>inicio &gt;= fin</code>, retorna lista vacía</li>
+          <li style="font-size:13px; margin-bottom:5px; color:#334155;">Índice fuera de rango no genera error</li>
+          <li style="font-size:13px; color:#334155;"><code>[::paso]</code> salta elementos, <code>[::-1]</code> invierte</li>
+        </ul>
+      </div>
+      <div style="background:#F1F5F9; border-radius:8px; padding:14px 16px; border:1px solid #CBD5E1;">
+        <div style="font-size:13px; font-weight:700; margin-bottom:10px; color:var(--dark);">Ejemplos rápidos</div>
+        <pre style="font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.7; color:#334155; white-space:pre;"><span style="color:#0063B1;">miLista = [1, 2, 3, 4]</span>
+
+miLista[1:3]   <span style="color:#107C10;"># [2, 3]</span>
+miLista[:2]    <span style="color:#107C10;"># [1, 2]</span>
+miLista[2:]    <span style="color:#107C10;"># [3, 4]</span>
+miLista[-2:]   <span style="color:#107C10;"># [3, 4]</span>
+miLista[1:-1]  <span style="color:#107C10;"># [2, 3]</span>
+miLista[::-1]  <span style="color:#107C10;"># [4, 3, 2, 1]</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ E24 + E25 — slicing básico ============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-ejercicio">Ejercicios</span>
+  <div class="concept-label anim">05 — Slicing · Extraer sublistas con índices positivos y negativos</div>
+  <div class="concept-title anim">Slicing<br>básico</div>
+  <div class="concept-body anim">
+    <div class="ej-grid">
+
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E24</span>
+          <span class="ej-tag blue">[:n]</span>
+        </div>
+        <div class="ej-title">Ranking de ventas — mostrar solo el podio (Top 3)</div>
+        <div class="ej-desc">El reporte mensual tiene los 10 productos más vendidos. El gerente solo quiere ver los 3 primeros para la presentación ejecutiva.</div>
+        <pre class="ej-code"><span class="py-cmt"># Top 10 productos más vendidos</span>
+top10 = [<span class="py-str">"Notebook Dell"</span>, <span class="py-str">"iPhone 15"</span>,
+         <span class="py-str">"Smart TV 55"</span>, <span class="py-str">"Audifonos JBL"</span>,
+         <span class="py-str">"Tablet Samsung"</span>, <span class="py-str">"Camara Canon"</span>,
+         <span class="py-str">"iPad Air"</span>, <span class="py-str">"Monitor LG"</span>,
+         <span class="py-str">"Teclado Mecanico"</span>, <span class="py-str">"Mouse"</span>]
+
+podio = top10[:<span class="py-num">3</span>]
+<span class="py-fn">print</span>(<span class="py-str">"Top 3 productos:"</span>)
+<span class="py-kw">for</span> i, p <span class="py-kw">in</span> <span class="py-fn">enumerate</span>(podio, <span class="py-num">1</span>):
+    <span class="py-fn">print</span>(<span class="py-str">f"  {i}. {p}"</span>)
+<span class="py-cmt"># 1. Notebook Dell
+# 2. iPhone 15
+# 3. Smart TV 55</span></pre>
+      </div>
+
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E25</span>
+          <span class="ej-tag blue">[-n:]</span>
+        </div>
+        <div class="ej-title">Auditoría de seguridad — revisar los 2 últimos accesos</div>
+        <div class="ej-desc">El equipo de seguridad necesita revisar solo los accesos más recientes al servidor para detectar actividad sospechosa al cierre del día.</div>
+        <pre class="ej-code"><span class="py-cmt"># Registro de accesos del día</span>
+accesos = [<span class="py-str">"admin 08:15"</span>, <span class="py-str">"user1 09:32"</span>,
+           <span class="py-str">"admin 11:47"</span>, <span class="py-str">"devops 13:20"</span>,
+           <span class="py-str">"admin 16:55"</span>]
+
+ultimos = accesos[-<span class="py-num">2</span>:]  <span class="py-cmt"># los 2 últimos</span>
+<span class="py-fn">print</span>(<span class="py-str">"Ultimos 2 accesos:"</span>)
+<span class="py-kw">for</span> acc <span class="py-kw">in</span> ultimos:
+    <span class="py-fn">print</span>(<span class="py-str">f"  - {acc}"</span>)
+<span class="py-cmt"># - devops 13:20
+# - admin 16:55</span></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ E26 — paginación + ANÁLISIS usuario ============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-ejercicio">Ejercicios</span>
+  <div class="concept-label anim">05 — Slicing · Paginación y análisis de índices</div>
+  <div class="concept-title anim">Slicing con<br>lógica de negocio</div>
+  <div class="concept-body anim">
+    <div class="ej-grid anim">
+
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E26</span>
+          <span class="ej-tag blue">[inicio:fin]</span>
+        </div>
+        <div class="ej-title">Buscador web — paginación de resultados</div>
+        <div class="ej-desc">Un motor de búsqueda muestra 5 resultados por página. El sistema calcula el rango de índices a partir del número de página solicitado.</div>
+        <pre class="ej-code"><span class="py-cmt"># 10 resultados de búsqueda</span>
+resultados = [<span class="py-str">"R01"</span>,<span class="py-str">"R02"</span>,<span class="py-str">"R03"</span>,<span class="py-str">"R04"</span>,<span class="py-str">"R05"</span>,
+              <span class="py-str">"R06"</span>,<span class="py-str">"R07"</span>,<span class="py-str">"R08"</span>,<span class="py-str">"R09"</span>,<span class="py-str">"R10"</span>]
+
+pagina = <span class="py-num">2</span>
+tam_pagina = <span class="py-num">5</span>
+inicio = (pagina - <span class="py-num">1</span>) * tam_pagina
+fin = inicio + tam_pagina
+
+<span class="py-fn">print</span>(<span class="py-str">f"Pagina {pagina}: {resultados[inicio:fin]}"</span>)
+<span class="py-cmt"># Pagina 2: ['R06', 'R07', 'R08', 'R09', 'R10']</span>
+
+<span class="py-cmt"># Pagina 1: resultados[0:5]  -> ['R01'...'R05']
+# Pagina 2: resultados[5:10] -> ['R06'...'R10']</span></pre>
+      </div>
+
+      <div class="ej-card blue-top" style="border-top-color: #7C3AED;">
+        <div class="ej-header">
+          <span class="ej-num" style="background:#7C3AED;">E27</span>
+          <span class="ej-tag" style="background:#F5F3FF;color:#7C3AED;">análisis</span>
+        </div>
+        <div class="ej-title">Análisis de slicing — ejercicios de clase</div>
+        <div class="ej-desc">Análisis detallado de los ejemplos vistos en clase para entender qué retorna cada expresión y por qué.</div>
+        <pre class="ej-code"><span class="py-cmt"># --- Ejemplo 1: rango normal ---</span>
+miLista = [<span class="py-num">10</span>, <span class="py-num">8</span>, <span class="py-num">6</span>, <span class="py-num">4</span>, <span class="py-num">2</span>]
+nuevaLista = miLista[<span class="py-num">1</span>:<span class="py-num">3</span>]
+<span class="py-fn">print</span>(nuevaLista)        <span class="py-cmt"># [8, 6]</span>
+
+<span class="py-cmt"># --- Ejemplos con índices negativos ---</span>
+miLista = [<span class="py-num">1</span>, <span class="py-num">2</span>, <span class="py-num">3</span>, <span class="py-num">4</span>]
+<span class="py-fn">print</span>(miLista[<span class="py-num">1</span>:-<span class="py-num">1</span>])    <span class="py-cmt"># [2, 3]   excluye el último</span>
+<span class="py-fn">print</span>(miLista[-<span class="py-num">2</span>:-<span class="py-num">1</span>])   <span class="py-cmt"># [3]      solo índice -2</span>
+<span class="py-fn">print</span>(miLista[-<span class="py-num">1</span>:-<span class="py-num">2</span>])   <span class="py-cmt"># []       inicio &gt;= fin</span>
+<span class="py-fn">print</span>(miLista[<span class="py-num">0</span>:<span class="py-num">999</span>])   <span class="py-cmt"># [1,2,3,4] fuera de rango = OK</span></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ E28 + E29 + E30 — slicing avanzado ============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-ejercicio">Ejercicios</span>
+  <div class="concept-label anim">05 — Slicing avanzado · [1:-1] · [::paso] · [::-1]</div>
+  <div class="concept-title anim">Slicing<br>avanzado</div>
+  <div class="concept-body anim">
+    <div class="ej-grid anim">
+
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E28</span>
+          <span class="ej-tag blue">[1:-1]</span>
+        </div>
+        <div class="ej-title">Importador de datos — procesar sin cabecera ni pie</div>
+        <div class="ej-desc">Un archivo de importación tiene la primera línea como cabecera y la última como total. El procesador debe trabajar solo con las líneas intermedias.</div>
+        <pre class="ej-code"><span class="py-cmt"># Líneas del archivo importado</span>
+lineas = [<span class="py-str">"CABECERA - Reporte ventas"</span>,
+          <span class="py-str">"Producto A: $50.000"</span>,
+          <span class="py-str">"Producto B: $75.000"</span>,
+          <span class="py-str">"Producto C: $30.000"</span>,
+          <span class="py-str">"TOTAL: $155.000"</span>]
+
+datos = lineas[<span class="py-num">1</span>:-<span class="py-num">1</span>]  <span class="py-cmt"># excluye primera y última</span>
+<span class="py-fn">print</span>(<span class="py-str">"Datos a procesar:"</span>)
+<span class="py-kw">for</span> d <span class="py-kw">in</span> datos:
+    <span class="py-fn">print</span>(<span class="py-str">f"  {d}"</span>)
+<span class="py-cmt"># Producto A: $50.000
+# Producto B: $75.000
+# Producto C: $30.000</span></pre>
+      </div>
+
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E29</span>
+          <span class="ej-tag blue">[::paso]</span>
+        </div>
+        <div class="ej-title">Servidor — muestreo de temperatura cada 2 horas</div>
+        <div class="ej-desc">El servidor mide temperatura cada hora (12 mediciones). El informe ejecutivo solo necesita una muestra representativa: una medición de cada dos.</div>
+        <pre class="ej-code"><span class="py-cmt"># Temperaturas por hora (0h a 11h)</span>
+temps = [<span class="py-num">45</span>, <span class="py-num">47</span>, <span class="py-num">46</span>, <span class="py-num">48</span>, <span class="py-num">52</span>, <span class="py-num">51</span>,
+         <span class="py-num">49</span>, <span class="py-num">50</span>, <span class="py-num">53</span>, <span class="py-num">48</span>, <span class="py-num">46</span>, <span class="py-num">44</span>]
+
+<span class="py-cmt"># Cada 2 horas → paso = 2</span>
+muestra = temps[::<span class="py-num">2</span>]
+<span class="py-fn">print</span>(<span class="py-str">f"Muestra (c/2h): {muestra}"</span>)
+<span class="py-cmt"># Muestra (c/2h): [45, 46, 52, 49, 53, 46]</span>
+
+<span class="py-cmt"># Cada 3 horas → paso = 3</span>
+muestra3 = temps[::<span class="py-num">3</span>]
+<span class="py-fn">print</span>(<span class="py-str">f"Muestra (c/3h): {muestra3}"</span>)
+<span class="py-cmt"># Muestra (c/3h): [45, 48, 49, 48]</span></pre>
+      </div>
+
+    </div>
+
+    <div class="ej-grid anim" style="margin-top:14px;">
+      <div class="ej-card blue-top">
+        <div class="ej-header">
+          <span class="ej-num">E30</span>
+          <span class="ej-tag blue">[::-1]</span>
+        </div>
+        <div class="ej-title">Sistema de prioridades — invertir orden de atención</div>
+        <div class="ej-desc">La lista de tareas está ordenada de menor a mayor prioridad. El sistema de despacho debe procesarlas de mayor a menor (crítica primero), sin modificar la lista original.</div>
+        <pre class="ej-code"><span class="py-cmt"># Prioridades de menor a mayor</span>
+prioridades = [<span class="py-str">"Baja"</span>, <span class="py-str">"Media"</span>, <span class="py-str">"Alta"</span>, <span class="py-str">"Critica"</span>]
+
+<span class="py-cmt"># [::-1] invierte sin modificar la original</span>
+orden_atencion = prioridades[::-<span class="py-num">1</span>]
+<span class="py-fn">print</span>(<span class="py-str">f"Despacho: {orden_atencion}"</span>)
+<span class="py-cmt"># Despacho: ['Critica', 'Alta', 'Media', 'Baja']</span>
+
+<span class="py-cmt"># Funciona igual con strings</span>
+codigo = <span class="py-str">"odanretla otxet"</span>
+<span class="py-fn">print</span>(codigo[::-<span class="py-num">1</span>])
+<span class="py-cmt"># texto alterado</span></pre>
+      </div>
+
+      <div style="background:#F0FDF4; border-radius:8px; border:1px solid #BBF7D0; padding:20px; display:flex; flex-direction:column; justify-content:center; gap:14px;">
+        <div style="font-size:13px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:0.08em;">Resumen slicing avanzado</div>
+        <div style="display:grid; gap:8px;">
+          <div style="display:flex; gap:10px; align-items:baseline;">
+            <code style="font-size:12px;">[1:-1]</code>
+            <span style="font-size:13px; color:#334155;">excluye primer y último elemento</span>
+          </div>
+          <div style="display:flex; gap:10px; align-items:baseline;">
+            <code style="font-size:12px;">[::2]</code>
+            <span style="font-size:13px; color:#334155;">toma un elemento de cada 2</span>
+          </div>
+          <div style="display:flex; gap:10px; align-items:baseline;">
+            <code style="font-size:12px;">[::-1]</code>
+            <span style="font-size:13px; color:#334155;">invierte completamente la lista</span>
+          </div>
+          <div style="display:flex; gap:10px; align-items:baseline;">
+            <code style="font-size:12px;">[2:8:2]</code>
+            <span style="font-size:13px; color:#334155;">desde 2 hasta 7, de 2 en 2</span>
+          </div>
+        </div>
+        <div class="callout callout-tip" style="margin:0;">
+          <span class="callout-icon">✓</span>
+          <div class="callout-content">
+            <strong>Slicing no modifica el original</strong>
+            <p>Siempre retorna una nueva lista. La original queda intacta, a diferencia de sort() y reverse().</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ CIERRE ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num green anim">Resumen</div>
+  <div class="sep-title anim">30 ejercicios<br><span class="green">completados</span></div>
+  <p class="sep-desc anim">Repaso de todos los métodos y operaciones cubiertas en esta sesión.</p>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">.append(x)</div>
+      <div class="resumen-desc">Agrega x al final. No retorna valor útil.</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">.count(x)</div>
+      <div class="resumen-desc">Retorna cuántas veces aparece x en la lista.</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">.index(x)</div>
+      <div class="resumen-desc">Retorna el índice de la primera ocurrencia de x.</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">.pop() / .pop(i)</div>
+      <div class="resumen-desc">Elimina y retorna el último elemento o el índice i.</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">.remove(x)</div>
+      <div class="resumen-desc">Elimina la primera ocurrencia de x por valor.</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">.reverse()</div>
+      <div class="resumen-desc">Invierte la lista en su lugar. No retorna valor.</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">.sort()</div>
+      <div class="resumen-desc">Ordena ascendente. .sort(reverse=True) para descendente.</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">.copy()</div>
+      <div class="resumen-desc">Retorna copia independiente. Evita efectos no deseados.</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">.clear()</div>
+      <div class="resumen-desc">Vacía la lista. Equivale a del lista[:] pero más legible.</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">dict.popitem()</div>
+      <div class="resumen-desc">Extrae y retorna el último par (clave, valor) como tupla.</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">str.split(sep)</div>
+      <div class="resumen-desc">Divide un string en lista usando sep como delimitador.</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">lista[inicio:fin:paso]</div>
+      <div class="resumen-desc">Extrae sublista. Índices negativos, paso y [::-1] disponibles.</div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const animSelectors = [
+    '.sep-num', '.sep-title', '.sep-desc', '.method-pills',
+    '.index-grid', '.concept-label', '.concept-title', '.concept-body',
+    '.callout', '.ej-grid', '.resumen-grid', '.slice-visual'
+  ];
+
+  document.querySelectorAll('.slide').forEach(slide => {
+    animSelectors.forEach((sel, si) => {
+      slide.querySelectorAll(sel).forEach((el, ei) => {
+        if (!el.classList.contains('anim')) {
+          el.classList.add('anim');
+          el.style.transitionDelay = (si * 70 + ei * 50) + 'ms';
+        }
+      });
+    });
+  });
+
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+</body>
+</html>
