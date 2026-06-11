@@ -365,6 +365,57 @@
     .col-card ul { margin-left: 18px; }
     .col-card li { font-size: 15px; line-height: 1.7; color: #444; }
 
+    /* EJERCICIOS — pregunta y respuesta */
+    .exercise-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 28px; max-width: 980px; margin-top: 8px;
+    }
+    .exercise-grid.single { grid-template-columns: 1fr; max-width: 860px; }
+    .ex-card {
+      background: #F8F8F8; border: 2px solid var(--border);
+      border-radius: 10px; padding: 26px 30px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .ex-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.14em; color: var(--red);
+    }
+    .ex-body { font-size: 17px; line-height: 1.7; color: #444; }
+    .ex-body strong { color: var(--dark); }
+    .ex-quote {
+      background: white; border: 1px solid var(--border);
+      border-left: 4px solid var(--red); border-radius: 6px;
+      padding: 14px 18px; font-size: 15.5px; line-height: 1.75;
+      color: #475569; font-style: italic;
+    }
+    .ex-quote strong { color: var(--dark); font-style: normal; }
+    .btn-answer {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: auto; padding: 9px 18px; background: var(--red); color: white;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em; border-radius: 5px;
+      text-decoration: none; align-self: flex-start; transition: background 0.15s;
+    }
+    .btn-answer:hover { background: #A91318; }
+    .btn-question {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 20px; padding: 9px 18px; background: transparent; color: var(--red);
+      border: 2px solid var(--red);
+      font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em; border-radius: 5px;
+      text-decoration: none; align-self: flex-start; transition: background 0.15s, color 0.15s;
+    }
+    .btn-question:hover { background: var(--red); color: white; }
+    .sol-q {
+      font-size: 17px; color: var(--muted); margin-bottom: 6px;
+      line-height: 1.6; font-style: italic; max-width: 860px;
+    }
+    .svg-box {
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-radius: 8px;
+      padding: 24px 28px; margin: 18px 0; max-width: 920px; overflow-x: auto;
+    }
+
     /* PROGRESS BAR */
     #progress {
       position: fixed; top: 0; left: 0;
@@ -730,14 +781,14 @@
           <div style="font-size:12px; color:#888; margin-top:6px;">Entidad fuerte</div>
         </div>
         <div class="er-line-h"></div>
-        <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; color:var(--orange);">(1,1)</div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; color:var(--orange);">(1,N)</div>
         <div class="er-line-h"></div>
         <div style="text-align:center; position:relative; width:80px; height:80px; display:flex; align-items:center; justify-content:center;">
           <div style="width:58px; height:58px; border:2px solid var(--dark); outline:3px solid var(--dark); outline-offset:4px; transform:rotate(45deg);"></div>
           <div style="position:absolute; font-size:10px; font-weight:800; text-transform:uppercase; font-family:'Barlow Condensed',sans-serif;">TIENE</div>
         </div>
         <div class="er-line-h"></div>
-        <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; color:var(--orange);">(1,N)</div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; color:var(--orange);">(1,1)</div>
         <div class="er-line-h"></div>
         <div style="text-align:center;">
           <div class="er-entity weak">DETALLE</div>
@@ -749,8 +800,8 @@
     <ul>
       <li><strong>Rectángulo doble</strong> para la entidad débil (<code>DETALLE</code>)</li>
       <li><strong>Rombo doble</strong> para la relación identificadora (<code>TIENE</code>)</li>
-      <li>La cardinalidad del lado débil siempre es <strong>(1,N)</strong> — un pedido tiene muchos detalles</li>
-      <li>La cardinalidad del lado fuerte siempre es <strong>(1,1)</strong> — cada detalle pertenece a exactamente un pedido</li>
+      <li>La cardinalidad del lado fuerte siempre es <strong>(1,N)</strong> — un pedido tiene muchos detalles</li>
+      <li>La cardinalidad del lado débil siempre es <strong>(1,1)</strong> — cada detalle pertenece a exactamente un pedido</li>
     </ul>
 
     <div class="callout callout-warn">
@@ -886,7 +937,7 @@
   <p class="sep-desc anim">Construimos juntos un modelo conceptual completo en draw.io. Sigan los pasos en sus equipos.</p>
 </div>
 
-<div class="slide slide-concept red-accent">
+<div class="slide slide-concept red-accent" id="lam-bib-caso">
   <span class="slide-badge badge-practica">Caso</span>
   <div class="concept-label anim">05 — Ejercicio · Enunciado</div>
   <div class="concept-title anim">El <span style="color:var(--red)">caso</span></div>
@@ -906,10 +957,11 @@
         <p>Subrayen sustantivos en azul, verbos en verde, y atributos/detalles en naranjo. Luego listar entidades, relaciones y atributos antes de abrir draw.io.</p>
       </div>
     </div>
+    <a href="#lam-bib-paso1" class="btn-answer">Ir a la respuesta &rarr;</a>
   </div>
 </div>
 
-<div class="slide slide-concept red-accent">
+<div class="slide slide-concept red-accent" id="lam-bib-paso1">
   <span class="slide-badge badge-practica">Paso 1</span>
   <div class="concept-label anim">05 — Ejercicio · Identificación de entidades</div>
   <div class="concept-title anim">Paso 1:<br><span style="color:var(--red)">Entidades</span></div>
@@ -952,6 +1004,13 @@
         </tr>
       </tbody>
     </table>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#128161;</span>
+      <div class="callout-content">
+        <strong>¿La copia no es un libro en sí?</strong>
+        <p>En el lenguaje cotidiano sí, pero en el modelo son cosas distintas. <code>LIBRO</code> es la <strong>obra</strong> (título, ISBN, año): existe una sola vez aunque haya 10 unidades en el estante. <code>COPIA</code> es el <strong>ejemplar físico</strong>: la unidad concreta que se presta o se deteriora. Si fueran una sola entidad, repetiríamos título y género por cada ejemplar, y no podríamos responder "¿cuántas copias disponibles quedan de esta obra?". El préstamo lo confirma: el socio no se lleva la obra, se lleva el ejemplar.</p>
+      </div>
+    </div>
     <div class="callout callout-warn">
       <span class="callout-icon">&#9888;</span>
       <div class="callout-content">
@@ -959,6 +1018,7 @@
         <p><code>COPIA</code> no tiene un identificador propio que sea único a nivel global. <code>NumCopia = 3</code> podría existir para muchos libros distintos. Solo tiene sentido junto al ISBN del libro. Por eso es débil y su relación con LIBRO es identificadora.</p>
       </div>
     </div>
+    <a href="#lam-bib-caso" class="btn-question">&larr; Ir a la pregunta</a>
   </div>
 </div>
 
@@ -975,7 +1035,7 @@
         <tr>
           <td><strong>TIENE</strong> (identificadora)</td>
           <td>LIBRO — COPIA</td>
-          <td>LIBRO (1,1) — COPIA (1,N)</td>
+          <td>LIBRO (1,N) — COPIA (1,1)</td>
           <td>—</td>
         </tr>
         <tr>
@@ -1056,9 +1116,436 @@
       <span class="callout-icon">&#10003;</span>
       <div class="callout-content">
         <strong>Ahora a draw.io</strong>
-        <p>Con todos los elementos identificados, construyan el diagrama: entidades como rectángulos, relaciones como rombos, atributos como óvalos. Conecten todo y marquen las cardinalidades en cada extremo de las relaciones.</p>
+        <p>Con todos los elementos identificados, construyan el diagrama: entidades como rectángulos, relaciones como rombos, atributos como óvalos. Conecten todo y marquen las cardinalidades en cada extremo de las relaciones. Cuando terminen, comparen con el diagrama de la lámina siguiente.</p>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- PASO 4 — DIAGRAMA COMPLETO BIBLIOTECA -->
+<div class="slide slide-concept red-accent" id="lam-bib-diagrama">
+  <span class="slide-badge badge-practica">Paso 4</span>
+  <div class="concept-label anim">05 — Ejercicio · Diagrama completo</div>
+  <div class="concept-title anim">Paso 4:<br>El <span style="color:var(--red)">diagrama</span></div>
+  <div class="concept-body anim">
+    <div class="svg-box" style="max-width:1040px;">
+      <svg viewBox="0 0 1180 760" style="width:100%; min-width:860px; display:block; margin:0 auto;">
+        <!-- líneas de relaciones -->
+        <line x1="120" y1="200" x2="300" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="300" y1="200" x2="490" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="490" y1="200" x2="680" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="680" y1="200" x2="905" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="905" y1="200" x2="905" y2="560" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="905" y1="560" x2="650" y2="560" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="650" y1="560" x2="430" y2="560" stroke="#1A1A1A" stroke-width="2"/>
+        <!-- líneas de atributos: AUTOR -->
+        <line x1="120" y1="200" x2="55" y2="95" stroke="#888" stroke-width="1.3"/>
+        <line x1="120" y1="200" x2="165" y2="55" stroke="#888" stroke-width="1.3"/>
+        <line x1="120" y1="200" x2="75" y2="300" stroke="#888" stroke-width="1.3"/>
+        <line x1="120" y1="200" x2="205" y2="330" stroke="#888" stroke-width="1.3"/>
+        <line x1="120" y1="200" x2="320" y2="300" stroke="#888" stroke-width="1.3"/>
+        <!-- líneas de atributos: LIBRO -->
+        <line x1="490" y1="200" x2="385" y2="85" stroke="#888" stroke-width="1.3"/>
+        <line x1="490" y1="200" x2="470" y2="45" stroke="#888" stroke-width="1.3"/>
+        <line x1="490" y1="200" x2="570" y2="45" stroke="#888" stroke-width="1.3"/>
+        <line x1="490" y1="200" x2="655" y2="90" stroke="#888" stroke-width="1.3"/>
+        <!-- líneas de atributos: COPIA -->
+        <line x1="905" y1="200" x2="1080" y2="120" stroke="#888" stroke-width="1.3"/>
+        <line x1="905" y1="200" x2="1090" y2="230" stroke="#888" stroke-width="1.3"/>
+        <!-- líneas de atributos: SOCIO -->
+        <line x1="430" y1="560" x2="300" y2="680" stroke="#888" stroke-width="1.3"/>
+        <line x1="430" y1="560" x2="430" y2="715" stroke="#888" stroke-width="1.3"/>
+        <line x1="430" y1="560" x2="560" y2="690" stroke="#888" stroke-width="1.3"/>
+        <line x1="430" y1="560" x2="180" y2="610" stroke="#888" stroke-width="1.3"/>
+        <!-- líneas de atributos: PRESTAMO -->
+        <line x1="905" y1="560" x2="1090" y2="520" stroke="#888" stroke-width="1.3"/>
+        <line x1="905" y1="560" x2="1095" y2="600" stroke="#888" stroke-width="1.3"/>
+        <line x1="905" y1="560" x2="1060" y2="680" stroke="#888" stroke-width="1.3"/>
+        <line x1="905" y1="560" x2="880" y2="700" stroke="#888" stroke-width="1.3"/>
+
+        <!-- AUTOR -->
+        <rect x="55" y="177" width="130" height="46" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="120" y="206" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="15" fill="#1A1A1A">AUTOR</text>
+        <!-- ESCRIBE -->
+        <polygon points="300,160 365,200 300,240 235,200" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="300" y="204" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="10" fill="#1A1A1A">ESCRIBE</text>
+        <!-- LIBRO -->
+        <rect x="425" y="177" width="130" height="46" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="490" y="206" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="15" fill="#1A1A1A">LIBRO</text>
+        <!-- TIENE (identificadora) -->
+        <polygon points="680,152 748,200 680,248 612,200" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <polygon points="680,163 733,200 680,237 627,200" fill="white" stroke="#1A1A1A" stroke-width="1.8"/>
+        <text x="680" y="204" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="10" fill="#1A1A1A">TIENE</text>
+        <!-- COPIA (débil) -->
+        <rect x="830" y="172" width="150" height="56" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <rect x="837" y="179" width="136" height="42" fill="white" stroke="#1A1A1A" stroke-width="1.8"/>
+        <text x="905" y="206" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="15" fill="#1A1A1A">COPIA</text>
+        <!-- CORRESPONDE -->
+        <polygon points="905,332 985,380 905,428 825,380" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="905" y="384" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="9.5" fill="#1A1A1A">CORRESPONDE</text>
+        <!-- PRESTAMO -->
+        <rect x="830" y="537" width="150" height="46" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="905" y="566" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="15" fill="#1A1A1A">PRÉSTAMO</text>
+        <!-- REALIZA -->
+        <polygon points="650,520 715,560 650,600 585,560" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="650" y="564" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="10" fill="#1A1A1A">REALIZA</text>
+        <!-- SOCIO -->
+        <rect x="365" y="537" width="130" height="46" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="430" y="566" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="15" fill="#1A1A1A">SOCIO</text>
+
+        <!-- cardinalidades -->
+        <text x="210" y="186" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#0063B1">(1,N)</text>
+        <text x="395" y="186" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#0063B1">(1,N)</text>
+        <text x="583" y="186" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#0063B1">(1,N)</text>
+        <text x="789" y="186" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#0063B1">(1,1)</text>
+        <text x="938" y="295" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#0063B1">(0,N)</text>
+        <text x="938" y="495" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#0063B1">(1,1)</text>
+        <text x="772" y="548" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#0063B1">(1,1)</text>
+        <text x="540" y="548" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#0063B1">(0,N)</text>
+
+        <!-- atributos AUTOR -->
+        <ellipse cx="55" cy="95" rx="44" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="55" y="99" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">IdAutor</text>
+        <line x1="32" y1="106" x2="78" y2="106" stroke="#1A1A1A" stroke-width="1.4"/>
+        <ellipse cx="165" cy="55" rx="42" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="165" y="59" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">Nombre</text>
+        <ellipse cx="75" cy="300" rx="58" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="75" y="304" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">Nacionalidad</text>
+        <ellipse cx="205" cy="330" rx="50" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="205" y="334" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">FechaNac</text>
+        <ellipse cx="320" cy="300" rx="34" ry="16" fill="white" stroke="#555" stroke-width="1.4" stroke-dasharray="5 4"/>
+        <text x="320" y="304" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" font-style="italic" fill="#555">Edad</text>
+
+        <!-- atributos LIBRO -->
+        <ellipse cx="385" cy="85" rx="36" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="385" y="89" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">ISBN</text>
+        <line x1="368" y1="96" x2="402" y2="96" stroke="#1A1A1A" stroke-width="1.4"/>
+        <ellipse cx="470" cy="45" rx="38" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="470" y="49" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">Título</text>
+        <ellipse cx="570" cy="45" rx="44" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="570" y="49" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">AñoPub</text>
+        <ellipse cx="655" cy="90" rx="42" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="655" y="94" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">Género</text>
+
+        <!-- atributos COPIA -->
+        <ellipse cx="1080" cy="120" rx="52" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="1080" y="124" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">NumCopia</text>
+        <line x1="1052" y1="131" x2="1108" y2="131" stroke="#1A1A1A" stroke-width="1.4" stroke-dasharray="4 3"/>
+        <ellipse cx="1090" cy="230" rx="40" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="1090" y="234" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">Estado</text>
+
+        <!-- atributos SOCIO -->
+        <ellipse cx="300" cy="680" rx="52" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="300" y="684" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">NumSocio</text>
+        <line x1="272" y1="691" x2="328" y2="691" stroke="#1A1A1A" stroke-width="1.4"/>
+        <ellipse cx="430" cy="715" rx="74" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="430" y="719" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">NombreCompleto</text>
+        <ellipse cx="560" cy="690" rx="36" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="560" y="694" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">Email</text>
+        <ellipse cx="180" cy="610" rx="56" ry="22" fill="white" stroke="#555" stroke-width="1.4"/>
+        <ellipse cx="180" cy="610" rx="48" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="180" y="614" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">Teléfonos</text>
+
+        <!-- atributos PRESTAMO -->
+        <ellipse cx="1090" cy="520" rx="56" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="1090" y="524" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">IdPrestamo</text>
+        <line x1="1060" y1="531" x2="1120" y2="531" stroke="#1A1A1A" stroke-width="1.4"/>
+        <ellipse cx="1095" cy="600" rx="56" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="1095" y="604" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">FechaInicio</text>
+        <ellipse cx="1060" cy="680" rx="80" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="1060" y="684" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="11.5" fill="#444">FechaDevPrevista</text>
+        <ellipse cx="880" cy="700" rx="68" ry="16" fill="white" stroke="#555" stroke-width="1.4"/>
+        <text x="880" y="704" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">FechaDevReal</text>
+      </svg>
+    </div>
+    <ul>
+      <li><code>COPIA</code> con rectángulo doble y <code>TIENE</code> con rombo doble: la única entidad débil del modelo, con <code>NumCopia</code> como llave parcial</li>
+      <li><code>ESCRIBE</code> es la relación N:M entre <code>AUTOR</code> y <code>LIBRO</code></li>
+      <li>Las mínimas en 0: un socio puede no tener préstamos y una copia puede no haberse prestado nunca</li>
+    </ul>
+    <a href="#lam-bib-caso" class="btn-question">&larr; Ir a la pregunta</a>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 05B — EJERCICIOS DE PRÁCTICA (pregunta → respuesta SVG)
+============================================================ -->
+<div class="slide slide-separator sep-red">
+  <span class="slide-badge badge-practica">05 — Práctica</span>
+  <div class="sep-num anim">Bloque 05 · Práctica</div>
+  <div class="sep-title anim">Ejercicios de<br><span>modelamiento</span></div>
+  <p class="sep-desc anim">Cinco ejercicios cortos para dominar la notación. Resuelve cada uno en papel o draw.io y luego compara con la respuesta en diagrama.</p>
+</div>
+
+<!-- EJERCICIOS 1–2 -->
+<div class="slide slide-concept red-accent" id="lam-ej-chen-1">
+  <span class="slide-badge badge-practica">Ejercicios 1 y 2</span>
+  <div class="concept-label anim">05 — Práctica · Tipos de atributos</div>
+  <div class="concept-title anim">Practica:<br><span style="color:var(--red)">Atributos</span></div>
+  <div class="concept-body anim">
+    <div class="exercise-grid">
+      <div class="ex-card">
+        <span class="ex-num">Ejercicio 1</span>
+        <p class="ex-body">El dueño de un minimarket quiere ordenar la información de su personal y te describe lo que necesita:</p>
+        <div class="ex-quote">"De cada empleado necesito guardar su RUT, que es con lo que los identifico, además de su nombre y su fecha de nacimiento. Casi todos tienen más de un número de teléfono y quiero tenerlos todos anotados. Ah, y para los contratos me interesa conocer la edad de cada uno, aunque supongo que eso se puede sacar de la fecha de nacimiento, ¿no?"</div>
+        <p class="ex-body">Modela la entidad <strong>EMPLEADO</strong> usando la notación correcta para cada tipo de atributo.</p>
+        <a href="#lam-sol-chen-1" class="btn-answer">Ir a la respuesta &rarr;</a>
+      </div>
+      <div class="ex-card">
+        <span class="ex-num">Ejercicio 2</span>
+        <p class="ex-body">Una tienda online está rediseñando su base de clientes. El gerente comercial te explica el problema:</p>
+        <div class="ex-quote">"Cada cliente tiene un código interno único y un nombre, eso es lo simple. Lo complicado es la dirección de despacho: hoy la guardamos en un solo campo de texto y es un desastre, porque marketing necesita hacer campañas por ciudad y logística arma sus rutas por región. Necesitamos poder consultar la calle, la ciudad y la región por separado."</div>
+        <p class="ex-body">Modela la entidad <strong>CLIENTE</strong>. Decide qué tipo de atributo corresponde a la dirección y dibújalo correctamente.</p>
+        <a href="#lam-sol-chen-2" class="btn-answer">Ir a la respuesta &rarr;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EJERCICIOS 3–4 -->
+<div class="slide slide-concept red-accent" id="lam-ej-chen-2">
+  <span class="slide-badge badge-practica">Ejercicios 3 y 4</span>
+  <div class="concept-label anim">05 — Práctica · Relaciones y entidades débiles</div>
+  <div class="concept-title anim">Practica:<br><span style="color:var(--red)">Relaciones</span></div>
+  <div class="concept-body anim">
+    <div class="exercise-grid">
+      <div class="ex-card">
+        <span class="ex-num">Ejercicio 3</span>
+        <p class="ex-body">El director de un centro médico te plantea su necesidad, pero llega con una duda de diseño:</p>
+        <div class="ex-quote">"Nuestros médicos atienden a muchos pacientes, y un mismo paciente suele atenderse con distintos médicos a lo largo del año. Por cada atención necesitamos registrar la fecha en que ocurrió y el diagnóstico que entregó el médico. Lo que no tengo claro es dónde se guarda ese diagnóstico: ¿es un dato del médico o del paciente? Porque el mismo paciente puede tener diagnósticos distintos según el médico y el día."</div>
+        <p class="ex-body">Resuelve la duda del director: dibuja el modelo, decide dónde van esos atributos y marca las cardinalidades.</p>
+        <a href="#lam-sol-chen-3" class="btn-answer">Ir a la respuesta &rarr;</a>
+      </div>
+      <div class="ex-card">
+        <span class="ex-num">Ejercicio 4</span>
+        <p class="ex-body">La administradora de un campus universitario necesita controlar el uso de los espacios:</p>
+        <div class="ex-quote">"Administro varios edificios y cada uno tiene sus salas. A las salas las llamamos por número: sala 101, sala 102, y así. Pero ojo: todos los edificios tienen una sala 101, así que el número por sí solo no me dice nada si no sé de qué edificio estamos hablando. De cada sala necesito además su capacidad de personas."</div>
+        <p class="ex-body">Dibuja el modelo y representa correctamente la dependencia que existe entre las salas y su edificio.</p>
+        <a href="#lam-sol-chen-4" class="btn-answer">Ir a la respuesta &rarr;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EJERCICIO 5 -->
+<div class="slide slide-concept red-accent" id="lam-ej-chen-3">
+  <span class="slide-badge badge-practica">Ejercicio 5</span>
+  <div class="concept-label anim">05 — Práctica · Caso integrador</div>
+  <div class="concept-title anim">Practica:<br><span style="color:var(--red)">Caso integrador</span></div>
+  <div class="concept-body anim">
+    <div class="exercise-grid single">
+      <div class="ex-card">
+        <span class="ex-num">Ejercicio 5</span>
+        <p class="ex-body">Una cadena hotelera te contrata para diseñar su sistema de reservas. En la reunión de levantamiento, la gerenta de operaciones describe el negocio:</p>
+        <div class="ex-quote">"Tenemos varios hoteles y cada uno administra sus propias habitaciones. Las habitaciones se conocen por su número, pero ese número se repite entre hoteles: todos tienen una habitación 305, por ejemplo. Nuestros huéspedes reservan habitaciones, y de cada reserva necesitamos saber la fecha de entrada y la fecha de salida. Un buen cliente puede acumular decenas de reservas en el año, y una misma habitación pasa por muchos huéspedes. Algo importante: también registramos huéspedes que todavía no han reservado nunca, porque se inscriben primero en nuestro programa de fidelización."</div>
+        <p class="ex-body">Construye el modelo conceptual completo: entidades, relaciones, atributos y cardinalidades. Atención a los detalles del relato: cada frase de la gerenta aporta una decisión de modelamiento.</p>
+        <a href="#lam-sol-chen-5" class="btn-answer">Ir a la respuesta &rarr;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SOLUCIÓN 1 -->
+<div class="slide slide-concept red-accent" id="lam-sol-chen-1">
+  <span class="slide-badge badge-practica">Solución 1</span>
+  <div class="concept-label anim">05 — Práctica · Solución Ejercicio 1</div>
+  <div class="concept-title anim">Solución 1:<br><span style="color:var(--red)">EMPLEADO</span></div>
+  <div class="concept-body anim">
+    <p class="sol-q">Entidad EMPLEADO con RUT (clave), Nombre, FechaNac, teléfonos múltiples y edad calculada.</p>
+    <div class="svg-box">
+      <svg viewBox="0 0 680 310" style="width:100%; min-width:520px; display:block; margin:0 auto;">
+        <line x1="340" y1="155" x2="170" y2="55" stroke="#888" stroke-width="1.5"/>
+        <line x1="340" y1="155" x2="510" y2="55" stroke="#888" stroke-width="1.5"/>
+        <line x1="340" y1="155" x2="115" y2="155" stroke="#888" stroke-width="1.5"/>
+        <line x1="340" y1="155" x2="190" y2="265" stroke="#888" stroke-width="1.5"/>
+        <line x1="340" y1="155" x2="490" y2="265" stroke="#888" stroke-width="1.5"/>
+        <rect x="270" y="132" width="140" height="46" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="340" y="161" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="16" fill="#1A1A1A">EMPLEADO</text>
+        <ellipse cx="170" cy="55" rx="40" ry="18" fill="white" stroke="#555" stroke-width="1.5"/>
+        <text x="170" y="59" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="13" fill="#444">RUT</text>
+        <line x1="156" y1="66" x2="184" y2="66" stroke="#1A1A1A" stroke-width="1.5"/>
+        <ellipse cx="510" cy="55" rx="46" ry="18" fill="white" stroke="#555" stroke-width="1.5"/>
+        <text x="510" y="60" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="13" fill="#444">Nombre</text>
+        <ellipse cx="115" cy="155" rx="52" ry="18" fill="white" stroke="#555" stroke-width="1.5"/>
+        <text x="115" y="160" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="13" fill="#444">FechaNac</text>
+        <ellipse cx="190" cy="265" rx="58" ry="23" fill="white" stroke="#555" stroke-width="1.5"/>
+        <ellipse cx="190" cy="265" rx="50" ry="17" fill="white" stroke="#555" stroke-width="1.5"/>
+        <text x="190" y="270" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="13" fill="#444">Teléfonos</text>
+        <ellipse cx="490" cy="265" rx="38" ry="18" fill="white" stroke="#555" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <text x="490" y="270" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="13" font-style="italic" fill="#555">Edad</text>
+      </svg>
+    </div>
+    <ul>
+      <li><code>RUT</code> subrayado: atributo <strong>clave</strong></li>
+      <li><code>Teléfonos</code> con óvalo doble: atributo <strong>multivaluado</strong></li>
+      <li><code>Edad</code> con óvalo discontinuo: atributo <strong>derivado</strong> de FechaNac, no se almacena</li>
+    </ul>
+    <a href="#lam-ej-chen-1" class="btn-question">&larr; Ir a la pregunta</a>
+  </div>
+</div>
+
+<!-- SOLUCIÓN 2 -->
+<div class="slide slide-concept red-accent" id="lam-sol-chen-2">
+  <span class="slide-badge badge-practica">Solución 2</span>
+  <div class="concept-label anim">05 — Práctica · Solución Ejercicio 2</div>
+  <div class="concept-title anim">Solución 2:<br><span style="color:var(--red)">CLIENTE</span></div>
+  <div class="concept-body anim">
+    <p class="sol-q">Entidad CLIENTE con dirección consultable por calle, ciudad y región.</p>
+    <div class="svg-box">
+      <svg viewBox="0 0 680 300" style="width:100%; min-width:520px; display:block; margin:0 auto;">
+        <line x1="115" y1="150" x2="115" y2="45" stroke="#888" stroke-width="1.5"/>
+        <line x1="115" y1="150" x2="115" y2="255" stroke="#888" stroke-width="1.5"/>
+        <line x1="115" y1="150" x2="350" y2="150" stroke="#888" stroke-width="1.5"/>
+        <line x1="350" y1="150" x2="550" y2="60" stroke="#888" stroke-width="1.2"/>
+        <line x1="350" y1="150" x2="565" y2="150" stroke="#888" stroke-width="1.2"/>
+        <line x1="350" y1="150" x2="550" y2="240" stroke="#888" stroke-width="1.2"/>
+        <rect x="45" y="127" width="140" height="46" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="115" y="156" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="16" fill="#1A1A1A">CLIENTE</text>
+        <ellipse cx="115" cy="45" rx="52" ry="18" fill="white" stroke="#555" stroke-width="1.5"/>
+        <text x="115" y="49" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="13" fill="#444">IdCliente</text>
+        <line x1="89" y1="56" x2="141" y2="56" stroke="#1A1A1A" stroke-width="1.5"/>
+        <ellipse cx="115" cy="255" rx="46" ry="18" fill="white" stroke="#555" stroke-width="1.5"/>
+        <text x="115" y="260" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="13" fill="#444">Nombre</text>
+        <ellipse cx="350" cy="150" rx="54" ry="19" fill="white" stroke="#555" stroke-width="1.5"/>
+        <text x="350" y="155" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="13" fill="#444">Dirección</text>
+        <ellipse cx="550" cy="60" rx="38" ry="15" fill="white" stroke="#777" stroke-width="1.2"/>
+        <text x="550" y="64" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="500" font-size="11" fill="#555">Calle</text>
+        <ellipse cx="565" cy="150" rx="42" ry="15" fill="white" stroke="#777" stroke-width="1.2"/>
+        <text x="565" y="154" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="500" font-size="11" fill="#555">Ciudad</text>
+        <ellipse cx="550" cy="240" rx="42" ry="15" fill="white" stroke="#777" stroke-width="1.2"/>
+        <text x="550" y="244" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="500" font-size="11" fill="#555">Región</text>
+      </svg>
+    </div>
+    <ul>
+      <li><code>Dirección</code> es un atributo <strong>compuesto</strong>: el negocio opera con las partes por separado</li>
+      <li>Los sub-atributos <code>Calle</code>, <code>Ciudad</code> y <code>Región</code> se conectan al óvalo padre, no a la entidad</li>
+    </ul>
+    <a href="#lam-ej-chen-1" class="btn-question">&larr; Ir a la pregunta</a>
+  </div>
+</div>
+
+<!-- SOLUCIÓN 3 -->
+<div class="slide slide-concept red-accent" id="lam-sol-chen-3">
+  <span class="slide-badge badge-practica">Solución 3</span>
+  <div class="concept-label anim">05 — Práctica · Solución Ejercicio 3</div>
+  <div class="concept-title anim">Solución 3:<br><span style="color:var(--red)">MÉDICO — PACIENTE</span></div>
+  <div class="concept-body anim">
+    <p class="sol-q">Fecha y diagnóstico de cada atención: ¿dónde van?</p>
+    <div class="svg-box">
+      <svg viewBox="0 0 680 240" style="width:100%; min-width:500px; display:block; margin:0 auto;">
+        <line x1="320" y1="56" x2="320" y2="80" stroke="#888" stroke-width="1.5"/>
+        <line x1="320" y1="160" x2="320" y2="186" stroke="#888" stroke-width="1.5"/>
+        <line x1="150" y1="120" x2="252" y2="120" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="388" y1="120" x2="490" y2="120" stroke="#1A1A1A" stroke-width="2"/>
+        <rect x="10" y="97" width="140" height="46" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="80" y="126" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="16" fill="#1A1A1A">MÉDICO</text>
+        <polygon points="320,80 388,120 320,160 252,120" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="320" y="124" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="11" fill="#1A1A1A">ATIENDE</text>
+        <rect x="490" y="97" width="140" height="46" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="560" y="126" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="15" fill="#1A1A1A">PACIENTE</text>
+        <text x="201" y="110" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="15" fill="#0063B1">(1,N)</text>
+        <text x="439" y="110" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="15" fill="#0063B1">(1,N)</text>
+        <ellipse cx="320" cy="40" rx="36" ry="16" fill="white" stroke="#555" stroke-width="1.5"/>
+        <text x="320" y="45" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">Fecha</text>
+        <ellipse cx="320" cy="202" rx="58" ry="16" fill="white" stroke="#555" stroke-width="1.5"/>
+        <text x="320" y="207" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">Diagnóstico</text>
+      </svg>
+    </div>
+    <ul>
+      <li><code>Fecha</code> y <code>Diagnóstico</code> son <strong>atributos de la relación</strong>: pertenecen al hecho de atender, no al médico ni al paciente</li>
+      <li>La cardinalidad es <strong>N:M</strong> — (1,N) en ambos lados</li>
+    </ul>
+    <a href="#lam-ej-chen-2" class="btn-question">&larr; Ir a la pregunta</a>
+  </div>
+</div>
+
+<!-- SOLUCIÓN 4 -->
+<div class="slide slide-concept red-accent" id="lam-sol-chen-4">
+  <span class="slide-badge badge-practica">Solución 4</span>
+  <div class="concept-label anim">05 — Práctica · Solución Ejercicio 4</div>
+  <div class="concept-title anim">Solución 4:<br><span style="color:var(--red)">EDIFICIO — SALA</span></div>
+  <div class="concept-body anim">
+    <p class="sol-q">Una sala se identifica por su número solo dentro de su edificio.</p>
+    <div class="svg-box">
+      <svg viewBox="0 0 720 290" style="width:100%; min-width:540px; display:block; margin:0 auto;">
+        <line x1="150" y1="120" x2="258" y2="120" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="402" y1="120" x2="500" y2="120" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="575" y1="120" x2="480" y2="235" stroke="#888" stroke-width="1.5"/>
+        <line x1="575" y1="120" x2="660" y2="235" stroke="#888" stroke-width="1.5"/>
+        <rect x="10" y="97" width="140" height="46" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="80" y="126" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="15" fill="#1A1A1A">EDIFICIO</text>
+        <polygon points="330,72 402,120 330,168 258,120" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <polygon points="330,84 386,120 330,156 274,120" fill="white" stroke="#1A1A1A" stroke-width="1.8"/>
+        <text x="330" y="124" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="11" fill="#1A1A1A">TIENE</text>
+        <rect x="500" y="92" width="150" height="56" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <rect x="507" y="99" width="136" height="42" fill="white" stroke="#1A1A1A" stroke-width="1.8"/>
+        <text x="575" y="126" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="16" fill="#1A1A1A">SALA</text>
+        <text x="204" y="110" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="15" fill="#0063B1">(1,N)</text>
+        <text x="451" y="110" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="15" fill="#0063B1">(1,1)</text>
+        <ellipse cx="480" cy="235" rx="48" ry="17" fill="white" stroke="#555" stroke-width="1.5"/>
+        <text x="480" y="239" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">NumSala</text>
+        <line x1="453" y1="246" x2="507" y2="246" stroke="#1A1A1A" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <ellipse cx="660" cy="235" rx="52" ry="17" fill="white" stroke="#555" stroke-width="1.5"/>
+        <text x="660" y="240" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">Capacidad</text>
+      </svg>
+    </div>
+    <ul>
+      <li><code>SALA</code> es <strong>entidad débil</strong>: rectángulo doble. <code>TIENE</code> es la relación identificadora: rombo doble</li>
+      <li><code>NumSala</code> es la <strong>llave parcial</strong>: subrayado discontinuo</li>
+      <li>Cardinalidades fijas del patrón: fuerte (1,N), débil (1,1)</li>
+    </ul>
+    <a href="#lam-ej-chen-2" class="btn-question">&larr; Ir a la pregunta</a>
+  </div>
+</div>
+
+<!-- SOLUCIÓN 5 -->
+<div class="slide slide-concept red-accent" id="lam-sol-chen-5">
+  <span class="slide-badge badge-practica">Solución 5</span>
+  <div class="concept-label anim">05 — Práctica · Solución Ejercicio 5</div>
+  <div class="concept-title anim">Solución 5:<br><span style="color:var(--red)">Hotel</span></div>
+  <div class="concept-body anim">
+    <p class="sol-q">Modelo completo: hotel, habitaciones identificadas por número dentro del hotel, y reservas de huéspedes con fechas.</p>
+    <div class="svg-box">
+      <svg viewBox="0 0 960 320" style="width:100%; min-width:700px; display:block; margin:0 auto;">
+        <line x1="70" y1="165" x2="250" y2="165" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="250" y1="165" x2="435" y2="165" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="435" y1="165" x2="640" y2="165" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="640" y1="165" x2="875" y2="165" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="640" y1="165" x2="640" y2="55" stroke="#888" stroke-width="1.5"/>
+        <line x1="640" y1="165" x2="640" y2="285" stroke="#888" stroke-width="1.5"/>
+        <line x1="435" y1="165" x2="415" y2="285" stroke="#888" stroke-width="1.5"/>
+        <rect x="10" y="142" width="120" height="46" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="70" y="171" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="16" fill="#1A1A1A">HOTEL</text>
+        <polygon points="250,117 322,165 250,213 178,165" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <polygon points="250,129 306,165 250,201 194,165" fill="white" stroke="#1A1A1A" stroke-width="1.8"/>
+        <text x="250" y="169" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="11" fill="#1A1A1A">TIENE</text>
+        <rect x="360" y="137" width="150" height="56" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <rect x="367" y="144" width="136" height="42" fill="white" stroke="#1A1A1A" stroke-width="1.8"/>
+        <text x="435" y="171" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#1A1A1A">HABITACIÓN</text>
+        <polygon points="640,123 712,165 640,207 568,165" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="640" y="169" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="11" fill="#1A1A1A">RESERVA</text>
+        <rect x="810" y="142" width="130" height="46" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="875" y="171" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="15" fill="#1A1A1A">HUÉSPED</text>
+        <text x="154" y="156" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#0063B1">(1,N)</text>
+        <text x="341" y="156" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#0063B1">(1,1)</text>
+        <text x="539" y="156" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#0063B1">(0,N)</text>
+        <text x="761" y="156" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#0063B1">(0,N)</text>
+        <ellipse cx="640" cy="55" rx="66" ry="17" fill="white" stroke="#555" stroke-width="1.5"/>
+        <text x="640" y="60" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">FechaEntrada</text>
+        <ellipse cx="640" cy="285" rx="62" ry="17" fill="white" stroke="#555" stroke-width="1.5"/>
+        <text x="640" y="290" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">FechaSalida</text>
+        <ellipse cx="415" cy="285" rx="46" ry="17" fill="white" stroke="#555" stroke-width="1.5"/>
+        <text x="415" y="289" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="600" font-size="12" fill="#444">NumHab</text>
+        <line x1="390" y1="296" x2="440" y2="296" stroke="#1A1A1A" stroke-width="1.5" stroke-dasharray="4 3"/>
+      </svg>
+    </div>
+    <ul>
+      <li><code>HABITACIÓN</code> es entidad débil de <code>HOTEL</code>: rectángulo doble, rombo doble, llave parcial <code>NumHab</code></li>
+      <li><code>RESERVA</code> es relación N:M entre <code>HABITACIÓN</code> y <code>HUÉSPED</code>, con <code>FechaEntrada</code> y <code>FechaSalida</code> como atributos de relación</li>
+      <li>Las mínimas en 0 salen del relato: los huéspedes del programa de fidelización aún no reservan, y una habitación nueva puede no tener reservas</li>
+    </ul>
+    <a href="#lam-ej-chen-3" class="btn-question">&larr; Ir a la pregunta</a>
   </div>
 </div>
 
