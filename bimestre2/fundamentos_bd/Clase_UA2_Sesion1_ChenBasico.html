@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA2 Sesión 1 — Introducción al Modelamiento Conceptual</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #0063B1;
+      --green:  #107C10;
+      --orange: #D97706;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0;
+      color: var(--text);
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white;
+      justify-content: center;
+      padding: 80px;
+      border-bottom: 6px solid var(--blue);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3);
+      margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--blue); }
+    .cover-desc {
+      font-size: 20px; color: rgba(255,255,255,0.5);
+      max-width: 600px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--blue);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--blue); margin-bottom: 16px;
+    }
+    .sep-green  .sep-num  { color: var(--green); }
+    .sep-orange .sep-num  { color: var(--orange); }
+
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--blue); }
+    .sep-green  .sep-title span { color: var(--green); }
+    .sep-orange .sep-title span { color: var(--orange); }
+
+    .sep-desc {
+      font-size: 20px; color: rgba(255,255,255,0.45);
+      max-width: 560px; line-height: 1.65;
+    }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 64px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark);
+      margin-bottom: 32px;
+    }
+    .concept-body { max-width: 860px; }
+    .concept-body p { font-size: 19px; line-height: 1.7; color: #333; margin-bottom: 18px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body ul { margin-left: 24px; margin-bottom: 18px; }
+    .concept-body li { font-size: 18px; line-height: 1.7; color: #333; margin-bottom: 8px; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 18px 22px; margin: 20px 0;
+      max-width: 860px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content strong {
+      display: block; font-size: 13px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+    }
+    .callout-content p { font-size: 16px; line-height: 1.6; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F0FDF4; border: 1px solid #BBF7D0; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #14532D; }
+    .callout-info { background: #EFF6FF; border: 1px solid #BFDBFE; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #1E3A5F; }
+    .callout-warn { background: #FFFBEB; border: 1px solid #FDE68A; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #78350F; }
+
+    /* ÍNDICE */
+    .index-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-top: 32px; max-width: 860px;
+    }
+    .index-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 18px 20px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 32px; font-weight: 900; color: var(--blue); line-height: 1; margin-bottom: 8px;
+    }
+    .index-name { font-size: 15px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #EFF6FF; color: var(--blue); border: 1px solid #BFDBFE; }
+    .badge-pasos    { background: #F0FDF4; color: var(--green); border: 1px solid #BBF7D0; }
+    .badge-herramienta { background: #FFFBEB; color: var(--orange); border: 1px solid #FDE68A; }
+    .badge-cierre   { background: rgba(0,99,177,0.12); color: var(--blue); border: 1px solid rgba(0,99,177,0.3); }
+
+    /* RESUMEN */
+    .resumen-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 12px; margin-top: 28px; max-width: 860px;
+    }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .resumen-cmd { font-size: 15px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 14px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* TWO COL */
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px; max-width: 860px; margin-top: 20px;
+    }
+    .col-card {
+      background: #F8F8F8; border: 1px solid #E0E0E0;
+      border-radius: 8px; padding: 20px 22px;
+    }
+    .col-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 12px;
+    }
+    .col-card ul { margin-left: 18px; }
+    .col-card li { font-size: 15px; line-height: 1.7; color: #444; margin-bottom: 4px; }
+
+    /* ER VISUAL */
+    .er-legend {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 20px; max-width: 860px; margin-top: 24px;
+    }
+    .er-card {
+      background: #F8F8F8; border: 1px solid #E0E0E0;
+      border-radius: 8px; padding: 22px 24px;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+    }
+    .er-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 18px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); text-align: center;
+    }
+    .er-shape-entity {
+      border: 2px solid var(--dark); padding: 10px 24px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 18px; font-weight: 800; text-transform: uppercase;
+      background: white;
+    }
+    .er-shape-attr {
+      border: 2px solid #555; border-radius: 50%;
+      padding: 8px 20px; font-size: 15px; font-weight: 600;
+      background: white; color: #333;
+    }
+    .er-shape-attr.key { text-decoration: underline; }
+    .er-shape-rel-wrap {
+      width: 80px; height: 80px; display: flex;
+      align-items: center; justify-content: center; position: relative;
+    }
+    .er-shape-rel {
+      width: 60px; height: 60px; border: 2px solid var(--dark);
+      transform: rotate(45deg); background: white;
+    }
+    .er-card-desc { font-size: 13px; color: #666; text-align: center; line-height: 1.5; }
+
+    /* CARDINALIDAD VISUAL */
+    .card-table {
+      width: 100%; max-width: 860px; border-collapse: collapse;
+      margin-top: 20px; font-size: 15px;
+    }
+    .card-table th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 10px 16px; text-align: left;
+    }
+    .card-table td {
+      padding: 12px 16px; border-bottom: 1px solid #E0E0E0;
+      vertical-align: middle; line-height: 1.5;
+    }
+    .card-table tr:last-child td { border-bottom: none; }
+    .card-table tr:nth-child(even) td { background: #F8F8F8; }
+    .card-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px; font-weight: 700; color: var(--blue);
+    }
+
+    /* RUTA */
+    .ruta { display: flex; flex-direction: column; max-width: 740px; margin-top: 20px; }
+    .ruta-step { display: flex; align-items: flex-start; gap: 18px; }
+    .ruta-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .ruta-num {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--orange); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ruta-line { width: 2px; flex: 1; min-height: 16px; background: #FDE68A; margin: 4px 0; }
+    .ruta-content { padding-bottom: 18px; padding-top: 4px; }
+    .ruta-title { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .ruta-desc { font-size: 15px; color: #555; line-height: 1.5; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; background: #EBEBEB;
+      padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    /* PROGRESS BAR */
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; background: var(--blue);
+      width: 0%; z-index: 9999;
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
+      pointer-events: none;
+    }
+
+    /* ANIMACIONES */
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- ============================================================
+     SLIDE 1 — PORTADA
+============================================================ -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Fundamentos de Base de Datos · TI3V12 · Unidad 2 · Sesión 1</div>
+  <div class="cover-title anim">Modelamiento<br><span>conceptual</span></div>
+  <p class="cover-desc anim">
+    Comenzamos la unidad más importante del curso: aprender a modelar una base de datos
+    antes de escribir una sola línea de SQL. Hoy construimos los cimientos: entidades,
+    atributos, relaciones y cardinalidad en notación de Chen.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>V-FB50-N1-P14-C1</span></span>
+    <span class="cover-chip">10 junio 2026</span>
+    <span class="cover-chip">80 minutos</span>
+    <span class="cover-chip">UA2 — Modelamiento</span>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SLIDE 2 — ÍNDICE
+============================================================ -->
+<div class="slide slide-separator">
+  <div class="sep-num anim">¿Qué vemos hoy?</div>
+  <div class="sep-title anim">Contenido<br>de la <span>sesión</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">¿Para qué modelamos?</div>
+      <div class="index-type">Contexto — 10 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Elementos de Chen</div>
+      <div class="index-type">Concepto — 25 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Cardinalidad</div>
+      <div class="index-type">Concepto — 20 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Herramienta: draw.io</div>
+      <div class="index-type">Práctica — 25 min</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 01 — ¿PARA QUÉ MODELAMOS?
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">01 — Contexto</span>
+  <div class="sep-num anim">Bloque 01</div>
+  <div class="sep-title anim">¿Para qué<br><span>modelamos</span>?</div>
+  <p class="sep-desc anim">Nadie construye un edificio sin planos. Nadie debería construir una base de datos sin un modelo.</p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Contexto</span>
+  <div class="concept-label anim">01 — ¿Para qué modelamos?</div>
+  <div class="concept-title anim">El modelo es<br>el <span style="color:var(--blue)">plano</span> de la BD</div>
+  <div class="concept-body anim">
+    <p>Cuando alguien nos pide construir una base de datos, lo primero que recibimos es una descripción del negocio en lenguaje natural. El <strong>modelamiento</strong> es el proceso de transformar esa descripción en una representación formal que podamos analizar, corregir y luego implementar.</p>
+    <div class="two-col">
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--red)">Sin modelo</div>
+        <ul>
+          <li>Creamos tablas "a ojo"</li>
+          <li>Duplicamos datos sin darnos cuenta</li>
+          <li>Relaciones mal definidas desde el inicio</li>
+          <li>Refactorizar una BD en producción es costosísimo</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--green)">Con modelo</div>
+        <ul>
+          <li>Detectamos errores antes de escribir SQL</li>
+          <li>El cliente puede validar el diseño</li>
+          <li>La transformación a tablas es mecánica y predecible</li>
+          <li>El equipo habla el mismo idioma</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#128161;</span>
+      <div class="callout-content">
+        <strong>Tres niveles de modelo</strong>
+        <p><strong>Conceptual</strong> (Chen) — captura el negocio, sin pensar en tecnología. <strong>Lógico</strong> (Barker) — prepara el diseño para implementar. <strong>Relacional/Físico</strong> — el esquema final de tablas que se convierte en SQL. Hoy empezamos por el primero.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 02 — ELEMENTOS DE CHEN
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">02 — Chen</span>
+  <div class="sep-num anim">Bloque 02</div>
+  <div class="sep-title anim">Elementos<br>de <span>Chen</span></div>
+  <p class="sep-desc anim">El modelo de Chen usa tres figuras geométricas para representar el mundo real.</p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">02 — Chen · Las tres figuras</div>
+  <div class="concept-title anim">Entidad, atributo<br>y <span style="color:var(--blue)">relación</span></div>
+  <div class="concept-body anim">
+    <div class="er-legend">
+
+      <div class="er-card">
+        <div class="er-shape-entity">CLIENTE</div>
+        <div class="er-card-title">Entidad</div>
+        <div class="er-card-desc">Objeto o concepto del mundo real sobre el que necesitamos almacenar información. Se dibuja como un <strong>rectángulo</strong>.</div>
+      </div>
+
+      <div class="er-card">
+        <div class="er-shape-attr key">RUT</div>
+        <div class="er-card-title">Atributo</div>
+        <div class="er-card-desc">Propiedad que describe a una entidad o relación. Se dibuja como un <strong>óvalo</strong>. El atributo clave se <u>subraya</u>.</div>
+      </div>
+
+      <div class="er-card">
+        <div class="er-shape-rel-wrap">
+          <div class="er-shape-rel"></div>
+        </div>
+        <div class="er-card-title">Relación</div>
+        <div class="er-card-desc">Asociación entre dos o más entidades. Se dibuja como un <strong>rombo</strong> conectado a las entidades por líneas.</div>
+      </div>
+
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>¿Cómo sé si algo es entidad o atributo?</strong>
+        <p>Si tiene atributos propios y necesito almacenar información sobre ello de forma independiente, es una <strong>entidad</strong>. Si solo describe a otro objeto, es un <strong>atributo</strong>. Ejemplo: "Color" en una tienda de ropa puede ser solo un atributo del producto, o una entidad propia si necesito gestionarla con código y nombre comercial.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">02 — Chen · Ejemplo completo</div>
+  <div class="concept-title anim">Leyendo un<br><span style="color:var(--blue)">modelo</span></div>
+  <div class="concept-body anim">
+    <p>Veamos un ejemplo sencillo: una tienda tiene <strong>clientes</strong> que <strong>realizan</strong> <strong>pedidos</strong>.</p>
+
+    <div style="background:#F8F8F8; border:1px solid #E0E0E0; border-radius:8px; padding:24px 28px; margin:20px 0; overflow-x:auto;">
+      <svg viewBox="0 0 820 400" style="width:100%; min-width:620px; display:block; margin:0 auto;">
+        <defs>
+          <marker id="arr-b" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#0063B1"/>
+          </marker>
+          <marker id="arr-g" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#107C10"/>
+          </marker>
+        </defs>
+
+        <!-- Líneas: atributos CLIENTE → entidad -->
+        <line x1="92"  y1="138" x2="64"  y2="76"  stroke="#BBB" stroke-width="1.5"/>
+        <line x1="130" y1="138" x2="130" y2="60"  stroke="#BBB" stroke-width="1.5"/>
+        <line x1="168" y1="138" x2="207" y2="76"  stroke="#BBB" stroke-width="1.5"/>
+        <!-- Líneas: atributos PEDIDO → entidad -->
+        <line x1="634" y1="138" x2="580" y2="76"  stroke="#BBB" stroke-width="1.5"/>
+        <line x1="695" y1="138" x2="695" y2="60"  stroke="#BBB" stroke-width="1.5"/>
+        <line x1="756" y1="138" x2="776" y2="76"  stroke="#BBB" stroke-width="1.5"/>
+
+        <!-- Líneas horizontales: entidades → rombo -->
+        <line x1="200" y1="161" x2="352" y2="161" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="468" y1="161" x2="620" y2="161" stroke="#1A1A1A" stroke-width="2"/>
+
+        <!-- CLIENTE -->
+        <rect x="50" y="138" width="150" height="46" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="125" y="168" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="19" fill="#1A1A1A">CLIENTE</text>
+
+        <!-- REALIZA: top(410,117) right(468,161) bottom(410,205) left(352,161) -->
+        <polygon points="410,117 468,161 410,205 352,161" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="410" y="165" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="11" fill="#1A1A1A">REALIZA</text>
+
+        <!-- PEDIDO -->
+        <rect x="620" y="138" width="150" height="46" fill="white" stroke="#1A1A1A" stroke-width="2.5"/>
+        <text x="695" y="168" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="19" fill="#1A1A1A">PEDIDO</text>
+
+        <!-- Atributos CLIENTE -->
+        <ellipse cx="64"  cy="60" rx="28" ry="16" fill="white" stroke="#888" stroke-width="1.5"/>
+        <text x="64"  y="65" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="700" font-size="13" fill="#222">RUT</text>
+        <line x1="50" y1="68" x2="78" y2="68" stroke="#444" stroke-width="1.2"/>
+
+        <ellipse cx="130" cy="44" rx="40" ry="16" fill="white" stroke="#888" stroke-width="1.5"/>
+        <text x="130" y="49" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="500" font-size="13" fill="#555">Nombre</text>
+
+        <ellipse cx="207" cy="60" rx="32" ry="16" fill="white" stroke="#888" stroke-width="1.5"/>
+        <text x="207" y="65" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="500" font-size="13" fill="#555">Email</text>
+
+        <!-- Atributos PEDIDO -->
+        <ellipse cx="580" cy="60" rx="52" ry="16" fill="white" stroke="#888" stroke-width="1.5"/>
+        <text x="580" y="65" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="700" font-size="12" fill="#222">NumPedido</text>
+        <line x1="549" y1="68" x2="611" y2="68" stroke="#444" stroke-width="1.2"/>
+
+        <ellipse cx="695" cy="44" rx="34" ry="16" fill="white" stroke="#888" stroke-width="1.5"/>
+        <text x="695" y="49" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="500" font-size="13" fill="#555">Fecha</text>
+
+        <ellipse cx="776" cy="60" rx="30" ry="16" fill="white" stroke="#888" stroke-width="1.5"/>
+        <text x="776" y="65" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="500" font-size="13" fill="#555">Total</text>
+
+        <!-- Etiquetas de cardinalidad: cada par junto a la entidad que describe (lectura directa) -->
+        <!-- (0,N) en AZUL — junto a CLIENTE — describe a CLIENTE -->
+        <rect x="206" y="148" width="48" height="20" rx="4" fill="#EFF6FF" stroke="#0063B1" stroke-width="2"/>
+        <text x="230" y="162" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#0063B1">(0,N)</text>
+
+        <!-- (1,1) en VERDE — junto a PEDIDO — describe a PEDIDO -->
+        <rect x="474" y="148" width="44" height="20" rx="4" fill="#F0FDF4" stroke="#107C10" stroke-width="2"/>
+        <text x="496" y="162" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="14" fill="#107C10">(1,1)</text>
+
+        <!-- ===== SEPARADOR ===== -->
+        <line x1="16" y1="220" x2="804" y2="220" stroke="#D0D0D0" stroke-width="1.5" stroke-dasharray="5,4"/>
+        <rect x="308" y="211" width="204" height="17" rx="8" fill="#EBEBEB"/>
+        <text x="410" y="223" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="11" font-weight="700" fill="#888">CÓMO SE LEE</text>
+
+        <!-- ===== FRANJA 1: CLIENTE lee (0,N) — AZUL ===== -->
+        <rect x="16" y="236" width="788" height="70" rx="6" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1.5"/>
+        <!-- "Me paro en" -->
+        <text x="28" y="258" font-family="Barlow,sans-serif" font-size="12" fill="#777">Me paro en</text>
+        <!-- Mini caja CLIENTE -->
+        <rect x="28"  y="261" width="80" height="22" fill="white" stroke="#0063B1" stroke-width="2"/>
+        <text x="68" y="276" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="13" fill="#0063B1">CLIENTE</text>
+        <!-- Flecha + "y leo" -->
+        <line x1="110" y1="272" x2="144" y2="272" stroke="#0063B1" stroke-width="1.8" marker-end="url(#arr-b)"/>
+        <text x="127" y="268" text-anchor="middle" font-family="Barlow,sans-serif" font-size="11" fill="#888" font-style="italic">y leo</text>
+        <!-- Píldora (0,N) -->
+        <rect x="148" y="261" width="48" height="22" rx="4" fill="white" stroke="#0063B1" stroke-width="2"/>
+        <text x="172" y="276" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="15" fill="#0063B1">(0,N)</text>
+        <!-- Explicación -->
+        <text x="210" y="257" font-family="Barlow,sans-serif" font-size="14" font-weight="700" fill="#1A1A1A">Un cliente puede tener</text>
+        <text x="210" y="275" font-family="Barlow,sans-serif" font-size="14" fill="#333"><tspan font-weight="700" fill="#0063B1">cero</tspan> pedidos (cliente recién registrado) o <tspan font-weight="700" fill="#0063B1">muchos</tspan> pedidos (cliente frecuente)</text>
+        <text x="210" y="297" font-family="Barlow,sans-serif" font-size="12" fill="#888" font-style="italic">Mínimo = 0: el cliente puede existir sin haber comprado nada todavía</text>
+
+        <!-- ===== FRANJA 2: PEDIDO lee (1,1) — VERDE ===== -->
+        <rect x="16" y="318" width="788" height="70" rx="6" fill="#F0FDF4" stroke="#BBF7D0" stroke-width="1.5"/>
+        <!-- "Me paro en" -->
+        <text x="28" y="340" font-family="Barlow,sans-serif" font-size="12" fill="#777">Me paro en</text>
+        <!-- Mini caja PEDIDO -->
+        <rect x="28" y="343" width="76" height="22" fill="white" stroke="#107C10" stroke-width="2"/>
+        <text x="66" y="358" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="13" fill="#107C10">PEDIDO</text>
+        <!-- Flecha + "y leo" -->
+        <line x1="106" y1="354" x2="140" y2="354" stroke="#107C10" stroke-width="1.8" marker-end="url(#arr-g)"/>
+        <text x="123" y="350" text-anchor="middle" font-family="Barlow,sans-serif" font-size="11" fill="#888" font-style="italic">y leo</text>
+        <!-- Píldora (1,1) -->
+        <rect x="144" y="343" width="44" height="22" rx="4" fill="white" stroke="#107C10" stroke-width="2"/>
+        <text x="166" y="358" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="15" fill="#107C10">(1,1)</text>
+        <!-- Explicación -->
+        <text x="202" y="339" font-family="Barlow,sans-serif" font-size="14" font-weight="700" fill="#1A1A1A">Un pedido pertenece a</text>
+        <text x="202" y="357" font-family="Barlow,sans-serif" font-size="14" fill="#333"><tspan font-weight="700" fill="#107C10">exactamente 1</tspan> cliente — no puede quedar sin dueño ni pertenecer a dos clientes</text>
+        <text x="202" y="379" font-family="Barlow,sans-serif" font-size="12" fill="#888" font-style="italic">Mínimo = 1: todo pedido debe tener un cliente asignado (participación obligatoria)</text>
+
+      </svg>
+    </div>
+
+    <ul>
+      <li><code>CLIENTE</code> y <code>PEDIDO</code> son entidades (rectángulos)</li>
+      <li><code>REALIZA</code> es la relación entre ellas (rombo)</li>
+      <li><code>RUT</code> y <code>NumPedido</code> son atributos clave (subrayados)</li>
+      <li><code>Nombre</code>, <code>Email</code>, <code>Fecha</code>, <code>Total</code> son atributos simples</li>
+    </ul>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">02 — Chen · Convenciones de nombrado</div>
+  <div class="concept-title anim">Reglas de<br><span style="color:var(--blue)">nombres</span></div>
+  <div class="concept-body anim">
+    <p>Para que todos los diagramas sean legibles y consistentes, Chen usa convenciones de nombrado. Seguirlas es obligatorio en este curso.</p>
+    <div class="two-col">
+      <div class="col-card">
+        <div class="col-card-title">Entidades</div>
+        <ul>
+          <li><strong>Sustantivo singular</strong> en mayúsculas</li>
+          <li>Correcto: <code>CLIENTE</code>, <code>PEDIDO</code>, <code>EMPLEADO</code></li>
+          <li>Incorrecto: <code>clientes</code>, <code>Pedidos</code>, <code>tbl_empleado</code></li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title">Relaciones</div>
+        <ul>
+          <li><strong>Verbo en mayúsculas</strong>, infinitivo o presente</li>
+          <li>Correcto: <code>REALIZA</code>, <code>TRABAJA_EN</code>, <code>PERTENECE</code></li>
+          <li>Incorrecto: <code>tiene</code>, <code>relacion1</code>, <code>vinculo</code></li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title">Atributos</div>
+        <ul>
+          <li><strong>CamelCase</strong>, descriptivo, sin abreviaturas innecesarias</li>
+          <li>Correcto: <code>FechaNacimiento</code>, <code>NumPedido</code>, <code>Email</code></li>
+          <li>Incorrecto: <code>fecha</code>, <code>f_nac</code>, <code>ATRIBUTO1</code></li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title">Atributo clave</div>
+        <ul>
+          <li>Mismo CamelCase, pero <u>subrayado</u> en el diagrama</li>
+          <li>Correcto: <u>RUT</u>, <u>NumPedido</u>, <u>ISBN</u></li>
+          <li>Solo <strong>un atributo clave</strong> por entidad en el modelo conceptual</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout callout-warn">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>Por qué importa desde el primer diagrama</strong>
+        <p>Un modelo con nombres inconsistentes (<code>cliente</code>, <code>Clientes</code>, <code>tbl_CLIENTE</code>) parece el trabajo de tres personas distintas. Las convenciones son parte de la calidad del entregable, no un detalle opcional.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 03 — CARDINALIDAD
+============================================================ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-pasos">03 — Cardinalidad</span>
+  <div class="sep-num anim">Bloque 03</div>
+  <div class="sep-title anim">Cardinalidad:<br><span>máxima y mínima</span></div>
+  <p class="sep-desc anim">Las relaciones tienen restricciones: cuántos como máximo y si es obligatorio participar. Eso es la cardinalidad.</p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Concepto</span>
+  <div class="concept-label anim">03 — Cardinalidad · Notación (min, max)</div>
+  <div class="concept-title anim">¿Cuántos<br>y si es <span style="color:var(--green)">obligatorio</span>?</div>
+  <div class="concept-body anim">
+    <p>En Chen la cardinalidad se expresa como <strong>(min, max)</strong> en cada extremo de la relación, junto a la entidad que describe. Se lee desde esa entidad hacia el interior de la relación.</p>
+    <table class="card-table">
+      <thead>
+        <tr>
+          <th>Notación</th>
+          <th>Significado</th>
+          <th>Ejemplo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="card-label">(0,1)</span></td>
+          <td>Opcional, como máximo uno</td>
+          <td>Un empleado puede ser jefe de a lo más un depto (o ninguno)</td>
+        </tr>
+        <tr>
+          <td><span class="card-label">(1,1)</span></td>
+          <td>Obligatorio, exactamente uno</td>
+          <td>Un pedido pertenece a exactamente un cliente</td>
+        </tr>
+        <tr>
+          <td><span class="card-label">(0,N)</span></td>
+          <td>Opcional, puede ser muchos</td>
+          <td>Un cliente puede no tener ningún pedido todavía</td>
+        </tr>
+        <tr>
+          <td><span class="card-label">(1,N)</span></td>
+          <td>Obligatorio, puede ser muchos</td>
+          <td>Un pedido tiene al menos un producto</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#128161;</span>
+      <div class="callout-content">
+        <strong>Cómo leer la cardinalidad</strong>
+        <p>Para leer la cardinalidad de <code>CLIENTE</code> en la relación <code>REALIZA</code> con <code>PEDIDO</code>: me paro en <code>CLIENTE</code> y pregunto <em>"¿cuántos PEDIDO puede realizar un CLIENTE?"</em> → muchos = N. <em>"¿Debe realizar al menos uno?"</em> → no es obligatorio = 0. Resultado: <strong>(0,N)</strong>, que se escribe del lado de CLIENTE (la entidad que describe).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Concepto</span>
+  <div class="concept-label anim">03 — Cardinalidad · Tipos de relación</div>
+  <div class="concept-title anim">Relaciones<br><span style="color:var(--green)">1:1, 1:N, N:M</span></div>
+  <div class="concept-body anim">
+    <p>La <strong>cardinalidad máxima</strong> de ambos extremos define el tipo de relación:</p>
+    <div style="display:flex; flex-direction:column; gap:16px; max-width:860px; margin-top:16px;">
+
+      <div style="background:#F8F8F8; border:1px solid #E0E0E0; border-radius:8px; padding:18px 22px;">
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:28px; font-weight:900; color:var(--blue); min-width:60px;">1:1</div>
+          <div style="flex:1;">
+            <div style="font-size:16px; font-weight:700; color:var(--dark); margin-bottom:4px;">Uno a Uno</div>
+            <div style="font-size:15px; color:#555;">Una instancia de A se relaciona con a lo sumo una de B y viceversa. <br><em>Ej: EMPLEADO (0,1) — DIRIGE — DEPARTAMENTO (1,1)</em>. Un empleado dirige a lo más un depto, un depto tiene exactamente un director.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#F8F8F8; border:1px solid #E0E0E0; border-radius:8px; padding:18px 22px;">
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:28px; font-weight:900; color:var(--green); min-width:60px;">1:N</div>
+          <div style="flex:1;">
+            <div style="font-size:16px; font-weight:700; color:var(--dark); margin-bottom:4px;">Uno a Muchos</div>
+            <div style="font-size:15px; color:#555;">Una instancia de A se relaciona con muchas de B, pero cada B solo con una A. <br><em>Ej: CLIENTE (0,N) — REALIZA — PEDIDO (1,1)</em>. Un pedido pertenece a un cliente, un cliente puede tener muchos pedidos.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#F8F8F8; border:1px solid #E0E0E0; border-radius:8px; padding:18px 22px;">
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:28px; font-weight:900; color:var(--orange); min-width:60px;">N:M</div>
+          <div style="flex:1;">
+            <div style="font-size:16px; font-weight:700; color:var(--dark); margin-bottom:4px;">Muchos a Muchos</div>
+            <div style="font-size:15px; color:#555;">Una instancia de A se relaciona con muchas de B y viceversa. <br><em>Ej: ESTUDIANTE (0,N) — INSCRIBE — CURSO (0,N)</em>. Un estudiante se inscribe en muchos cursos, un curso tiene muchos estudiantes.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="callout callout-warn">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>Las relaciones N:M se descomponen más adelante</strong>
+        <p>En el modelo conceptual las dejamos así. Cuando pasemos al modelo relacional, cada relación N:M se convertirá en una tabla intermedia. No hay que hacer nada ahora — solo identificarlas correctamente.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 04 — HERRAMIENTA: DRAW.IO
+============================================================ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-herramienta">04 — Herramienta</span>
+  <div class="sep-num anim">Bloque 04</div>
+  <div class="sep-title anim">Herramienta:<br><span>draw.io</span></div>
+  <p class="sep-desc anim">Esta es la herramienta que usaremos durante toda la unidad para construir nuestros modelos.</p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-herramienta">Herramienta</span>
+  <div class="concept-label anim">04 — draw.io · Primeros pasos</div>
+  <div class="concept-title anim">Primeros pasos<br>en <span style="color:var(--orange)">draw.io</span></div>
+  <div class="concept-body anim">
+    <p><strong>draw.io</strong> (también llamado diagrams.net) es una herramienta gratuita, sin instalación y disponible en el navegador. Es el estándar para diagramas técnicos en la industria.</p>
+    <div class="ruta">
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">1</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Abrir <code>app.diagrams.net</code> en el navegador</div>
+          <div class="ruta-desc">No requiere cuenta. Seleccionar "Device" para guardar localmente o conectar Google Drive para sincronizar en la nube.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">2</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Crear un nuevo diagrama en blanco</div>
+          <div class="ruta-desc">Seleccionar "Blank Diagram". El lienzo está listo para trabajar.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">3</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Buscar formas de Chen en el panel izquierdo</div>
+          <div class="ruta-desc">En la barra de búsqueda de formas escribir <code>entity</code>. Aparecerán las figuras del modelo ER: rectángulo de entidad, óvalo de atributo y rombo de relación.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">4</div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Guardar el archivo como <code>.drawio</code></div>
+          <div class="ruta-desc">Menú File → Save. El archivo se guarda en formato <code>.drawio</code> (XML) y puede abrirse en cualquier momento. Usar un nombre claro: <code>ModeloChenBiblioteca.drawio</code>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-herramienta">Práctica</span>
+  <div class="concept-label anim">04 — draw.io · Ejercicio de práctica</div>
+  <div class="concept-title anim">Practiquemos:<br><span style="color:var(--orange)">primer modelo</span></div>
+  <div class="concept-body anim">
+    <p>Construyan en draw.io el modelo de la tienda que vimos en la pizarra. Deben representar:</p>
+    <ul>
+      <li>Entidad <code>CLIENTE</code> con atributos: <u>RUT</u>, Nombre, Email</li>
+      <li>Entidad <code>PEDIDO</code> con atributos: <u>NumPedido</u>, Fecha, Total</li>
+      <li>Relación <code>REALIZA</code> entre ambas</li>
+      <li>Cardinalidad <strong>(0,N)</strong> del lado del CLIENTE y <strong>(1,1)</strong> del lado del PEDIDO</li>
+    </ul>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Tips rápidos de draw.io</strong>
+        <p>Doble clic sobre una figura para editar su texto. Arrastrar desde el borde de una figura para crear una conexión. <code>Ctrl + Shift + H</code> para centrar todo el diagrama en pantalla. <code>Ctrl + Z</code> para deshacer.</p>
+      </div>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#128161;</span>
+      <div class="callout-content">
+        <strong>¿Dónde va la cardinalidad?</strong>
+        <p>La notación (min,max) se escribe sobre la línea que conecta la entidad con el rombo, cerca de la entidad que describe. En draw.io: doble clic sobre la línea para agregar una etiqueta de texto en ese punto.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     CIERRE
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen</div>
+  <div class="sep-title anim">Lo que vimos<br><span>hoy</span></div>
+  <p class="sep-desc anim">80 minutos. Ya tienen la base del modelamiento conceptual y la herramienta funcionando.</p>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">Entidad</div>
+      <div class="resumen-desc">Rectángulo. Objeto del mundo real con existencia independiente y atributos propios</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Atributo</div>
+      <div class="resumen-desc">Óvalo. Propiedad de una entidad. El atributo clave se subraya</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Relación</div>
+      <div class="resumen-desc">Rombo. Asociación entre entidades. Puede tener atributos propios</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Cardinalidad (min, max)</div>
+      <div class="resumen-desc">Min 0 = opcional, min 1 = obligatorio. Max 1 = uno, max N = muchos</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Tipos de relación</div>
+      <div class="resumen-desc">1:1, 1:N, N:M según la cardinalidad máxima de ambos extremos</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">draw.io</div>
+      <div class="resumen-desc">app.diagrams.net — la herramienta que usaremos toda la unidad</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Convenciones</div>
+      <div class="resumen-desc">Entidades en MAYÚSCULAS singular. Relaciones como verbo. Atributos en CamelCase. Clave subrayada</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--blue); margin-bottom:12px;">Mañana (jueves 11/06 · 160 min)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,0.6); line-height:1.6;">Atributos compuestos, multivaluados y derivados · Entidades débiles · Cómo leer un caso real · Ejercicio completo desde cero en draw.io</div>
+  </div>
+</div>
+
+
+<script>
+  const animSelectors = [
+    '.sep-num', '.sep-title', '.sep-desc', '.index-grid',
+    '.concept-label', '.concept-title', '.concept-body',
+    '.callout', '.ruta', '.resumen-grid', '.er-legend',
+    '.two-col', '.card-table'
+  ];
+
+  document.querySelectorAll('.slide').forEach(slide => {
+    animSelectors.forEach((sel, si) => {
+      slide.querySelectorAll(sel).forEach((el, ei) => {
+        el.classList.add('anim');
+        el.style.transitionDelay = (si * 60 + ei * 50) + 'ms';
+      });
+    });
+  });
+
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
