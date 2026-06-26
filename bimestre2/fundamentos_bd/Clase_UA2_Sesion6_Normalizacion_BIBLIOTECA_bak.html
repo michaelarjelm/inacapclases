@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA2 Sesion 6 - Normalizacion y Subtipos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0;
+      color: var(--text);
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white;
+      justify-content: center;
+      padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3);
+      margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 640px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+    .slide-separator.sep-blue   { border-color: var(--blue); }
+
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+    }
+    .sep-green  .sep-num  { color: var(--green); }
+    .sep-orange .sep-num  { color: var(--orange); }
+    .sep-blue   .sep-num  { color: var(--blue); }
+
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .cover-title span, .sep-title span, .concept-title span { color: var(--red) !important; }
+
+    .sep-desc {
+      font-size: 22px; color: rgba(255,255,255,0.45);
+      max-width: 600px; line-height: 1.65;
+    }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 64px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark);
+      margin-bottom: 32px;
+    }
+    .concept-body { max-width: 960px; }
+    .concept-body p { font-size: 21px; line-height: 1.7; color: #333; margin-bottom: 18px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body ul { margin-left: 24px; margin-bottom: 18px; }
+    .concept-body li { font-size: 20px; line-height: 1.7; color: #333; margin-bottom: 8px; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 18px 22px; margin: 20px 0;
+      max-width: 960px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+    }
+    .callout-content p { font-size: 18px; line-height: 1.6; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+
+    /* INDICE */
+    .index-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 16px; margin-top: 32px; max-width: 760px;
+    }
+    .index-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 18px 20px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 32px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 8px;
+    }
+    .index-name { font-size: 16px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-pasos    { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-practica { background: #F7E3E3; color: #8E1A1F; border: 1px solid #E2CACA; }
+    .badge-cierre   { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* RESUMEN */
+    .resumen-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 12px; margin-top: 28px; max-width: 920px;
+    }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .resumen-cmd { font-size: 16px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* TWO COL */
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px; max-width: 960px; margin-top: 20px;
+    }
+    .three-col {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 18px; max-width: 960px; margin-top: 20px;
+    }
+    .col-card {
+      background: #F8F8F8; border: 1px solid #E0E0E0;
+      border-radius: 8px; padding: 20px 22px;
+    }
+    .col-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 12px;
+    }
+    .col-card ul { margin-left: 18px; }
+    .col-card li { font-size: 17px; line-height: 1.7; color: #444; margin-bottom: 4px; }
+    .col-card p  { font-size: 16px; line-height: 1.55; color: #444; margin-bottom: 8px; }
+
+    /* SVG BOX */
+    .svg-box {
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-radius: 8px;
+      padding: 26px 28px; margin: 18px 0; max-width: 960px; overflow-x: auto;
+    }
+
+    /* TABLA MAPEO */
+    .mapeo-table {
+      width: 100%; max-width: 960px; border-collapse: collapse;
+      margin-top: 20px; font-size: 16px;
+    }
+    .mapeo-table th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 10px 16px; text-align: left;
+    }
+    .mapeo-table td {
+      padding: 13px 16px; border-bottom: 1px solid #E0E0E0;
+      vertical-align: middle; line-height: 1.4;
+    }
+    .mapeo-table tr:last-child td { border-bottom: none; }
+    .mapeo-table tr:nth-child(even) td { background: #F8F8F8; }
+    .chen-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px; font-weight: 700; color: var(--blue);
+    }
+
+    /* DATA TABLE (filas de ejemplo, muchas columnas) */
+    .data-table {
+      border-collapse: collapse; margin: 16px 0; max-width: 960px;
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+      background: white; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .data-table caption {
+      caption-side: top; text-align: left;
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+      font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--dark); padding: 0 0 8px 2px;
+    }
+    .data-table th {
+      background: #1A1A1A; color: white; font-weight: 600;
+      padding: 7px 10px; text-align: left; white-space: nowrap;
+      border-right: 1px solid #333;
+    }
+    .data-table th.keycol { background: #8E1A1F; }
+    .data-table td {
+      padding: 6px 10px; border-bottom: 1px solid #ECECEC;
+      border-right: 1px solid #F0F0F0; color: #333; white-space: nowrap;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .dup { background: #FFE2E2; color: #C0392B; font-weight: 600; border-radius: 2px; padding: 0 2px; }
+    .multi { background: #FFF6D9; color: #8A6D00; font-weight: 600; border-radius: 2px; padding: 0 2px; }
+
+    /* NOTACION LINEAL */
+    .notacion {
+      background: #1A1A1A; border-radius: 8px; padding: 18px 24px;
+      margin: 18px 0; max-width: 960px; overflow-x: auto;
+    }
+    .notacion-line {
+      font-family: 'JetBrains Mono', monospace; font-size: 16px;
+      color: #EDEDED; line-height: 2; white-space: nowrap;
+    }
+    .notacion-line .tname { color: #FF8A80; font-weight: 700; }
+    .notacion-line .pk { text-decoration: underline; color: #FFD2CC; font-weight: 700; }
+    .notacion-line .fk { color: #FFAB91; font-style: italic; }
+    .notacion-line .fkmark { color: #FF8A80; }
+
+    /* LEYENDA */
+    .legend-row {
+      display: flex; gap: 28px; flex-wrap: wrap; margin-top: 14px;
+      font-size: 15px; color: #555;
+    }
+    .legend-row span u { color: var(--red); font-weight: 700; }
+    .legend-row span em { color: var(--purple); font-weight: 600; }
+
+    /* PILDORAS DE FORMA NORMAL */
+    .fn-pills { display: flex; gap: 12px; flex-wrap: wrap; margin: 8px 0 4px; }
+    .fn-pill {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+      font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase;
+      padding: 6px 14px; border-radius: 20px;
+      background: #F2F2F2; color: #888; border: 1px solid #DADADA;
+    }
+    .fn-pill.on { background: #FFF1F2; color: var(--red); border-color: #FECDD3; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; background: #EBEBEB;
+      padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    /* PROGRESS BAR */
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; background: var(--red);
+      width: 0%; z-index: 9999;
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
+      pointer-events: none;
+    }
+
+    /* ANIMACIONES */
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- ============================================================
+     SLIDE 1 - PORTADA
+============================================================ -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Fundamentos de Base de Datos &middot; TI3V12 &middot; Unidad 2 &middot; Sesion 6</div>
+  <div class="cover-title anim"><span>Normalizar</span><br>y subtipos<br>a tablas</div>
+  <p class="cover-desc anim">
+    El cierre del modelamiento. Llevamos un modelo relacional a
+    <strong>Tercera Forma Normal (3FN)</strong> para eliminar redundancia y
+    anomalias, y aprendemos a traducir subtipos a tablas. Clase de practica
+    intensiva: con esto el modelo fisico del portafolio queda completo.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Seccion <span>V-FB50-N1-P14-C1</span></span>
+    <span class="cover-chip">25 junio 2026</span>
+    <span class="cover-chip">19:50 - 22:30 &middot; 160 min</span>
+    <span class="cover-chip">UA2 - Modelamiento</span>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SLIDE 2 - INDICE
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">Que vemos hoy?</div>
+  <div class="sep-title anim">Contenido<br>de la <span>sesion</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Por que normalizar: las anomalias</div>
+      <div class="index-type">Contexto &middot; 19:50</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">La herramienta: dependencia funcional</div>
+      <div class="index-type">Concepto &middot; 20:05</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">1FN, 2FN y 3FN paso a paso</div>
+      <div class="index-type">Guiado &middot; 20:15</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">--</div>
+      <div class="index-name">Receso</div>
+      <div class="index-type">10 min &middot; 20:50</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Subtipos a tablas: 3 estrategias</div>
+      <div class="index-type">Sintesis &middot; 21:00</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Practica: normalizar a 3FN</div>
+      <div class="index-type">Practica &middot; 21:30</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 01 - POR QUE NORMALIZAR
+============================================================ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">01 - Contexto</span>
+  <div class="sep-num anim">Bloque 01</div>
+  <div class="sep-title anim">Por que<br><span>normalizar</span></div>
+  <p class="sep-desc anim">Un modelo puede estar "correcto" y aun asi guardar mal los datos. La normalizacion arregla eso.</p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Contexto</span>
+  <div class="concept-label anim">01 - Por que normalizar &middot; Una tabla que guarda mal</div>
+  <div class="concept-title anim">El problema:<br>una tabla <span style="color:var(--blue)">plana</span></div>
+  <div class="concept-body anim">
+    <p>Imaginen que la biblioteca registra los prestamos en <strong>una sola tabla</strong>, metiendo todo junto: el socio, los libros, el autor. Se ve comodo, pero mira lo que pasa:</p>
+
+    <table class="data-table">
+      <caption>PRESTAMO_PLANO (todo en una tabla)</caption>
+      <thead>
+        <tr>
+          <th class="keycol">NumPrestamo</th><th>Fecha</th><th>NumSocio</th><th>NombreSocio</th><th>Libros</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1001</td><td>2026-06-02</td><td>S01</td><td><span class="dup">Ana Soto</span></td><td><span class="multi">El Aleph ; Ficciones</span></td></tr>
+        <tr><td>1002</td><td>2026-06-03</td><td>S02</td><td>Luis Paredes</td><td><span class="multi">El Aleph</span></td></tr>
+        <tr><td>1003</td><td>2026-06-05</td><td>S01</td><td><span class="dup">Ana Soto</span></td><td><span class="multi">Rayuela ; Ficciones</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-warn">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>Dos sintomas a simple vista</strong>
+        <p>La celda <span style="background:#FFF6D9;color:#8A6D00;font-weight:600;padding:0 3px;border-radius:2px;">amarilla</span> guarda <strong>varios valores juntos</strong> (no se puede buscar ni contar). El dato <span style="background:#FFE2E2;color:#C0392B;font-weight:600;padding:0 3px;border-radius:2px;">rojo</span> "Ana Soto" esta <strong>repetido</strong>: la misma informacion escrita muchas veces. Eso es <strong>redundancia</strong>, y la redundancia trae problemas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Contexto</span>
+  <div class="concept-label anim">01 - Por que normalizar &middot; Las tres anomalias</div>
+  <div class="concept-title anim">Las tres<br><span style="color:var(--blue)">anomalias</span></div>
+  <div class="concept-body anim">
+    <p>La redundancia no es solo "feo": genera tres problemas concretos al operar la base de datos. Son el motivo real para normalizar.</p>
+    <div class="three-col">
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--blue)">Insercion</div>
+        <p>No puedo registrar un socio nuevo si todavia no tiene ningun prestamo: no hay fila donde meterlo. El dato del socio queda "preso" del prestamo.</p>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--orange)">Actualizacion</div>
+        <p>Si Ana Soto cambia de email, tengo que corregir <strong>todas</strong> sus filas. Si olvido una, la base queda con dos verdades distintas (inconsistencia).</p>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--red)">Eliminacion</div>
+        <p>Si borro el unico prestamo de un socio, borro tambien al socio sin querer. Pierdo informacion que queria conservar.</p>
+      </div>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#128161;</span>
+      <div class="callout-content">
+        <strong>Normalizar = separar lo que no va junto</strong>
+        <p>Normalizar es un proceso de <strong>pasos</strong> que parte una tabla "gorda" en varias tablas bien formadas, de modo que cada dato viva en <strong>un solo lugar</strong>. Cada paso es una <strong>Forma Normal</strong>: 1FN, 2FN y 3FN. Para el portafolio (y para esta carrera) llegamos hasta <strong>3FN</strong>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 02 - DEPENDENCIA FUNCIONAL
+============================================================ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">02 - Concepto</span>
+  <div class="sep-num anim">Bloque 02</div>
+  <div class="sep-title anim">Dependencia<br><span>funcional</span></div>
+  <p class="sep-desc anim">La unica herramienta que necesitas para normalizar. Una pregunta simple repetida tres veces.</p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">02 - Dependencia funcional &middot; Quien determina a quien</div>
+  <div class="concept-title anim">"Si se A,<br>se <span style="color:var(--blue)">B</span>"</div>
+  <div class="concept-body anim">
+    <p>Una columna <strong>B depende funcionalmente</strong> de otra columna <strong>A</strong> si, conociendo el valor de A, el valor de B queda <strong>determinado sin ambiguedad</strong>. Se escribe <code>A &rarr; B</code> y se lee "A determina B".</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="tname">NumSocio</span> &rarr; NombreSocio, Email   <span style="color:#888">(si se el socio, se su nombre)</span></div>
+      <div class="notacion-line"><span class="tname">ISBN</span> &rarr; Titulo, AnioPub        <span style="color:#888">(si se el libro, se su titulo)</span></div>
+      <div class="notacion-line"><span class="tname">IdAutor</span> &rarr; NombreAutor          <span style="color:#888">(si se el autor, se su nombre)</span></div>
+    </div>
+    <div class="two-col">
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--blue)">La regla de oro</div>
+        <p>En una tabla bien normalizada, <strong>todo</strong> depende de la <strong>clave primaria</strong>, y de nada mas. La frase clasica para recordarlo:</p>
+        <p style="font-style:italic;color:var(--dark);font-weight:600;">"Cada columna depende de la clave, de la clave completa, y de nada mas que la clave."</p>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--orange)">Y eso es justo 1-2-3FN</div>
+        <ul>
+          <li><strong>De la clave</strong> ... lo arregla la <strong>1FN</strong></li>
+          <li><strong>completa</strong> ... lo arregla la <strong>2FN</strong></li>
+          <li><strong>nada mas que la clave</strong> ... lo arregla la <strong>3FN</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Normalizar = mirar cada columna y preguntar "de quien dependes?"</strong>
+        <p>Si una columna depende de algo que <strong>no es la clave completa</strong>, esa columna esta en la tabla equivocada. La normalizacion solo la mueve a donde corresponde. No hay magia: es esa pregunta, tres veces.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 03 - 1FN, 2FN, 3FN PASO A PASO
+============================================================ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-pasos">03 - Guiado</span>
+  <div class="sep-num anim">Bloque 03</div>
+  <div class="sep-title anim">1FN, 2FN<br>y <span>3FN</span></div>
+  <p class="sep-desc anim">Tomamos la tabla plana de la biblioteca y la normalizamos en vivo, una forma a la vez.</p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Paso 1</span>
+  <div class="concept-label anim">03 - Paso a paso &middot; Primera Forma Normal</div>
+  <div class="concept-title anim">1FN: un solo<br>valor por <span style="color:var(--orange)">celda</span></div>
+  <div class="concept-body anim">
+    <div class="fn-pills anim">
+      <span class="fn-pill on">1FN</span><span class="fn-pill">2FN</span><span class="fn-pill">3FN</span>
+    </div>
+    <p>Una tabla esta en <strong>1FN</strong> si cada celda guarda <strong>un solo valor atomico</strong> (nada de listas) y la tabla tiene una <strong>clave primaria</strong>. Atacamos la celda amarilla: una fila por cada libro del prestamo.</p>
+
+    <table class="data-table">
+      <caption>Despues de 1FN &middot; PK compuesta (NumPrestamo, ISBN)</caption>
+      <thead>
+        <tr>
+          <th class="keycol">NumPrestamo</th><th>Fecha</th><th>NumSocio</th><th>NombreSocio</th>
+          <th class="keycol">ISBN</th><th>Titulo</th><th>IdAutor</th><th>NombreAutor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1001</td><td>06-02</td><td>S01</td><td>Ana Soto</td><td>978-001</td><td>El Aleph</td><td>A1</td><td>Borges</td></tr>
+        <tr><td>1001</td><td>06-02</td><td>S01</td><td>Ana Soto</td><td>978-002</td><td>Ficciones</td><td>A1</td><td>Borges</td></tr>
+        <tr><td>1002</td><td>06-03</td><td>S02</td><td>Luis Paredes</td><td>978-001</td><td>El Aleph</td><td>A1</td><td>Borges</td></tr>
+        <tr><td>1003</td><td>06-05</td><td>S01</td><td>Ana Soto</td><td>978-003</td><td>Rayuela</td><td>A2</td><td>Cortazar</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-warn">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>Ya es 1FN, pero mira la redundancia</strong>
+        <p>Necesitamos <strong>las dos columnas</strong> (NumPrestamo + ISBN) para identificar cada fila: ninguna sola basta. Eso es una <strong>clave compuesta</strong>. Pero "Ana Soto" y "El Aleph / Borges" siguen repitiendose. La 1FN limpio la forma, no la redundancia. Vamos al siguiente paso.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Paso 2</span>
+  <div class="concept-label anim">03 - Paso a paso &middot; Segunda Forma Normal</div>
+  <div class="concept-title anim">2FN: depende de la<br>clave <span style="color:var(--orange)">completa</span></div>
+  <div class="concept-body anim">
+    <div class="fn-pills anim">
+      <span class="fn-pill on">1FN</span><span class="fn-pill on">2FN</span><span class="fn-pill">3FN</span>
+    </div>
+    <p>Estando en 1FN, una tabla es <strong>2FN</strong> si ninguna columna depende de <strong>solo una parte</strong> de la clave compuesta (sin <strong>dependencias parciales</strong>). Revisamos columna por columna:</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="tname">NumPrestamo</span> &rarr; Fecha, NumSocio, NombreSocio   <span style="color:#FF8A80">depende de media clave</span></div>
+      <div class="notacion-line"><span class="tname">ISBN</span> &rarr; Titulo, IdAutor, NombreAutor         <span style="color:#FF8A80">depende de la otra media</span></div>
+    </div>
+    <p>Cada grupo depende de <strong>media clave</strong>. Se separa cada uno a su propia tabla, y la clave compuesta queda en una tabla de enlace:</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="tname">PRESTAMO</span>(<span class="pk">NumPrestamo</span>, Fecha, NumSocio, NombreSocio)</div>
+      <div class="notacion-line"><span class="tname">LIBRO</span>(<span class="pk">ISBN</span>, Titulo, IdAutor, NombreAutor)</div>
+      <div class="notacion-line"><span class="tname">DETALLE</span>(<span class="pk">NumPrestamo</span><span class="fkmark">*</span>, <span class="pk">ISBN</span><span class="fkmark">*</span>)</div>
+    </div>
+    <div class="callout callout-important">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>La 2FN solo importa si la clave es compuesta</strong>
+        <p>Si la clave primaria es <strong>una sola columna</strong>, no puede haber dependencia parcial: ya estas en 2FN automaticamente. La 2FN es la regla que persigue a las <strong>claves compuestas</strong>. Por eso DETALLE (puro enlace) no tiene problema.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Paso 3</span>
+  <div class="concept-label anim">03 - Paso a paso &middot; Tercera Forma Normal</div>
+  <div class="concept-title anim">3FN: nada mas<br>que la <span style="color:var(--orange)">clave</span></div>
+  <div class="concept-body anim">
+    <div class="fn-pills anim">
+      <span class="fn-pill on">1FN</span><span class="fn-pill on">2FN</span><span class="fn-pill on">3FN</span>
+    </div>
+    <p>Estando en 2FN, una tabla es <strong>3FN</strong> si ninguna columna depende de <strong>otra columna que no es clave</strong> (sin <strong>dependencias transitivas</strong>). Miramos dentro de PRESTAMO y LIBRO:</p>
+    <div class="notacion">
+      <div class="notacion-line">En PRESTAMO:  <span class="tname">NumSocio</span> &rarr; NombreSocio   <span style="color:#FF8A80">y NumSocio no es la clave</span></div>
+      <div class="notacion-line">En LIBRO:     <span class="tname">IdAutor</span> &rarr; NombreAutor    <span style="color:#FF8A80">y IdAutor no es la clave</span></div>
+    </div>
+    <p>NombreSocio no depende del prestamo, depende del <strong>socio</strong>. Se saca a su propia tabla y queda solo la FK. Igual con el autor. Resultado final en <strong>3FN</strong>:</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="tname">SOCIO</span>(<span class="pk">NumSocio</span>, NombreSocio)</div>
+      <div class="notacion-line"><span class="tname">AUTOR</span>(<span class="pk">IdAutor</span>, NombreAutor)</div>
+      <div class="notacion-line"><span class="tname">LIBRO</span>(<span class="pk">ISBN</span>, Titulo, <span class="fk">IdAutor</span><span class="fkmark">*</span>)</div>
+      <div class="notacion-line"><span class="tname">PRESTAMO</span>(<span class="pk">NumPrestamo</span>, Fecha, <span class="fk">NumSocio</span><span class="fkmark">*</span>)</div>
+      <div class="notacion-line"><span class="tname">DETALLE</span>(<span class="pk">NumPrestamo</span><span class="fkmark">*</span>, <span class="pk">ISBN</span><span class="fkmark">*</span>)</div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>El truco de la transitiva: "no clave depende de no clave"</strong>
+        <p>Si una columna que <strong>no es clave</strong> determina a otra columna que <strong>tampoco es clave</strong>, hay dependencia transitiva. La sacas a una tabla nueva donde la columna determinante pasa a ser <strong>PK</strong>, y dejas una <strong>FK</strong> en su lugar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Cierre del bloque</span>
+  <div class="concept-label anim">03 - Paso a paso &middot; El resultado no es casualidad</div>
+  <div class="concept-title anim">Normalizar te<br>devuelve el <span style="color:var(--orange)">modelo</span></div>
+  <div class="concept-body anim">
+    <p>Miren las tablas que salieron: <strong>SOCIO, AUTOR, LIBRO, PRESTAMO</strong> y una tabla de enlace. Son practicamente las <strong>mismas tablas</strong> que obtuvimos ayer partiendo de Chen y Barker. No es coincidencia.</p>
+    <div class="two-col">
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--blue)">Camino A &middot; Modelar</div>
+        <ul>
+          <li>Chen (conceptual)</li>
+          <li>Barker (logico)</li>
+          <li>Reglas a tablas (Sesion 5)</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--orange)">Camino B &middot; Normalizar</div>
+        <ul>
+          <li>Tabla plana</li>
+          <li>1FN, 2FN, 3FN</li>
+          <li>Las mismas tablas (hoy)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#128161;</span>
+      <div class="callout-content">
+        <strong>Dos caminos, el mismo destino</strong>
+        <p>Un buen modelo conceptual <strong>ya viene casi normalizado</strong>: si separaste bien las entidades en Chen, llegaste a 3FN sin proponertelo. La normalizacion es la <strong>red de seguridad</strong>: te deja <strong>verificar</strong> que tu modelo guarda bien los datos, y arreglar una tabla plana cuando alguien la armo sin modelar. Las dos miradas se confirman entre si.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     RECESO
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Pausa</span>
+  <div class="sep-num anim">20:50 - 21:00</div>
+  <div class="sep-title anim">Receso<br><span>10 minutos</span></div>
+  <p class="sep-desc anim">Estiren las piernas. Volvemos con subtipos a tablas y luego practica para llevarse el portafolio listo.</p>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 04 - SUBTIPOS A TABLAS
+============================================================ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-pasos">04 - Sintesis</span>
+  <div class="sep-num anim">Bloque 04</div>
+  <div class="sep-title anim">Subtipos<br>a <span>tablas</span></div>
+  <p class="sep-desc anim">El otro pendiente del portafolio: el supertipo y sus subtipos no caben directo en una tabla. Hay tres formas de resolverlo.</p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Recordatorio</span>
+  <div class="concept-label anim">04 - Subtipos &middot; El caso EMPLEADO</div>
+  <div class="concept-title anim">Un supertipo,<br>dos <span style="color:var(--green)">subtipos</span></div>
+  <div class="concept-body anim">
+    <p>Recordemos el caso de Barker: <code>EMPLEADO</code> es el <strong>supertipo</strong> con lo comun (Rut, Nombre). De el salen dos <strong>subtipos</strong> con atributos propios:</p>
+    <div class="svg-box" style="display:flex; justify-content:center;">
+      <svg viewBox="0 0 560 230" width="560" height="230">
+        <!-- EMPLEADO supertipo -->
+        <rect x="180" y="14" width="200" height="74" rx="6" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+        <rect x="180" y="14" width="200" height="24" rx="6" fill="#1A1A1A"/>
+        <text x="280" y="31" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="13" fill="white">EMPLEADO</text>
+        <text x="194" y="56" font-family="JetBrains Mono,monospace" font-size="11" fill="#E31E24" font-weight="700"># RutEmpleado</text>
+        <text x="194" y="74" font-family="JetBrains Mono,monospace" font-size="11" fill="#333">* Nombre</text>
+        <text x="392" y="60" font-family="Barlow,sans-serif" font-size="11" fill="#888" font-style="italic">discriminador: Tipo</text>
+        <!-- lineas -->
+        <line x1="280" y1="88" x2="280" y2="110" stroke="#888" stroke-width="2"/>
+        <line x1="130" y1="110" x2="430" y2="110" stroke="#888" stroke-width="2"/>
+        <line x1="130" y1="110" x2="130" y2="132" stroke="#888" stroke-width="2"/>
+        <line x1="430" y1="110" x2="430" y2="132" stroke="#888" stroke-width="2"/>
+        <!-- PLANTA -->
+        <rect x="30" y="132" width="200" height="74" rx="6" fill="#F8F8F8" stroke="#4A4A4A" stroke-width="2"/>
+        <rect x="30" y="132" width="200" height="24" rx="6" fill="#4A4A4A"/>
+        <text x="130" y="149" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="13" fill="white">PLANTA</text>
+        <text x="44" y="174" font-family="JetBrains Mono,monospace" font-size="11" fill="#333">* SueldoBase</text>
+        <text x="44" y="192" font-family="JetBrains Mono,monospace" font-size="11" fill="#333">* FechaIngreso</text>
+        <!-- HONORARIOS -->
+        <rect x="330" y="132" width="200" height="74" rx="6" fill="#F8F8F8" stroke="#8E1A1F" stroke-width="2"/>
+        <rect x="330" y="132" width="200" height="24" rx="6" fill="#8E1A1F"/>
+        <text x="430" y="149" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="13" fill="white">HONORARIOS</text>
+        <text x="344" y="174" font-family="JetBrains Mono,monospace" font-size="11" fill="#333">* ValorBoleta</text>
+        <text x="344" y="192" font-family="JetBrains Mono,monospace" font-size="11" fill="#333">o FechaTermino</text>
+      </svg>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#128161;</span>
+      <div class="callout-content">
+        <strong>El subtipo no tiene clave propia</strong>
+        <p>Un PLANTA <strong>es un</strong> EMPLEADO: comparte su identidad. La pregunta del modelo fisico es solo <strong>cuantas tablas</strong> uso para representar esto. Hay tres respuestas validas, cada una con su costo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Sintesis</span>
+  <div class="concept-label anim">04 - Subtipos &middot; Las tres estrategias</div>
+  <div class="concept-title anim">Tres formas de<br><span style="color:var(--green)">resolverlo</span></div>
+  <div class="concept-body anim">
+    <div class="three-col">
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--blue); font-size:19px;">1. Una sola tabla</div>
+        <p style="font-size:14px;color:#888;margin-bottom:8px;">Todo en EMPLEADO + columna Tipo</p>
+        <div class="notacion" style="margin:0 0 10px; padding:12px 14px;">
+          <div class="notacion-line" style="font-size:12px; white-space:normal;"><span class="tname">EMPLEADO</span>(<span class="pk">Rut</span>, Nombre, Tipo, SueldoBase<span style="color:#FF8A80">o</span>, FechaIngreso<span style="color:#FF8A80">o</span>, ValorBoleta<span style="color:#FF8A80">o</span>, FechaTermino<span style="color:#FF8A80">o</span>)</div>
+        </div>
+        <p style="font-size:14px;"><strong style="color:var(--green)">A favor:</strong> simple, sin joins, una consulta ve todo.</p>
+        <p style="font-size:14px;"><strong style="color:var(--red)">En contra:</strong> muchas columnas en <code>NULL</code> (un honorario no usa SueldoBase).</p>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--orange); font-size:19px;">2. Una tabla por subtipo</div>
+        <p style="font-size:14px;color:#888;margin-bottom:8px;">Sin tabla EMPLEADO; lo comun se copia</p>
+        <div class="notacion" style="margin:0 0 10px; padding:12px 14px;">
+          <div class="notacion-line" style="font-size:12px; white-space:normal;"><span class="tname">PLANTA</span>(<span class="pk">Rut</span>, Nombre, SueldoBase, FechaIngreso)</div>
+          <div class="notacion-line" style="font-size:12px; white-space:normal;"><span class="tname">HONORARIOS</span>(<span class="pk">Rut</span>, Nombre, ValorBoleta, FechaTermino)</div>
+        </div>
+        <p style="font-size:14px;"><strong style="color:var(--green)">A favor:</strong> sin <code>NULL</code>, cada tabla tiene solo lo suyo.</p>
+        <p style="font-size:14px;"><strong style="color:var(--red)">En contra:</strong> ver "todos los empleados" obliga a unir dos tablas.</p>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--purple); font-size:19px;">3. Una tabla por cada tipo</div>
+        <p style="font-size:14px;color:#888;margin-bottom:8px;">Supertipo + subtipos, unidos por FK</p>
+        <div class="notacion" style="margin:0 0 10px; padding:12px 14px;">
+          <div class="notacion-line" style="font-size:12px; white-space:normal;"><span class="tname">EMPLEADO</span>(<span class="pk">Rut</span>, Nombre, Tipo)</div>
+          <div class="notacion-line" style="font-size:12px; white-space:normal;"><span class="tname">PLANTA</span>(<span class="pk">Rut</span><span class="fkmark">*</span>, SueldoBase, FechaIngreso)</div>
+          <div class="notacion-line" style="font-size:12px; white-space:normal;"><span class="tname">HONORARIOS</span>(<span class="pk">Rut</span><span class="fkmark">*</span>, ValorBoleta, ...)</div>
+        </div>
+        <p style="font-size:14px;"><strong style="color:var(--green)">A favor:</strong> la mas limpia y normalizada, sin repetir ni dejar NULL.</p>
+        <p style="font-size:14px;"><strong style="color:var(--red)">En contra:</strong> mas tablas y joins para ver el detalle.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Como elegir</strong>
+        <p>Subtipos muy parecidos y consultas que mezclan todo: <strong>opcion 1</strong>. Subtipos muy distintos que casi no se mezclan: <strong>opcion 2</strong>. La mas segura y la que se espera por defecto en el portafolio: <strong>opcion 3</strong> (PK del supertipo baja como PK+FK al subtipo, igual que una entidad debil). En la duda, usen la 3.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 05 - PRACTICA
+============================================================ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-practica">05 - Practica</span>
+  <div class="sep-num anim">Bloque 05</div>
+  <div class="sep-title anim">Ahora<br><span>ustedes</span></div>
+  <p class="sep-desc anim">Tres casos para resolver solos o en dupla. Intentenlo antes de mirar la solucion; despues la revisamos juntos.</p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Ejercicio 1</span>
+  <div class="concept-label anim">05 - Practica &middot; Normalizar a 3FN</div>
+  <div class="concept-title anim">La boleta<br>de <span style="color:var(--red)">venta</span></div>
+  <div class="concept-body anim">
+    <p>Una tienda guarda sus ventas en esta tabla plana. <strong>Llevenla a 3FN.</strong> Pista: la clave natural es (NumBoleta, CodProducto).</p>
+    <table class="data-table">
+      <caption>VENTA_PLANA</caption>
+      <thead>
+        <tr><th class="keycol">NumBoleta</th><th>Fecha</th><th>RutCliente</th><th>NombreCliente</th><th class="keycol">CodProducto</th><th>NombreProducto</th><th>PrecioUnit</th><th>Cantidad</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>B-100</td><td>06-10</td><td>11.1</td><td>Marta Diaz</td><td>P1</td><td>Cuaderno</td><td>1200</td><td>3</td></tr>
+        <tr><td>B-100</td><td>06-10</td><td>11.1</td><td>Marta Diaz</td><td>P2</td><td>Lapiz</td><td>500</td><td>10</td></tr>
+        <tr><td>B-101</td><td>06-11</td><td>22.2</td><td>Pedro Lir</td><td>P1</td><td>Cuaderno</td><td>1200</td><td>1</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#128161;</span>
+      <div class="callout-content">
+        <strong>Guia de las tres preguntas</strong>
+        <p>1FN: hay alguna celda con varios valores? &middot; 2FN: que depende de solo NumBoleta? que depende de solo CodProducto? que depende de los dos? &middot; 3FN: alguna columna no-clave determina a otra no-clave?</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Solucion 1</span>
+  <div class="concept-label anim">05 - Practica &middot; Boleta en 3FN</div>
+  <div class="concept-title anim">Boleta:<br><span style="color:var(--red)">cuatro tablas</span></div>
+  <div class="concept-body anim">
+    <div class="notacion">
+      <div class="notacion-line"><span class="tname">CLIENTE</span>(<span class="pk">RutCliente</span>, NombreCliente)</div>
+      <div class="notacion-line"><span class="tname">PRODUCTO</span>(<span class="pk">CodProducto</span>, NombreProducto, PrecioUnit)</div>
+      <div class="notacion-line"><span class="tname">BOLETA</span>(<span class="pk">NumBoleta</span>, Fecha, <span class="fk">RutCliente</span><span class="fkmark">*</span>)</div>
+      <div class="notacion-line"><span class="tname">DETALLE</span>(<span class="pk">NumBoleta</span><span class="fkmark">*</span>, <span class="pk">CodProducto</span><span class="fkmark">*</span>, Cantidad)</div>
+    </div>
+    <div class="two-col">
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--orange); font-size:18px;">El razonamiento</div>
+        <ul>
+          <li><strong>2FN:</strong> Fecha y cliente dependen de NumBoleta; NombreProducto y PrecioUnit dependen de CodProducto. Solo <strong>Cantidad</strong> depende de los dos: se queda en DETALLE.</li>
+          <li><strong>3FN:</strong> NombreCliente dependia de RutCliente (no-clave): sale a CLIENTE.</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--green); font-size:18px;">El detalle fino</div>
+        <ul>
+          <li>Cantidad es el unico atributo del enlace (cuantas unidades de ese producto en esa boleta).</li>
+          <li>Toda la redundancia desaparecio: el nombre de Marta Diaz vive en <strong>una sola fila</strong>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Ejercicio 2</span>
+  <div class="concept-label anim">05 - Practica &middot; Normalizar a 3FN</div>
+  <div class="concept-title anim">Las <span style="color:var(--red)">inscripciones</span></div>
+  <div class="concept-body anim">
+    <p>Un instituto registra que alumno cursa que asignatura, con su nota. <strong>Llevenla a 3FN.</strong> Clave natural: (NumAlumno, CodCurso). Ojo con el profesor.</p>
+    <table class="data-table">
+      <caption>INSCRIPCION_PLANA</caption>
+      <thead>
+        <tr><th class="keycol">NumAlumno</th><th>NombreAlumno</th><th class="keycol">CodCurso</th><th>NombreCurso</th><th>RutProfe</th><th>NombreProfe</th><th>Nota</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>A-1</td><td>Sofia Rojas</td><td>BD-01</td><td>Base de Datos</td><td>9.9</td><td>Mike A.</td><td>6.5</td></tr>
+        <tr><td>A-1</td><td>Sofia Rojas</td><td>PR-02</td><td>Programacion</td><td>8.8</td><td>Ana V.</td><td>5.8</td></tr>
+        <tr><td>A-2</td><td>Ivan Mura</td><td>BD-01</td><td>Base de Datos</td><td>9.9</td><td>Mike A.</td><td>4.2</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#128161;</span>
+      <div class="callout-content">
+        <strong>Pista</strong>
+        <p>Un curso lo dicta un solo profesor. Entonces <code>CodCurso &rarr; RutProfe</code>, y ademas <code>RutProfe &rarr; NombreProfe</code>. Hay una transitiva escondida ahi.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Solucion 2</span>
+  <div class="concept-label anim">05 - Practica &middot; Inscripciones en 3FN</div>
+  <div class="concept-title anim">Inscripcion:<br><span style="color:var(--red)">cuatro tablas</span></div>
+  <div class="concept-body anim">
+    <div class="notacion">
+      <div class="notacion-line"><span class="tname">ALUMNO</span>(<span class="pk">NumAlumno</span>, NombreAlumno)</div>
+      <div class="notacion-line"><span class="tname">PROFESOR</span>(<span class="pk">RutProfe</span>, NombreProfe)</div>
+      <div class="notacion-line"><span class="tname">CURSO</span>(<span class="pk">CodCurso</span>, NombreCurso, <span class="fk">RutProfe</span><span class="fkmark">*</span>)</div>
+      <div class="notacion-line"><span class="tname">INSCRIPCION</span>(<span class="pk">NumAlumno</span><span class="fkmark">*</span>, <span class="pk">CodCurso</span><span class="fkmark">*</span>, Nota)</div>
+    </div>
+    <div class="two-col">
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--orange); font-size:18px;">El razonamiento</div>
+        <ul>
+          <li><strong>2FN:</strong> NombreAlumno depende de NumAlumno; NombreCurso y profesor dependen de CodCurso. <strong>Nota</strong> depende de los dos: se queda en INSCRIPCION.</li>
+          <li><strong>3FN:</strong> dentro de CURSO, NombreProfe dependia de RutProfe (no-clave): sale a PROFESOR y queda la FK.</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--green); font-size:18px;">La trampa</div>
+        <ul>
+          <li>Muchos paran en 2FN y dejan RutProfe + NombreProfe dentro de CURSO. Eso aun tiene transitiva.</li>
+          <li>La Nota es el unico dato que pertenece de verdad al cruce alumno-curso.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Ejercicio 3</span>
+  <div class="concept-label anim">05 - Practica &middot; Subtipos a tablas</div>
+  <div class="concept-title anim">El catalogo<br>de <span style="color:var(--red)">productos</span></div>
+  <div class="concept-body anim">
+    <p>Una biblioteca presta distintos <strong>materiales</strong>. Todos comparten Codigo y Titulo, pero cada tipo tiene lo suyo:</p>
+    <div class="three-col" style="margin-top:12px;">
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--blue); font-size:18px;">MATERIAL (super)</div>
+        <ul><li>Codigo (#)</li><li>Titulo</li><li>Tipo</li></ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--green); font-size:18px;">LIBRO</div>
+        <ul><li>NumPaginas</li><li>ISBN</li></ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--orange); font-size:18px;">DVD</div>
+        <ul><li>DuracionMin</li><li>Region</li></ul>
+      </div>
+    </div>
+    <p style="margin-top:16px;">Se prestan y se buscan <strong>todos juntos</strong> en un mismo catalogo, pero LIBRO y DVD tienen atributos muy distintos. <strong>Que estrategia eligen y como quedan las tablas?</strong></p>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Solucion 3</span>
+  <div class="concept-label anim">05 - Practica &middot; Catalogo con subtipos</div>
+  <div class="concept-title anim">Estrategia 3:<br><span style="color:var(--red)">tabla por tipo</span></div>
+  <div class="concept-body anim">
+    <p>Como se consultan juntos (conviene un supertipo comun) pero los atributos propios son distintos (no conviene mezclar ni dejar NULL), la <strong>opcion 3</strong> es la mas adecuada:</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="tname">MATERIAL</span>(<span class="pk">Codigo</span>, Titulo, Tipo)</div>
+      <div class="notacion-line"><span class="tname">LIBRO</span>(<span class="pk">Codigo</span><span class="fkmark">*</span>, NumPaginas, ISBN)</div>
+      <div class="notacion-line"><span class="tname">DVD</span>(<span class="pk">Codigo</span><span class="fkmark">*</span>, DuracionMin, Region)</div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Por que esta y no otra</strong>
+        <p>El supertipo MATERIAL permite buscar y prestar todo desde una sola tabla. La PK <code>Codigo</code> baja como <strong>PK + FK</strong> a cada subtipo (igual que una entidad debil de Sesion 5), asi un material no se repite y no hay columnas vacias. La opcion 1 dejaria muchos NULL; la 2 perderia el catalogo unico. Tambien seria defendible la 1 si los atributos propios fueran pocos, siempre que lo justifiquen.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     CIERRE
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen</div>
+  <div class="sep-title anim">Lo que vimos<br><span>hoy</span></div>
+  <p class="sep-desc anim">Con esto cierran UA2: ya pueden modelar, traducir a tablas y verificar que esas tablas guardan bien los datos.</p>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">Por que normalizar</div>
+      <div class="resumen-desc">La redundancia causa anomalias de insercion, actualizacion y eliminacion</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Dependencia funcional</div>
+      <div class="resumen-desc">A determina B. Todo debe depender de la clave, completa y nada mas</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">1FN</div>
+      <div class="resumen-desc">Un solo valor por celda (atomico) y una clave primaria. Sin listas</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">2FN</div>
+      <div class="resumen-desc">Sin dependencias parciales. Solo importa si la clave es compuesta</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">3FN</div>
+      <div class="resumen-desc">Sin dependencias transitivas: ninguna no-clave determina otra no-clave</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Subtipos a tablas</div>
+      <div class="resumen-desc">Una sola tabla, una por subtipo, o una por tipo (la mas segura)</div>
+    </div>
+  </div>
+  <div style="margin-top:32px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Checklist para el portafolio (ES2)</div>
+    <div style="font-size:17px; color:rgba(255,255,255,0.6); line-height:1.7;">
+      Toda tabla tiene PK &middot; ninguna celda con varios valores (1FN) &middot; cada columna depende de la clave completa (2FN) &middot; ninguna no-clave depende de otra no-clave (3FN) &middot; toda FK apunta a una PK que existe &middot; y dejen escrita la <strong style="color:rgba(255,255,255,0.85)">reflexion critica</strong>: que anomalias evitaron al normalizar.
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
