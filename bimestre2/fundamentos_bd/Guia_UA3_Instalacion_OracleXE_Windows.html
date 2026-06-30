@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA3 - Guía de instalación: Oracle XE + SQL Developer (Windows)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0;
+      color: var(--text);
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white;
+      justify-content: center;
+      padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3);
+      margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 680px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+    .slide-separator.sep-blue   { border-color: var(--blue); }
+
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+    }
+    .sep-green  .sep-num  { color: var(--green); }
+    .sep-orange .sep-num  { color: var(--orange); }
+    .sep-blue   .sep-num  { color: var(--blue); }
+
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .cover-title span, .sep-title span, .concept-title span { color: var(--red) !important; }
+
+    .sep-desc {
+      font-size: 22px; color: rgba(255,255,255,0.45);
+      max-width: 640px; line-height: 1.65;
+    }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 64px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark);
+      margin-bottom: 32px;
+    }
+    .concept-body { max-width: 980px; }
+    .concept-body p { font-size: 21px; line-height: 1.7; color: #333; margin-bottom: 18px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body ul { margin-left: 24px; margin-bottom: 18px; }
+    .concept-body li { font-size: 20px; line-height: 1.7; color: #333; margin-bottom: 8px; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 18px 22px; margin: 20px 0;
+      max-width: 980px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+    }
+    .callout-content p { font-size: 18px; line-height: 1.6; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+
+    /* INDICE */
+    .index-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-top: 32px; max-width: 900px;
+    }
+    .index-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 18px 20px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 30px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 8px;
+    }
+    .index-name { font-size: 16px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-pasos    { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-practica { background: #F7E3E3; color: #8E1A1F; border: 1px solid #E2CACA; }
+    .badge-cierre   { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* RESUMEN */
+    .resumen-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 12px; margin-top: 28px; max-width: 940px;
+    }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .resumen-cmd { font-size: 16px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* TWO / THREE COL */
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px; max-width: 980px; margin-top: 20px;
+    }
+    .three-col {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 18px; max-width: 980px; margin-top: 20px;
+    }
+    .col-card {
+      background: #F8F8F8; border: 1px solid #E0E0E0;
+      border-radius: 8px; padding: 20px 22px;
+    }
+    .col-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 12px;
+    }
+    .col-card ul { margin-left: 18px; }
+    .col-card li { font-size: 17px; line-height: 1.7; color: #444; margin-bottom: 4px; }
+    .col-card p  { font-size: 16px; line-height: 1.55; color: #444; margin-bottom: 8px; }
+
+    /* TABLA MAPEO */
+    .mapeo-table { width: 100%; max-width: 980px; border-collapse: collapse; margin-top: 20px; font-size: 16px; }
+    .mapeo-table th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 10px 16px; text-align: left;
+    }
+    .mapeo-table td { padding: 13px 16px; border-bottom: 1px solid #E0E0E0; vertical-align: middle; line-height: 1.4; }
+    .mapeo-table tr:last-child td { border-bottom: none; }
+    .mapeo-table tr:nth-child(even) td { background: #F8F8F8; }
+    .mapeo-table td code, .mapeo-table td .val {
+      font-family: 'JetBrains Mono', monospace; font-size: 15px;
+      background: #1A1A1A; color: #FFD2CC; padding: 3px 9px; border-radius: 4px; font-weight: 600;
+    }
+
+    /* NOTACION / CONSOLA */
+    .notacion {
+      background: #1A1A1A; border-radius: 8px; padding: 18px 24px;
+      margin: 18px 0; max-width: 980px; overflow-x: auto;
+    }
+    .notacion-line {
+      font-family: 'JetBrains Mono', monospace; font-size: 15px;
+      color: #EDEDED; line-height: 1.9; white-space: pre-wrap;
+    }
+    .notacion-line .prompt { color: #FF8A80; font-weight: 700; }
+    .notacion-line .hl     { color: #FFD2CC; font-weight: 700; }
+    .notacion-line .ok     { color: #7CD992; font-weight: 700; }
+    .notacion-line .cmt    { color: #888; }
+
+    /* PASOS DE INSTALACION */
+    .steps { display: flex; flex-direction: column; gap: 14px; max-width: 1000px; margin-top: 18px; }
+    .step {
+      display: flex; gap: 18px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0;
+      border-left: 4px solid var(--red); border-radius: 8px; padding: 16px 22px;
+    }
+    .step.warn-step  { border-left-color: var(--orange); background: #FBF4F4; }
+    .step.last-step  { border-left-color: var(--green); }
+    .step-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900; font-size: 34px; color: var(--red);
+      line-height: 1; width: 48px; flex-shrink: 0; text-align: center; padding-top: 2px;
+    }
+    .step.warn-step .step-num { color: var(--orange); }
+    .step.last-step .step-num { color: var(--green); }
+    .step-body { flex: 1; }
+    .step-title {
+      display: block; font-family: 'Barlow Condensed', sans-serif;
+      font-size: 21px; font-weight: 800; color: var(--dark);
+      text-transform: uppercase; letter-spacing: 0.01em; margin-bottom: 6px;
+    }
+    .step-body p { font-size: 17px; line-height: 1.6; color: #444; margin: 0 0 6px; }
+    .step-body p:last-child { margin-bottom: 0; }
+
+    /* PILDORA DE RUTA / VALOR INLINE */
+    .kbd {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: #EBEBEB; border: 1px solid #D5D5D5;
+      padding: 2px 8px; border-radius: 4px; color: #1A1A1A; font-weight: 600;
+      white-space: nowrap;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; background: #EBEBEB;
+      padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    /* PROGRESS BAR */
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; background: var(--red);
+      width: 0%; z-index: 9999;
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
+      pointer-events: none;
+    }
+
+    /* ANIMACIONES */
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+    .slide.visible .anim:nth-child(7) { transition-delay: 670ms; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- ============================================================
+     SLIDE 1 - PORTADA
+============================================================ -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Fundamentos de Base de Datos &middot; TI3V12 &middot; Unidad 3 &middot; Guía de instalación</div>
+  <div class="cover-title anim">Instalar<br>Oracle <span>en tu PC</span></div>
+  <p class="cover-desc anim">
+    Paso a paso, sin saltarte nada, para dejar <strong>Oracle Database XE</strong> y
+    <strong>SQL Developer</strong> funcionando en tu computador con <strong>Windows</strong>.
+    Al terminar vas a poder crear tablas y escribir SQL en tu propia máquina,
+    igual que en el laboratorio.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>V-FB50-N1-P14-C1</span></span>
+    <span class="cover-chip">Material UA3 &middot; SQL</span>
+    <span class="cover-chip">Solo <span>Windows 10 / 11</span> (64 bits)</span>
+    <span class="cover-chip">Equipo personal &middot; opcional</span>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SLIDE 2 - ¿QUIÉN NECESITA HACER ESTO?
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Lee esto primero</span>
+  <div class="sep-num anim">Antes de partir</div>
+  <div class="sep-title anim">¿Esto es<br><span>para ti</span>?</div>
+  <p class="sep-desc anim" style="margin-bottom:10px;">No todos tienen que instalar nada. Ubícate en uno de los dos casos:</p>
+  <div class="two-col anim" style="max-width:900px;">
+    <div class="col-card" style="background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.12);">
+      <div class="col-card-title" style="color:#7CD992;">Trabajo en el laboratorio</div>
+      <p style="color:rgba(255,255,255,0.75);">No tienes que instalar <strong style="color:#fff;">nada</strong>. Los computadores del laboratorio ya tienen Oracle y SQL Developer listos. Puedes cerrar esta guía.</p>
+    </div>
+    <div class="col-card" style="background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.12);">
+      <div class="col-card-title" style="color:#FF8A80;">Quiero usar mi PC personal</div>
+      <p style="color:rgba(255,255,255,0.75);">Esta guía es <strong style="color:#fff;">para ti</strong>. Sigue cada paso en orden, sin adelantarte. Tómate tu tiempo: se hace una sola vez.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SLIDE 3 - QUÉ VAMOS A INSTALAR
+============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Panorama</span>
+  <div class="concept-label anim">El plan &middot; Dos programas distintos</div>
+  <div class="concept-title anim">Vas a instalar<br><span style="color:var(--blue)">dos cosas</span></div>
+  <div class="concept-body anim">
+    <p>Oracle no es un solo programa, son <strong>dos piezas</strong> que trabajan juntas. Es importante que entiendas la diferencia, porque a veces los alumnos creen que instalaron todo cuando solo pusieron una mitad.</p>
+    <div class="two-col">
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--blue);">1. El motor &middot; Oracle XE</div>
+        <p><strong>Oracle Database XE</strong> es la base de datos misma: el "cerebro" que guarda tus tablas y datos. Trabaja por dentro, no tiene una ventana bonita. Una vez instalado, queda corriendo solo en tu PC.</p>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--red);">2. El cliente &middot; SQL Developer</div>
+        <p><strong>SQL Developer</strong> es la ventana donde TÚ escribes SQL. Es el programa que abres, escribes <code>SELECT</code>, y le pides al motor que responda. Sin él, no tienes cómo "hablarle" a la base.</p>
+      </div>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#128161;</span>
+      <div class="callout-content">
+        <strong>La analogía del auto</strong>
+        <p>El <strong>motor (Oracle XE)</strong> es el motor del auto: hace toda la fuerza, pero no te subes a él directamente. <strong>SQL Developer</strong> es el volante y el tablero: es por donde tú manejas. Necesitas los dos, y en este orden: primero el motor, después el volante.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SLIDE 4 - REQUISITOS
+============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Requisitos</span>
+  <div class="concept-label anim">Antes de descargar &middot; Revisa que cumples esto</div>
+  <div class="concept-title anim">Lo que tu PC<br><span style="color:var(--blue)">necesita</span></div>
+  <div class="concept-body anim">
+    <p>Revisa esta lista <strong>antes</strong> de empezar a descargar. Si algo no se cumple, mejor resuélvelo primero o usa el laboratorio.</p>
+    <table class="mapeo-table">
+      <thead><tr><th style="width:34%;">Requisito</th><th>Detalle</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Sistema operativo</strong></td><td>Windows 10 o Windows 11, de <strong>64 bits</strong>. (Esta guía NO sirve para Mac ni Linux.)</td></tr>
+        <tr><td><strong>Memoria RAM</strong></td><td>Al menos <strong>2 GB</strong> libres. Con 4 GB o más, mejor.</td></tr>
+        <tr><td><strong>Espacio en disco</strong></td><td>Unos <strong>10 GB libres</strong> entre la descarga y la instalación.</td></tr>
+        <tr><td><strong>Permisos</strong></td><td>Tu usuario de Windows debe poder <strong>instalar programas</strong> (ser administrador del equipo).</td></tr>
+        <tr><td><strong>Cuenta Oracle</strong></td><td>Una <strong>cuenta gratuita</strong> de Oracle (correo y contraseña). La creas en el primer paso, es gratis.</td></tr>
+        <tr><td><strong>Internet</strong></td><td>Conexión estable: vas a descargar archivos grandes (más de 2 GB).</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Consejo</strong>
+        <p>Hazlo con tiempo y buena conexión, no quince minutos antes de una clase. La descarga sola puede tardar bastante según tu internet.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     PARTE A - SEPARADOR
+============================================================ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-pasos">Parte A</span>
+  <div class="sep-num anim">Parte A &middot; El motor</div>
+  <div class="sep-title anim">Instalar<br>Oracle <span>XE</span></div>
+  <p class="sep-desc anim">Primero el motor de la base de datos. Es la parte más larga, pero es "siguiente, siguiente". Sigue cada paso sin saltarte ninguno.</p>
+</div>
+
+
+<!-- ============================================================
+     A - DESCARGA
+============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Parte A &middot; Descarga</span>
+  <div class="concept-label anim">A &middot; Pasos 1 y 2 &middot; Conseguir el archivo</div>
+  <div class="concept-title anim">Descargar<br><span style="color:var(--blue)">Oracle XE</span></div>
+  <div class="concept-body anim">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <span class="step-title">Abre la página de descarga</span>
+          <p>En tu navegador entra a la página oficial de Oracle XE:</p>
+          <p><span class="kbd">oracle.com/database/technologies/xe-downloads.html</span></p>
+          <p>Busca la opción <strong>"Oracle Database 21c Express Edition for Windows x64"</strong> y haz clic para descargar.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <span class="step-title">Inicia sesión y descarga</span>
+          <p>Oracle te puede pedir <strong>iniciar sesión</strong>. Si no tienes cuenta, dale a "Create Account", créala gratis (es solo correo y contraseña) y vuelve.</p>
+          <p>Se descargará un archivo comprimido <span class="kbd">.zip</span> de más de 2 GB. Espera a que termine por completo antes de seguir.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-warn">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>No abras el archivo a medio descargar</strong>
+        <p>Si lo abres antes de que termine, los archivos salen corruptos y la instalación falla. Espera a que la descarga llegue al 100%.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     A - INSTALACIÓN (descomprimir + setup)
+============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Parte A &middot; Instalación</span>
+  <div class="concept-label anim">A &middot; Pasos 3 y 4 &middot; Ejecutar el instalador</div>
+  <div class="concept-title anim">Iniciar la<br><span style="color:var(--blue)">instalación</span></div>
+  <div class="concept-body anim">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <span class="step-title">Descomprime el .zip</span>
+          <p>Haz clic derecho sobre el archivo descargado y elige <strong>"Extraer todo..."</strong>. Espera a que termine. Vas a obtener una carpeta nueva.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <span class="step-title">Ejecuta el instalador como administrador</span>
+          <p>Entra a la carpeta que se creó y busca el archivo <span class="kbd">setup.exe</span>.</p>
+          <p>Haz <strong>clic derecho</strong> sobre él y elige <strong>"Ejecutar como administrador"</strong>. Si Windows pregunta "¿Permites que esta app haga cambios?", responde <strong>Sí</strong>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#128161;</span>
+      <div class="callout-content">
+        <strong>¿Por qué "como administrador"?</strong>
+        <p>Oracle instala un servicio que corre en segundo plano en Windows. Sin permisos de administrador, la instalación se queda a medias y después no conecta. No te saltes esta parte.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     A - ASISTENTE
+============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Parte A &middot; Asistente</span>
+  <div class="concept-label anim">A &middot; Pasos 5 y 6 &middot; Las pantallas del asistente</div>
+  <div class="concept-title anim">Siguiente,<br><span style="color:var(--blue)">siguiente...</span></div>
+  <div class="concept-body anim">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <span class="step-title">Bienvenida y licencia</span>
+          <p>Se abre una ventana de instalación. En la pantalla de <strong>bienvenida</strong> presiona <strong>Next</strong> (Siguiente).</p>
+          <p>En la pantalla de la <strong>licencia</strong>, marca <strong>"I accept the terms..."</strong> (Acepto los términos) y presiona <strong>Next</strong>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <span class="step-title">Carpeta de instalación</span>
+          <p>Te muestra dónde se instalará (algo como <span class="kbd">C:\app\...</span>). <strong>No cambies nada</strong>: deja la ruta que viene por defecto y presiona <strong>Next</strong>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Regla simple para alumnos</strong>
+        <p>En todo el asistente, salvo el paso de la contraseña (que viene ahora), deja <strong>todo como está</strong> y presiona Next. No hace falta cambiar ninguna opción.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     A - CONTRASEÑA (clave)
+============================================================ -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Parte A &middot; Contraseña</span>
+  <div class="concept-label anim">A &middot; Paso 7 &middot; El paso MÁS importante</div>
+  <div class="concept-title anim">Define tu<br><span style="color:var(--red)">contraseña</span></div>
+  <div class="concept-body anim">
+    <div class="steps">
+      <div class="step warn-step">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <span class="step-title">Escribe una contraseña y ANÓTALA</span>
+          <p>El asistente te pide crear una <strong>contraseña para la base de datos</strong>. La escribes dos veces (la segunda es para confirmar).</p>
+          <p>Esta contraseña es la llave de tu base de datos. La vas a necesitar <strong>cada vez</strong> que te conectes. Anótala en un lugar seguro <strong>ahora mismo</strong>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-important">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>Si olvidas esta contraseña, no podrás entrar</strong>
+        <p>No hay un "¿olvidaste tu contraseña?" como en las redes sociales. Recuperarla es muy engorroso. Usa una que recuerdes bien y <strong>escríbela</strong>. Sugerencia: algo simple pero con una mayúscula y un número, por ejemplo <code>Oracle2026</code>. Evita espacios y empezar con un número.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Dato</strong>
+        <p>Esa misma contraseña sirve para los usuarios internos de Oracle (<code>SYS</code>, <code>SYSTEM</code> y <code>PDBADMIN</code>). Tú vas a usar el usuario <code>SYSTEM</code> con esta contraseña. Recuérdalo para la Parte C.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     A - INSTALAR Y FINALIZAR
+============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Parte A &middot; Final</span>
+  <div class="concept-label anim">A &middot; Pasos 8 y 9 &middot; Instalar y terminar</div>
+  <div class="concept-title anim">Instalar y<br><span style="color:var(--blue)">finalizar</span></div>
+  <div class="concept-body anim">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">8</div>
+        <div class="step-body">
+          <span class="step-title">Presiona Install y espera</span>
+          <p>Llegas a un resumen. Presiona <strong>Install</strong>. Ahora <strong>espera con paciencia</strong>: la barra puede tardar varios minutos. No cierres la ventana ni apagues el PC.</p>
+        </div>
+      </div>
+      <div class="step last-step">
+        <div class="step-num">9</div>
+        <div class="step-body">
+          <span class="step-title">Lee la pantalla final y presiona Finish</span>
+          <p>Al terminar aparece una pantalla con un resumen y <strong>datos importantes de conexión</strong>. No la cierres de golpe: estos datos los usarás en la Parte C.</p>
+        </div>
+      </div>
+    </div>
+    <div class="notacion">
+      <div class="notacion-line"><span class="cmt"># Lo que muestra la pantalla final (anótalo):</span></div>
+      <div class="notacion-line">Container Database (CDB)..: <span class="hl">XE</span></div>
+      <div class="notacion-line">Pluggable Database (PDB)..: <span class="hl">XEPDB1</span>   <span class="cmt">&lt;- esta es la que usarás</span></div>
+      <div class="notacion-line">Puerto del listener.......: <span class="hl">1521</span></div>
+      <div class="notacion-line">EM Express (administración): 5500</div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>El motor ya quedó corriendo</strong>
+        <p>Listo: Oracle XE quedó instalado y <strong>arranca solo</strong> con Windows. No tienes que "abrirlo". Ahora falta el volante: SQL Developer.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     A - FICHA DE DATOS DE CONEXIÓN
+============================================================ -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Tu ficha</span>
+  <div class="concept-label anim">A &middot; Guarda esto &middot; Tus datos de conexión</div>
+  <div class="concept-title anim">Anota tu<br><span style="color:var(--red)">ficha</span></div>
+  <div class="concept-body anim">
+    <p>Antes de seguir, copia estos datos en tu cuaderno o en un archivo. Son los que pondrás en SQL Developer en la Parte C. Esta es <strong>tu ficha personal de conexión</strong>:</p>
+    <table class="mapeo-table">
+      <thead><tr><th style="width:42%;">Campo</th><th>Tu valor</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Usuario</strong> (Username)</td><td><span class="val">SYSTEM</span></td></tr>
+        <tr><td><strong>Contraseña</strong> (Password)</td><td>la que escribiste en el paso 7</td></tr>
+        <tr><td><strong>Nombre de host</strong> (Hostname)</td><td><span class="val">localhost</span></td></tr>
+        <tr><td><strong>Puerto</strong> (Port)</td><td><span class="val">1521</span></td></tr>
+        <tr><td><strong>Nombre del servicio</strong> (Service name)</td><td><span class="val">XEPDB1</span></td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#128161;</span>
+      <div class="callout-content">
+        <strong>"localhost" significa "este mismo computador"</strong>
+        <p>Como el motor está instalado en tu propio PC, le dices a SQL Developer que busque la base en <code>localhost</code>, es decir, "aquí mismo". No necesitas internet para conectarte una vez instalado.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     PARTE B - SEPARADOR
+============================================================ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-pasos">Parte B</span>
+  <div class="sep-num anim">Parte B &middot; El cliente</div>
+  <div class="sep-title anim">Instalar<br>SQL <span>Developer</span></div>
+  <p class="sep-desc anim">Ahora el programa donde escribirás SQL. Buena noticia: este no tiene instalador, es mucho más rápido que el motor.</p>
+</div>
+
+
+<!-- ============================================================
+     B - DESCARGA SQL DEVELOPER
+============================================================ -->
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Parte B &middot; Descarga</span>
+  <div class="concept-label anim">B &middot; Pasos 10 y 11 &middot; Conseguir SQL Developer</div>
+  <div class="concept-title anim">Descargar<br>SQL <span style="color:var(--orange)">Developer</span></div>
+  <div class="concept-body anim">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">10</div>
+        <div class="step-body">
+          <span class="step-title">Abre la página de SQL Developer</span>
+          <p>En tu navegador entra a:</p>
+          <p><span class="kbd">oracle.com/database/sqldeveloper/</span></p>
+          <p>Haz clic en <strong>"Download"</strong>.</p>
+        </div>
+      </div>
+      <div class="step warn-step">
+        <div class="step-num">11</div>
+        <div class="step-body">
+          <span class="step-title">Elige la versión "with JDK included"</span>
+          <p>Verás varias opciones. Elige la de <strong>Windows 64-bit</strong> que diga <strong>"with JDK included"</strong> (con JDK incluido).</p>
+          <p>Esto es clave: esa versión trae adentro el Java que SQL Developer necesita. Si bajas la otra, después te pedirá instalar Java aparte y se complica.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-important">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>Si no eliges "with JDK included"</strong>
+        <p>SQL Developer no abrirá y te pedirá la ruta de un Java que probablemente no tengas. Para ahorrarte ese dolor de cabeza, baja siempre la versión <strong>con JDK incluido</strong>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     B - DESCOMPRIMIR Y ABRIR
+============================================================ -->
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Parte B &middot; Abrir</span>
+  <div class="concept-label anim">B &middot; Pasos 12 y 13 &middot; No se instala, se descomprime</div>
+  <div class="concept-title anim">Descomprimir<br>y <span style="color:var(--orange)">abrir</span></div>
+  <div class="concept-body anim">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">12</div>
+        <div class="step-body">
+          <span class="step-title">Descomprime la carpeta</span>
+          <p>SQL Developer viene en un <span class="kbd">.zip</span>. <strong>No tiene instalador.</strong> Haz clic derecho y <strong>"Extraer todo..."</strong>.</p>
+          <p>Te recomiendo extraerlo en un lugar fácil de encontrar, por ejemplo dentro de <span class="kbd">C:\</span> o en tu carpeta de Documentos.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">13</div>
+        <div class="step-body">
+          <span class="step-title">Abre sqldeveloper.exe</span>
+          <p>Entra a la carpeta que se descomprimió. Adentro busca el archivo <span class="kbd">sqldeveloper.exe</span> (tiene un ícono rojo) y haz <strong>doble clic</strong>.</p>
+          <p>La <strong>primera vez tarda más</strong> en abrir. Si pregunta si quieres importar configuraciones de una versión anterior, responde <strong>No</strong>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Crea un acceso directo</strong>
+        <p>Como no hay instalador, no aparecerá en el menú inicio solo. Haz clic derecho sobre <code>sqldeveloper.exe</code> &rarr; "Enviar a" &rarr; "Escritorio (crear acceso directo)". Así lo abres rápido la próxima vez.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     PARTE C - SEPARADOR
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-pasos">Parte C</span>
+  <div class="sep-num anim">Parte C &middot; Unir las dos piezas</div>
+  <div class="sep-title anim">Conectar el<br>volante al <span>motor</span></div>
+  <p class="sep-desc anim">Tienes el motor (Oracle XE) y el volante (SQL Developer). Falta presentarlos: crear una conexión para que SQL Developer le hable a tu base.</p>
+</div>
+
+
+<!-- ============================================================
+     C - CREAR CONEXIÓN
+============================================================ -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Parte C &middot; Conexión</span>
+  <div class="concept-label anim">C &middot; Pasos 14 y 15 &middot; Crear la conexión</div>
+  <div class="concept-title anim">Crear una<br><span style="color:var(--red)">conexión</span></div>
+  <div class="concept-body anim">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">14</div>
+        <div class="step-body">
+          <span class="step-title">Haz clic en el botón verde "+"</span>
+          <p>Ya con SQL Developer abierto, arriba a la izquierda verás un panel "Connections" (Conexiones) con un <strong>botón verde con un "+"</strong>. Haz clic ahí.</p>
+          <p>Se abre una ventana llamada <strong>"New / Select Database Connection"</strong>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">15</div>
+        <div class="step-body">
+          <span class="step-title">Rellena los campos con tu ficha</span>
+          <p>Copia exactamente los valores de tu ficha de la Parte A. Mira la tabla de la lámina siguiente para no equivocarte en ningún campo.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-important">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>El error más común está aquí</strong>
+        <p>En la zona de host/puerto hay dos opciones: <strong>"SID"</strong> y <strong>"Service name"</strong> (Nombre de servicio). Debes elegir <strong>Service name</strong> y escribir <code>XEPDB1</code>. Si dejas SID, no conectará.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     C - VALORES EXACTOS
+============================================================ -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Parte C &middot; Campos</span>
+  <div class="concept-label anim">C &middot; Paso 15 &middot; Qué va en cada casilla</div>
+  <div class="concept-title anim">Campo por<br><span style="color:var(--red)">campo</span></div>
+  <div class="concept-body anim">
+    <table class="mapeo-table">
+      <thead><tr><th style="width:38%;">Casilla en SQL Developer</th><th>Qué escribir</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Name</strong> (Nombre)</td><td><span class="val">XE Local</span> &middot; o cualquier nombre que te guste</td></tr>
+        <tr><td><strong>Username</strong> (Usuario)</td><td><span class="val">SYSTEM</span></td></tr>
+        <tr><td><strong>Password</strong> (Contraseña)</td><td>la del paso 7 &middot; marca <strong>"Save Password"</strong></td></tr>
+        <tr><td><strong>Connection Type</strong> (Tipo)</td><td><span class="val">Basic</span></td></tr>
+        <tr><td><strong>Hostname</strong></td><td><span class="val">localhost</span></td></tr>
+        <tr><td><strong>Port</strong> (Puerto)</td><td><span class="val">1521</span></td></tr>
+        <tr><td><strong>Service name</strong> (selecciona esta opción)</td><td><span class="val">XEPDB1</span></td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Marca "Save Password"</strong>
+        <p>Si marcas <strong>"Save Password"</strong> (Guardar contraseña), no te la pedirá cada vez que abras SQL Developer. Cómodo para tu PC personal.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     C - PROBAR Y CONECTAR
+============================================================ -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Parte C &middot; Probar</span>
+  <div class="concept-label anim">C &middot; Pasos 16 y 17 &middot; Test y Connect</div>
+  <div class="concept-title anim">Probar y<br><span style="color:var(--red)">conectar</span></div>
+  <div class="concept-body anim">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">16</div>
+        <div class="step-body">
+          <span class="step-title">Presiona "Test"</span>
+          <p>Antes de guardar, presiona el botón <strong>"Test"</strong> (Probar). Abajo a la izquierda debe aparecer en verde:</p>
+          <p><span class="kbd" style="color:#2e7d32;">Status: Success</span> (Estado: Correcto).</p>
+        </div>
+      </div>
+      <div class="step last-step">
+        <div class="step-num">17</div>
+        <div class="step-body">
+          <span class="step-title">Presiona "Connect"</span>
+          <p>Si te salió <strong>Success</strong>, presiona <strong>"Connect"</strong> (Conectar). La ventana se cierra y tu conexión <strong>XE Local</strong> aparece en el panel de la izquierda. ¡Ya estás dentro!</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-warn">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>¿Te salió un error en rojo en vez de Success?</strong>
+        <p>Tranquilo, es normal a la primera. Casi siempre es la contraseña mal escrita o el "Service name" mal puesto. Revisa la lámina de <strong>Problemas comunes</strong> al final de esta guía: están los errores típicos y cómo solucionarlos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     PARTE D - SEPARADOR
+============================================================ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-pasos">Parte D</span>
+  <div class="sep-num anim">Parte D &middot; Comprobar</div>
+  <div class="sep-title anim">Probar que<br>todo <span>funciona</span></div>
+  <p class="sep-desc anim">Un último paso para estar 100% seguro: pedirle algo a la base y ver que responde.</p>
+</div>
+
+
+<!-- ============================================================
+     D - VERIFICACIÓN
+============================================================ -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Parte D &middot; Prueba</span>
+  <div class="concept-label anim">D &middot; Pasos 18 y 19 &middot; Tu primer SQL</div>
+  <div class="concept-title anim">Tu primera<br><span style="color:var(--green)">consulta</span></div>
+  <div class="concept-body anim">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">18</div>
+        <div class="step-body">
+          <span class="step-title">Escribe esta consulta en la hoja SQL</span>
+          <p>Al conectar se abre una hoja en blanco (SQL Worksheet). Escribe exactamente:</p>
+        </div>
+      </div>
+    </div>
+    <div class="notacion">
+      <div class="notacion-line"><span class="hl">SELECT</span> 'Conexion exitosa' <span class="hl">AS</span> estado <span class="hl">FROM</span> dual;</div>
+    </div>
+    <div class="steps">
+      <div class="step last-step">
+        <div class="step-num">19</div>
+        <div class="step-body">
+          <span class="step-title">Ejecútala</span>
+          <p>Presiona el botón <strong>play verde</strong> (un triángulo) o usa el teclado: <span class="kbd">Ctrl + Enter</span>.</p>
+          <p>Abajo, en la zona de resultados, debe aparecer una tabla con una fila:</p>
+        </div>
+      </div>
+    </div>
+    <div class="notacion">
+      <div class="notacion-line"><span class="cmt">ESTADO</span></div>
+      <div class="notacion-line"><span class="ok">Conexion exitosa</span></div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Si ves "Conexion exitosa", terminaste</strong>
+        <p><code>dual</code> es una tablita de prueba que Oracle trae siempre. Si te respondió, significa que el motor y el cliente están hablando perfecto. Tu Oracle ya está listo para trabajar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     PROBLEMAS COMUNES
+============================================================ -->
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-cierre">Ayuda</span>
+  <div class="concept-label anim">Problemas comunes &middot; Si algo salió mal</div>
+  <div class="concept-title anim">Problemas<br><span style="color:var(--orange)">comunes</span></div>
+  <div class="concept-body anim">
+    <p>Si te topaste con un error, búscalo aquí. Estos cuatro cubren el 95% de los casos:</p>
+    <table class="mapeo-table" style="font-size:15px;">
+      <thead><tr><th style="width:38%;">Lo que te dice</th><th>Qué hacer</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>ORA-12541</code><br>"TNS: no listener"</td>
+          <td>El motor no está corriendo. Abre el menú inicio, escribe <strong>"Servicios"</strong>, busca <span class="kbd">OracleServiceXE</span>, clic derecho &rarr; <strong>Iniciar</strong>. O simplemente <strong>reinicia el PC</strong> y vuelve a intentar.</td>
+        </tr>
+        <tr>
+          <td><code>ORA-01017</code><br>"invalid username/password"</td>
+          <td>Contraseña o usuario mal escritos. El usuario es <code>SYSTEM</code> y la contraseña es <strong>exactamente</strong> la del paso 7. Cuidado con mayúsculas y el teclado.</td>
+        </tr>
+        <tr>
+          <td><code>ORA-12514</code><br>"listener does not know of service"</td>
+          <td>El "Service name" está mal. Asegúrate de haber elegido la opción <strong>Service name</strong> (no SID) y escrito <code>XEPDB1</code>.</td>
+        </tr>
+        <tr>
+          <td>SQL Developer <strong>no abre</strong> o pide ruta de Java</td>
+          <td>Descargaste la versión sin JDK. Borra esa carpeta y baja la versión <strong>"with JDK included"</strong> (paso 11).</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>¿Olvidaste la contraseña del paso 7?</strong>
+        <p>Recuperarla es complejo. Lo más rápido para un alumno suele ser <strong>desinstalar y reinstalar</strong> Oracle XE definiendo una nueva (y esta vez anotándola). Si te complicas, escríbeme y lo vemos en clase.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     CIERRE - CHECKLIST
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Listo</div>
+  <div class="sep-title anim">Quedaste<br><span>listo</span></div>
+  <p class="sep-desc anim">Si llegaste hasta acá con tu "Conexion exitosa", tienes Oracle funcionando en tu PC. Repaso de lo que hiciste:</p>
+  <div class="resumen-grid anim">
+    <div class="resumen-item"><div class="resumen-cmd">A &middot; El motor</div><div class="resumen-desc">Instalaste Oracle Database XE y definiste tu contraseña</div></div>
+    <div class="resumen-item"><div class="resumen-cmd">B &middot; El cliente</div><div class="resumen-desc">Descomprimiste y abriste SQL Developer (con JDK incluido)</div></div>
+    <div class="resumen-item"><div class="resumen-cmd">C &middot; La conexión</div><div class="resumen-desc">SYSTEM / localhost / 1521 / Service name XEPDB1 &middot; Test: Success</div></div>
+    <div class="resumen-item"><div class="resumen-cmd">D &middot; La prueba</div><div class="resumen-desc">Corriste tu primer SELECT y la base respondió</div></div>
+  </div>
+  <div style="margin-top:32px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Guarda en un lugar seguro</div>
+    <div style="font-size:17px; color:rgba(255,255,255,0.6); line-height:1.7;">
+      Tu <strong style="color:rgba(255,255,255,0.85)">contraseña</strong> del paso 7 &middot; y tu ficha de conexión: usuario <strong style="color:rgba(255,255,255,0.85)">SYSTEM</strong>, host <strong style="color:rgba(255,255,255,0.85)">localhost</strong>, puerto <strong style="color:rgba(255,255,255,0.85)">1521</strong>, servicio <strong style="color:rgba(255,255,255,0.85)">XEPDB1</strong>. Las vas a usar en cada clase de SQL de la Unidad 3.
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
