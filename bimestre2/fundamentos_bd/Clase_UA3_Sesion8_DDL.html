@@ -306,6 +306,43 @@
     .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
     .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
     .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+
+    /* BANCO DE EJERCICIOS */
+    .ejercicio-nivel {
+      position: absolute; top: 24px; left: 32px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .nivel-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--red);
+    }
+    .nivel-bar { display: flex; gap: 3px; }
+    .nivel-pip { width: 12px; height: 5px; border-radius: 3px; background: #E0E0E0; }
+    .nivel-pip.on { background: var(--red); }
+
+    .solucion {
+      max-width: 980px; margin-top: 12px;
+      border: 1px solid var(--border); border-radius: 8px;
+      background: #FAFAFA; overflow: hidden;
+    }
+    .solucion > summary {
+      cursor: pointer; list-style: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 17px; font-weight: 800; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--dark);
+      padding: 14px 20px; display: flex; align-items: center; gap: 10px;
+      user-select: none;
+    }
+    .solucion > summary::-webkit-details-marker { display: none; }
+    .solucion > summary::before {
+      content: '\25B6'; font-size: 11px; color: var(--red);
+      transition: transform 0.2s;
+    }
+    .solucion[open] > summary::before { transform: rotate(90deg); }
+    .solucion > summary:hover { background: #F2F2F2; }
+    .solucion .notacion { margin: 0 16px 16px; }
+    .solucion-nota { padding: 2px 20px 16px; font-size: 15px; color: var(--muted); line-height: 1.55; }
   </style>
 </head>
 <body>
@@ -646,16 +683,16 @@
     <div class="tarea-box">
       <div class="tarea-title">Manos al teclado</div>
       <ol>
-        <li>Agrega a <strong>SOCIO</strong> una columna <code>telefono</code> de texto (15 caracteres).</li>
-        <li>Amplía el <code>email</code> de SOCIO a 100 caracteres.</li>
-        <li>Agrega a <strong>LIBRO</strong> una columna <code>anio_publicacion NUMBER</code> que <strong>no acepte años futuros</strong>. Pista: necesitas un <code>CHECK</code> con la condición correcta.</li>
+        <li>Agrega a <strong>SOCIO</strong> una columna <code>direccion</code> de texto (100 caracteres).</li>
+        <li>Amplía el <code>titulo</code> de LIBRO de 120 a 150 caracteres.</li>
+        <li>Agrega a <strong>LIBRO</strong> una columna <code>anio_publicacion NUMBER</code> que solo acepte años <strong>razonables</strong> (entre 1450 y 2100). Pista: necesitas un <code>CHECK</code> con un rango.</li>
       </ol>
     </div>
     <div class="callout callout-tip">
       <span class="callout-icon">&#10003;</span>
       <div class="callout-content">
         <strong>Si te trabas en el 3</strong>
-        <p>"No futuro" significa que el año sea menor o igual al actual. Consulta la documentación de Oracle para la forma exacta: no se memoriza, se busca.</p>
+        <p>Un rango se expresa con <code>BETWEEN ... AND ...</code> o combinando dos condiciones con <code>AND</code>. Ojo: el <code>CHECK</code> debe comparar contra valores fijos, no contra la fecha del sistema.</p>
       </div>
     </div>
   </div>
@@ -718,6 +755,441 @@
 </div>
 
 
+<!-- ============================================================
+     BANCO DE EJERCICIOS - SEPARADOR
+============================================================ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-practica">Práctica</span>
+  <div class="sep-num anim">Banco de ejercicios</div>
+  <div class="sep-title anim">Sube de <span>nivel</span></div>
+  <p class="sep-desc anim">Doce ejercicios que arrancan muy fáciles y terminan a nivel ES3. Hazlos en orden, ejecuta cada uno en SQL Developer y abre la solución solo cuando ya lo intentaste.</p>
+</div>
+
+
+<!-- EJERCICIO 01 -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Ejercicio 01</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Muy fácil</span><span class="nivel-bar" data-level="1"></span></div>
+  <div class="concept-label anim">Dominio &middot; Cafetería</div>
+  <div class="concept-title anim">Tu primera <span>tabla</span></div>
+  <div class="concept-body anim">
+    <p>Lo más básico: una tabla con su clave primaria y una columna de texto.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Crea PRODUCTO</div>
+      <ol>
+        <li><code>id_producto</code>: número, clave primaria.</li>
+        <li><code>nombre</code>: texto de hasta 60 caracteres.</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> producto (</div>
+        <div class="notacion-line">  id_producto <span class="kw">NUMBER</span>,</div>
+        <div class="notacion-line">  nombre      <span class="kw">VARCHAR2</span>(60),</div>
+        <div class="notacion-line">  <span class="kw">CONSTRAINT</span> pk_producto <span class="kw">PRIMARY KEY</span> (id_producto)</div>
+        <div class="notacion-line">);</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 02 -->
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Ejercicio 02</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Muy fácil</span><span class="nivel-bar" data-level="2"></span></div>
+  <div class="concept-label anim">Dominio &middot; Geografía</div>
+  <div class="concept-title anim">Que no quede <span>vacía</span></div>
+  <div class="concept-body anim">
+    <p>Igual que la anterior, pero ahora el nombre es obligatorio.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Crea CIUDAD</div>
+      <ol>
+        <li><code>id_ciudad</code>: número, clave primaria.</li>
+        <li><code>nombre</code>: texto de hasta 60 caracteres, <strong>obligatorio</strong>.</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> ciudad (</div>
+        <div class="notacion-line">  id_ciudad <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_ciudad <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  nombre    <span class="kw">VARCHAR2</span>(60) <span class="kw">NOT NULL</span></div>
+        <div class="notacion-line">);</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 03 -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Ejercicio 03</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Fácil</span><span class="nivel-bar" data-level="3"></span></div>
+  <div class="concept-label anim">Dominio &middot; Veterinaria</div>
+  <div class="concept-title anim">Más <span>columnas</span></div>
+  <div class="concept-body anim">
+    <p>Cuatro columnas de tipos distintos. Fíjate cuál es texto y cuál es número.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Crea MASCOTA</div>
+      <ol>
+        <li><code>id_mascota</code>: número, clave primaria.</li>
+        <li><code>nombre</code>: texto (50), obligatorio.</li>
+        <li><code>especie</code>: texto (40).</li>
+        <li><code>peso</code>: número.</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> mascota (</div>
+        <div class="notacion-line">  id_mascota <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_mascota <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  nombre     <span class="kw">VARCHAR2</span>(50) <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  especie    <span class="kw">VARCHAR2</span>(40),</div>
+        <div class="notacion-line">  peso       <span class="kw">NUMBER</span></div>
+        <div class="notacion-line">);</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 04 -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Ejercicio 04</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Fácil</span><span class="nivel-bar" data-level="4"></span></div>
+  <div class="concept-label anim">Dominio &middot; Streaming</div>
+  <div class="concept-title anim">Sin <span>repetidos</span></div>
+  <div class="concept-body anim">
+    <p>El email identifica a cada usuario: no puede repetirse ni quedar vacío.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Crea USUARIO</div>
+      <ol>
+        <li><code>id_usuario</code>: número, clave primaria.</li>
+        <li><code>email</code>: texto (80), obligatorio y <strong>único</strong>.</li>
+        <li><code>nick</code>: texto (30).</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> usuario (</div>
+        <div class="notacion-line">  id_usuario <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_usuario <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  email      <span class="kw">VARCHAR2</span>(80) <span class="kw">NOT NULL</span> <span class="kw">UNIQUE</span>,</div>
+        <div class="notacion-line">  nick       <span class="kw">VARCHAR2</span>(30)</div>
+        <div class="notacion-line">);</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 05 -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Ejercicio 05</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Intermedio</span><span class="nivel-bar" data-level="5"></span></div>
+  <div class="concept-label anim">Dominio &middot; Ferretería</div>
+  <div class="concept-title anim">Reglas con <span>CHECK</span></div>
+  <div class="concept-body anim">
+    <p>La base debe rechazar precios y stock imposibles. Usa <code>CHECK</code>.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Crea ARTICULO</div>
+      <ol>
+        <li><code>id_articulo</code>: número, clave primaria.</li>
+        <li><code>nombre</code>: texto (80), obligatorio.</li>
+        <li><code>precio</code>: número, solo valores <strong>mayores que 0</strong>.</li>
+        <li><code>stock</code>: número, <strong>no negativo</strong>.</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> articulo (</div>
+        <div class="notacion-line">  id_articulo <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_articulo <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  nombre      <span class="kw">VARCHAR2</span>(80) <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  precio      <span class="kw">NUMBER</span> <span class="kw">CHECK</span> (precio &gt; 0),</div>
+        <div class="notacion-line">  stock       <span class="kw">NUMBER</span> <span class="kw">CHECK</span> (stock &gt;= 0)</div>
+        <div class="notacion-line">);</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 06 -->
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Ejercicio 06</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Intermedio</span><span class="nivel-bar" data-level="6"></span></div>
+  <div class="concept-label anim">Dominio &middot; Soporte técnico</div>
+  <div class="concept-title anim">Valores por <span>defecto</span></div>
+  <div class="concept-body anim">
+    <p>Si el usuario no da un dato, la base pone uno. Combina <code>DEFAULT</code> con <code>CHECK</code>.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Crea TICKET</div>
+      <ol>
+        <li><code>id_ticket</code>: número, clave primaria.</li>
+        <li><code>asunto</code>: texto (100), obligatorio.</li>
+        <li><code>estado</code>: texto (15), por defecto <code>'ABIERTO'</code>.</li>
+        <li><code>prioridad</code>: número, por defecto <code>3</code>, valores <strong>entre 1 y 5</strong>.</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> ticket (</div>
+        <div class="notacion-line">  id_ticket <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_ticket <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  asunto    <span class="kw">VARCHAR2</span>(100) <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  estado    <span class="kw">VARCHAR2</span>(15) <span class="kw">DEFAULT</span> <span class="str">'ABIERTO'</span>,</div>
+        <div class="notacion-line">  prioridad <span class="kw">NUMBER</span> <span class="kw">DEFAULT</span> 3 <span class="kw">CHECK</span> (prioridad <span class="kw">BETWEEN</span> 1 <span class="kw">AND</span> 5)</div>
+        <div class="notacion-line">);</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 07 -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Ejercicio 07</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Intermedio</span><span class="nivel-bar" data-level="7"></span></div>
+  <div class="concept-label anim">Dominio &middot; Gimnasio</div>
+  <div class="concept-title anim">Todo <span>junto</span></div>
+  <div class="concept-body anim">
+    <p>Una tabla que usa las cinco herramientas a la vez. La columna <code>activo</code> solo admite dos letras.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Crea SOCIO_GYM</div>
+      <ol>
+        <li><code>id_socio</code>: número, clave primaria.</li>
+        <li><code>rut</code>: texto (12), obligatorio y único.</li>
+        <li><code>nombre</code>: texto (80), obligatorio.</li>
+        <li><code>edad</code>: número, <strong>15 o más</strong>.</li>
+        <li><code>plan</code>: texto (20), por defecto <code>'MENSUAL'</code>.</li>
+        <li><code>activo</code>: una letra, por defecto <code>'S'</code>, solo <code>'S'</code> o <code>'N'</code>.</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> socio_gym (</div>
+        <div class="notacion-line">  id_socio <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_socio_gym <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  rut      <span class="kw">VARCHAR2</span>(12) <span class="kw">NOT NULL</span> <span class="kw">UNIQUE</span>,</div>
+        <div class="notacion-line">  nombre   <span class="kw">VARCHAR2</span>(80) <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  edad     <span class="kw">NUMBER</span> <span class="kw">CHECK</span> (edad &gt;= 15),</div>
+        <div class="notacion-line">  plan     <span class="kw">VARCHAR2</span>(20) <span class="kw">DEFAULT</span> <span class="str">'MENSUAL'</span>,</div>
+        <div class="notacion-line">  activo   <span class="kw">CHAR</span>(1) <span class="kw">DEFAULT</span> <span class="str">'S'</span> <span class="kw">CHECK</span> (activo <span class="kw">IN</span> (<span class="str">'S'</span>, <span class="str">'N'</span>))</div>
+        <div class="notacion-line">);</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 08 -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Ejercicio 08</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Avanzado</span><span class="nivel-bar" data-level="8"></span></div>
+  <div class="concept-label anim">Dominio &middot; RRHH</div>
+  <div class="concept-title anim">Cambiar con <span>ALTER</span></div>
+  <div class="concept-body anim">
+    <p>Parte de esta tabla ya creada y modifícala. Necesitas tres <code>ALTER</code> distintos.</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="kw">CREATE TABLE</span> empleado (</div>
+      <div class="notacion-line">  id_empleado <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_empleado <span class="kw">PRIMARY KEY</span>,</div>
+      <div class="notacion-line">  nombre      <span class="kw">VARCHAR2</span>(60));</div>
+    </div>
+    <div class="tarea-box">
+      <div class="tarea-title">Modifica EMPLEADO</div>
+      <ol>
+        <li>Agrega <code>correo</code>: texto (80).</li>
+        <li>Amplía <code>nombre</code> a 100 caracteres.</li>
+        <li>Agrega <code>sueldo</code>: número que <strong>no admita negativos</strong>.</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">ALTER TABLE</span> empleado <span class="kw">ADD</span> (correo <span class="kw">VARCHAR2</span>(80));</div>
+        <div class="notacion-line"><span class="kw">ALTER TABLE</span> empleado <span class="kw">MODIFY</span> (nombre <span class="kw">VARCHAR2</span>(100));</div>
+        <div class="notacion-line"><span class="kw">ALTER TABLE</span> empleado <span class="kw">ADD</span> (sueldo <span class="kw">NUMBER</span> <span class="kw">CHECK</span> (sueldo &gt;= 0));</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 09 -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Ejercicio 09</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Avanzado</span><span class="nivel-bar" data-level="9"></span></div>
+  <div class="concept-label anim">Dominio &middot; Clínica</div>
+  <div class="concept-title anim">Conectar y <span>borrar</span></div>
+  <div class="concept-body anim">
+    <p>Una cita necesita un médico que exista (FK). Créalas en orden y luego bórralas en el orden correcto.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Crea y elimina</div>
+      <ol>
+        <li><code>MEDICO</code>: <code>id_medico</code> (PK), <code>nombre</code> obligatorio.</li>
+        <li><code>CITA</code>: <code>id_cita</code> (PK), <code>fecha</code> por defecto hoy, <code>id_medico</code> que apunte a MEDICO.</li>
+        <li>Elimina ambas tablas con <code>DROP</code> en el orden correcto.</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> medico (</div>
+        <div class="notacion-line">  id_medico <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_medico <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  nombre    <span class="kw">VARCHAR2</span>(80) <span class="kw">NOT NULL</span>);</div>
+        <div class="notacion-line"> </div>
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> cita (</div>
+        <div class="notacion-line">  id_cita   <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_cita <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  fecha     <span class="kw">DATE</span> <span class="kw">DEFAULT</span> <span class="kw">SYSDATE</span>,</div>
+        <div class="notacion-line">  id_medico <span class="kw">NUMBER</span> <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  <span class="kw">CONSTRAINT</span> fk_cita_medico <span class="kw">FOREIGN KEY</span> (id_medico) <span class="kw">REFERENCES</span> medico(id_medico));</div>
+        <div class="notacion-line"> </div>
+        <div class="notacion-line"><span class="cmt">-- Primero la que tiene la FK, luego la padre</span></div>
+        <div class="notacion-line"><span class="kw">DROP TABLE</span> cita;</div>
+        <div class="notacion-line"><span class="kw">DROP TABLE</span> medico;</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 10 -->
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Ejercicio 10</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Difícil</span><span class="nivel-bar" data-level="10"></span></div>
+  <div class="concept-label anim">Dominio &middot; Colegio</div>
+  <div class="concept-title anim">Tres tablas <span>conectadas</span></div>
+  <div class="concept-body anim">
+    <p>Un alumno se matricula en un curso. La tabla <code>MATRICULA</code> une las otras dos con dos claves foráneas. Cuida el orden de creación.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Crea el modelo completo</div>
+      <ol>
+        <li><code>ALUMNO</code>: <code>id_alumno</code> (PK), <code>nombre</code> obligatorio.</li>
+        <li><code>CURSO</code>: <code>id_curso</code> (PK), <code>nombre</code> obligatorio, <code>cupos</code> por defecto 30 y mayor que 0.</li>
+        <li><code>MATRICULA</code>: <code>id_matricula</code> (PK), <code>fecha</code> por defecto hoy, y dos FK hacia ALUMNO y CURSO.</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> alumno (</div>
+        <div class="notacion-line">  id_alumno <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_alumno <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  nombre    <span class="kw">VARCHAR2</span>(80) <span class="kw">NOT NULL</span>);</div>
+        <div class="notacion-line"> </div>
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> curso (</div>
+        <div class="notacion-line">  id_curso <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_curso <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  nombre   <span class="kw">VARCHAR2</span>(60) <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  cupos    <span class="kw">NUMBER</span> <span class="kw">DEFAULT</span> 30 <span class="kw">CHECK</span> (cupos &gt; 0));</div>
+        <div class="notacion-line"> </div>
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> matricula (</div>
+        <div class="notacion-line">  id_matricula <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_matricula <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  id_alumno    <span class="kw">NUMBER</span> <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  id_curso     <span class="kw">NUMBER</span> <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  fecha        <span class="kw">DATE</span> <span class="kw">DEFAULT</span> <span class="kw">SYSDATE</span>,</div>
+        <div class="notacion-line">  <span class="kw">CONSTRAINT</span> fk_matricula_alumno <span class="kw">FOREIGN KEY</span> (id_alumno) <span class="kw">REFERENCES</span> alumno(id_alumno),</div>
+        <div class="notacion-line">  <span class="kw">CONSTRAINT</span> fk_matricula_curso  <span class="kw">FOREIGN KEY</span> (id_curso)  <span class="kw">REFERENCES</span> curso(id_curso));</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 11 -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Ejercicio 11</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Difícil</span><span class="nivel-bar" data-level="11"></span></div>
+  <div class="concept-label anim">Dominio &middot; Hotel</div>
+  <div class="concept-title anim">Del enunciado al <span>modelo</span></div>
+  <div class="concept-body anim">
+    <p>Ahora sin decirte columna por columna. Lee la historia y decide tú los tipos y restricciones.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Reservas de un hotel</div>
+      <ol>
+        <li>Cada <strong>habitación</strong> tiene un número que la identifica, un tipo (obligatorio) y un precio por noche mayor que 0.</li>
+        <li>Cada <strong>huésped</strong> tiene un id, un nombre obligatorio y un documento único.</li>
+        <li>Cada <strong>reserva</strong> pertenece a un huésped y a una habitación existentes, dura una cantidad de noches mayor que 0 y guarda la fecha (por defecto hoy).</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> habitacion (</div>
+        <div class="notacion-line">  numero       <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_habitacion <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  tipo         <span class="kw">VARCHAR2</span>(30) <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  precio_noche <span class="kw">NUMBER</span> <span class="kw">CHECK</span> (precio_noche &gt; 0));</div>
+        <div class="notacion-line"> </div>
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> huesped (</div>
+        <div class="notacion-line">  id_huesped <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_huesped <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  nombre     <span class="kw">VARCHAR2</span>(80) <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  documento  <span class="kw">VARCHAR2</span>(20) <span class="kw">NOT NULL</span> <span class="kw">UNIQUE</span>);</div>
+        <div class="notacion-line"> </div>
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> reserva (</div>
+        <div class="notacion-line">  id_reserva     <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_reserva <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  id_huesped     <span class="kw">NUMBER</span> <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  num_habitacion <span class="kw">NUMBER</span> <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  noches         <span class="kw">NUMBER</span> <span class="kw">CHECK</span> (noches &gt; 0),</div>
+        <div class="notacion-line">  fecha          <span class="kw">DATE</span> <span class="kw">DEFAULT</span> <span class="kw">SYSDATE</span>,</div>
+        <div class="notacion-line">  <span class="kw">CONSTRAINT</span> fk_reserva_huesped    <span class="kw">FOREIGN KEY</span> (id_huesped)     <span class="kw">REFERENCES</span> huesped(id_huesped),</div>
+        <div class="notacion-line">  <span class="kw">CONSTRAINT</span> fk_reserva_habitacion <span class="kw">FOREIGN KEY</span> (num_habitacion) <span class="kw">REFERENCES</span> habitacion(numero));</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 12 -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Ejercicio 12</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Experto</span><span class="nivel-bar" data-level="12"></span></div>
+  <div class="concept-label anim">Dominio &middot; Tienda online &middot; Nivel ES3</div>
+  <div class="concept-title anim">El jefe <span>final</span></div>
+  <div class="concept-body anim">
+    <p>Diseña una tienda online completa desde cero: tres tablas conectadas, todas las restricciones que veas necesarias, en el orden correcto. Y al final, un <code>ALTER</code>.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Modelo E-COMMERCE</div>
+      <ol>
+        <li><strong>CLIENTE</strong>: id, email (único, obligatorio), nombre (obligatorio), fecha de registro (por defecto hoy).</li>
+        <li><strong>PEDIDO</strong>: id, el cliente que lo hizo (FK), fecha (por defecto hoy), estado (por defecto <code>'PENDIENTE'</code>), total (no negativo).</li>
+        <li><strong>DETALLE_PEDIDO</strong>: id, el pedido al que pertenece (FK), nombre del producto (obligatorio), cantidad (mayor que 0), precio unitario (mayor que 0).</li>
+        <li>Después de crear todo: agrega a PEDIDO una columna <code>descuento</code> que solo acepte valores <strong>entre 0 y 100</strong>.</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> cliente (</div>
+        <div class="notacion-line">  id_cliente     <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_cliente <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  email          <span class="kw">VARCHAR2</span>(100) <span class="kw">NOT NULL</span> <span class="kw">UNIQUE</span>,</div>
+        <div class="notacion-line">  nombre         <span class="kw">VARCHAR2</span>(80) <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  fecha_registro <span class="kw">DATE</span> <span class="kw">DEFAULT</span> <span class="kw">SYSDATE</span>);</div>
+        <div class="notacion-line"> </div>
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> pedido (</div>
+        <div class="notacion-line">  id_pedido  <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_pedido <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  id_cliente <span class="kw">NUMBER</span> <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  fecha      <span class="kw">DATE</span> <span class="kw">DEFAULT</span> <span class="kw">SYSDATE</span>,</div>
+        <div class="notacion-line">  estado     <span class="kw">VARCHAR2</span>(20) <span class="kw">DEFAULT</span> <span class="str">'PENDIENTE'</span>,</div>
+        <div class="notacion-line">  total      <span class="kw">NUMBER</span> <span class="kw">CHECK</span> (total &gt;= 0),</div>
+        <div class="notacion-line">  <span class="kw">CONSTRAINT</span> fk_pedido_cliente <span class="kw">FOREIGN KEY</span> (id_cliente) <span class="kw">REFERENCES</span> cliente(id_cliente));</div>
+        <div class="notacion-line"> </div>
+        <div class="notacion-line"><span class="kw">CREATE TABLE</span> detalle_pedido (</div>
+        <div class="notacion-line">  id_detalle      <span class="kw">NUMBER</span> <span class="kw">CONSTRAINT</span> pk_detalle <span class="kw">PRIMARY KEY</span>,</div>
+        <div class="notacion-line">  id_pedido       <span class="kw">NUMBER</span> <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  nombre_producto <span class="kw">VARCHAR2</span>(100) <span class="kw">NOT NULL</span>,</div>
+        <div class="notacion-line">  cantidad        <span class="kw">NUMBER</span> <span class="kw">CHECK</span> (cantidad &gt; 0),</div>
+        <div class="notacion-line">  precio_unitario <span class="kw">NUMBER</span> <span class="kw">CHECK</span> (precio_unitario &gt; 0),</div>
+        <div class="notacion-line">  <span class="kw">CONSTRAINT</span> fk_detalle_pedido <span class="kw">FOREIGN KEY</span> (id_pedido) <span class="kw">REFERENCES</span> pedido(id_pedido));</div>
+        <div class="notacion-line"> </div>
+        <div class="notacion-line"><span class="cmt">-- Cambio final</span></div>
+        <div class="notacion-line"><span class="kw">ALTER TABLE</span> pedido <span class="kw">ADD</span> (descuento <span class="kw">NUMBER</span> <span class="kw">DEFAULT</span> 0 <span class="kw">CHECK</span> (descuento <span class="kw">BETWEEN</span> 0 <span class="kw">AND</span> 100));</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+
 <script>
   const slides   = document.querySelectorAll('.slide');
   const total    = slides.length;
@@ -736,6 +1208,16 @@
   slides.forEach(s => obs.observe(s));
   slides[0].classList.add('visible');
   progress.style.width = (1 / total * 100) + '%';
+
+  // Barras de nivel del banco de ejercicios
+  document.querySelectorAll('.nivel-bar').forEach(bar => {
+    const lvl = +bar.dataset.level, max = +bar.dataset.max || 12;
+    for (let i = 1; i <= max; i++) {
+      const pip = document.createElement('span');
+      pip.className = 'nivel-pip' + (i <= lvl ? ' on' : '');
+      bar.appendChild(pip);
+    }
+  });
 
   document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
