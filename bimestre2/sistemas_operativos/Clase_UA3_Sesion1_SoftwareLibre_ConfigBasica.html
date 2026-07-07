@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA3 Sesión 1 — Configuración Básica de Linux Server</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #0063B1;
+      --green:  #107C10;
+      --orange: #D97706;
+      --dark:   #1A1A1A;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0;
+      color: var(--text);
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white;
+      justify-content: center;
+      padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900;
+      text-transform: uppercase; line-height: 0.92;
+      letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc { font-size: 20px; color: rgba(255,255,255,0.5); max-width: 620px; line-height: 1.65; margin-bottom: 56px; }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 16px;
+    }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900;
+      text-transform: uppercase; line-height: 0.92;
+      letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .sep-desc { font-size: 20px; color: rgba(255,255,255,0.45); max-width: 620px; line-height: 1.65; }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 64px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 900;
+      text-transform: uppercase; line-height: 0.95;
+      letter-spacing: -0.01em; color: var(--dark); margin-bottom: 32px;
+    }
+    .concept-body { max-width: 880px; }
+    .concept-body p { font-size: 19px; line-height: 1.7; color: #333; margin-bottom: 18px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body ul { margin-left: 24px; margin-bottom: 18px; }
+    .concept-body li { font-size: 18px; line-height: 1.7; color: #333; margin-bottom: 8px; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 18px 22px; margin: 20px 0;
+      max-width: 880px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content strong {
+      display: block; font-size: 13px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+    }
+    .callout-content p { font-size: 16px; line-height: 1.6; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F0FDF4; border: 1px solid #BBF7D0; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #14532D; }
+    .callout-info { background: #EFF6FF; border: 1px solid #BFDBFE; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #1E3A5F; }
+    .callout-warning { background: #FFFBEB; border: 1px solid #FDE68A; }
+    .callout-warning strong { color: var(--orange); }
+    .callout-warning p { color: #92400E; }
+
+    /* RUTA DE PASOS */
+    .ruta { display: flex; flex-direction: column; max-width: 880px; margin-top: 20px; }
+    .ruta-step { display: flex; align-items: flex-start; gap: 18px; }
+    .ruta-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .ruta-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--blue); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 17px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ruta-num.red   { background: var(--red); }
+    .ruta-num.green { background: var(--green); }
+    .ruta-num.orange{ background: var(--orange); }
+    .ruta-line { width: 2px; flex: 1; min-height: 16px; background: #BFDBFE; margin: 4px 0; }
+    .ruta-line.red    { background: #FECDD3; }
+    .ruta-line.green  { background: #BBF7D0; }
+    .ruta-line.orange { background: #FDE68A; }
+    .ruta-content { padding-bottom: 20px; padding-top: 4px; }
+    .ruta-title { font-size: 17px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .ruta-desc { font-size: 15px; color: #555; line-height: 1.6; }
+    .ruta-sub {
+      background: #F8FAFC; border-left: 3px solid #CBD5E1;
+      padding: 10px 14px; border-radius: 4px;
+      margin-top: 8px; font-size: 14px; color: #475569; line-height: 1.6;
+    }
+
+    /* PATH VISUAL */
+    .path-visual {
+      display: flex; align-items: center; flex-wrap: wrap;
+      gap: 6px; margin: 16px 0; max-width: 880px;
+    }
+    .path-step {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px; font-weight: 700;
+      padding: 6px 14px; border-radius: 4px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .path-step.highlight { background: var(--blue); }
+    .path-arrow { color: #94A3B8; font-size: 18px; font-weight: 700; }
+
+    /* TERMINAL */
+    .terminal {
+      background: #16181D; border-radius: 8px; margin: 22px 0;
+      max-width: 880px; overflow: hidden;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.16); border: 1px solid #2A2E37;
+    }
+    .terminal-bar {
+      background: #23262E; padding: 10px 16px;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid #2A2E37;
+    }
+    .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-red { background: #FF5F56; } .dot-yellow { background: #FFBD2E; } .dot-green { background: #27C93F; }
+    .terminal-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(255,255,255,0.4); margin-left: 10px;
+    }
+    .terminal-body {
+      padding: 18px 20px; font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; line-height: 1.85; color: #E6E6E6; overflow-x: auto;
+      white-space: pre; tab-size: 2;
+    }
+    .terminal-body .prompt  { color: #27C93F; }
+    .terminal-body .cmd     { color: #FFFFFF; }
+    .terminal-body .flag    { color: #FFBD2E; }
+    .terminal-body .comment { color: #6B7280; }
+    .terminal-body .out     { color: #93A1AD; }
+    .terminal-body .ok      { color: #27C93F; }
+
+    /* TARJETAS (grid conceptual) */
+    .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; max-width: 880px; margin-top: 20px; }
+    .card { background: #F8FAFC; border: 1px solid #E2E8F0; border-left: 4px solid var(--blue); border-radius: 6px; padding: 18px 20px; }
+    .card.red    { border-left-color: var(--red); }
+    .card.green  { border-left-color: var(--green); }
+    .card.orange { border-left-color: var(--orange); }
+    .card-num { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 900; color: var(--blue); line-height: 1; margin-bottom: 8px; }
+    .card.red .card-num { color: var(--red); } .card.green .card-num { color: var(--green); } .card.orange .card-num { color: var(--orange); }
+    .card-title { font-size: 17px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+    .card-desc { font-size: 15px; color: #475569; line-height: 1.55; }
+
+    /* TABLA */
+    .tbl { width: 100%; max-width: 880px; border-collapse: collapse; margin: 20px 0; font-size: 16px; }
+    .tbl th { background: var(--dark); color: white; text-align: left; padding: 12px 16px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-size: 14px; }
+    .tbl td { padding: 11px 16px; border-bottom: 1px solid #E2E8F0; color: #333; line-height: 1.5; vertical-align: top; }
+    .tbl tr:nth-child(even) td { background: #F8FAFC; }
+
+    /* ÍNDICE */
+    .index-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-top: 32px; max-width: 880px;
+    }
+    .index-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 18px 20px;
+    }
+    .index-num { font-family: 'Barlow Condensed', sans-serif; font-size: 32px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 8px; }
+    .index-name { font-size: 15px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #EFF6FF; color: var(--blue); border: 1px solid #BFDBFE; }
+    .badge-pasos    { background: #F0FDF4; color: var(--green); border: 1px solid #BBF7D0; }
+    .badge-alerta   { background: #FFFBEB; color: var(--orange); border: 1px solid #FDE68A; }
+    .badge-cierre   { background: rgba(227,30,36,0.15); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* RESUMEN */
+    .resumen-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 28px; max-width: 880px; }
+    .resumen-item { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 16px 18px; }
+    .resumen-cmd { font-size: 15px; color: white; margin-bottom: 6px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .resumen-desc { font-size: 14px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; background: #EBEBEB;
+      padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; background: var(--red);
+      width: 0%; z-index: 9999;
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
+      pointer-events: none;
+    }
+
+    .anim { opacity: 0; transform: translateY(22px); transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1); }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- ============================================================ PORTADA ============================================================ -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Sistemas Operativos · TI3V35 · Unidad 3 · Sesión 1</div>
+  <div class="cover-title anim">Configuración<br>básica de<br><span>Linux Server</span></div>
+  <p class="cover-desc anim">
+    Arrancamos la Unidad 3 con las manos en la consola. Nos conectamos por SSH, aprendemos a
+    movernos por la línea de comandos y dejamos una instancia RHEL operativa en AWS:
+    hostname, IP, actualizaciones y firewall.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-3A-F2</span></span>
+    <span class="cover-chip">06 julio 2026</span>
+    <span class="cover-chip">19:50 – 22:30</span>
+    <span class="cover-chip">Plataforma <span>AWS Academy — RHEL</span></span>
+  </div>
+</div>
+
+
+<!-- ============================================================ ÍNDICE ============================================================ -->
+<div class="slide slide-separator">
+  <div class="sep-num anim">¿Qué vemos hoy?</div>
+  <div class="sep-title anim">Contenido<br>de la <span>lámina</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Conexión SSH a la instancia</div>
+      <div class="index-type">Acceso al servidor</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Comandos básicos y navegación</div>
+      <div class="index-type">FHS · CLI</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Cambiar el hostname</div>
+      <div class="index-type">hostnamectl</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Direccionamiento IP</div>
+      <div class="index-type">nmcli · IP estática</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Actualizaciones del sistema</div>
+      <div class="index-type">dnf / yum update</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">06</div>
+      <div class="index-name">Firewall del sistema</div>
+      <div class="index-type">firewalld</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ BLOQUE 01 — CONEXIÓN SSH ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">01 — SSH</span>
+  <div class="sep-num anim">Bloque 01 · Criterio 3.1.2</div>
+  <div class="sep-title anim">Conexión<br>por <span>SSH</span></div>
+  <p class="sep-desc anim">Windows Server se administra por RDP (escritorio gráfico). Linux Server se administra por SSH: una consola de texto remota, cifrada y liviana. Todo lo de hoy se hace escribiendo comandos.</p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">01 — SSH · La llave privada en Windows</div>
+  <div class="concept-title anim">Proteger la llave<br>(.pem) en Windows</div>
+  <div class="concept-body anim">
+    <p>Al crear la instancia descargaste un archivo <code>.pem</code> (la <strong>llave privada</strong>, normalmente <code>vockey.pem</code>). Esa llave es como tu contraseña: <strong>SSH exige que solo tu usuario pueda leerla</strong>. Si Windows la deja accesible a otros usuarios, la conexión se rechaza por seguridad.</p>
+    <p>Importante: en Windows los permisos <strong>no se cambian con <code>chmod</code></strong> (ese comando es de Linux/Mac). En Windows se usa <code>icacls</code>, que es el equivalente para gestionar permisos de archivos.</p>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>Paso previo: abrir PowerShell en la carpeta de la llave</strong>
+        <p>Guarda <code>vockey.pem</code> en una carpeta fácil de ubicar, por ejemplo <code>Descargas</code>. Abre esa carpeta en el Explorador de archivos, manten presionada la tecla <strong>Shift</strong>, haz clic derecho sobre un espacio vacío y elige <strong>"Abrir la ventana de PowerShell aquí"</strong> (en Windows 11 puede decir <strong>"Abrir en Terminal"</strong>). Así los comandos actúan sobre la llave sin tener que escribir la ruta completa.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Pasos</span>
+  <div class="concept-label anim">01 — SSH · Proteger la llave con icacls</div>
+  <div class="concept-title anim">Los tres comandos<br>icacls</div>
+  <div class="concept-body anim">
+    <div class="terminal anim">
+      <div class="terminal-bar">
+        <span class="terminal-dot dot-red"></span><span class="terminal-dot dot-yellow"></span><span class="terminal-dot dot-green"></span>
+        <span class="terminal-title">Windows PowerShell — tu equipo local</span>
+      </div>
+<div class="terminal-body"><span class="comment"># 1. Reiniciar los permisos del archivo a los valores heredados de fabrica</span>
+<span class="prompt">PS></span> <span class="cmd">icacls.exe vockey.pem <span class="flag">/reset</span></span>
+
+<span class="comment"># 2. Dar permiso de solo lectura (R) UNICAMENTE a tu usuario de Windows</span>
+<span class="comment">#    $env:USERNAME se reemplaza solo por tu nombre de usuario</span>
+<span class="prompt">PS></span> <span class="cmd">icacls.exe vockey.pem <span class="flag">/grant:r</span> <span class="out">"$($env:USERNAME):(R)"</span></span>
+
+<span class="comment"># 3. Quitar la herencia: elimina al resto de usuarios del archivo</span>
+<span class="prompt">PS></span> <span class="cmd">icacls.exe vockey.pem <span class="flag">/inheritance:r</span></span>
+
+<span class="ok">Successfully processed 1 files.</span>  <span class="comment"># respuesta esperada en cada paso</span></div>
+    </div>
+    <div class="callout callout-important">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>Si te saltas este paso...</strong>
+        <p>Al conectarte verás el error <code>Permissions for 'vockey.pem' are too open ... This private key will be ignored</code> y SSH no te dejará entrar. Ejecuta los 3 comandos de arriba y reintenta.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">✓</span>
+      <div class="callout-content">
+        <strong>¿Practicas en casa con Mac o Linux?</strong>
+        <p>Ahí sí aplica <code>chmod</code>: con un solo comando, <code>chmod 400 vockey.pem</code>, la llave queda como solo-lectura para tu usuario. En Windows usa siempre los <code>icacls</code> de arriba.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Concepto + Pasos</span>
+  <div class="concept-label anim">01 — SSH · Conectarse por SSH</div>
+  <div class="concept-title anim">Entrar al servidor<br>por SSH</div>
+  <div class="concept-body anim">
+    <p><strong>SSH (Secure Shell)</strong> abre una sesión de terminal remota y cifrada contra el servidor. Con la llave ya protegida, para conectarte necesitas dos datos: la <strong>IP pública</strong> de tu instancia y el usuario por defecto de RHEL, <code>ec2-user</code>.</p>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>¿De dónde saco la IP pública?</strong>
+        <p>En la consola de AWS: <strong>EC2 → Instances → (selecciona tu instancia) → pestaña Details → "Public IPv4 address"</strong>. Ojo: esa IP <strong>cambia cada vez que apagas y prendes</strong> la instancia, así que revísala justo antes de conectarte.</p>
+      </div>
+    </div>
+    <div class="terminal anim">
+      <div class="terminal-bar">
+        <span class="terminal-dot dot-red"></span><span class="terminal-dot dot-yellow"></span><span class="terminal-dot dot-green"></span>
+        <span class="terminal-title">Windows PowerShell — tu equipo local</span>
+      </div>
+<div class="terminal-body"><span class="comment"># La opcion -i indica cual es la llave (identity file) a usar</span>
+<span class="comment"># Formato:  ssh -i &lt;llave&gt; &lt;usuario&gt;@&lt;IP-publica&gt;</span>
+<span class="prompt">PS></span> <span class="cmd">ssh <span class="flag">-i</span> vockey.pem ec2-user@<span class="out">&lt;IP-PUBLICA&gt;</span></span>
+
+<span class="comment"># Solo la primera vez pregunta si confias en el servidor: escribe yes</span>
+<span class="out">The authenticity of host '...' can't be established.</span>
+<span class="out">Are you sure you want to continue connecting (yes/no)?</span> <span class="cmd">yes</span>
+
+<span class="comment"># Si aparece este prompt, ya estas DENTRO del servidor RHEL</span>
+<span class="ok">[ec2-user@ip-172-31-37-145 ~]$</span></div>
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>El puerto 22 debe estar abierto en el Security Group</strong>
+        <p>Igual que el 3389 (RDP) para Windows, aquí AWS debe permitir el puerto <strong>22 (SSH)</strong> en el Security Group de la instancia. Si no, la conexión se queda esperando y falla con <code>Connection timed out</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">01 — SSH · sudo y usuarios</div>
+  <div class="concept-title anim">Usuario normal<br>vs. root</div>
+  <div class="concept-body anim">
+    <p>Entras como <code>ec2-user</code>, un usuario normal sin permisos de administrador. Para tareas de administración se antepone <strong><code>sudo</code></strong> (superuser do), que ejecuta ese comando con privilegios de <strong>root</strong> (el administrador total del sistema).</p>
+    <ul>
+      <li><code>$</code> al final del prompt indica <strong>usuario normal</strong>.</li>
+      <li><code>#</code> indicaría sesión como <strong>root</strong>.</li>
+      <li>Buenas prácticas: trabajar como usuario normal y usar <code>sudo</code> solo cuando es necesario. Nunca operar todo el tiempo como root.</li>
+    </ul>
+    <div class="callout callout-tip">
+      <span class="callout-icon">✓</span>
+      <div class="callout-content">
+        <strong>Verifica quién eres</strong>
+        <p>Los comandos <code>whoami</code> (usuario actual) y <code>hostname</code> (nombre del equipo) te orientan apenas entras. Los usaremos constantemente.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ BLOQUE 02 — COMANDOS BÁSICOS ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">02 — Comandos básicos</span>
+  <div class="sep-num anim">Bloque 02 · Base 3.1.3</div>
+  <div class="sep-title anim">Comandos básicos<br>y <span>navegación</span></div>
+  <p class="sep-desc anim">Ya estás dentro por SSH. Antes de configurar nada, aprende a moverte por la consola: en Linux todo cuelga de una única raíz, la barra /. No hay letras de unidad como C: o D: de Windows.</p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">02 — Comandos básicos · FHS</div>
+  <div class="concept-title anim">La estructura<br>de directorios</div>
+  <div class="concept-body anim">
+    <p>El estándar <strong>FHS (Filesystem Hierarchy Standard)</strong> define qué va en cada directorio. Los más importantes:</p>
+    <table class="tbl anim">
+      <tr><th>Directorio</th><th>Qué contiene</th></tr>
+      <tr><td><code>/</code></td><td>La raíz. Todo lo demás cuelga de aquí.</td></tr>
+      <tr><td><code>/root</code></td><td>Carpeta personal del usuario root.</td></tr>
+      <tr><td><code>/home</code></td><td>Carpetas personales de los usuarios normales (<code>/home/ana</code>).</td></tr>
+      <tr><td><code>/etc</code></td><td>Archivos de configuración del sistema y servicios.</td></tr>
+      <tr><td><code>/var</code></td><td>Datos variables: logs (<code>/var/log</code>), colas, sitios web.</td></tr>
+      <tr><td><code>/tmp</code></td><td>Archivos temporales. Se borran al reiniciar.</td></tr>
+      <tr><td><code>/bin</code>, <code>/usr</code></td><td>Programas y comandos del sistema.</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Pasos</span>
+  <div class="concept-label anim">02 — Comandos básicos · Navegación</div>
+  <div class="concept-title anim">Moverse y gestionar<br>archivos por CLI</div>
+  <div class="concept-body anim">
+    <div class="terminal anim">
+      <div class="terminal-bar">
+        <span class="terminal-dot dot-red"></span><span class="terminal-dot dot-yellow"></span><span class="terminal-dot dot-green"></span>
+        <span class="terminal-title">Terminal — sesion SSH en el servidor</span>
+      </div>
+<div class="terminal-body"><span class="prompt">$</span> <span class="cmd">pwd</span>                     <span class="comment"># ¿donde estoy? -> /home/ec2-user</span>
+<span class="prompt">$</span> <span class="cmd">ls <span class="flag">-l</span></span>                   <span class="comment"># listar con detalle (permisos, dueño...)</span>
+<span class="prompt">$</span> <span class="cmd">cd /var/log</span>             <span class="comment"># cambiar de directorio</span>
+<span class="prompt">$</span> <span class="cmd">cd ~</span>                    <span class="comment"># volver a mi carpeta personal</span>
+
+<span class="comment"># Crear, copiar, mover, borrar</span>
+<span class="prompt">$</span> <span class="cmd">mkdir proyecto</span>          <span class="comment"># crear directorio</span>
+<span class="prompt">$</span> <span class="cmd">touch proyecto/notas.txt</span> <span class="comment"># crear archivo vacio</span>
+<span class="prompt">$</span> <span class="cmd">cp notas.txt copia.txt</span>   <span class="comment"># copiar</span>
+<span class="prompt">$</span> <span class="cmd">mv copia.txt /tmp/</span>        <span class="comment"># mover</span>
+<span class="prompt">$</span> <span class="cmd">rm /tmp/copia.txt</span>         <span class="comment"># borrar</span></div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">✓</span>
+      <div class="callout-content">
+        <strong>Leer la salida de <code>ls -l</code></strong>
+        <p>Una línea como <code>-rw-r--r-- 1 ec2-user ec2-user 1024 nov 3 notas.txt</code> te dice: tipo y permisos, dueño (<em>ec2-user</em>), grupo (<em>ec2-user</em>), tamaño y nombre. Ese primer bloque de letras son los permisos, que estudiamos en detalle en la próxima clase.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ BLOQUE 03 — HOSTNAME ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-pasos">03 — Hostname</span>
+  <div class="sep-num anim">Bloque 03 · Criterio 3.1.2</div>
+  <div class="sep-title anim">Cambiar el<br><span>hostname</span></div>
+  <p class="sep-desc anim">AWS asigna un nombre genérico tipo ip-172-31-37-145. Le ponemos un nombre descriptivo para identificar el servidor en la red. En Linux esto no requiere reiniciar.</p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Pasos</span>
+  <div class="concept-label anim">03 — Hostname · hostnamectl</div>
+  <div class="concept-title anim">Cambiar el nombre<br>con hostnamectl</div>
+  <div class="concept-body anim">
+    <p>En RHEL el hostname se gestiona con <strong><code>hostnamectl</code></strong>. El cambio es inmediato: no hace falta reiniciar el servidor.</p>
+    <div class="terminal anim">
+      <div class="terminal-bar">
+        <span class="terminal-dot dot-red"></span><span class="terminal-dot dot-yellow"></span><span class="terminal-dot dot-green"></span>
+        <span class="terminal-title">Terminal — sesion SSH en el servidor</span>
+      </div>
+<div class="terminal-body"><span class="comment"># Ver el hostname actual</span>
+<span class="prompt">$</span> <span class="cmd">hostnamectl</span>
+<span class="out">   Static hostname: ip-172-31-37-145.ec2.internal</span>
+
+<span class="comment"># Asignar un nombre descriptivo (requiere sudo)</span>
+<span class="prompt">$</span> <span class="cmd">sudo hostnamectl set-hostname linux-srv-rhel</span>
+
+<span class="comment"># Verificar el cambio</span>
+<span class="prompt">$</span> <span class="cmd">hostnamectl</span>
+<span class="out">   Static hostname: </span><span class="ok">linux-srv-rhel</span>
+
+<span class="comment"># El prompt nuevo aparece al reconectar o abrir otra sesion</span>
+<span class="ok">[ec2-user@linux-srv-rhel ~]$</span></div>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>Convención de nombres</strong>
+        <p>Usa solo minúsculas, números y guiones, sin espacios ni tildes. Un buen nombre describe el rol: <code>linux-srv-rhel</code>, <code>web-prod</code>, <code>db-01</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ BLOQUE 04 — IP ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-pasos">04 — IP Fija</span>
+  <div class="sep-num anim">Bloque 04 · Criterio 3.1.2</div>
+  <div class="sep-title anim">Direccionamiento<br><span>IP</span></div>
+  <p class="sep-desc anim">Por defecto la instancia toma su IP por DHCP. Vamos a fijarla de forma estática usando exactamente la misma IP privada que AWS ya asignó, calculando gateway y máscara desde el CIDR de la subred (justo lo de la Unidad 1).</p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">04 — IP Estática · Datos desde AWS</div>
+  <div class="concept-title anim">Los datos que<br>necesitas de AWS</div>
+  <div class="concept-body anim">
+    <p>Los mismos cuatro valores que usamos en Windows Server. Se obtienen desde la consola de AWS (EC2 → tu instancia → Details, y el CIDR desde el Subnet):</p>
+    <ul>
+      <li><strong>IP privada actual:</strong> la que AWS asignó, ej. <code>172.31.37.145</code>. La reutilizas como IP fija.</li>
+      <li><strong>CIDR de la subred:</strong> ej. <code>172.31.32.0/20</code>. De aquí sale la máscara.</li>
+      <li><strong>Gateway:</strong> dirección de red del CIDR + 1. Para <code>172.31.32.0/20</code> → <code>172.31.32.1</code>.</li>
+      <li><strong>DNS:</strong> <code>169.254.169.253</code> (resolver de AWS) y <code>8.8.8.8</code> como respaldo.</li>
+    </ul>
+    <div class="callout callout-important">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>Usa exactamente la misma IP que AWS ya asignó</strong>
+        <p>Si escribes una IP distinta o fuera del CIDR de la subred, el servidor pierde conectividad y se cae la sesión SSH. En la nube, la IP la manda AWS: solo la estamos fijando, no cambiando.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Pasos</span>
+  <div class="concept-label anim">04 — IP Estática · nmcli</div>
+  <div class="concept-title anim">Fijar la IP<br>con nmcli</div>
+  <div class="concept-body anim">
+    <p>RHEL gestiona la red con <strong>NetworkManager</strong>. Su herramienta de línea de comandos es <strong><code>nmcli</code></strong>.</p>
+    <div class="terminal anim">
+      <div class="terminal-bar">
+        <span class="terminal-dot dot-red"></span><span class="terminal-dot dot-yellow"></span><span class="terminal-dot dot-green"></span>
+        <span class="terminal-title">Terminal — sesion SSH en el servidor</span>
+      </div>
+<div class="terminal-body"><span class="comment"># 1. Ver las conexiones y el nombre de la interfaz</span>
+<span class="prompt">$</span> <span class="cmd">nmcli connection show</span>
+<span class="out">NAME         UUID       TYPE       DEVICE</span>
+<span class="out">System eth0  ....       ethernet   eth0</span>
+
+<span class="comment"># 2. Fijar IP, gateway, DNS y metodo manual (una sola linea)</span>
+<span class="prompt">$</span> <span class="cmd">sudo nmcli con mod <span class="out">"System eth0"</span> \
+    ipv4.addresses 172.31.37.145/20 \
+    ipv4.gateway 172.31.32.1 \
+    ipv4.dns <span class="out">"169.254.169.253 8.8.8.8"</span> \
+    ipv4.method manual</span>
+
+<span class="comment"># 3. Aplicar los cambios</span>
+<span class="prompt">$</span> <span class="cmd">sudo nmcli con up <span class="out">"System eth0"</span></span>
+
+<span class="comment"># 4. Verificar</span>
+<span class="prompt">$</span> <span class="cmd">ip addr show eth0</span>
+<span class="prompt">$</span> <span class="cmd">ping <span class="flag">-c 3</span> 8.8.8.8</span>   <span class="comment"># comprobar salida a internet</span></div>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>Qué hace cada parte del comando</strong>
+        <p><code>ipv4.addresses 172.31.37.145/20</code>: la IP fija más la máscara en formato CIDR (el <code>/20</code>). <code>ipv4.gateway</code>: la puerta de enlace (el router de la subred). <code>ipv4.dns "... ..."</code>: los servidores DNS; las comillas agrupan los dos en un solo valor. <code>ipv4.method manual</code>: le ordena a NetworkManager dejar de pedir IP por DHCP y usar estos valores fijos. La barra <code>\</code> al final de cada línea solo significa "el comando continúa abajo"; puedes escribir todo en una sola línea si prefieres.</p>
+      </div>
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>Si se cae la sesión SSH</strong>
+        <p>Escribiste un valor incorrecto (IP, máscara o gateway). Reinicia la instancia desde la consola de AWS: al volver a DHCP recuperas el acceso y puedes reintentar con los valores correctos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ BLOQUE 05 — ACTUALIZACIONES ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-pasos">05 — Actualizaciones</span>
+  <div class="sep-num anim">Bloque 05 · Criterio 3.1.2</div>
+  <div class="sep-title anim">Actualizaciones<br>del <span>sistema</span></div>
+  <p class="sep-desc anim">Un servidor sin actualizar tiene vulnerabilidades conocidas. En RHEL el gestor de paquetes es dnf (evolución de yum). Con un solo comando dejamos el sistema al día. En la clase 3 profundizamos en gestión de paquetes.</p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Concepto + Pasos</span>
+  <div class="concept-label anim">05 — Actualizaciones · dnf update</div>
+  <div class="concept-title anim">Actualizar con<br>dnf / yum</div>
+  <div class="concept-body anim">
+    <p>En RHEL, <strong><code>dnf</code></strong> es el gestor de paquetes moderno; <code>yum</code> sigue funcionando como alias por compatibilidad. Ambos descargan e instalan software desde los repositorios oficiales.</p>
+    <div class="terminal anim">
+      <div class="terminal-bar">
+        <span class="terminal-dot dot-red"></span><span class="terminal-dot dot-yellow"></span><span class="terminal-dot dot-green"></span>
+        <span class="terminal-title">Terminal — sesion SSH en el servidor</span>
+      </div>
+<div class="terminal-body"><span class="comment"># Ver que actualizaciones hay disponibles</span>
+<span class="prompt">$</span> <span class="cmd">sudo dnf check-update</span>
+
+<span class="comment"># Actualizar todo el sistema (-y responde "si" automaticamente)</span>
+<span class="prompt">$</span> <span class="cmd">sudo dnf update <span class="flag">-y</span></span>
+<span class="out">Dependencies resolved.</span>
+<span class="out">Upgrading  :  kernel, openssl, systemd ...</span>
+<span class="ok">Complete!</span>
+
+<span class="comment"># yum funciona igual (es un alias en RHEL)</span>
+<span class="prompt">$</span> <span class="cmd">sudo yum update <span class="flag">-y</span></span></div>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>RPM está por debajo</strong>
+        <p><code>dnf</code> resuelve dependencias y descarga; internamente instala paquetes en formato <strong>RPM</strong> (Red Hat Package Manager). Ese es el criterio 3.1.4 que veremos en detalle en la clase 3.</p>
+      </div>
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>Si se actualiza el kernel</strong>
+        <p>Conviene reiniciar (<code>sudo reboot</code>) para cargar el nuevo kernel. La sesión SSH se cerrará; espera 1-2 minutos y reconéctate.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ BLOQUE 06 — FIREWALL ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-pasos">06 — Firewall</span>
+  <div class="sep-num anim">Bloque 06 · Criterio 3.1.2</div>
+  <div class="sep-title anim">Firewall<br>del <span>sistema</span></div>
+  <p class="sep-desc anim">El firewall controla qué tráfico entra y sale del servidor. En RHEL la herramienta es firewalld, que organiza las reglas en zonas y servicios. Abrimos solo lo necesario.</p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">06 — Firewall · firewalld</div>
+  <div class="concept-title anim">Qué es<br>firewalld</div>
+  <div class="concept-body anim">
+    <p><strong>firewalld</strong> es el servicio de firewall de RHEL. En lugar de reglas sueltas, trabaja con <strong>zonas</strong> (perfiles de confianza) y <strong>servicios</strong> (grupos de puertos con nombre, ej. <code>http</code> = puerto 80).</p>
+    <ul>
+      <li><strong>Regla temporal:</strong> se pierde al reiniciar el servicio.</li>
+      <li><strong>Regla permanente (<code>--permanent</code>):</strong> sobrevive reinicios. Requiere <code>--reload</code> para activarse.</li>
+    </ul>
+    <div class="callout callout-important">
+      <span class="callout-icon">⚠</span>
+      <div class="callout-content">
+        <strong>Dos capas de firewall</strong>
+        <p>En AWS conviven el <strong>Security Group</strong> (firewall de la nube) y <strong>firewalld</strong> (firewall del sistema operativo). Ambos deben permitir el tráfico. Si uno bloquea, la conexión falla. Mismo concepto que en Windows Server.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Pasos</span>
+  <div class="concept-label anim">06 — Firewall · firewall-cmd</div>
+  <div class="concept-title anim">Abrir puertos<br>con firewall-cmd</div>
+  <div class="concept-body anim">
+    <p>Como ejemplo, permitimos tráfico web (HTTP y HTTPS). Existen <strong>dos formas equivalentes</strong> de abrir acceso; a propósito usamos una de cada una para que veas ambas.</p>
+    <div class="terminal anim">
+      <div class="terminal-bar">
+        <span class="terminal-dot dot-red"></span><span class="terminal-dot dot-yellow"></span><span class="terminal-dot dot-green"></span>
+        <span class="terminal-title">Terminal — sesion SSH en el servidor</span>
+      </div>
+<div class="terminal-body"><span class="comment"># Verificar que firewalld este activo</span>
+<span class="prompt">$</span> <span class="cmd">sudo systemctl status firewalld</span>
+
+<span class="comment"># Permitir HTTP (puerto 80) de forma permanente</span>
+<span class="prompt">$</span> <span class="cmd">sudo firewall-cmd <span class="flag">--permanent</span> <span class="flag">--add-service=http</span></span>
+
+<span class="comment"># Permitir HTTPS por numero de puerto (puerto 443)</span>
+<span class="prompt">$</span> <span class="cmd">sudo firewall-cmd <span class="flag">--permanent</span> <span class="flag">--add-port=443/tcp</span></span>
+
+<span class="comment"># Recargar para aplicar las reglas permanentes</span>
+<span class="prompt">$</span> <span class="cmd">sudo firewall-cmd <span class="flag">--reload</span></span>
+
+<span class="comment"># Verificar que quedaron activas</span>
+<span class="prompt">$</span> <span class="cmd">sudo firewall-cmd <span class="flag">--list-all</span></span>
+<span class="out">  services: cockpit dhcpv6-client ssh </span><span class="ok">http</span>
+<span class="out">  ports: </span><span class="ok">443/tcp</span></div>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>Las dos formas: por servicio o por puerto</strong>
+        <p><code>--add-service=&lt;nombre&gt;</code> usa un nombre conocido (<code>http</code>, <code>https</code>, <code>ssh</code>) y firewalld ya sabe qué puerto le corresponde (<code>http</code> = 80). Es más legible. <code>--add-port=&lt;numero&gt;/&lt;protocolo&gt;</code> abre el puerto exacto (<code>443/tcp</code>), útil cuando el servicio no tiene nombre o quieres control fino. Las dos hacen lo mismo; ambas se combinan con <code>--permanent</code> para sobrevivir reinicios.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">✓</span>
+      <div class="callout-content">
+        <strong>No cierres el puerto 22</strong>
+        <p>El servicio <code>ssh</code> ya está permitido por defecto. Nunca lo quites: es tu única vía de acceso al servidor. Si lo bloqueas, pierdes la conexión.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ ACTIVIDAD ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-alerta">Actividad</span>
+  <div class="sep-num anim">Práctica guiada · En clase</div>
+  <div class="sep-title anim">Tu turno:<br><span>configúralo</span></div>
+  <p class="sep-desc anim">Levanta tu instancia RHEL en AWS Academy y déjala operativa repitiendo los pasos de la lámina desde tu propia sesión SSH.</p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-alerta">Actividad — Entrega</span>
+  <div class="concept-label anim">Actividad · Evidencia</div>
+  <div class="concept-title anim">¿Qué debes<br>mostrar?</div>
+  <div class="concept-body anim">
+    <p>Al finalizar, muestra al profesor la salida de estos comandos en tu terminal. Todo debe verse claramente:</p>
+    <div class="ruta anim">
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num orange">E1</div><div class="ruta-line orange"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title"><code>hostnamectl</code> con el nuevo nombre</div>
+          <div class="ruta-desc">El Static hostname debe mostrar el nombre descriptivo que asignaste (no el genérico de AWS).</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num orange">E2</div><div class="ruta-line orange"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title"><code>ip addr show eth0</code> con IP estática</div>
+          <div class="ruta-desc">Debe verse la IP fija asignada por nmcli, coincidente con la Private IPv4 de tu instancia en AWS.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num orange">E3</div><div class="ruta-line orange"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title"><code>sudo dnf update</code> completado</div>
+          <div class="ruta-desc">El sistema debe reportar que no hay más actualizaciones pendientes.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num orange">E4</div></div>
+        <div class="ruta-content">
+          <div class="ruta-title"><code>sudo firewall-cmd --list-all</code></div>
+          <div class="ruta-desc">Deben verse los servicios/puertos <code>http</code> y <code>443/tcp</code> habilitados, además de <code>ssh</code>.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <strong>Si algo no funciona</strong>
+        <p>Revisa los pasos de la lámina antes de llamar al profesor. Si el servidor no responde por SSH después de tocar la red, reinicia la instancia desde AWS para volver a DHCP. Verifica que el Security Group tenga abierto el puerto 22.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ CIERRE ============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen</div>
+  <div class="sep-title anim">Lo que<br><span>configuramos</span></div>
+  <p class="sep-desc anim">La clase 2 (asincrónica) cubre permisos, propietarios y umask desde la CLI. La clase 3 profundiza en gestores de paquetes RPM/yum y prepara el entregable grupal ES3.</p>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">pwd · ls -l · cd · mkdir · cp · mv · rm</div>
+      <div class="resumen-desc">Navegación y gestión de archivos por consola. Todo cuelga de la raíz /</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">ssh -i llave.pem ec2-user@IP</div>
+      <div class="resumen-desc">Acceso remoto cifrado. sudo para tareas de administración</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">sudo hostnamectl set-hostname</div>
+      <div class="resumen-desc">Nombre descriptivo del servidor. No requiere reinicio</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">sudo nmcli con mod ... manual</div>
+      <div class="resumen-desc">IP estática desde el CIDR de la subred. Misma IP que asignó AWS</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">sudo dnf update -y</div>
+      <div class="resumen-desc">Sistema al día. Instala paquetes RPM desde los repositorios</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">sudo firewall-cmd --add-service</div>
+      <div class="resumen-desc">Abrir solo lo necesario. --permanent + --reload. Nunca cerrar ssh</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Dos capas: Security Group + firewalld</div>
+      <div class="resumen-desc">Ambos deben permitir el tráfico para que la conexión funcione</div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const animSelectors = [
+    '.sep-num', '.sep-title', '.sep-desc', '.index-grid',
+    '.concept-label', '.concept-title', '.concept-body',
+    '.callout', '.ruta', '.path-visual', '.terminal', '.cards', '.tbl',
+    '.resumen-grid'
+  ];
+
+  document.querySelectorAll('.slide').forEach(slide => {
+    animSelectors.forEach((sel, si) => {
+      slide.querySelectorAll(sel).forEach((el, ei) => {
+        if (!el.classList.contains('anim')) {
+          el.classList.add('anim');
+          el.style.transitionDelay = (si * 80 + ei * 60) + 'ms';
+        }
+      });
+    });
+  });
+
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.15) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.15 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+</body>
+</html>
