@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA3 Sesión 10 - DQL: Preguntarle a los Datos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0;
+      color: var(--text);
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white;
+      justify-content: center;
+      padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3);
+      margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 680px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+    .slide-separator.sep-blue   { border-color: var(--blue); }
+
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+    }
+    .sep-green  .sep-num  { color: var(--green); }
+    .sep-orange .sep-num  { color: var(--orange); }
+    .sep-blue   .sep-num  { color: var(--blue); }
+
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .cover-title span, .sep-title span, .concept-title span { color: var(--red) !important; }
+
+    .sep-desc {
+      font-size: 22px; color: rgba(255,255,255,0.45);
+      max-width: 640px; line-height: 1.65;
+    }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 64px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark);
+      margin-bottom: 32px;
+    }
+    .concept-body { max-width: 980px; }
+    .concept-body p { font-size: 21px; line-height: 1.7; color: #333; margin-bottom: 18px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body ul { margin-left: 24px; margin-bottom: 18px; }
+    .concept-body li { font-size: 20px; line-height: 1.7; color: #333; margin-bottom: 8px; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 18px 22px; margin: 20px 0;
+      max-width: 980px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+    }
+    .callout-content p { font-size: 18px; line-height: 1.6; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+
+    /* INDICE / AGENDA */
+    .index-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-top: 32px; max-width: 900px;
+    }
+    .index-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 18px 20px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 30px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 8px;
+    }
+    .index-name { font-size: 16px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-pasos    { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-practica { background: #F7E3E3; color: #8E1A1F; border: 1px solid #E2CACA; }
+    .badge-cierre   { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* CHIP DE TIEMPO */
+    .time-chip {
+      position: absolute; top: 24px; left: 32px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+      padding: 5px 12px; border-radius: 20px;
+      background: #1A1A1A; color: #FFD2CC;
+    }
+
+    /* RESUMEN */
+    .resumen-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 12px; margin-top: 28px; max-width: 940px;
+    }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .resumen-cmd { font-size: 16px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* TWO / THREE COL */
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px; max-width: 980px; margin-top: 20px;
+    }
+    .three-col {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 18px; max-width: 980px; margin-top: 20px;
+    }
+    .col-card {
+      background: #F8F8F8; border: 1px solid #E0E0E0;
+      border-radius: 8px; padding: 20px 22px;
+    }
+    .col-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 12px;
+    }
+    .col-card ul { margin-left: 18px; }
+    .col-card li { font-size: 17px; line-height: 1.7; color: #444; margin-bottom: 4px; }
+    .col-card p  { font-size: 16px; line-height: 1.55; color: #444; margin-bottom: 8px; }
+
+    /* TABLA MAPEO */
+    .mapeo-table { width: 100%; max-width: 980px; border-collapse: collapse; margin-top: 20px; font-size: 16px; }
+    .mapeo-table th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 10px 16px; text-align: left;
+    }
+    .mapeo-table td { padding: 13px 16px; border-bottom: 1px solid #E0E0E0; vertical-align: middle; line-height: 1.4; }
+    .mapeo-table tr:last-child td { border-bottom: none; }
+    .mapeo-table tr:nth-child(even) td { background: #F8F8F8; }
+    .mapeo-table code { white-space: nowrap; }
+
+    /* CONSOLA / SQL */
+    .notacion {
+      background: #1A1A1A; border-radius: 8px; padding: 18px 24px;
+      margin: 18px 0; max-width: 980px; overflow-x: auto;
+    }
+    .notacion-line {
+      font-family: 'JetBrains Mono', monospace; font-size: 16px;
+      color: #EDEDED; line-height: 1.9; white-space: pre-wrap;
+    }
+    .notacion-line .kw   { color: #FF8A80; font-weight: 700; }
+    .notacion-line .str  { color: #FFD2CC; }
+    .notacion-line .cmt  { color: #888; }
+    .notacion-line .res  { color: #7CD992; font-weight: 700; }
+    .notacion-line .err  { color: #FF6B6B; font-weight: 700; }
+
+    /* RESULTSET / TABLA DE RESULTADO */
+    .rs {
+      width: auto; max-width: 980px; border-collapse: collapse;
+      margin: 6px 0 4px; font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: #101010; border: 1px solid #333; border-radius: 6px; overflow: hidden;
+    }
+    .rs th {
+      background: #262626; color: #FFD2CC; text-align: left;
+      padding: 7px 14px; font-weight: 600; border-bottom: 1px solid #333;
+    }
+    .rs td { color: #DADADA; padding: 6px 14px; border-bottom: 1px solid #222; }
+    .rs tr:last-child td { border-bottom: none; }
+    .rs .null { color: #777; font-style: italic; }
+
+    /* TAREA / RETO */
+    .tarea-box {
+      background: #FFF1F2; border: 1px solid #FECDD3;
+      border-left: 5px solid var(--red); border-radius: 8px;
+      padding: 22px 26px; max-width: 980px; margin-top: 20px;
+    }
+    .tarea-box .tarea-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--red); margin-bottom: 12px;
+    }
+    .tarea-box ol { margin-left: 22px; }
+    .tarea-box li { font-size: 18px; line-height: 1.7; color: #4A1418; margin-bottom: 6px; }
+
+    /* PILDORA */
+    .kbd {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: #EBEBEB; border: 1px solid #D5D5D5;
+      padding: 2px 8px; border-radius: 4px; color: #1A1A1A; font-weight: 600;
+      white-space: nowrap;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; background: #EBEBEB;
+      padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    /* PROGRESS BAR */
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; background: var(--red);
+      width: 0%; z-index: 9999;
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
+      pointer-events: none;
+    }
+
+    /* ANIMACIONES */
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+
+    /* BANCO DE EJERCICIOS */
+    .ejercicio-nivel {
+      position: absolute; top: 24px; left: 32px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .nivel-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--red);
+    }
+    .nivel-bar { display: flex; gap: 3px; }
+    .nivel-pip { width: 12px; height: 5px; border-radius: 3px; background: #E0E0E0; }
+    .nivel-pip.on { background: var(--red); }
+
+    .solucion {
+      max-width: 980px; margin-top: 12px;
+      border: 1px solid var(--border); border-radius: 8px;
+      background: #FAFAFA; overflow: hidden;
+    }
+    .solucion > summary {
+      cursor: pointer; list-style: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 17px; font-weight: 800; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--dark);
+      padding: 14px 20px; display: flex; align-items: center; gap: 10px;
+      user-select: none;
+    }
+    .solucion > summary::-webkit-details-marker { display: none; }
+    .solucion > summary::before {
+      content: '\25B6'; font-size: 11px; color: var(--red);
+      transition: transform 0.2s;
+    }
+    .solucion[open] > summary::before { transform: rotate(90deg); }
+    .solucion > summary:hover { background: #F2F2F2; }
+    .solucion .notacion { margin: 0 16px 16px; }
+    .solucion-nota { padding: 2px 20px 16px; font-size: 15px; color: var(--muted); line-height: 1.55; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- ============================================================
+     SLIDE 1 - PORTADA
+============================================================ -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Fundamentos de Base de Datos &middot; TI3V12 &middot; Unidad 3 &middot; Sesión 10</div>
+  <div class="cover-title anim">Le preguntamos<br>a los <span>datos</span></div>
+  <p class="cover-desc anim">
+    Ya creaste las tablas y las llenaste. Hoy viene lo que de verdad hace útil a una base de datos:
+    <strong>consultarla</strong>. Con <strong>SELECT</strong> pides columnas, con <strong>WHERE</strong> filtras
+    y con <strong>ORDER BY</strong> ordenas. Es la última clase antes del receso: hay que quedar sólidos.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>V-FB50-N1-P14-C1</span></span>
+    <span class="cover-chip">Jueves 09 julio 2026</span>
+    <span class="cover-chip">160 min &middot; Laboratorio</span>
+    <span class="cover-chip">DQL - SELECT / WHERE / ORDER BY + JOIN</span>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SLIDE 2 - AGENDA
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">Cómo trabajamos hoy</div>
+  <div class="sep-title anim">Una consulta,<br>y otra, y <span>otra</span></div>
+  <p class="sep-desc anim" style="margin-bottom:10px;">Igualamos los datos de todos, y a partir de ahí es puro consultar. Cada operador se explica en minutos y de inmediato lo pruebas contra tu biblioteca.</p>
+  <div class="index-grid anim">
+    <div class="index-item"><div class="index-num">00</div><div class="index-name">Semilla: mismos datos para todos</div><div class="index-type">Teclado</div></div>
+    <div class="index-item"><div class="index-num">01</div><div class="index-name">SELECT: pedir columnas</div><div class="index-type">Pildora + Teclado</div></div>
+    <div class="index-item"><div class="index-num">02</div><div class="index-name">WHERE: filtrar filas</div><div class="index-type">Pildora + Teclado</div></div>
+    <div class="index-item"><div class="index-num">03</div><div class="index-name">LIKE, BETWEEN, IN, IS NULL</div><div class="index-type">Pildora + Teclado</div></div>
+    <div class="index-item"><div class="index-num">04</div><div class="index-name">ORDER BY: ordenar el resultado</div><div class="index-type">Pildora + Teclado</div></div>
+    <div class="index-item"><div class="index-num">05</div><div class="index-name">JOIN: cruzar tablas (bonus)</div><div class="index-type">Capstone + ensayo ES3</div></div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SLIDE 3 - ARRANQUE
+============================================================ -->
+<div class="slide slide-concept red-accent">
+  <span class="time-chip">19:50 &middot; 4 min</span>
+  <span class="slide-badge badge-concepto">Arranque</span>
+  <div class="concept-label anim">Objetivo &middot; La base sirve cuando responde</div>
+  <div class="concept-title anim">Crear y llenar<br>era el <span>medio</span></div>
+  <div class="concept-body anim">
+    <p>Piénsalo así: nadie guarda datos por guardarlos. Una biblioteca sirve cuando puedes preguntarle <em>"¿qué libros tienen más de dos copias?"</em> o <em>"¿quién no dejó su email?"</em>. Eso es <strong>DQL</strong>: el lenguaje de las preguntas.</p>
+    <p>Toda la clase gira en torno a una sola sentencia, <code>SELECT</code>, y a cómo afinarla con <code>WHERE</code> y <code>ORDER BY</code>. Al cierre, un bonus para los curiosos: cruzar tablas con <code>JOIN</code>.</p>
+    <div class="callout callout-important">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>Última antes del receso</strong>
+        <p>El 15 y 16 no hay clase presencial: sigue de forma <strong>asincrónica</strong>. Por eso hoy debes salir consultando con soltura; el SELECT es el tercio final de la ES3 (crear, poblar y <strong>consultar</strong>).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 00 - SEMILLA DE DATOS
+============================================================ -->
+<div class="slide slide-concept orange-accent">
+  <span class="time-chip">19:54 &middot; 6 min</span>
+  <span class="slide-badge badge-pasos">Teclado 0</span>
+  <div class="concept-label anim">00 - Semilla &middot; Que todos partan igual</div>
+  <div class="concept-title anim">Mismos datos<br>para <span style="color:var(--orange)">todos</span></div>
+  <div class="concept-body anim">
+    <p>Para que tus resultados coincidan con los de la pizarra, vamos a dejar la biblioteca con un juego de datos común. Si ya tenías filas, primero vacía las tablas y luego pega esto. Ejecuta y da <code>COMMIT</code> al final.</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="cmt">-- Limpieza (hijo primero por la FK), y recarga</span></div>
+      <div class="notacion-line"><span class="kw">DELETE FROM</span> prestamo; <span class="kw">DELETE FROM</span> libro; <span class="kw">DELETE FROM</span> socio;</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> socio (id_socio, nombre, email) <span class="kw">VALUES</span> (1, <span class="str">'Ana Perez'</span>,   <span class="str">'ana@mail.cl'</span>);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> socio (id_socio, nombre, email) <span class="kw">VALUES</span> (2, <span class="str">'Luis Rojas'</span>,  <span class="str">'luis@mail.cl'</span>);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> socio (id_socio, nombre, email) <span class="kw">VALUES</span> (3, <span class="str">'Marta Diaz'</span>,  <span class="kw">NULL</span>);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> socio (id_socio, nombre, email) <span class="kw">VALUES</span> (4, <span class="str">'Pedro Soto'</span>,  <span class="str">'pedro@mail.cl'</span>);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> socio (id_socio, nombre, email) <span class="kw">VALUES</span> (5, <span class="str">'Carla Vega'</span>,  <span class="kw">NULL</span>);</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> libro (id_libro, titulo, isbn, copias) <span class="kw">VALUES</span> (1, <span class="str">'Cien Anios de Soledad'</span>,           <span class="str">'978-1'</span>, 3);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> libro (id_libro, titulo, isbn, copias) <span class="kw">VALUES</span> (2, <span class="str">'El Quijote'</span>,                      <span class="str">'978-2'</span>, 1);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> libro (id_libro, titulo, isbn, copias) <span class="kw">VALUES</span> (3, <span class="str">'Rayuela'</span>,                         <span class="str">'978-3'</span>, 2);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> libro (id_libro, titulo, isbn, copias) <span class="kw">VALUES</span> (4, <span class="str">'La Ciudad y los Perros'</span>,          <span class="str">'978-4'</span>, 0);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> libro (id_libro, titulo, isbn, copias) <span class="kw">VALUES</span> (5, <span class="str">'Cronica de una Muerte Anunciada'</span>, <span class="str">'978-5'</span>, 4);</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> prestamo (id_prestamo, id_socio, id_libro, fecha_prestamo) <span class="kw">VALUES</span> (1, 1, 2, <span class="kw">DATE</span> <span class="str">'2026-06-10'</span>);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> prestamo (id_prestamo, id_socio, id_libro, fecha_prestamo) <span class="kw">VALUES</span> (2, 3, 1, <span class="kw">DATE</span> <span class="str">'2026-06-15'</span>);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> prestamo (id_prestamo, id_socio, id_libro, fecha_prestamo) <span class="kw">VALUES</span> (3, 1, 5, <span class="kw">DATE</span> <span class="str">'2026-07-01'</span>);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> prestamo (id_prestamo, id_socio, id_libro, fecha_prestamo) <span class="kw">VALUES</span> (4, 4, 3, <span class="kw">DATE</span> <span class="str">'2026-07-05'</span>);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> prestamo (id_prestamo, id_socio, id_libro, fecha_prestamo) <span class="kw">VALUES</span> (5, 2, 1, <span class="kw">DATE</span> <span class="str">'2026-07-08'</span>);</div>
+      <div class="notacion-line"><span class="kw">COMMIT</span>;</div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Fíjate en el detalle</strong>
+        <p>Marta y Carla quedan <strong>sin email</strong> (NULL) y <em>La Ciudad y los Perros</em> tiene <strong>0 copias</strong>. Esos casos raros nos servirán para probar los filtros. Nombramos las columnas en cada INSERT: así la semilla funciona aunque tus tablas tengan columnas extra.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 01 - SELECT
+============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="time-chip">20:00 &middot; 7 min</span>
+  <span class="slide-badge badge-concepto">Pildora 1</span>
+  <div class="concept-label anim">01 - SELECT &middot; Pedir columnas</div>
+  <div class="concept-title anim">Elige <span style="color:var(--blue)">qué</span><br>quieres ver</div>
+  <div class="concept-body anim">
+    <p>El <code>SELECT</code> tiene dos partes mínimas: <strong>qué columnas</strong> quieres y <strong>de qué tabla</strong>. El <code>*</code> significa "todas las columnas".</p>
+    <table class="mapeo-table">
+      <thead><tr><th style="width:46%;">Consulta</th><th>Qué devuelve</th></tr></thead>
+      <tbody>
+        <tr><td><code>SELECT * FROM libro;</code></td><td>Todas las columnas, todas las filas.</td></tr>
+        <tr><td><code>SELECT titulo, copias FROM libro;</code></td><td>Solo esas dos columnas.</td></tr>
+        <tr><td><code>SELECT titulo AS nombre FROM libro;</code></td><td>Renombra la columna en el resultado (alias).</td></tr>
+        <tr><td><code>SELECT DISTINCT id_socio FROM prestamo;</code></td><td>Valores sin repetir.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#128161;</span>
+      <div class="callout-content">
+        <strong>El alias es cosmético</strong>
+        <p><code>AS</code> solo cambia el título de la columna en la respuesta; no toca la tabla. Sirve para que el resultado se lea mejor. La palabra <code>AS</code> es opcional, pero escribirla se entiende más.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="time-chip">20:07 &middot; 16 min</span>
+  <span class="slide-badge badge-pasos">Teclado 1</span>
+  <div class="concept-title anim">Ahora tú:<br>cuatro <span style="color:var(--orange)">SELECT</span></div>
+  <div class="concept-body anim">
+    <p>Ejecuta cada uno con <span class="kbd">Ctrl + Enter</span> y mira la grilla de resultados abajo:</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="kw">SELECT</span> * <span class="kw">FROM</span> socio;</div>
+      <div class="notacion-line"><span class="kw">SELECT</span> titulo, copias <span class="kw">FROM</span> libro;</div>
+      <div class="notacion-line"><span class="kw">SELECT</span> nombre <span class="kw">AS</span> socio, email <span class="kw">AS</span> correo <span class="kw">FROM</span> socio;</div>
+      <div class="notacion-line"><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> id_socio <span class="kw">FROM</span> prestamo;</div>
+    </div>
+    <p style="font-size:17px; color:var(--muted); margin-bottom:6px;">El último devuelve 4 filas, no 5: el socio 1 pidió dos libros y aparece una sola vez.</p>
+    <table class="rs">
+      <thead><tr><th>ID_SOCIO</th></tr></thead>
+      <tbody>
+        <tr><td>1</td></tr><tr><td>2</td></tr><tr><td>3</td></tr><tr><td>4</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Lee la grilla</strong>
+        <p>Donde Marta y Carla no tienen email, la celda aparece vacía o con <em>(null)</em>. Ese vacío no es un espacio ni un texto: es la <strong>ausencia</strong> de dato. Lo cazaremos con IS NULL en un rato.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 02 - WHERE
+============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="time-chip">20:23 &middot; 7 min</span>
+  <span class="slide-badge badge-concepto">Pildora 2</span>
+  <div class="concept-label anim">02 - WHERE &middot; Filtrar filas</div>
+  <div class="concept-title anim">Solo las filas<br>que <span style="color:var(--blue)">cumplen</span></div>
+  <div class="concept-body anim">
+    <p>Si <code>SELECT</code> elige columnas, <code>WHERE</code> elige <strong>filas</strong>: se queda solo con las que cumplen una condición.</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="kw">SELECT</span> titulo, copias <span class="kw">FROM</span> libro <span class="kw">WHERE</span> copias &gt; 2;</div>
+    </div>
+    <div class="two-col">
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--blue); font-size:19px;">Operadores</div>
+        <ul>
+          <li><code>=</code> igual</li>
+          <li><code>&lt;&gt;</code> distinto</li>
+          <li><code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code></li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title" style="color:var(--blue); font-size:19px;">Unir condiciones</div>
+        <ul>
+          <li><code>AND</code>: deben cumplirse las dos</li>
+          <li><code>OR</code>: basta con una</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout callout-warn">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>El texto va entre comillas simples</strong>
+        <p><code>WHERE nombre = 'Ana Perez'</code>. Y ojo: Oracle distingue mayúsculas de minúsculas en el texto, <code>'ana perez'</code> no es lo mismo que <code>'Ana Perez'</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="time-chip">20:30 &middot; 20 min</span>
+  <span class="slide-badge badge-pasos">Teclado 2</span>
+  <div class="concept-title anim">Ahora tú:<br><span style="color:var(--orange)">filtra</span></div>
+  <div class="concept-body anim">
+    <p>Predice el resultado antes de ejecutar cada consulta, luego compruébalo:</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="cmt">-- Libros con más de una copia</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> titulo, copias <span class="kw">FROM</span> libro <span class="kw">WHERE</span> copias &gt; 1;</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="cmt">-- Un socio exacto</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> * <span class="kw">FROM</span> socio <span class="kw">WHERE</span> nombre = <span class="str">'Luis Rojas'</span>;</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="cmt">-- Dos condiciones a la vez</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> titulo, copias <span class="kw">FROM</span> libro <span class="kw">WHERE</span> copias &gt;= 2 <span class="kw">AND</span> id_libro &lt; 4;</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="cmt">-- Una u otra</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> titulo, copias <span class="kw">FROM</span> libro <span class="kw">WHERE</span> copias = 0 <span class="kw">OR</span> copias &gt;= 4;</div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Chequeo</strong>
+        <p>La tercera consulta devuelve <em>Cien Anios</em> (3 copias) y <em>Rayuela</em> (2). La cuarta devuelve <em>La Ciudad y los Perros</em> (0) y <em>Cronica...</em> (4): los dos extremos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     RECREO
+============================================================ -->
+<div class="slide slide-separator sep-green">
+  <span class="time-chip">20:50 &middot; 10 min</span>
+  <span class="slide-badge badge-pasos">Pausa</span>
+  <div class="sep-num anim">Recreo</div>
+  <div class="sep-title anim">10 <span>minutos</span></div>
+  <p class="sep-desc anim">Despeja la cabeza. Volvemos con los filtros que hacen que WHERE se sienta como magia: LIKE, BETWEEN, IN e IS NULL.</p>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 03 - WHERE AVANZADO
+============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="time-chip">21:00 &middot; 8 min</span>
+  <span class="slide-badge badge-concepto">Pildora 3</span>
+  <div class="concept-label anim">03 - Filtros especiales &middot; Cuatro herramientas</div>
+  <div class="concept-title anim">Filtrar con<br><span style="color:var(--blue)">precisión</span></div>
+  <div class="concept-body anim">
+    <p>Cuatro operadores que resuelven casos que <code>=</code> y <code>&gt;</code> no cubren bien:</p>
+    <table class="mapeo-table">
+      <thead><tr><th style="width:34%;">Operador</th><th>Para qué sirve</th></tr></thead>
+      <tbody>
+        <tr><td><code>LIKE 'C%'</code></td><td>Buscar por patrón de texto. <code>%</code> = cualquier cosa, <code>_</code> = un carácter.</td></tr>
+        <tr><td><code>BETWEEN a AND b</code></td><td>Rango, incluye los dos extremos. Sirve con números y fechas.</td></tr>
+        <tr><td><code>IN (1, 2, 3)</code></td><td>Pertenece a una lista de valores. Reemplaza muchos OR.</td></tr>
+        <tr><td><code>IS NULL</code></td><td>La columna está vacía (sin dato). Su opuesto: <code>IS NOT NULL</code>.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>NULL no se compara con =</strong>
+        <p><code>WHERE email = NULL</code> <strong>nunca</strong> devuelve filas, aunque haya vacíos. El vacío es especial: se pregunta con <code>IS NULL</code>, jamás con <code>=</code>. Es el error más típico de este bloque.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="time-chip">21:08 &middot; 22 min</span>
+  <span class="slide-badge badge-pasos">Teclado 3</span>
+  <div class="concept-title anim">Ahora tú: los<br>cuatro <span style="color:var(--orange)">filtros</span></div>
+  <div class="concept-body anim">
+    <p>Uno por cada operador. Fíjate en qué filas de la semilla caza cada uno:</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="cmt">-- LIKE: títulos que empiezan con C</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> titulo <span class="kw">FROM</span> libro <span class="kw">WHERE</span> titulo <span class="kw">LIKE</span> <span class="str">'C%'</span>;</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="cmt">-- BETWEEN: libros con 1 a 3 copias</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> titulo, copias <span class="kw">FROM</span> libro <span class="kw">WHERE</span> copias <span class="kw">BETWEEN</span> 1 <span class="kw">AND</span> 3;</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="cmt">-- IN: préstamos de los socios 1 o 2</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> * <span class="kw">FROM</span> prestamo <span class="kw">WHERE</span> id_socio <span class="kw">IN</span> (1, 2);</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="cmt">-- IS NULL: socios sin email</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> nombre <span class="kw">FROM</span> socio <span class="kw">WHERE</span> email <span class="kw">IS NULL</span>;</div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Chequeo</strong>
+        <p>LIKE 'C%' devuelve <em>Cien Anios</em> y <em>Cronica...</em>. IS NULL devuelve <strong>Marta y Carla</strong>. Ahora prueba tú <code>WHERE email = NULL</code> y confirma que devuelve <strong>cero filas</strong>: por eso existe IS NULL.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 04 - ORDER BY
+============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="time-chip">21:30 &middot; 6 min</span>
+  <span class="slide-badge badge-concepto">Pildora 4</span>
+  <div class="concept-label anim">04 - ORDER BY &middot; Ordenar el resultado</div>
+  <div class="concept-title anim">Ponlo en<br><span style="color:var(--blue)">orden</span></div>
+  <div class="concept-body anim">
+    <p><code>ORDER BY</code> ordena las filas del resultado por una o más columnas. Va siempre al <strong>final</strong> de la consulta.</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="cmt">-- ASC = ascendente (es el valor por defecto)</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> titulo, copias <span class="kw">FROM</span> libro <span class="kw">ORDER BY</span> copias <span class="kw">ASC</span>;</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="cmt">-- DESC = descendente (de mayor a menor)</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> titulo, copias <span class="kw">FROM</span> libro <span class="kw">ORDER BY</span> copias <span class="kw">DESC</span>;</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="cmt">-- Dos criterios: primero copias, y empates por título</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> titulo, copias <span class="kw">FROM</span> libro <span class="kw">ORDER BY</span> copias <span class="kw">DESC</span>, titulo <span class="kw">ASC</span>;</div>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#128161;</span>
+      <div class="callout-content">
+        <strong>El orden de la sentencia importa</strong>
+        <p>Siempre en esta secuencia: <code>SELECT</code> ... <code>FROM</code> ... <code>WHERE</code> ... <code>ORDER BY</code>. Si pones ORDER BY antes del WHERE, da error de sintaxis.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="time-chip">21:36 &middot; 14 min</span>
+  <span class="slide-badge badge-pasos">Teclado 4</span>
+  <div class="concept-title anim">Ahora tú:<br><span style="color:var(--orange)">ordena</span></div>
+  <div class="concept-body anim">
+    <p>Combina lo de hoy: filtrar y ordenar en la misma consulta.</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="cmt">-- Socios en orden alfabético</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> nombre <span class="kw">FROM</span> socio <span class="kw">ORDER BY</span> nombre;</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="cmt">-- Préstamos del más reciente al más antiguo</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> * <span class="kw">FROM</span> prestamo <span class="kw">ORDER BY</span> fecha_prestamo <span class="kw">DESC</span>;</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="cmt">-- Solo los disponibles, del que más copias tiene al que menos</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> titulo, copias <span class="kw">FROM</span> libro <span class="kw">WHERE</span> copias &gt; 0 <span class="kw">ORDER BY</span> copias <span class="kw">DESC</span>;</div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Chequeo</strong>
+        <p>La última consulta deja fuera a <em>La Ciudad y los Perros</em> (0 copias) por el WHERE, y encabeza con <em>Cronica...</em> (4) por el ORDER BY. Filtras y ordenas de una sola pasada.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 05 - JOIN (BONUS, NO ENTRA EN LA ES3)
+============================================================ -->
+<div class="slide slide-concept blue-accent">
+  <span class="time-chip">21:50 &middot; 8 min</span>
+  <span class="slide-badge badge-concepto">Pildora 5 &middot; Bonus</span>
+  <div class="concept-label anim">05 - JOIN &middot; El pago del modelo (no entra en la ES3)</div>
+  <div class="concept-title anim">Cruzar dos<br><span style="color:var(--blue)">tablas</span></div>
+  <div class="concept-body anim">
+    <p>Un problema que arrastramos toda la clase: <code>prestamo</code> guarda <code>id_socio = 1</code>, no "Ana". El nombre vive en otra tabla. Para verlos juntos, hay que <strong>cruzar</strong> las dos tablas por su clave.</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="cmt">-- Antes: solo ids, sin nombres</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> * <span class="kw">FROM</span> prestamo;   <span class="cmt">-- id_socio = 1 ... quién es?</span></div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="cmt">-- JOIN: traer el nombre desde socio</span></div>
+      <div class="notacion-line"><span class="kw">SELECT</span> prestamo.id_prestamo, socio.nombre</div>
+      <div class="notacion-line"><span class="kw">FROM</span> prestamo</div>
+      <div class="notacion-line"><span class="kw">JOIN</span> socio <span class="kw">ON</span> prestamo.id_socio = socio.id_socio;</div>
+    </div>
+    <p>El <code>ON</code> dice por dónde se pegan: la <strong>FK</strong> de prestamo coincide con la <strong>PK</strong> de socio. Para exactamente esto existían las claves foráneas desde la UA2. Cuando una columna se llama igual en las dos tablas, se antepone la tabla: <code>prestamo.id_socio</code>.</p>
+    <div class="callout callout-important">
+      <span class="callout-icon">&#9888;</span>
+      <div class="callout-content">
+        <strong>Esto NO entra en la ES3</strong>
+        <p>La evaluación pide consultas de <strong>una</strong> tabla. El JOIN es un paso más, para que veas por qué modelaste con claves foráneas. Míralo con calma, sin presión de examen.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="time-chip">21:58 &middot; 16 min</span>
+  <span class="slide-badge badge-pasos">Teclado 5 &middot; Bonus</span>
+  <div class="concept-title anim">Ahora tú: quién<br>pidió <span style="color:var(--orange)">qué</span></div>
+  <div class="concept-body anim">
+    <p>La pregunta que el modelo prometía responder. Cruza las <strong>tres</strong> tablas: préstamo con socio y con libro.</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="kw">SELECT</span> socio.nombre, libro.titulo, prestamo.fecha_prestamo</div>
+      <div class="notacion-line"><span class="kw">FROM</span> prestamo</div>
+      <div class="notacion-line"><span class="kw">JOIN</span> socio <span class="kw">ON</span> prestamo.id_socio = socio.id_socio</div>
+      <div class="notacion-line"><span class="kw">JOIN</span> libro <span class="kw">ON</span> prestamo.id_libro = libro.id_libro</div>
+      <div class="notacion-line"><span class="kw">ORDER BY</span> prestamo.fecha_prestamo;</div>
+    </div>
+    <table class="rs">
+      <thead><tr><th>NOMBRE</th><th>TITULO</th><th>FECHA_PRESTAMO</th></tr></thead>
+      <tbody>
+        <tr><td>Ana Perez</td><td>El Quijote</td><td>2026-06-10</td></tr>
+        <tr><td>Marta Diaz</td><td>Cien Anios de Soledad</td><td>2026-06-15</td></tr>
+        <tr><td>Ana Perez</td><td>Cronica de una Muerte Anunciada</td><td>2026-07-01</td></tr>
+        <tr><td>Pedro Soto</td><td>Rayuela</td><td>2026-07-05</td></tr>
+        <tr><td>Luis Rojas</td><td>Cien Anios de Soledad</td><td>2026-07-08</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:14px;">Y le puedes seguir poniendo <code>WHERE</code>: agrega <code>WHERE socio.nombre = 'Ana Perez'</code> al final y verás solo lo de Ana.</p>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Lo que acabas de hacer</strong>
+        <p>Convertiste ids en información legible. Eso es una base de datos relacional funcionando: tablas separadas para no repetir, y JOIN para volver a unirlas cuando preguntas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BLOQUE 06 - DESAFIO INTEGRADOR
+============================================================ -->
+<div class="slide slide-concept red-accent">
+  <span class="time-chip">22:14 &middot; 11 min</span>
+  <span class="slide-badge badge-practica">Desafío integrador</span>
+  <div class="concept-label anim">06 - Todo junto &middot; Ensayo de la ES3</div>
+  <div class="concept-title anim">Tres preguntas<br>a la <span>biblioteca</span></div>
+  <div class="concept-body anim">
+    <p>Sin plantilla. Traduce cada pregunta en una consulta. Usa SELECT de columnas concretas, WHERE y ORDER BY según haga falta:</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Resuélvelas tú</div>
+      <ol>
+        <li>El <strong>título</strong> de todos los libros que tengan entre 2 y 4 copias, ordenados de mayor a menor copia.</li>
+        <li>El <strong>nombre y email</strong> de los socios que <strong>sí</strong> tienen correo, en orden alfabético.</li>
+        <li>Los libros cuyo título <strong>contiene</strong> la palabra "de" (en cualquier parte).</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="cmt">-- 1</span></div>
+        <div class="notacion-line"><span class="kw">SELECT</span> titulo <span class="kw">FROM</span> libro <span class="kw">WHERE</span> copias <span class="kw">BETWEEN</span> 2 <span class="kw">AND</span> 4 <span class="kw">ORDER BY</span> copias <span class="kw">DESC</span>;</div>
+        <div class="notacion-line"> </div>
+        <div class="notacion-line"><span class="cmt">-- 2</span></div>
+        <div class="notacion-line"><span class="kw">SELECT</span> nombre, email <span class="kw">FROM</span> socio <span class="kw">WHERE</span> email <span class="kw">IS NOT NULL</span> <span class="kw">ORDER BY</span> nombre;</div>
+        <div class="notacion-line"> </div>
+        <div class="notacion-line"><span class="cmt">-- 3</span></div>
+        <div class="notacion-line"><span class="kw">SELECT</span> titulo <span class="kw">FROM</span> libro <span class="kw">WHERE</span> titulo <span class="kw">LIKE</span> <span class="str">'%de%'</span>;</div>
+      </div>
+      <div class="solucion-nota">La 3 caza <em>Cien Anios de Soledad</em>, <em>La Ciudad y los Perros</em> y <em>Cronica de una Muerte Anunciada</em>. Este es el nivel exacto de consultas que pide la ES3.</div>
+    </details>
+    <div class="callout callout-important">
+      <span class="callout-icon">&#128221;</span>
+      <div class="callout-content">
+        <strong>Si las tres te salen solo</strong>
+        <p>Estás listo para el tercio DQL de la ES3. Guarda estas consultas en tu <code>.sql</code>: son tu machete para el receso.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     CIERRE - RESUMEN
+============================================================ -->
+<div class="slide slide-separator">
+  <span class="time-chip">22:25 &middot; 5 min</span>
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen</div>
+  <div class="sep-title anim">Ya sabes <span>preguntar</span></div>
+  <p class="sep-desc anim">Cerraste el ciclo completo de SQL: creaste, poblaste y ahora consultas. Eso es una base de datos funcionando de punta a punta.</p>
+  <div class="resumen-grid anim">
+    <div class="resumen-item"><div class="resumen-cmd">SELECT ... FROM</div><div class="resumen-desc">Elegir columnas: *, específicas, alias con AS, DISTINCT</div></div>
+    <div class="resumen-item"><div class="resumen-cmd">WHERE</div><div class="resumen-desc">Filtrar filas: comparadores, AND / OR</div></div>
+    <div class="resumen-item"><div class="resumen-cmd">LIKE / BETWEEN / IN</div><div class="resumen-desc">Patrón de texto, rango y lista de valores</div></div>
+    <div class="resumen-item"><div class="resumen-cmd">IS NULL</div><div class="resumen-desc">El vacío se pregunta con IS NULL, nunca con =</div></div>
+    <div class="resumen-item"><div class="resumen-cmd">ORDER BY</div><div class="resumen-desc">Ordenar ASC / DESC, uno o varios criterios</div></div>
+    <div class="resumen-item"><div class="resumen-cmd">El orden fijo</div><div class="resumen-desc">SELECT - FROM - WHERE - ORDER BY, siempre así</div></div>
+    <div class="resumen-item"><div class="resumen-cmd">JOIN (bonus)</div><div class="resumen-desc">Cruzar tablas por su clave; no entra en la ES3</div></div>
+  </div>
+  <div style="margin-top:32px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Receso &middot; 15 y 16 julio &middot; Trabajo asincrónico</div>
+    <div style="font-size:17px; color:rgba(255,255,255,0.6); line-height:1.7;">
+      No hay clase, pero sí <strong style="color:rgba(255,255,255,0.85)">práctica autónoma</strong>: una guía para resolver por tu cuenta y consolidar todo lo de la UA3. Volvemos el <strong style="color:rgba(255,255,255,0.85)">miércoles 22/07</strong> con el taller de cierre (ensayo de la ES3) y el <strong style="color:rgba(255,255,255,0.85)">jueves 23/07</strong> es la evaluación. Llega con tu script completo: crear, poblar y consultar.
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BANCO DE EJERCICIOS - SEPARADOR
+============================================================ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-practica">Práctica</span>
+  <div class="sep-num anim">Banco de ejercicios</div>
+  <div class="sep-title anim">Sube de <span>nivel</span></div>
+  <p class="sep-desc anim">Doce consultas sobre la <strong>tienda online</strong> que creaste y poblaste en la clase de INSERT, de muy fáciles a nivel ES3, más dos de regalo con JOIN. Primero carga la semilla de la tienda (siguiente diapositiva) para que tus resultados coincidan. Abre la solución solo cuando ya lo intentaste.</p>
+</div>
+
+
+<!-- SEMILLA DE LA TIENDA -->
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Semilla</span>
+  <div class="concept-label anim">Antes del banco &middot; Que todos partan igual</div>
+  <div class="concept-title anim">Carga la <span style="color:var(--orange)">tienda</span></div>
+  <div class="concept-body anim">
+    <p>Para que tus resultados coincidan con las soluciones, deja la tienda con este juego de datos. Si ya la poblaste en la clase de INSERT (ejercicio 12), ya la tienes; si no, corre primero el script de setup de esa clase para crear las cinco tablas, y luego pega esto y da <code>COMMIT</code>. Nombramos las columnas: funciona aunque tus tablas tengan columnas extra.</p>
+    <div class="notacion">
+      <div class="notacion-line"><span class="cmt">-- Limpieza (hijo -> padre) y recarga</span></div>
+      <div class="notacion-line"><span class="kw">DELETE FROM</span> detalle; <span class="kw">DELETE FROM</span> pedido; <span class="kw">DELETE FROM</span> producto; <span class="kw">DELETE FROM</span> cliente; <span class="kw">DELETE FROM</span> categoria;</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> categoria (id_categoria, nombre) <span class="kw">VALUES</span> (1, <span class="str">'Libros'</span>);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> categoria (id_categoria, nombre) <span class="kw">VALUES</span> (2, <span class="str">'Tecnologia'</span>);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> categoria (id_categoria, nombre) <span class="kw">VALUES</span> (3, <span class="str">'Hogar'</span>);</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> cliente (id_cliente, nombre, email, ciudad, fecha_registro) <span class="kw">VALUES</span> (1, <span class="str">'Ana Soto'</span>,    <span class="str">'ana@mail.cl'</span>,   <span class="str">'Santiago'</span>,   <span class="kw">DATE</span> <span class="str">'2026-01-10'</span>);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> cliente (id_cliente, nombre, email, ciudad, fecha_registro) <span class="kw">VALUES</span> (2, <span class="str">'Luis Rojas'</span>,  <span class="str">'luis@mail.cl'</span>,  <span class="str">'Valparaiso'</span>, <span class="kw">DATE</span> <span class="str">'2026-02-15'</span>);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> cliente (id_cliente, nombre, email, ciudad, fecha_registro) <span class="kw">VALUES</span> (3, <span class="str">'Marta Diaz'</span>,  <span class="str">'marta@mail.cl'</span>, <span class="kw">NULL</span>,         <span class="kw">DATE</span> <span class="str">'2026-03-20'</span>);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> cliente (id_cliente, nombre, email, ciudad, fecha_registro) <span class="kw">VALUES</span> (4, <span class="str">'Pedro Vega'</span>,  <span class="str">'pedro@mail.cl'</span>, <span class="str">'Santiago'</span>,   <span class="kw">DATE</span> <span class="str">'2026-04-05'</span>);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> cliente (id_cliente, nombre, email, ciudad, fecha_registro) <span class="kw">VALUES</span> (5, <span class="str">'Carla Nunez'</span>, <span class="str">'carla@mail.cl'</span>, <span class="kw">NULL</span>,         <span class="kw">DATE</span> <span class="str">'2026-05-12'</span>);</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> producto (id_producto, nombre, precio, stock, id_categoria) <span class="kw">VALUES</span> (1, <span class="str">'Cien Anios de Soledad'</span>,  12000,  5, 1);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> producto (id_producto, nombre, precio, stock, id_categoria) <span class="kw">VALUES</span> (2, <span class="str">'Notebook Pro'</span>,         599000, 3, 2);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> producto (id_producto, nombre, precio, stock, id_categoria) <span class="kw">VALUES</span> (3, <span class="str">'Mouse Inalambrico'</span>,    15000,  0, 2);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> producto (id_producto, nombre, precio, stock, id_categoria) <span class="kw">VALUES</span> (4, <span class="str">'Sarten Antiadherente'</span>, 25000,  8, 3);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> producto (id_producto, nombre, precio, stock, id_categoria) <span class="kw">VALUES</span> (5, <span class="str">'Rayuela'</span>,               9000,   2, 1);</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> pedido (id_pedido, id_cliente, fecha, estado, total) <span class="kw">VALUES</span> (1, 1, <span class="kw">DATE</span> <span class="str">'2026-06-05'</span>, <span class="str">'ENVIADO'</span>,   614000);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> pedido (id_pedido, id_cliente, fecha, estado, total) <span class="kw">VALUES</span> (2, 3, <span class="kw">DATE</span> <span class="str">'2026-06-20'</span>, <span class="str">'PENDIENTE'</span>, 12000);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> pedido (id_pedido, id_cliente, fecha, estado, total) <span class="kw">VALUES</span> (3, 1, <span class="kw">DATE</span> <span class="str">'2026-07-01'</span>, <span class="str">'ENTREGADO'</span>, 9000);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> pedido (id_pedido, id_cliente, fecha, estado, total) <span class="kw">VALUES</span> (4, 4, <span class="kw">DATE</span> <span class="str">'2026-07-03'</span>, <span class="str">'PENDIENTE'</span>, 25000);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> pedido (id_pedido, id_cliente, fecha, estado, total) <span class="kw">VALUES</span> (5, 2, <span class="kw">DATE</span> <span class="str">'2026-07-07'</span>, <span class="str">'ENVIADO'</span>,   30000);</div>
+      <div class="notacion-line"> </div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> detalle (id_detalle, id_pedido, id_producto, cantidad, precio_unitario) <span class="kw">VALUES</span> (1, 1, 2, 1, 599000);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> detalle (id_detalle, id_pedido, id_producto, cantidad, precio_unitario) <span class="kw">VALUES</span> (2, 1, 3, 1, 15000);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> detalle (id_detalle, id_pedido, id_producto, cantidad, precio_unitario) <span class="kw">VALUES</span> (3, 2, 1, 1, 12000);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> detalle (id_detalle, id_pedido, id_producto, cantidad, precio_unitario) <span class="kw">VALUES</span> (4, 3, 5, 1, 9000);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> detalle (id_detalle, id_pedido, id_producto, cantidad, precio_unitario) <span class="kw">VALUES</span> (5, 4, 4, 1, 25000);</div>
+      <div class="notacion-line"><span class="kw">INSERT INTO</span> detalle (id_detalle, id_pedido, id_producto, cantidad, precio_unitario) <span class="kw">VALUES</span> (6, 5, 3, 2, 15000);</div>
+      <div class="notacion-line"><span class="kw">COMMIT</span>;</div>
+    </div>
+    <div class="callout callout-tip">
+      <span class="callout-icon">&#10003;</span>
+      <div class="callout-content">
+        <strong>Fíjate en los casos raros</strong>
+        <p>Marta y Carla quedan <strong>sin ciudad</strong> (NULL) y el <em>Mouse</em> tiene <strong>0 de stock</strong>. Esos casos nos servirán para probar <code>IS NULL</code> y los filtros.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 01 -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Ejercicio 01</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Muy fácil</span><span class="nivel-bar" data-level="1"></span></div>
+  <div class="concept-label anim">SELECT &middot; Todo</div>
+  <div class="concept-title anim">Mira la tabla <span>entera</span></div>
+  <div class="concept-body anim">
+    <p>Lo más simple: todas las columnas y filas de una tabla.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Consulta</div>
+      <ol><li>Muestra todos los datos de la tabla <code>producto</code>.</li></ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion"><div class="notacion-line"><span class="kw">SELECT</span> * <span class="kw">FROM</span> producto;</div></div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 02 -->
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Ejercicio 02</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Muy fácil</span><span class="nivel-bar" data-level="2"></span></div>
+  <div class="concept-label anim">SELECT &middot; Columnas</div>
+  <div class="concept-title anim">Solo lo que <span>pides</span></div>
+  <div class="concept-body anim">
+    <p>Elige columnas concretas en vez de todas.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Consulta</div>
+      <ol><li>Muestra solo el <code>nombre</code> y el <code>email</code> de los clientes.</li></ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion"><div class="notacion-line"><span class="kw">SELECT</span> nombre, email <span class="kw">FROM</span> cliente;</div></div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 03 -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Ejercicio 03</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Fácil</span><span class="nivel-bar" data-level="3"></span></div>
+  <div class="concept-label anim">WHERE &middot; Comparación</div>
+  <div class="concept-title anim">Filtra por <span>número</span></div>
+  <div class="concept-body anim">
+    <p>Quédate solo con las filas que cumplen una condición numérica.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Consulta</div>
+      <ol><li>Muestra el <code>nombre</code> y el <code>precio</code> de los productos que cuesten <strong>más de 20000</strong>.</li></ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion"><div class="notacion-line"><span class="kw">SELECT</span> nombre, precio <span class="kw">FROM</span> producto <span class="kw">WHERE</span> precio &gt; 20000;</div></div>
+      <div class="solucion-nota">Devuelve <em>Notebook Pro</em> (599000) y <em>Sarten Antiadherente</em> (25000).</div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 04 -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Ejercicio 04</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Fácil</span><span class="nivel-bar" data-level="4"></span></div>
+  <div class="concept-label anim">WHERE &middot; Texto</div>
+  <div class="concept-title anim">Filtra por <span>texto</span></div>
+  <div class="concept-body anim">
+    <p>Recuerda las comillas simples y las mayúsculas exactas.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Consulta</div>
+      <ol><li>Muestra todos los datos del cliente cuyo nombre es exactamente <code>'Pedro Vega'</code>.</li></ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion"><div class="notacion-line"><span class="kw">SELECT</span> * <span class="kw">FROM</span> cliente <span class="kw">WHERE</span> nombre = <span class="str">'Pedro Vega'</span>;</div></div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 05 -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Ejercicio 05</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Intermedio</span><span class="nivel-bar" data-level="5"></span></div>
+  <div class="concept-label anim">WHERE &middot; AND</div>
+  <div class="concept-title anim">Dos condiciones <span>juntas</span></div>
+  <div class="concept-body anim">
+    <p>Ambas deben cumplirse a la vez.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Consulta</div>
+      <ol><li>Muestra el <code>nombre</code> y el <code>precio</code> de los productos con <strong>stock mayor que 0</strong> y <strong>precio menor que 20000</strong>.</li></ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion"><div class="notacion-line"><span class="kw">SELECT</span> nombre, precio <span class="kw">FROM</span> producto <span class="kw">WHERE</span> stock &gt; 0 <span class="kw">AND</span> precio &lt; 20000;</div></div>
+      <div class="solucion-nota"><em>Cien Anios</em> (12000) y <em>Rayuela</em> (9000). El Mouse queda fuera por tener 0 de stock.</div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 06 -->
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Ejercicio 06</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Intermedio</span><span class="nivel-bar" data-level="6"></span></div>
+  <div class="concept-label anim">WHERE &middot; LIKE</div>
+  <div class="concept-title anim">Busca por <span>patrón</span></div>
+  <div class="concept-body anim">
+    <p>El comodín <code>%</code> reemplaza cualquier cantidad de caracteres.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Consulta</div>
+      <ol><li>Muestra los nombres de productos que <strong>empiezan con la letra R</strong>.</li></ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion"><div class="notacion-line"><span class="kw">SELECT</span> nombre <span class="kw">FROM</span> producto <span class="kw">WHERE</span> nombre <span class="kw">LIKE</span> <span class="str">'R%'</span>;</div></div>
+      <div class="solucion-nota">Solo <em>Rayuela</em>.</div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 07 -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Ejercicio 07</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Intermedio</span><span class="nivel-bar" data-level="7"></span></div>
+  <div class="concept-label anim">WHERE &middot; IN</div>
+  <div class="concept-title anim">Pertenece a una <span>lista</span></div>
+  <div class="concept-body anim">
+    <p><code>IN</code> reemplaza varios OR sobre la misma columna.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Consulta</div>
+      <ol><li>Muestra el <code>nombre</code> de los productos de las categorías <strong>1 o 3</strong>.</li></ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion"><div class="notacion-line"><span class="kw">SELECT</span> nombre <span class="kw">FROM</span> producto <span class="kw">WHERE</span> id_categoria <span class="kw">IN</span> (1, 3);</div></div>
+      <div class="solucion-nota"><em>Cien Anios</em> y <em>Rayuela</em> (categoria 1) y <em>Sarten</em> (categoria 3). Equivale a <code>id_categoria = 1 OR id_categoria = 3</code>, pero más corto.</div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 08 -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Ejercicio 08</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Avanzado</span><span class="nivel-bar" data-level="8"></span></div>
+  <div class="concept-label anim">WHERE &middot; IS NULL</div>
+  <div class="concept-title anim">Caza los <span>vacíos</span></div>
+  <div class="concept-body anim">
+    <p>El vacío no se compara con <code>=</code>. Aquí está la trampa clásica.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Consulta</div>
+      <ol>
+        <li>Muestra el nombre de los clientes que <strong>tienen</strong> ciudad registrada.</li>
+        <li>Ahora los que <strong>no</strong> tienen ciudad.</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">SELECT</span> nombre <span class="kw">FROM</span> cliente <span class="kw">WHERE</span> ciudad <span class="kw">IS NOT NULL</span>;</div>
+        <div class="notacion-line"><span class="kw">SELECT</span> nombre <span class="kw">FROM</span> cliente <span class="kw">WHERE</span> ciudad <span class="kw">IS NULL</span>;</div>
+      </div>
+      <div class="solucion-nota">Con ciudad: Ana, Luis, Pedro. Sin ciudad: Marta y Carla.</div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 09 -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Ejercicio 09</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Avanzado</span><span class="nivel-bar" data-level="9"></span></div>
+  <div class="concept-label anim">WHERE &middot; BETWEEN fechas</div>
+  <div class="concept-title anim">Un rango de <span>fechas</span></div>
+  <div class="concept-body anim">
+    <p><code>BETWEEN</code> también funciona con fechas, e incluye los dos extremos.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Consulta</div>
+      <ol><li>Muestra los pedidos hechos entre el <strong>1 y el 30 de junio</strong> de 2026.</li></ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">SELECT</span> * <span class="kw">FROM</span> pedido</div>
+        <div class="notacion-line"><span class="kw">WHERE</span> fecha <span class="kw">BETWEEN</span> <span class="kw">DATE</span> <span class="str">'2026-06-01'</span> <span class="kw">AND</span> <span class="kw">DATE</span> <span class="str">'2026-06-30'</span>;</div>
+      </div>
+      <div class="solucion-nota">Los pedidos 1 (05-jun) y 2 (20-jun).</div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 10 -->
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Ejercicio 10</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Difícil</span><span class="nivel-bar" data-level="10"></span></div>
+  <div class="concept-label anim">ORDER BY &middot; Múltiple</div>
+  <div class="concept-title anim">Ordena por <span>dos</span> criterios</div>
+  <div class="concept-body anim">
+    <p>Primero un criterio; los empates se resuelven con el segundo.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Consulta</div>
+      <ol><li>Muestra nombre y precio de todos los productos, ordenados por <strong>precio de mayor a menor</strong> y, en caso de empate, por <strong>nombre alfabético</strong>.</li></ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion"><div class="notacion-line"><span class="kw">SELECT</span> nombre, precio <span class="kw">FROM</span> producto <span class="kw">ORDER BY</span> precio <span class="kw">DESC</span>, nombre <span class="kw">ASC</span>;</div></div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 11 -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Ejercicio 11</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Difícil</span><span class="nivel-bar" data-level="11"></span></div>
+  <div class="concept-label anim">WHERE + ORDER BY</div>
+  <div class="concept-title anim">Filtrar y <span>ordenar</span></div>
+  <div class="concept-body anim">
+    <p>Las dos cosas en una sola consulta, en el orden correcto.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Consulta</div>
+      <ol><li>Muestra los productos <strong>disponibles</strong> (stock mayor que 0), ordenados alfabéticamente por nombre.</li></ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion"><div class="notacion-line"><span class="kw">SELECT</span> nombre, stock <span class="kw">FROM</span> producto <span class="kw">WHERE</span> stock &gt; 0 <span class="kw">ORDER BY</span> nombre;</div></div>
+      <div class="solucion-nota">Deja fuera al <em>Mouse Inalambrico</em> (0 de stock).</div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 12 -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Ejercicio 12</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Experto</span><span class="nivel-bar" data-level="12"></span></div>
+  <div class="concept-label anim">Todo junto &middot; Nivel ES3</div>
+  <div class="concept-title anim">La consulta <span>final</span></div>
+  <div class="concept-body anim">
+    <p>Una sola consulta que combina selección de columnas, dos condiciones y orden. Piénsala por partes.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">El jefe final</div>
+      <ol>
+        <li>Muestra el <strong>nombre</strong> y el <strong>precio</strong> de los productos que cuesten <strong>10000 o más</strong> y cuyo nombre <strong>contenga una "a"</strong>, ordenados de más caro a más barato.</li>
+      </ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">SELECT</span> nombre, precio <span class="kw">FROM</span> producto</div>
+        <div class="notacion-line"><span class="kw">WHERE</span> precio &gt;= 10000 <span class="kw">AND</span> nombre <span class="kw">LIKE</span> <span class="str">'%a%'</span></div>
+        <div class="notacion-line"><span class="kw">ORDER BY</span> precio <span class="kw">DESC</span>;</div>
+      </div>
+      <div class="solucion-nota">Sarten (25000), Mouse Inalambrico (15000) y Cien Anios (12000). El Notebook Pro cuesta más, pero su nombre no tiene "a" minúscula, así que queda fuera. Este es justo el tipo de consulta compuesta que evalúa la ES3.</div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 13 - BONUS JOIN -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Bonus 01</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Bonus JOIN</span><span class="nivel-bar" data-level="12"></span></div>
+  <div class="concept-label anim">JOIN &middot; No entra en la ES3</div>
+  <div class="concept-title anim">Nombre en vez de <span>id</span></div>
+  <div class="concept-body anim">
+    <p>Cruza dos tablas para mostrar quién hizo cada pedido, con su nombre en vez del número.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Consulta con JOIN</div>
+      <ol><li>Muestra el <code>id_pedido</code>, el <strong>nombre del cliente</strong> y la <code>fecha</code>, ordenado por fecha.</li></ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">SELECT</span> pedido.id_pedido, cliente.nombre, pedido.fecha</div>
+        <div class="notacion-line"><span class="kw">FROM</span> pedido</div>
+        <div class="notacion-line"><span class="kw">JOIN</span> cliente <span class="kw">ON</span> pedido.id_cliente = cliente.id_cliente</div>
+        <div class="notacion-line"><span class="kw">ORDER BY</span> pedido.fecha;</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+
+<!-- EJERCICIO 14 - BONUS JOIN -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Bonus 02</span>
+  <div class="ejercicio-nivel"><span class="nivel-label">Bonus JOIN</span><span class="nivel-bar" data-level="12"></span></div>
+  <div class="concept-label anim">JOIN + WHERE &middot; No entra en la ES3</div>
+  <div class="concept-title anim">Qué pidió <span>Ana</span></div>
+  <div class="concept-body anim">
+    <p>Cuatro tablas y un filtro: los productos que pidió un cliente concreto. Se cruza <code>detalle</code> con <code>pedido</code>, <code>producto</code> y <code>cliente</code>.</p>
+    <div class="tarea-box">
+      <div class="tarea-title">Consulta con JOIN</div>
+      <ol><li>Muestra el <strong>nombre de los productos</strong> que pidió <code>'Ana Soto'</code>.</li></ol>
+    </div>
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <div class="notacion">
+        <div class="notacion-line"><span class="kw">SELECT</span> producto.nombre</div>
+        <div class="notacion-line"><span class="kw">FROM</span> detalle</div>
+        <div class="notacion-line"><span class="kw">JOIN</span> pedido   <span class="kw">ON</span> detalle.id_pedido = pedido.id_pedido</div>
+        <div class="notacion-line"><span class="kw">JOIN</span> producto <span class="kw">ON</span> detalle.id_producto = producto.id_producto</div>
+        <div class="notacion-line"><span class="kw">JOIN</span> cliente  <span class="kw">ON</span> pedido.id_cliente = cliente.id_cliente</div>
+        <div class="notacion-line"><span class="kw">WHERE</span> cliente.nombre = <span class="str">'Ana Soto'</span>;</div>
+      </div>
+      <div class="solucion-nota">Ana pidió Notebook Pro, Mouse Inalambrico y Rayuela.</div>
+    </details>
+  </div>
+</div>
+
+
+<script>
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  // Barras de nivel del banco de ejercicios
+  document.querySelectorAll('.nivel-bar').forEach(bar => {
+    const lvl = +bar.dataset.level, max = +bar.dataset.max || 12;
+    for (let i = 1; i <= max; i++) {
+      const pip = document.createElement('span');
+      pip.className = 'nivel-pip' + (i <= lvl ? ' on' : '');
+      bar.appendChild(pip);
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
