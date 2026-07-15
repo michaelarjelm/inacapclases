@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agendar evaluacion pendiente - INACAP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Colores oficiales INACAP (Manual de Identidad Corporativa) */
+      --rojo: #E30513;
+      --rojo-oscuro: #b3040f;
+      --gris: #5A5B5E;
+      --gris-claro: #f4f4f6;
+      --texto: #2b2b2e;
+      --borde: #dcdce0;
+      --verde: #1f9d55;
+      --rojo-error: #c0392b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      margin: 0; background: var(--gris-claro); color: var(--texto); line-height: 1.45;
+    }
+    .contenedor { max-width: 900px; margin: 0 auto; padding: 0 16px 64px; }
+
+    /* --- Marca INACAP --- */
+    .barra-superior { height: 6px; background: var(--rojo); }
+    .marca {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px; padding: 20px 0 16px;
+    }
+    .logo { display: flex; align-items: flex-end; }
+    .logo-tile { width: 26px; height: 34px; background: var(--rojo); position: relative; margin-right: 3px; }
+    .logo-tile::after { content: ''; position: absolute; left: 6px; bottom: 6px; width: 8px; height: 9px; background: #fff; }
+    .logo-word { font-weight: 700; font-size: 2rem; line-height: .9; color: var(--gris); letter-spacing: -1px; }
+    .inst {
+      font-size: .62rem; font-weight: 500; color: var(--gris); text-align: right;
+      letter-spacing: .5px; line-height: 1.5; border-left: 2px solid var(--rojo); padding-left: 10px;
+    }
+    h1 { font-size: 1.4rem; margin: 8px 0 2px; color: var(--texto); font-weight: 700; }
+    .sub { color: var(--gris); margin: 0 0 22px; font-size: .95rem; }
+
+    .tarjeta {
+      background: #fff; border: 1px solid var(--borde); border-radius: 12px;
+      padding: 18px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+    label { display: block; font-weight: 700; margin-bottom: 6px; font-size: .9rem; color: var(--texto); }
+    input, select {
+      width: 100%; padding: 12px; font-size: 1rem; border: 1px solid var(--borde);
+      border-radius: 8px; background: #fff; color: var(--texto); font-family: inherit;
+    }
+    input:focus, select:focus { outline: none; border-color: var(--rojo); box-shadow: 0 0 0 3px rgba(227,5,19,.12); }
+    button {
+      width: 100%; padding: 13px; font-size: 1rem; font-weight: 700; border: none;
+      border-radius: 8px; background: var(--rojo); color: #fff; cursor: pointer;
+      margin-top: 14px; font-family: inherit;
+    }
+    button:hover { background: var(--rojo-oscuro); }
+    button:disabled { background: #d9a0a4; cursor: not-allowed; }
+    .boton-sec { background: #fff; color: var(--rojo); border: 1px solid var(--rojo); }
+    .boton-sec:hover { background: #fdeff0; }
+    .oculto { display: none; }
+    .chip {
+      display: inline-block; background: rgba(227,5,19,.1); color: var(--rojo);
+      padding: 3px 10px; border-radius: 999px; font-size: .8rem; font-weight: 700;
+    }
+
+    /* --- Calendario semanal --- */
+    .semana {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px; margin-top: 4px;
+    }
+    .dia-col {
+      border: 1px solid var(--borde); border-radius: 10px; overflow: hidden;
+      display: flex; flex-direction: column; background: #fff; min-height: 130px;
+    }
+    .dia-cab {
+      background: var(--gris); color: #fff; text-align: center; padding: 7px 4px;
+      font-size: .72rem; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+    }
+    .dia-cab .fecha { display: block; font-size: .68rem; font-weight: 400; opacity: .85; margin-top: 1px; }
+    .dia-cuerpo { flex: 1; padding: 10px 8px; display: flex; flex-direction: column; justify-content: center; }
+
+    .slot {
+      cursor: pointer; text-align: center; border-radius: 8px; padding: 10px 6px;
+      border: 1.5px solid transparent; transition: border-color .15s, background .15s;
+    }
+    .slot:hover { background: rgba(227,5,19,.06); }
+    .slot .hora { font-weight: 700; font-size: .95rem; color: var(--texto); }
+    .slot .sala { font-size: .78rem; color: var(--gris); margin-top: 2px; }
+    .slot .tag { font-size: .68rem; color: var(--rojo); font-weight: 700; margin-top: 6px; text-transform: uppercase; letter-spacing: .3px; }
+    .dia-col.sel { border-color: var(--rojo); box-shadow: 0 0 0 2px rgba(227,5,19,.15); }
+    .dia-col.sel .dia-cab { background: var(--rojo); }
+    .dia-col.sel .slot { background: rgba(227,5,19,.08); border-color: var(--rojo); }
+
+    .dia-col.off { background: #fafafa; }
+    .dia-col.off .dia-cab { background: #c9c9cd; }
+    .off-nota { text-align: center; font-size: .74rem; color: #9a9aa0; font-style: italic; }
+
+    .msg { padding: 12px 14px; border-radius: 8px; margin: 14px 0 0; font-size: .92rem; }
+    .msg.error { background: #fdecea; color: var(--rojo-error); }
+    .exito-caja {
+      padding: 22px 20px; border: 2px solid var(--verde); border-radius: 12px; background: #e8f7ee;
+    }
+    .exito-cab { text-align: center; margin-bottom: 16px; }
+    .exito-cab .tick { font-size: 2.4rem; color: var(--verde); }
+    .exito-cab .exito-titulo { font-size: 1.15rem; font-weight: 700; color: #14612f; margin-top: 4px; }
+    .detalle {
+      background: #fff; border-radius: 10px; padding: 4px 14px; border: 1px solid #cfe9d7;
+    }
+    .detalle .fila {
+      display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+      padding: 9px 0; border-top: 1px solid #eef3ef;
+    }
+    .detalle .fila:first-child { border-top: none; }
+    .detalle .k { font-weight: 700; color: var(--gris); font-size: .85rem; }
+    .detalle .v { color: var(--texto); font-size: .92rem; text-align: right; }
+    .cargando { color: var(--gris); font-size: .9rem; }
+    ul.previos { list-style: none; padding: 0; margin: 10px 0 0; }
+    ul.previos li { padding: 8px 0; border-top: 1px dashed var(--borde); }
+    ul.previos .p-fecha { font-size: .88rem; font-weight: 700; color: var(--texto); }
+    ul.previos .p-eval { font-size: .82rem; color: var(--gris); margin-top: 1px; }
+    .pie { text-align: center; color: var(--gris); font-size: .75rem; margin-top: 28px; }
+    .paso-titulo { font-weight: 700; font-size: .95rem; margin: 0 0 10px; }
+  </style>
+</head>
+<body>
+  <div class="barra-superior"></div>
+  <div class="contenedor">
+
+    <header class="marca">
+      <div class="logo">
+        <span class="logo-tile"></span><span class="logo-word">nacap</span>
+      </div>
+      <div class="inst">
+        UNIVERSIDAD TECNOLOGICA DE CHILE<br>
+        INSTITUTO PROFESIONAL<br>
+        CENTRO DE FORMACION TECNICA
+      </div>
+    </header>
+
+    <h1>Agendar evaluacion pendiente</h1>
+    <p id="sub" class="sub">Ingresa tu RUT para ver los dias en que puedo tomarte evaluaciones en tu sede.</p>
+
+    <!-- Paso 1: RUT -->
+    <div id="paso-rut" class="tarjeta">
+      <label for="rut">RUT</label>
+      <input id="rut" type="text" placeholder="12345678-9" autocomplete="off">
+      <div id="msg-rut"></div>
+      <button id="btn-rut">Continuar</button>
+    </div>
+
+    <!-- Paso 2: calendario + evaluacion -->
+    <div id="paso-agenda" class="oculto">
+      <div class="tarjeta">
+        <div><strong id="hola"></strong></div>
+        <div style="margin-top:4px; color:var(--gris); font-size:.9rem;">Sede: <span id="sede-chip" class="chip"></span></div>
+        <div id="previos-wrap"></div>
+      </div>
+
+      <div class="tarjeta">
+        <p class="paso-titulo">1. Elige el dia</p>
+        <div id="semana" class="semana"></div>
+
+        <div id="zona-eval" class="oculto" style="margin-top:18px;">
+          <label for="ramo">2. Ramo de la evaluacion</label>
+          <select id="ramo"></select>
+
+          <label for="evaluacion" style="margin-top:12px;">3. Evaluacion a rendir</label>
+          <select id="evaluacion"></select>
+        </div>
+
+        <div id="msg-agenda"></div>
+        <button id="btn-agendar" disabled>Agendar evaluacion</button>
+        <button id="btn-cambiar" class="boton-sec">Usar otro RUT</button>
+      </div>
+    </div>
+
+    <!-- Paso 3: exito -->
+    <div id="paso-exito" class="oculto">
+      <div class="exito-caja">
+        <div class="exito-cab">
+          <div class="tick">&#10003;</div>
+          <div class="exito-titulo">Evaluacion agendada</div>
+        </div>
+        <div id="exito-detalle" class="detalle"></div>
+      </div>
+      <button id="btn-otra" style="margin-top:16px;">Agendar otra evaluacion</button>
+    </div>
+
+    <div class="pie">INACAP &middot; Agendamiento de evaluaciones</div>
+  </div>
+
+  <script>
+    /* =========================================================
+       CONFIGURACION: URL del Web App de Apps Script (deploy /exec).
+       ========================================================= */
+    var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoyCdDGxU0P6U6YiI71yEk8e5KsB1_2LX6lC61hJyuXvt7MbtOHFoX3wRILp051Mq6/exec";
+
+    /* --------------------------------------------------------- */
+    var estudiante = null;
+    var bloques = [];            // semana completa (todas las sedes)
+    var evaluaciones = [];       // [{ramo, evaluacion, tipo}]
+    var misAgendamientos = [];   // evaluaciones que el alumno ya agendo
+    var bloqueSel = null;
+
+    function el(id) { return document.getElementById(id); }
+    function mostrarMsg(cont, texto, tipo) {
+      cont.innerHTML = texto ? '<div class="msg ' + tipo + '">' + escaparHtml(texto) + '</div>' : '';
+    }
+
+    // --- Paso 1: validar RUT (GET) ---
+    el('btn-rut').addEventListener('click', buscarRut);
+    el('rut').addEventListener('keydown', function (e) { if (e.key === 'Enter') buscarRut(); });
+
+    function buscarRut() {
+      var rut = el('rut').value.trim();
+      if (!rut) { mostrarMsg(el('msg-rut'), 'Ingresa tu RUT.', 'error'); return; }
+      el('btn-rut').disabled = true;
+      el('btn-rut').textContent = 'Buscando...';
+      mostrarMsg(el('msg-rut'), '', '');
+
+      fetch(SCRIPT_URL + '?rut=' + encodeURIComponent(rut) + '&t=' + Date.now())
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          el('btn-rut').disabled = false;
+          el('btn-rut').textContent = 'Continuar';
+          if (!data.ok) { mostrarMsg(el('msg-rut'), data.error, 'error'); return; }
+          estudiante = data.estudiante;
+          bloques = data.bloques || [];
+          evaluaciones = data.evaluaciones || [];
+          iniciarAgenda(data.agendamientos || []);
+        })
+        .catch(function () {
+          el('btn-rut').disabled = false;
+          el('btn-rut').textContent = 'Continuar';
+          mostrarMsg(el('msg-rut'), 'No se pudo conectar con el servidor. Intenta nuevamente.', 'error');
+        });
+    }
+
+    // --- Paso 2: calendario ---
+    function iniciarAgenda(agendamientos) {
+      misAgendamientos = agendamientos || [];
+      el('paso-rut').classList.add('oculto');
+      el('paso-exito').classList.add('oculto');
+      el('paso-agenda').classList.remove('oculto');
+      el('sub').textContent = 'Elige un dia y luego la evaluacion que vas a rendir.';
+      el('hola').textContent = 'Hola, ' + estudiante.nombre;
+      el('sede-chip').textContent = (estudiante.sedes || []).join(', ');
+      el('zona-eval').classList.add('oculto');
+      el('btn-agendar').disabled = true;
+      bloqueSel = null;
+      mostrarMsg(el('msg-agenda'), '', '');
+      pintarSemana();
+      pintarPrevios(agendamientos || []);
+    }
+
+    function pintarSemana() {
+      var cont = el('semana');
+      if (!bloques.length) {
+        cont.innerHTML = '<p class="cargando">No hay dias configurados.</p>';
+        return;
+      }
+      cont.innerHTML = '';
+      bloques.forEach(function (b, idx) {
+        var disponible = (estudiante.sedes || []).indexOf(b.sede) !== -1;
+        var col = document.createElement('div');
+        col.className = 'dia-col' + (disponible ? '' : ' off');
+
+        var cuerpo = disponible
+          ? '<div class="slot">' +
+              '<div class="hora">' + escaparHtml(b.inicio + ' - ' + b.fin) + '</div>' +
+              '<div class="sala">' + escaparHtml(b.sala) + '</div>' +
+              '<div class="tag">Evaluaciones pendientes</div>' +
+            '</div>'
+          : '<div class="off-nota">En ' + escaparHtml(b.sede) + '</div>';
+
+        col.innerHTML =
+          '<div class="dia-cab">' + escaparHtml(diaCorto(b.dia)) +
+            '<span class="fecha">' + escaparHtml(b.fecha) + '</span></div>' +
+          '<div class="dia-cuerpo">' + cuerpo + '</div>';
+
+        if (disponible) {
+          col.addEventListener('click', function () { seleccionarBloque(idx, col); });
+        }
+        cont.appendChild(col);
+      });
+    }
+
+    function diaCorto(dia) {
+      var d = String(dia).trim();
+      return d.substring(0, 3).toUpperCase();
+    }
+
+    function seleccionarBloque(idx, col) {
+      bloqueSel = bloques[idx];
+      var cols = document.querySelectorAll('.dia-col');
+      for (var i = 0; i < cols.length; i++) cols[i].classList.remove('sel');
+      col.classList.add('sel');
+
+      // Ramos que el alumno cursa en la sede del bloque y que aun tienen evaluaciones sin agendar.
+      var ramos = [];
+      evaluaciones.forEach(function (ev) {
+        if (ev.sede === bloqueSel.sede && ramos.indexOf(ev.ramo) === -1 &&
+            evalsDisponibles(ev.ramo).length > 0) {
+          ramos.push(ev.ramo);
+        }
+      });
+      var selR = el('ramo');
+      selR.innerHTML = '<option value="">Selecciona tu ramo...</option>';
+      ramos.forEach(function (r) {
+        var o = document.createElement('option'); o.value = r; o.textContent = r; selR.appendChild(o);
+      });
+      el('zona-eval').classList.remove('oculto');
+
+      if (!ramos.length) {
+        selR.innerHTML = '<option value="">Ya agendaste todas tus evaluaciones de esta sede</option>';
+        el('evaluacion').innerHTML = '<option value="">-</option>';
+      } else if (ramos.length === 1) {
+        selR.value = ramos[0];
+        poblarEvaluaciones(ramos[0]);
+      } else {
+        el('evaluacion').innerHTML = '<option value="">Primero elige el ramo...</option>';
+      }
+      actualizarBotonAgendar();
+    }
+
+    // Evaluaciones de un ramo (en la sede del bloque) que el alumno todavia NO ha agendado.
+    function evalsDisponibles(ramo) {
+      return evaluaciones.filter(function (ev) {
+        if (ev.ramo !== ramo || ev.sede !== bloqueSel.sede) return false;
+        var yaAgendada = misAgendamientos.some(function (a) {
+          return a.ramo === ev.ramo && a.evaluacion === ev.evaluacion;
+        });
+        return !yaAgendada;
+      });
+    }
+
+    function poblarEvaluaciones(ramo) {
+      var sel = el('evaluacion');
+      sel.innerHTML = '';
+      if (!ramo) {
+        sel.innerHTML = '<option value="">Primero elige el ramo...</option>';
+        return;
+      }
+      var disp = evalsDisponibles(ramo);
+      if (!disp.length) {
+        sel.innerHTML = '<option value="">Ya agendaste todas las evaluaciones de este ramo</option>';
+        return;
+      }
+      var opt0 = document.createElement('option');
+      opt0.value = ''; opt0.textContent = 'Selecciona la evaluacion...';
+      sel.appendChild(opt0);
+      disp.forEach(function (ev) {
+        var o = document.createElement('option');
+        o.value = ev.evaluacion; o.textContent = ev.evaluacion;
+        sel.appendChild(o);
+      });
+    }
+
+    el('ramo').addEventListener('change', function () {
+      poblarEvaluaciones(el('ramo').value);
+      actualizarBotonAgendar();
+    });
+
+    el('evaluacion').addEventListener('change', actualizarBotonAgendar);
+    function actualizarBotonAgendar() {
+      el('btn-agendar').disabled = !(bloqueSel && el('ramo').value && el('evaluacion').value);
+    }
+
+    // --- Agendar (POST) ---
+    el('btn-agendar').addEventListener('click', function () {
+      if (!bloqueSel || !el('ramo').value || !el('evaluacion').value) return;
+      el('btn-agendar').disabled = true;
+      el('btn-agendar').textContent = 'Agendando...';
+      mostrarMsg(el('msg-agenda'), '', '');
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          rut: estudiante.rut,
+          bloqueId: bloqueSel.id,
+          ramo: el('ramo').value,
+          evaluacion: el('evaluacion').value
+        })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          el('btn-agendar').textContent = 'Agendar evaluacion';
+          if (!data.ok) {
+            mostrarMsg(el('msg-agenda'), data.error, 'error');
+            actualizarBotonAgendar();
+            return;
+          }
+          el('sub').textContent = 'Guarda este resumen. Puedes agendar otra evaluacion si lo necesitas.';
+          el('paso-agenda').classList.add('oculto');
+          el('paso-exito').classList.remove('oculto');
+          pintarDetalle(data.agendamiento);
+        })
+        .catch(function () {
+          el('btn-agendar').textContent = 'Agendar evaluacion';
+          actualizarBotonAgendar();
+          mostrarMsg(el('msg-agenda'), 'Error al agendar. Intenta nuevamente.', 'error');
+        });
+    });
+
+    function pintarDetalle(a) {
+      if (!a) { el('exito-detalle').innerHTML = ''; return; }
+      var filas = [
+        ['Fecha', a.dia + ' ' + a.fecha],
+        ['Horario', a.inicio + ' - ' + a.fin + ' hrs'],
+        ['Sala', a.sala],
+        ['Sede', a.sede],
+        ['Ramo', a.ramo],
+        ['Evaluacion', a.evaluacion],
+        ['Tipo', a.tipo]
+      ];
+      el('exito-detalle').innerHTML = filas.map(function (f) {
+        return '<div class="fila"><span class="k">' + escaparHtml(f[0]) + '</span>' +
+               '<span class="v">' + escaparHtml(f[1]) + '</span></div>';
+      }).join('');
+    }
+
+    function pintarPrevios(lista) {
+      var wrap = el('previos-wrap');
+      if (!lista || !lista.length) { wrap.innerHTML = ''; return; }
+      var html = '<div style="margin-top:12px; font-weight:700; font-size:.85rem;">Ya tienes agendado:</div><ul class="previos">';
+      lista.forEach(function (a) {
+        var horario = a.inicio ? ' &middot; ' + escaparHtml(a.inicio + ' - ' + a.fin + ' hrs') : '';
+        html += '<li>' +
+          '<div class="p-fecha">' + escaparHtml(a.dia + ' ' + a.fecha) + horario + '</div>' +
+          '<div class="p-eval">' + escaparHtml(a.evaluacion) + ' &mdash; ' + escaparHtml(a.ramo) + ' &middot; ' + escaparHtml(a.tipo) + '</div>' +
+          '</li>';
+      });
+      html += '</ul>';
+      wrap.innerHTML = html;
+    }
+
+    // --- Navegacion ---
+    el('btn-cambiar').addEventListener('click', volverAInicio);
+    el('btn-otra').addEventListener('click', function () {
+      if (estudiante) { el('rut').value = estudiante.rut; buscarRut(); }
+      else volverAInicio();
+    });
+
+    function volverAInicio() {
+      estudiante = null; bloqueSel = null; bloques = []; evaluaciones = [];
+      el('paso-agenda').classList.add('oculto');
+      el('paso-exito').classList.add('oculto');
+      el('paso-rut').classList.remove('oculto');
+      el('sub').textContent = 'Ingresa tu RUT para ver los dias en que puedo tomarte evaluaciones en tu sede.';
+      el('rut').value = '';
+      mostrarMsg(el('msg-rut'), '', '');
+    }
+
+    function escaparHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+  </script>
+</body>
+</html>
