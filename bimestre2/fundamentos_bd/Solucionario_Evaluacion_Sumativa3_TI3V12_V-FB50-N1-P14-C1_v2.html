@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Solucionario Evaluacion Sumativa N3 - Fundamentos de Base de Datos</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; font-size: 10pt; background: #f4f6f9; color: #333; line-height: 1.5; }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 20px 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 8px;
+    }
+
+    .header-pauta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid #CC0000;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+    .header-pauta img { height: 45px; width: auto; }
+    .header-pauta .doc-info { text-align: right; font-size: 9pt; color: #555; }
+
+    .title-block { text-align: center; margin-bottom: 25px; }
+    .title-block h1 { font-size: 18pt; font-weight: bold; color: #CC0000; margin-bottom: 4px; }
+    .title-block h2 { font-size: 13pt; font-weight: bold; color: #333; margin-bottom: 4px; }
+    .title-block h3 { font-size: 11pt; color: #666; font-style: italic; }
+
+    .section-title {
+      font-weight: bold;
+      font-size: 11pt;
+      background: #333;
+      color: white;
+      padding: 6px 12px;
+      margin: 25px 0 12px 0;
+      border-left: 6px solid #CC0000;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .info-box {
+      background: #fdf2f2;
+      border-left: 4px solid #CC0000;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 0 4px 4px 0;
+    }
+    .info-box p { font-size: 9.5pt; margin-bottom: 4px; }
+    .info-box p:last-child { margin-bottom: 0; }
+
+    .tip-box {
+      background: #eef9ff;
+      border-left: 4px solid #1a5fb4;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 0 4px 4px 0;
+    }
+    .tip-box p { font-size: 9pt; color: #222; }
+
+    .sql-code {
+      font-family: 'Courier New', monospace;
+      font-size: 9pt;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      border: 1px solid #333;
+      padding: 12px 15px;
+      margin: 10px 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-x: auto;
+      border-radius: 6px;
+      line-height: 1.45;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* SQL Highlighting colors */
+    .sql-keyword { color: #569cd6; font-weight: bold; }
+    .sql-comment { color: #6a9955; font-style: italic; }
+    .sql-string { color: #ce9178; }
+    .sql-number { color: #b5cea8; }
+    .sql-type { color: #4ec9b0; }
+    .sql-constraint { color: #c586c0; font-weight: bold; }
+
+    .table-results {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8.5pt;
+      margin: 12px 0;
+      background: #fff;
+    }
+    .table-results th {
+      background: #f0f0f0;
+      color: #333;
+      font-weight: bold;
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    .table-results td {
+      padding: 5px 10px;
+      border: 1px solid #ddd;
+    }
+    .table-results tr:nth-child(even) { background: #f9f9f9; }
+
+    .rubric-list { margin-left: 20px; margin-bottom: 15px; font-size: 9.5pt; }
+    .rubric-list li { margin-bottom: 6px; }
+
+    @media print {
+      body { background: white; color: black; }
+      .container { max-width: 100%; margin: 0; padding: 0; box-shadow: none; }
+      .sql-code { background: #f5f5f5; color: #000; border: 1px solid #ccc; overflow-x: visible; }
+      .sql-keyword { color: #0000ff; }
+      .sql-comment { color: #008000; }
+      .sql-string { color: #a31515; }
+      .sql-type { color: #2b91af; }
+      .sql-code, .table-results, .tip-box, .info-box {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      h3 {
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+      .section-title {
+        break-before: auto;
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-pauta">
+    <img src="../logo%20inacap.png" alt="INACAP">
+    <div class="doc-info">
+      <strong>Área Académica:</strong> Tecnologías de Información y Ciberseguridad<br>
+      <strong>Carrera:</strong> Analista Programador<br>
+      <strong>Asignatura:</strong> Fundamentos de Base de Datos (TI3V12)<br>
+      <strong>Sección:</strong> V-FB50-N1-P14-C1
+    </div>
+  </div>
+
+  <div class="title-block">
+    <h1>SOLUCIONARIO Y PAUTA DE CORRECCIÓN</h1>
+    <h2>Evaluación Sumativa N°3 - SQL DDL, DML y DQL</h2>
+    <h3>Docente: Michael Arjel Mayerovich &middot; Semestre Otoño 2026</h3>
+  </div>
+
+  <div class="info-box">
+    <p><strong>Propósito del documento:</strong> Esta pauta contiene la solución estándar esperada para la evaluación práctica, desarrollada para Oracle Database (SQL Developer). Incluye los criterios específicos para asignar puntaje parcial en caso de errores de sintaxis o lógica.</p>
+    <p><strong>Criterio de aprobación:</strong> Puntaje Máximo: 84 puntos (12 indicadores de la escala de apreciación, 7 puntos cada uno). Nota 4.0 se alcanza con 50 puntos (60% de exigencia).</p>
+    <p><strong>Indicador 1 de la escala (transversal, 7 pts):</strong> "El script completo (DDL, DML y DQL) se ejecuta sin errores, con sintaxis SQL correcta y sentencias bien terminadas." No corresponde a una parte específica: se evalúa sobre el archivo <code>.sql</code> completo.</p>
+  </div>
+
+  <!-- PARTE A -->
+  <div class="section-title">PARTE A: Definición de datos (DDL) - [28 puntos | Ítems 2 a 5 de la escala]</div>
+
+  <p>Creación de las cuatro tablas respetando las dependencias de clave foránea (primero las tablas maestras CLIENTE y PROVEEDOR, luego MEDICAMENTO que depende de PROVEEDOR, y por último VENTA que depende de CLIENTE y MEDICAMENTO). Se debe validar el uso correcto de restricciones de integridad (`NOT NULL`, `UNIQUE`, `DEFAULT`, `CHECK` y claves primarias/foráneas).</p>
+  <div class="sql-code"><span class="sql-comment">-- 1. Creación de tabla CLIENTE</span>
+<span class="sql-keyword">CREATE TABLE</span> CLIENTE (
+    id_cliente <span class="sql-type">NUMBER</span>(10) <span class="sql-constraint">CONSTRAINT pk_cliente PRIMARY KEY</span>,
+    nombre     <span class="sql-type">VARCHAR2</span>(100) <span class="sql-constraint">CONSTRAINT nn_cliente_nombre NOT NULL</span>,
+    rut        <span class="sql-type">VARCHAR2</span>(12) <span class="sql-constraint">CONSTRAINT nn_cliente_rut NOT NULL</span>
+                            <span class="sql-constraint">CONSTRAINT un_cliente_rut UNIQUE</span>,
+    telefono   <span class="sql-type">VARCHAR2</span>(15)
+);
+
+<span class="sql-comment">-- 2. Creación de tabla PROVEEDOR</span>
+<span class="sql-keyword">CREATE TABLE</span> PROVEEDOR (
+    id_proveedor <span class="sql-type">NUMBER</span>(10) <span class="sql-constraint">CONSTRAINT pk_proveedor PRIMARY KEY</span>,
+    nombre       <span class="sql-type">VARCHAR2</span>(100) <span class="sql-constraint">CONSTRAINT nn_proveedor_nombre NOT NULL</span>,
+    telefono     <span class="sql-type">VARCHAR2</span>(15) <span class="sql-constraint">CONSTRAINT nn_proveedor_telefono NOT NULL</span>,
+    ciudad       <span class="sql-type">VARCHAR2</span>(50),
+    activo       <span class="sql-type">VARCHAR2</span>(1) <span class="sql-keyword">DEFAULT</span> <span class="sql-string">'S'</span>
+                            <span class="sql-constraint">CONSTRAINT ck_proveedor_activo CHECK</span> (activo <span class="sql-keyword">IN</span> (<span class="sql-string">'S'</span>, <span class="sql-string">'N'</span>))
+);
+
+<span class="sql-comment">-- 3. Creación de tabla MEDICAMENTO</span>
+<span class="sql-keyword">CREATE TABLE</span> MEDICAMENTO (
+    id_medicamento  <span class="sql-type">NUMBER</span>(10) <span class="sql-constraint">CONSTRAINT pk_medicamento PRIMARY KEY</span>,
+    nombre          <span class="sql-type">VARCHAR2</span>(50) <span class="sql-constraint">CONSTRAINT nn_med_nombre NOT NULL</span>,
+    precio          <span class="sql-type">NUMBER</span>(10) <span class="sql-constraint">CONSTRAINT ck_med_precio CHECK</span> (precio &gt; <span class="sql-number">0</span>),
+    stock           <span class="sql-type">NUMBER</span>(10) <span class="sql-keyword">DEFAULT</span> <span class="sql-number">0</span>
+                               <span class="sql-constraint">CONSTRAINT ck_med_stock CHECK</span> (stock &gt;= <span class="sql-number">0</span>),
+    requiere_receta <span class="sql-type">VARCHAR2</span>(1) <span class="sql-keyword">DEFAULT</span> <span class="sql-string">'N'</span>
+                               <span class="sql-constraint">CONSTRAINT ck_med_receta CHECK</span> (requiere_receta <span class="sql-keyword">IN</span> (<span class="sql-string">'S'</span>, <span class="sql-string">'N'</span>)),
+    id_proveedor    <span class="sql-type">NUMBER</span>(10) <span class="sql-constraint">CONSTRAINT nn_med_proveedor NOT NULL</span>
+                               <span class="sql-constraint">CONSTRAINT fk_med_proveedor REFERENCES</span> PROVEEDOR(id_proveedor)
+);
+
+<span class="sql-comment">-- 4. Creación de tabla VENTA</span>
+<span class="sql-keyword">CREATE TABLE</span> VENTA (
+    id_venta        <span class="sql-type">NUMBER</span>(10) <span class="sql-constraint">CONSTRAINT pk_venta PRIMARY KEY</span>,
+    id_cliente      <span class="sql-type">NUMBER</span>(10) <span class="sql-constraint">CONSTRAINT nn_venta_cliente NOT NULL</span>
+                               <span class="sql-constraint">CONSTRAINT fk_venta_cliente REFERENCES</span> CLIENTE(id_cliente),
+    id_medicamento  <span class="sql-type">NUMBER</span>(10) <span class="sql-constraint">CONSTRAINT nn_venta_med NOT NULL</span>
+                               <span class="sql-constraint">CONSTRAINT fk_venta_med REFERENCES</span> MEDICAMENTO(id_medicamento),
+    cantidad        <span class="sql-type">NUMBER</span>(10) <span class="sql-constraint">CONSTRAINT nn_venta_cant NOT NULL</span>
+                               <span class="sql-constraint">CONSTRAINT ck_venta_cantidad CHECK</span> (cantidad &gt; <span class="sql-number">0</span>),
+    fecha           <span class="sql-type">DATE</span> <span class="sql-keyword">DEFAULT</span> <span class="sql-keyword">SYSDATE</span> <span class="sql-constraint">CONSTRAINT nn_venta_fecha NOT NULL</span>
+);</div>
+
+  <div class="tip-box">
+    <p><strong>Criterios de Puntaje (Parte A - Escala ítems 2 a 5):</strong></p>
+    <ul class="rubric-list">
+      <li><strong>Ítem 2 - PK y Tipos de Datos [7 pts]:</strong> Definición correcta de las 4 tablas con tipos lógicos (NUMBER para IDs/cantidades/precios, VARCHAR2 para nombres/RUTs/indicadores, DATE para fecha) y su clave primaria.</li>
+      <li><strong>Ítem 3 - FK MEDICAMENTO → PROVEEDOR [7 pts]:</strong> Declaración correcta de la restricción referencial <code>id_proveedor</code>. Restar 3 puntos si se crea la FK pero no se declara <code>NOT NULL</code>, dado que la regla de negocio exige que el proveedor "debe existir".</li>
+      <li><strong>Ítem 4 - FK VENTA → CLIENTE y MEDICAMENTO [7 pts]:</strong> Declaración correcta de ambas restricciones referenciales. Restar 3 puntos si se crean las llaves foráneas pero no se declaran <code>NOT NULL</code> ("ambos deben existir").</li>
+      <li><strong>Ítem 5 - CHECK/NOT NULL/UNIQUE/DEFAULT [7 pts]:</strong> Validar que stock sea >= 0, precio > 0, cantidad > 0, requiere_receta y activo admitan solo 'S' o 'N', rut sea UNIQUE y NOT NULL, y los valores DEFAULT (stock, requiere_receta, activo, fecha) estén bien asignados.</li>
+    </ul>
+  </div>
+
+  <!-- PARTE B -->
+  <div class="section-title">PARTE B: Ingreso de datos (DML) - [7 puntos | Ítem 6 de la escala]</div>
+
+  <p>Poblamiento de datos iniciales en la base de datos. Se debe cuidar el orden de inserción de las llaves foráneas (CLIENTE y PROVEEDOR primero, MEDICAMENTO después, VENTA al final) e incluir el comando `COMMIT` final.</p>
+
+  <div class="sql-code"><span class="sql-comment">-- Inserción de CLIENTES</span>
+<span class="sql-keyword">INSERT INTO</span> CLIENTE (id_cliente, nombre, rut, telefono) <span class="sql-keyword">VALUES</span> (<span class="sql-number">1</span>, <span class="sql-string">'Ana Perez'</span>, <span class="sql-string">'12456789-0'</span>, <span class="sql-string">'912345678'</span>);
+<span class="sql-keyword">INSERT INTO</span> CLIENTE (id_cliente, nombre, rut, telefono) <span class="sql-keyword">VALUES</span> (<span class="sql-number">2</span>, <span class="sql-string">'Luis Rojas'</span>, <span class="sql-string">'9873456-2'</span>, <span class="sql-keyword">NULL</span>);
+<span class="sql-keyword">INSERT INTO</span> CLIENTE (id_cliente, nombre, rut, telefono) <span class="sql-keyword">VALUES</span> (<span class="sql-number">3</span>, <span class="sql-string">'Marta Diaz'</span>, <span class="sql-string">'15678234-3'</span>, <span class="sql-string">'977777777'</span>);
+<span class="sql-keyword">INSERT INTO</span> CLIENTE (id_cliente, nombre, rut, telefono) <span class="sql-keyword">VALUES</span> (<span class="sql-number">4</span>, <span class="sql-string">'Pedro Soto'</span>, <span class="sql-string">'8345671-K'</span>, <span class="sql-keyword">NULL</span>);
+<span class="sql-keyword">INSERT INTO</span> CLIENTE (id_cliente, nombre, rut, telefono) <span class="sql-keyword">VALUES</span> (<span class="sql-number">5</span>, <span class="sql-string">'Carla Vega'</span>, <span class="sql-string">'17234568-9'</span>, <span class="sql-string">'966666666'</span>);
+<span class="sql-keyword">INSERT INTO</span> CLIENTE (id_cliente, nombre, rut, telefono) <span class="sql-keyword">VALUES</span> (<span class="sql-number">6</span>, <span class="sql-string">'Jorge Mena'</span>, <span class="sql-string">'11456782-5'</span>, <span class="sql-string">'955555555'</span>);
+<span class="sql-keyword">INSERT INTO</span> CLIENTE (id_cliente, nombre, rut, telefono) <span class="sql-keyword">VALUES</span> (<span class="sql-number">7</span>, <span class="sql-string">'Sofia Nunez'</span>, <span class="sql-string">'20567341-5'</span>, <span class="sql-string">'933221144'</span>);
+<span class="sql-keyword">INSERT INTO</span> CLIENTE (id_cliente, nombre, rut, telefono) <span class="sql-keyword">VALUES</span> (<span class="sql-number">8</span>, <span class="sql-string">'Diego Torres'</span>, <span class="sql-string">'13987654-7'</span>, <span class="sql-keyword">NULL</span>);
+<span class="sql-keyword">INSERT INTO</span> CLIENTE (id_cliente, nombre, rut, telefono) <span class="sql-keyword">VALUES</span> (<span class="sql-number">9</span>, <span class="sql-string">'Valentina Silva'</span>, <span class="sql-string">'16345298-7'</span>, <span class="sql-string">'944556677'</span>);
+<span class="sql-keyword">INSERT INTO</span> CLIENTE (id_cliente, nombre, rut, telefono) <span class="sql-keyword">VALUES</span> (<span class="sql-number">10</span>, <span class="sql-string">'Matias Fuentes'</span>, <span class="sql-string">'18654327-0'</span>, <span class="sql-string">'922114455'</span>);
+<span class="sql-keyword">INSERT INTO</span> CLIENTE (id_cliente, nombre, rut, telefono) <span class="sql-keyword">VALUES</span> (<span class="sql-number">11</span>, <span class="sql-string">'Camila Reyes'</span>, <span class="sql-string">'19087645-4'</span>, <span class="sql-keyword">NULL</span>);
+
+<span class="sql-comment">-- Inserción de PROVEEDORES</span>
+<span class="sql-keyword">INSERT INTO</span> PROVEEDOR (id_proveedor, nombre, telefono, ciudad, activo) <span class="sql-keyword">VALUES</span> (<span class="sql-number">1</span>, <span class="sql-string">'Distribuidora FarmaChile'</span>, <span class="sql-string">'224567890'</span>, <span class="sql-string">'Santiago'</span>, <span class="sql-string">'S'</span>);
+<span class="sql-keyword">INSERT INTO</span> PROVEEDOR (id_proveedor, nombre, telefono, ciudad, activo) <span class="sql-keyword">VALUES</span> (<span class="sql-number">2</span>, <span class="sql-string">'Laboratorios Andes'</span>, <span class="sql-string">'226678901'</span>, <span class="sql-string">'Santiago'</span>, <span class="sql-string">'S'</span>);
+<span class="sql-keyword">INSERT INTO</span> PROVEEDOR (id_proveedor, nombre, telefono, ciudad, activo) <span class="sql-keyword">VALUES</span> (<span class="sql-number">3</span>, <span class="sql-string">'Drogueria Sur'</span>, <span class="sql-string">'412345678'</span>, <span class="sql-string">'Concepcion'</span>, <span class="sql-string">'N'</span>);
+<span class="sql-keyword">INSERT INTO</span> PROVEEDOR (id_proveedor, nombre, telefono, ciudad, activo) <span class="sql-keyword">VALUES</span> (<span class="sql-number">4</span>, <span class="sql-string">'ImportMed'</span>, <span class="sql-string">'322345678'</span>, <span class="sql-keyword">NULL</span>, <span class="sql-string">'S'</span>);
+<span class="sql-keyword">INSERT INTO</span> PROVEEDOR (id_proveedor, nombre, telefono, ciudad, activo) <span class="sql-keyword">VALUES</span> (<span class="sql-number">5</span>, <span class="sql-string">'Quimica del Pacifico'</span>, <span class="sql-string">'322345679'</span>, <span class="sql-string">'Valparaiso'</span>, <span class="sql-string">'S'</span>);
+
+<span class="sql-comment">-- Inserción de MEDICAMENTOS</span>
+<span class="sql-keyword">INSERT INTO</span> MEDICAMENTO (id_medicamento, nombre, precio, stock, requiere_receta, id_proveedor) <span class="sql-keyword">VALUES</span> (<span class="sql-number">1</span>, <span class="sql-string">'Paracetamol'</span>, <span class="sql-number">1500</span>, <span class="sql-number">100</span>, <span class="sql-string">'N'</span>, <span class="sql-number">1</span>);
+<span class="sql-keyword">INSERT INTO</span> MEDICAMENTO (id_medicamento, nombre, precio, stock, requiere_receta, id_proveedor) <span class="sql-keyword">VALUES</span> (<span class="sql-number">2</span>, <span class="sql-string">'Ibuprofeno'</span>, <span class="sql-number">2300</span>, <span class="sql-number">60</span>, <span class="sql-string">'N'</span>, <span class="sql-number">1</span>);
+<span class="sql-keyword">INSERT INTO</span> MEDICAMENTO (id_medicamento, nombre, precio, stock, requiere_receta, id_proveedor) <span class="sql-keyword">VALUES</span> (<span class="sql-number">3</span>, <span class="sql-string">'Amoxicilina'</span>, <span class="sql-number">4800</span>, <span class="sql-number">25</span>, <span class="sql-string">'S'</span>, <span class="sql-number">2</span>);
+<span class="sql-keyword">INSERT INTO</span> MEDICAMENTO (id_medicamento, nombre, precio, stock, requiere_receta, id_proveedor) <span class="sql-keyword">VALUES</span> (<span class="sql-number">4</span>, <span class="sql-string">'Loratadina'</span>, <span class="sql-number">3200</span>, <span class="sql-number">0</span>, <span class="sql-string">'N'</span>, <span class="sql-number">3</span>);
+<span class="sql-keyword">INSERT INTO</span> MEDICAMENTO (id_medicamento, nombre, precio, stock, requiere_receta, id_proveedor) <span class="sql-keyword">VALUES</span> (<span class="sql-number">5</span>, <span class="sql-string">'Omeprazol'</span>, <span class="sql-number">5100</span>, <span class="sql-number">40</span>, <span class="sql-string">'S'</span>, <span class="sql-number">2</span>);
+<span class="sql-keyword">INSERT INTO</span> MEDICAMENTO (id_medicamento, nombre, precio, stock, requiere_receta, id_proveedor) <span class="sql-keyword">VALUES</span> (<span class="sql-number">6</span>, <span class="sql-string">'Aspirina'</span>, <span class="sql-number">1200</span>, <span class="sql-number">80</span>, <span class="sql-string">'N'</span>, <span class="sql-number">1</span>);
+<span class="sql-keyword">INSERT INTO</span> MEDICAMENTO (id_medicamento, nombre, precio, stock, requiere_receta, id_proveedor) <span class="sql-keyword">VALUES</span> (<span class="sql-number">7</span>, <span class="sql-string">'Vitamina C'</span>, <span class="sql-number">2900</span>, <span class="sql-number">150</span>, <span class="sql-string">'N'</span>, <span class="sql-number">4</span>);
+<span class="sql-keyword">INSERT INTO</span> MEDICAMENTO (id_medicamento, nombre, precio, stock, requiere_receta, id_proveedor) <span class="sql-keyword">VALUES</span> (<span class="sql-number">8</span>, <span class="sql-string">'Clorfenamina'</span>, <span class="sql-number">1800</span>, <span class="sql-number">12</span>, <span class="sql-string">'S'</span>, <span class="sql-number">3</span>);
+<span class="sql-keyword">INSERT INTO</span> MEDICAMENTO (id_medicamento, nombre, precio, stock, requiere_receta, id_proveedor) <span class="sql-keyword">VALUES</span> (<span class="sql-number">9</span>, <span class="sql-string">'Naproxeno'</span>, <span class="sql-number">3500</span>, <span class="sql-number">45</span>, <span class="sql-string">'N'</span>, <span class="sql-number">5</span>);
+<span class="sql-keyword">INSERT INTO</span> MEDICAMENTO (id_medicamento, nombre, precio, stock, requiere_receta, id_proveedor) <span class="sql-keyword">VALUES</span> (<span class="sql-number">10</span>, <span class="sql-string">'Metformina'</span>, <span class="sql-number">4200</span>, <span class="sql-number">30</span>, <span class="sql-string">'S'</span>, <span class="sql-number">2</span>);
+<span class="sql-keyword">INSERT INTO</span> MEDICAMENTO (id_medicamento, nombre, precio, stock, requiere_receta, id_proveedor) <span class="sql-keyword">VALUES</span> (<span class="sql-number">11</span>, <span class="sql-string">'Salbutamol'</span>, <span class="sql-number">6100</span>, <span class="sql-number">18</span>, <span class="sql-string">'S'</span>, <span class="sql-number">5</span>);
+<span class="sql-keyword">INSERT INTO</span> MEDICAMENTO (id_medicamento, nombre, precio, stock, requiere_receta, id_proveedor) <span class="sql-keyword">VALUES</span> (<span class="sql-number">12</span>, <span class="sql-string">'Cetirizina'</span>, <span class="sql-number">1500</span>, <span class="sql-number">90</span>, <span class="sql-string">'N'</span>, <span class="sql-number">4</span>);
+<span class="sql-keyword">INSERT INTO</span> MEDICAMENTO (id_medicamento, nombre, precio, stock, requiere_receta, id_proveedor) <span class="sql-keyword">VALUES</span> (<span class="sql-number">13</span>, <span class="sql-string">'Diclofenaco'</span>, <span class="sql-number">3900</span>, <span class="sql-number">22</span>, <span class="sql-string">'N'</span>, <span class="sql-number">3</span>);
+
+<span class="sql-comment">-- Inserción de VENTAS</span>
+<span class="sql-comment">-- Nota: Se utiliza el literal estándar ANSI DATE 'YYYY-MM-DD'. No requiere funciones y evita depender de la configuración regional de Oracle</span>
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">1</span>, <span class="sql-number">1</span>, <span class="sql-number">1</span>, <span class="sql-number">2</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-17'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">2</span>, <span class="sql-number">3</span>, <span class="sql-number">3</span>, <span class="sql-number">1</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-17'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">3</span>, <span class="sql-number">1</span>, <span class="sql-number">6</span>, <span class="sql-number">3</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-18'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">4</span>, <span class="sql-number">2</span>, <span class="sql-number">2</span>, <span class="sql-number">2</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-18'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">5</span>, <span class="sql-number">5</span>, <span class="sql-number">5</span>, <span class="sql-number">1</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-19'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">6</span>, <span class="sql-number">4</span>, <span class="sql-number">1</span>, <span class="sql-number">4</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-19'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">7</span>, <span class="sql-number">3</span>, <span class="sql-number">7</span>, <span class="sql-number">2</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-20'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">8</span>, <span class="sql-number">6</span>, <span class="sql-number">3</span>, <span class="sql-number">1</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-20'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">9</span>, <span class="sql-number">1</span>, <span class="sql-number">2</span>, <span class="sql-number">1</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-21'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">10</span>, <span class="sql-number">2</span>, <span class="sql-number">8</span>, <span class="sql-number">2</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-21'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">11</span>, <span class="sql-number">5</span>, <span class="sql-number">4</span>, <span class="sql-number">3</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-22'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">12</span>, <span class="sql-number">6</span>, <span class="sql-number">6</span>, <span class="sql-number">1</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-22'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">13</span>, <span class="sql-number">7</span>, <span class="sql-number">9</span>, <span class="sql-number">2</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-18'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">14</span>, <span class="sql-number">8</span>, <span class="sql-number">10</span>, <span class="sql-number">1</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-19'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">15</span>, <span class="sql-number">9</span>, <span class="sql-number">11</span>, <span class="sql-number">4</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-20'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">16</span>, <span class="sql-number">10</span>, <span class="sql-number">12</span>, <span class="sql-number">2</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-21'</span>);
+<span class="sql-keyword">INSERT INTO</span> VENTA (id_venta, id_cliente, id_medicamento, cantidad, fecha) <span class="sql-keyword">VALUES</span> (<span class="sql-number">17</span>, <span class="sql-number">11</span>, <span class="sql-number">13</span>, <span class="sql-number">3</span>, <span class="sql-keyword">DATE</span> <span class="sql-string">'2026-07-22'</span>);
+
+<span class="sql-comment">-- Confirmación obligatoria</span>
+<span class="sql-keyword">COMMIT</span>;</div>
+
+  <div class="tip-box">
+    <p><strong>Criterios de Puntaje (Parte B - Escala ítem 6):</strong></p>
+    <ul class="rubric-list">
+      <li><strong>Ítem 6 - Ejecución y consistencia [7 pts]:</strong> Todos los registros (incluyendo PROVEEDOR) se insertan sin violación de llaves foráneas (los catálogos CLIENTE y PROVEEDOR deben poblarse antes que MEDICAMENTO, y este antes que VENTA) y se ejecuta el `COMMIT`.</li>
+      <li><strong>Manejo de Fechas (Muy Importante):</strong> Dado que `TO_DATE` no se enseña en este nivel, la forma recomendada y estándar es el <strong>Literal de fecha ANSI</strong> (ej: <code>DATE '2026-07-17'</code>), el cual funciona directamente sin funciones y es independiente de la región. Si los estudiantes usaron strings de fecha directos como <code>'2026-07-17'</code> o <code>'17-07-2026'</code>, se considera <strong>totalmente correcto</strong> siempre que la configuración de su Oracle Express Edition local acepte dicha conversión implícita (regido por la variable <code>NLS_DATE_FORMAT</code>).</li>
+    </ul>
+  </div>
+
+  <!-- PARTE C -->
+  <div class="section-title">PARTE C: Modificación de estructura (DDL: ALTER TABLE) - [7 puntos | Ítem 7 de la escala]</div>
+
+  <p>Sentencias para expandir y complementar las tablas de la base de datos.</p>
+
+  <div class="sql-code"><span class="sql-comment">-- 1. Agregar email a CLIENTE</span>
+<span class="sql-keyword">ALTER TABLE</span> CLIENTE <span class="sql-keyword">ADD</span> email <span class="sql-type">VARCHAR2</span>(60);
+
+<span class="sql-comment">-- 2. Agregar categoria a MEDICAMENTO (con valor por defecto 'General')</span>
+<span class="sql-keyword">ALTER TABLE</span> MEDICAMENTO <span class="sql-keyword">ADD</span> categoria <span class="sql-type">VARCHAR2</span>(30) <span class="sql-keyword">DEFAULT</span> <span class="sql-string">'General'</span>;
+
+<span class="sql-comment">-- 3. Agregar metodo_pago a VENTA (con valor por defecto 'Efectivo')</span>
+<span class="sql-keyword">ALTER TABLE</span> VENTA <span class="sql-keyword">ADD</span> metodo_pago <span class="sql-type">VARCHAR2</span>(20) <span class="sql-keyword">DEFAULT</span> <span class="sql-string">'Efectivo'</span>;
+
+<span class="sql-comment">-- 4. Modificar la columna nombre de MEDICAMENTO a 80 caracteres</span>
+<span class="sql-keyword">ALTER TABLE</span> MEDICAMENTO <span class="sql-keyword">MODIFY</span> nombre <span class="sql-type">VARCHAR2</span>(80);</div>
+
+  <div class="tip-box">
+    <p><strong>Criterios de Puntaje (Parte C - Escala ítem 7):</strong></p>
+    <ul class="rubric-list">
+      <li><strong>Ítem 7 - Sentencias ALTER [7 pts]:</strong> Uso correcto de la sintaxis `ALTER TABLE ... ADD` y `ALTER TABLE ... MODIFY`. Se debe validar que los campos por defecto (`DEFAULT`) estén bien asignados.</li>
+    </ul>
+  </div>
+
+  <!-- PARTE D -->
+  <div class="section-title">PARTE D: Actualización y borrado (DML: UPDATE / DELETE) - [7 puntos | Ítem 8 de la escala]</div>
+  
+  <p>Ejecución de cambios y operaciones selectivas sobre los datos agregados. Las modificaciones deben restringirse únicamente a las filas deseadas.</p>
+
+  <div class="sql-code"><span class="sql-comment">-- 1. Registrar correo para Ana Perez (id_cliente = 1)</span>
+<span class="sql-keyword">UPDATE</span> CLIENTE
+<span class="sql-keyword">SET</span> email = <span class="sql-string">'ana.perez@saludexpress.cl'</span>
+<span class="sql-keyword">WHERE</span> id_cliente = <span class="sql-number">1</span>;
+
+<span class="sql-comment">-- 2. Aumentar en un 10% el precio de los medicamentos con receta</span>
+<span class="sql-keyword">UPDATE</span> MEDICAMENTO
+<span class="sql-keyword">SET</span> precio = precio * <span class="sql-number">1.10</span>
+<span class="sql-keyword">WHERE</span> requiere_receta = <span class="sql-string">'S'</span>;
+
+<span class="sql-comment">-- 3. Asignar categoría 'Analgesico'</span>
+<span class="sql-keyword">UPDATE</span> MEDICAMENTO
+<span class="sql-keyword">SET</span> categoria = <span class="sql-string">'Analgesico'</span>
+<span class="sql-keyword">WHERE</span> nombre <span class="sql-keyword">IN</span> (<span class="sql-string">'Paracetamol'</span>, <span class="sql-string">'Ibuprofeno'</span>, <span class="sql-string">'Aspirina'</span>, <span class="sql-string">'Naproxeno'</span>);
+
+<span class="sql-comment">-- 4. Asignar categoría 'Antialergico'</span>
+<span class="sql-keyword">UPDATE</span> MEDICAMENTO
+<span class="sql-keyword">SET</span> categoria = <span class="sql-string">'Antialergico'</span>
+<span class="sql-keyword">WHERE</span> nombre <span class="sql-keyword">IN</span> (<span class="sql-string">'Loratadina'</span>, <span class="sql-string">'Cetirizina'</span>, <span class="sql-string">'Clorfenamina'</span>);
+
+<span class="sql-comment">-- 5. Eliminar venta id_venta = 12</span>
+<span class="sql-keyword">DELETE FROM</span> VENTA
+<span class="sql-keyword">WHERE</span> id_venta = <span class="sql-number">12</span>;
+
+<span class="sql-comment">-- Confirmar los cambios DML</span>
+<span class="sql-keyword">COMMIT</span>;</div>
+
+  <div class="tip-box">
+    <p><strong>Criterios de Puntaje (Parte D - Escala ítem 8):</strong></p>
+    <ul class="rubric-list">
+      <li><strong>Ítem 8 - Modificaciones Selectivas [7 pts]:</strong> Validar que todos los `UPDATE` y `DELETE` tengan cláusulas `WHERE` precisas. Si un estudiante omite el `WHERE` en alguna de las sentencias y afecta a toda la tabla de manera irreversible, el puntaje de este ítem disminuye en 4 puntos. Se requiere el `COMMIT` final.</li>
+    </ul>
+  </div>
+
+  <!-- PARTE E -->
+  <div class="section-title">PARTE E: Consultas de base de datos (DQL) - [28 puntos | Ítems 9 a 12 de la escala]</div>
+
+  <p>La sección con mayor cantidad de indicadores de la escala (4 de los 12). Se proponen ocho consultas de selección de complejidad incremental: las cinco primeras sobre CLIENTE, MEDICAMENTO y VENTA, y las tres últimas sobre PROVEEDOR. Se detallan las consultas y las filas exactas resultantes tras aplicar todas las modificaciones previas (Partes C y D):</p>
+
+  <!-- CONSULTA 1 -->
+  <h3>Consulta 1 [7 puntos]</h3>
+  <p><em>Muestre el nombre, el precio y el stock de los medicamentos que no requieren receta cuyo precio esté entre 1000 y 3000 (ambos inclusive), ordenados por precio de menor a mayor y, a igual precio, por nombre alfabético.</em></p>
+  
+  <div class="sql-code"><span class="sql-keyword">SELECT</span> nombre, precio, stock
+<span class="sql-keyword">FROM</span> MEDICAMENTO
+<span class="sql-keyword">WHERE</span> requiere_receta = <span class="sql-string">'N'</span>
+  <span class="sql-keyword">AND</span> precio <span class="sql-keyword">BETWEEN</span> <span class="sql-number">1000</span> <span class="sql-keyword">AND</span> <span class="sql-number">3000</span>
+<span class="sql-keyword">ORDER BY</span> precio <span class="sql-keyword">ASC</span>, nombre <span class="sql-keyword">ASC</span>;</div>
+
+  <table class="table-results">
+    <caption>Resultados esperados (5 filas)</caption>
+    <thead>
+      <tr><th>NOMBRE</th><th>PRECIO</th><th>STOCK</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Aspirina</td><td>1200</td><td>80</td></tr>
+      <tr><td>Cetirizina</td><td>1500</td><td>90</td></tr>
+      <tr><td>Paracetamol</td><td>1500</td><td>100</td></tr>
+      <tr><td>Ibuprofeno</td><td>2300</td><td>60</td></tr>
+      <tr><td>Vitamina C</td><td>2900</td><td>150</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size: 8.5pt; color: #555;">*Nota: Cetirizina (id 12) queda empatada en precio con Paracetamol (1500); el desempate es por <code>nombre ASC</code>, por lo que Cetirizina precede a Paracetamol.</p>
+
+  <!-- CONSULTA 2 -->
+  <h3>Consulta 2 [7 puntos]</h3>
+  <p><em>Muestre el nombre y el precio de los medicamentos cuyo id_medicamento sea 1, 3, 5 o 7 y que además tengan precio mayor a 2500, ordenados de mayor a menor precio.</em></p>
+  <p style="font-size: 8.5pt; color: #555;">*Nota: En esta consulta se evalúa si se consideran los precios actualizados de los medicamentos que requieren receta (+10% para Amoxicilina y Omeprazol).</p>
+  
+  <div class="sql-code"><span class="sql-keyword">SELECT</span> nombre, precio
+<span class="sql-keyword">FROM</span> MEDICAMENTO
+<span class="sql-keyword">WHERE</span> id_medicamento <span class="sql-keyword">IN</span> (<span class="sql-number">1</span>, <span class="sql-number">3</span>, <span class="sql-number">5</span>, <span class="sql-number">7</span>)
+  <span class="sql-keyword">AND</span> precio &gt; <span class="sql-number">2500</span>
+<span class="sql-keyword">ORDER BY</span> precio <span class="sql-keyword">DESC</span>;</div>
+
+  <table class="table-results">
+    <caption>Resultados esperados (3 filas)</caption>
+    <thead>
+      <tr><th>NOMBRE</th><th>PRECIO</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Omeprazol</td><td>5610</td></tr>
+      <tr><td>Amoxicilina</td><td>5280</td></tr>
+      <tr><td>Vitamina C</td><td>2900</td></tr>
+    </tbody>
+  </table>
+
+  <!-- CONSULTA 3 -->
+  <h3>Consulta 3 [7 puntos]</h3>
+  <p><em>Muestre el nombre y el teléfono de los clientes que sí tengan teléfono registrado y cuyo nombre NO empiece con la letra "A", ordenados por nombre de la Z a la A.</em></p>
+  
+  <div class="sql-code"><span class="sql-keyword">SELECT</span> nombre, telefono
+<span class="sql-keyword">FROM</span> CLIENTE
+<span class="sql-keyword">WHERE</span> telefono <span class="sql-keyword">IS NOT NULL</span>
+  <span class="sql-keyword">AND</span> nombre <span class="sql-keyword">NOT LIKE</span> <span class="sql-string">'A%'</span>
+<span class="sql-keyword">ORDER BY</span> nombre <span class="sql-keyword">DESC</span>;</div>
+
+  <table class="table-results">
+    <caption>Resultados esperados (6 filas)</caption>
+    <thead>
+      <tr><th>NOMBRE</th><th>TELEFONO</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Valentina Silva</td><td>944556677</td></tr>
+      <tr><td>Sofia Nunez</td><td>933221144</td></tr>
+      <tr><td>Marta Diaz</td><td>977777777</td></tr>
+      <tr><td>Matias Fuentes</td><td>922114455</td></tr>
+      <tr><td>Jorge Mena</td><td>955555555</td></tr>
+      <tr><td>Carla Vega</td><td>966666666</td></tr>
+    </tbody>
+  </table>
+
+  <!-- CONSULTA 4 -->
+  <h3>Consulta 4 [7 puntos]</h3>
+  <p><em>Muestre el nombre y el stock de los medicamentos cuyo nombre termine en la letra "a" o cuyo stock sea menor a 20, ordenados por stock de menor a mayor.</em></p>
+  
+  <div class="sql-code"><span class="sql-keyword">SELECT</span> nombre, stock
+<span class="sql-keyword">FROM</span> MEDICAMENTO
+<span class="sql-keyword">WHERE</span> nombre <span class="sql-keyword">LIKE</span> <span class="sql-string">'%a'</span>
+   <span class="sql-keyword">OR</span> stock &lt; <span class="sql-number">20</span>
+<span class="sql-keyword">ORDER BY</span> stock <span class="sql-keyword">ASC</span>;</div>
+
+  <table class="table-results">
+    <caption>Resultados esperados (7 filas)</caption>
+    <thead>
+      <tr><th>NOMBRE</th><th>STOCK</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Loratadina</td><td>0</td></tr>
+      <tr><td>Clorfenamina</td><td>12</td></tr>
+      <tr><td>Salbutamol</td><td>18</td></tr>
+      <tr><td>Amoxicilina</td><td>25</td></tr>
+      <tr><td>Metformina</td><td>30</td></tr>
+      <tr><td>Aspirina</td><td>80</td></tr>
+      <tr><td>Cetirizina</td><td>90</td></tr>
+    </tbody>
+  </table>
+
+  <!-- CONSULTA 5 -->
+  <h3>Consulta 5 [7 puntos]</h3>
+  <p><em>Muestre el id_venta, el id_cliente, la cantidad y la fecha de las ventas cuya cantidad sea mayor o igual a 3 o que pertenezcan a los clientes 1, 3 o 5, ordenadas por fecha ascendente y, a igual fecha, por cantidad de mayor a menor.</em></p>
+  <p style="font-size: 8.5pt; color: #555;">*Nota: En esta consulta se debe notar la ausencia de la venta con ID 12 (eliminada en la Parte D).</p>
+  
+  <div class="sql-code"><span class="sql-keyword">SELECT</span> id_venta, id_cliente, cantidad, fecha
+<span class="sql-keyword">FROM</span> VENTA
+<span class="sql-keyword">WHERE</span> cantidad &gt;= <span class="sql-number">3</span>
+   <span class="sql-keyword">OR</span> id_cliente <span class="sql-keyword">IN</span> (<span class="sql-number">1</span>, <span class="sql-number">3</span>, <span class="sql-number">5</span>) <span class="sql-comment">-- También es válido usar: id_cliente = 1 OR id_cliente = 3 OR id_cliente = 5</span>
+<span class="sql-keyword">ORDER BY</span> fecha <span class="sql-keyword">ASC</span>, cantidad <span class="sql-keyword">DESC</span>;</div>
+
+  <table class="table-results">
+    <caption>Resultados esperados (10 filas)</caption>
+    <thead>
+      <tr><th>ID_VENTA</th><th>ID_CLIENTE</th><th>CANTIDAD</th><th>FECHA</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>1</td><td>2</td><td>17-JUL-26</td></tr>
+      <tr><td>2</td><td>3</td><td>1</td><td>17-JUL-26</td></tr>
+      <tr><td>3</td><td>1</td><td>3</td><td>18-JUL-26</td></tr>
+      <tr><td>6</td><td>4</td><td>4</td><td>19-JUL-26</td></tr>
+      <tr><td>5</td><td>5</td><td>1</td><td>19-JUL-26</td></tr>
+      <tr><td>15</td><td>9</td><td>4</td><td>20-JUL-26</td></tr>
+      <tr><td>7</td><td>3</td><td>2</td><td>20-JUL-26</td></tr>
+      <tr><td>9</td><td>1</td><td>1</td><td>21-JUL-26</td></tr>
+      <tr><td>11</td><td>5</td><td>3</td><td>22-JUL-26</td></tr>
+      <tr><td>17</td><td>11</td><td>3</td><td>22-JUL-26</td></tr>
+    </tbody>
+  </table>
+
+  <!-- CONSULTA 6 -->
+  <h3>Consulta 6 [7 puntos]</h3>
+  <p><em>Muestre el nombre y la ciudad de los proveedores que estén activos y tengan ciudad registrada, ordenados alfabéticamente por nombre.</em></p>
+
+  <div class="sql-code"><span class="sql-keyword">SELECT</span> nombre, ciudad
+<span class="sql-keyword">FROM</span> PROVEEDOR
+<span class="sql-keyword">WHERE</span> activo = <span class="sql-string">'S'</span>
+  <span class="sql-keyword">AND</span> ciudad <span class="sql-keyword">IS NOT NULL</span>
+<span class="sql-keyword">ORDER BY</span> nombre <span class="sql-keyword">ASC</span>;</div>
+
+  <table class="table-results">
+    <caption>Resultados esperados (3 filas)</caption>
+    <thead>
+      <tr><th>NOMBRE</th><th>CIUDAD</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Distribuidora FarmaChile</td><td>Santiago</td></tr>
+      <tr><td>Laboratorios Andes</td><td>Santiago</td></tr>
+      <tr><td>Quimica del Pacifico</td><td>Valparaiso</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size: 8.5pt; color: #555;">*Nota: Drogueria Sur queda excluida por <code>activo = 'N'</code>; ImportMed queda excluida por tener <code>ciudad</code> nula.</p>
+
+  <!-- CONSULTA 7 -->
+  <h3>Consulta 7 [7 puntos]</h3>
+  <p><em>Muestre el nombre y el precio de los medicamentos provistos por los proveedores con id_proveedor 1 o 2, cuyo precio sea menor a 5000, ordenados de menor a mayor precio.</em></p>
+  <p style="font-size: 8.5pt; color: #555;">*Nota: al igual que en la Consulta 2, se evalúa si se consideran los precios actualizados (+10% para los medicamentos con receta del proveedor 2: Amoxicilina y Omeprazol).</p>
+
+  <div class="sql-code"><span class="sql-keyword">SELECT</span> nombre, precio
+<span class="sql-keyword">FROM</span> MEDICAMENTO
+<span class="sql-keyword">WHERE</span> id_proveedor <span class="sql-keyword">IN</span> (<span class="sql-number">1</span>, <span class="sql-number">2</span>)
+  <span class="sql-keyword">AND</span> precio &lt; <span class="sql-number">5000</span>
+<span class="sql-keyword">ORDER BY</span> precio <span class="sql-keyword">ASC</span>;</div>
+
+  <table class="table-results">
+    <caption>Resultados esperados (4 filas)</caption>
+    <thead>
+      <tr><th>NOMBRE</th><th>PRECIO</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Aspirina</td><td>1200</td></tr>
+      <tr><td>Paracetamol</td><td>1500</td></tr>
+      <tr><td>Ibuprofeno</td><td>2300</td></tr>
+      <tr><td>Metformina</td><td>4620</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size: 8.5pt; color: #555;">*Nota: Metformina (proveedor 2, con receta) queda en 4620 tras el +10%, por lo que sigue bajo 5000. Amoxicilina (5280) y Omeprazol (5610) quedan excluidas por superar el tope tras el aumento.</p>
+
+  <!-- CONSULTA 8 -->
+  <h3>Consulta 8 [7 puntos]</h3>
+  <p><em>Muestre el nombre y el teléfono de los proveedores cuyo nombre contenga la palabra "Farma" o cuya ciudad no esté registrada, ordenados por nombre de la Z a la A.</em></p>
+
+  <div class="sql-code"><span class="sql-keyword">SELECT</span> nombre, telefono
+<span class="sql-keyword">FROM</span> PROVEEDOR
+<span class="sql-keyword">WHERE</span> nombre <span class="sql-keyword">LIKE</span> <span class="sql-string">'%Farma%'</span>
+   <span class="sql-keyword">OR</span> ciudad <span class="sql-keyword">IS NULL</span>
+<span class="sql-keyword">ORDER BY</span> nombre <span class="sql-keyword">DESC</span>;</div>
+
+  <table class="table-results">
+    <caption>Resultados esperados (2 filas)</caption>
+    <thead>
+      <tr><th>NOMBRE</th><th>TELEFONO</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>ImportMed</td><td>322345678</td></tr>
+      <tr><td>Distribuidora FarmaChile</td><td>224567890</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip-box">
+    <p><strong>Criterios de Puntaje (Parte E - Escala ítems 9 a 12):</strong></p>
+    <ul class="rubric-list">
+      <li><strong>Ítem 9 - Columnas y filtros de las Consultas 1 a 5 [7 pts]:</strong> Seleccionar exactamente las columnas requeridas y aplicar correctamente el `WHERE` y el `ORDER BY` de cada una (restar puntaje proporcional por columna extraña/faltante o cláusula mal aplicada).</li>
+      <li><strong>Ítem 10 - Columnas y filtros de las Consultas 6 a 8 (PROVEEDOR) [7 pts]:</strong> Mismo criterio que el ítem 9, aplicado a las tres consultas sobre PROVEEDOR.</li>
+      <li><strong>Ítem 11 - Combinaciones AND/OR/IN/LIKE/BETWEEN y negaciones [7 pts]:</strong> Uso correcto y consistente de estas cláusulas a través de las ocho consultas (`BETWEEN` en Consulta 1, `IN` en Consultas 2, 5 y 7, `NOT LIKE` en Consulta 3, `LIKE`/`OR` en Consultas 4 y 8, `AND`/`OR` compuestos en Consultas 5, 6 y 7).</li>
+      <li><strong>Ítem 12 - Consistencia del estado final [7 pts]:</strong> Los resultados de las ocho consultas deben reflejar las actualizaciones y borrados aplicados en la Parte D (precio +10% en medicamentos con receta, categorías asignadas, venta 12 eliminada).</li>
+    </ul>
+  </div>
+
+
+</div>
+
+</body>
+</html>
