@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Quién es el Profe? — TI3V25 Modelamiento de Soluciones Informáticas</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red:    #E31E24;
+    --blue:   #C0392B;
+    --dark:   #1A1A1A;
+    --gray:   #F4F4F4;
+    --border: #E0E0E0;
+    --text:   #1A1A1A;
+    --muted:  #666;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: #F0F0F0; color: var(--text);
+    scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh;
+  }
+
+  .slide {
+    min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+    display: flex; flex-direction: column; position: relative;
+  }
+
+  /* PORTADA */
+  .slide-cover {
+    background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+    color: white; justify-content: center; padding: 80px;
+    border-bottom: 6px solid var(--red);
+  }
+  .cover-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 24px;
+  }
+  .cover-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 80px; font-weight: 900; text-transform: uppercase;
+    line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+  }
+  .cover-title span { color: var(--red); }
+  .cover-desc {
+    font-size: 22px; color: rgba(255,255,255,0.5);
+    max-width: 620px; line-height: 1.65; margin-bottom: 56px;
+  }
+  .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+  .cover-chip {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+    padding: 8px 16px; border-radius: 20px;
+  }
+  .cover-chip span { color: white; }
+
+  /* SEPARADOR */
+  .slide-separator {
+    background: var(--dark); color: white;
+    justify-content: center; padding: 80px; border-bottom: 6px solid var(--red);
+  }
+  .sep-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+  }
+  .sep-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 72px; font-weight: 900; text-transform: uppercase;
+    line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+  }
+  .sep-title span { color: var(--red); }
+  .sep-desc { font-size: 22px; color: rgba(255,255,255,0.45); max-width: 620px; line-height: 1.65; }
+
+  /* CONCEPTO */
+  .slide-concept {
+    background: white; padding: 60px 80px;
+    border-bottom: 3px solid var(--border); justify-content: center;
+  }
+  .slide-concept.red-accent { border-top: 6px solid var(--red); }
+  .concept-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+  }
+  .concept-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 52px; font-weight: 900; text-transform: uppercase;
+    line-height: 0.95; letter-spacing: -0.01em; color: var(--dark); margin-bottom: 30px;
+  }
+  .concept-title span { color: var(--red); }
+  .concept-body { max-width: 920px; }
+  .concept-body.wide { max-width: 1180px; }
+  .concept-body p { font-size: 21px; line-height: 1.7; color: #333; margin-bottom: 18px; }
+  .concept-body p:last-child { margin-bottom: 0; }
+  .concept-body ul { margin-left: 24px; margin-bottom: 18px; }
+  .concept-body li { font-size: 20px; line-height: 1.7; color: #333; margin-bottom: 8px; }
+  .concept-body strong { color: var(--dark); }
+
+  /* BADGE */
+  .slide-badge {
+    position: absolute; top: 24px; right: 32px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 20px;
+  }
+  .badge-concepto { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+  .badge-practica { background: #F7E3E3; color: #8E1A1F; border: 1px solid #E2CACA; }
+  .badge-cierre   { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+  /* AGENDA */
+  .index-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 32px; max-width: 720px; }
+  .index-item {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px; padding: 18px 20px;
+  }
+  .index-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 32px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 8px;
+  }
+  .index-name { font-size: 16px; font-weight: 600; color: white; line-height: 1.4; }
+  .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* BIO A DOS COLUMNAS (foto + texto) */
+  .bio-grid {
+    display: grid; grid-template-columns: 38% 62%; align-items: center; gap: 36px;
+  }
+  .bio-photo {
+    width: 100%; max-width: 320px; aspect-ratio: 3/4; object-fit: cover;
+    border-radius: 16px; box-shadow: 0 12px 48px rgba(0,0,0,0.18);
+  }
+
+  /* GRILLA DE EMPRESAS (logos) */
+  .logos-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 20px; max-width: 1180px; margin-top: 20px;
+  }
+  .logo-slot {
+    aspect-ratio: 16/9; background: var(--gray); border: 1px solid var(--border);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .logo-slot.current { border-color: var(--red); background: #FFF3F3; }
+  .logo-slot img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* GRILLA DE FOTOS PERSONALES: 6 columnas x 2 filas */
+  .photo-grid {
+    display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(2, 1fr);
+    gap: 16px; max-width: 1180px; margin-top: 10px;
+  }
+  .photo-item {
+    border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+    background: var(--gray);
+  }
+  .photo-item img {
+    width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: top center; display: block;
+  }
+  .photo-item span {
+    display: block; font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--muted); text-align: center; padding: 7px 4px;
+  }
+
+  /* REGLAS DE LA CLASE (tarjetas con icono, como el original) */
+  .reglas-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 10px; max-width: 1180px;
+  }
+  .regla-card {
+    background: #F8F8F8; border: 1px solid var(--border); border-radius: 12px;
+    padding: 26px 24px; display: flex; gap: 20px; align-items: flex-start;
+  }
+  .regla-icon {
+    width: 60px; height: 60px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--gray);
+  }
+  .regla-icon.red   { background: #FEF2F2; }
+  .regla-icon.amber { background: #FFFBEA; }
+  .regla-info { flex: 1; }
+  .regla-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 17px; font-weight: 800; text-transform: uppercase;
+    color: var(--dark); margin-bottom: 8px; letter-spacing: 0.02em;
+  }
+  .regla-desc { font-size: 14px; line-height: 1.6; color: #666; }
+
+  /* VOCABULARIO (mi estilo) */
+  .voc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; max-width: 920px; margin-top: 22px; }
+  .voc-card {
+    background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+    border-radius: 8px; padding: 18px 22px;
+  }
+  .voc-nombre {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px; font-weight: 900; text-transform: uppercase;
+    color: var(--dark); margin-bottom: 4px;
+  }
+  .voc-desc { font-size: 16px; color: #555; line-height: 1.55; }
+  .voc-desc a { color: var(--red); font-weight: 600; text-decoration: none; }
+
+  #progress {
+    position: fixed; top: 0; left: 0; height: 3px; background: var(--red);
+    width: 0%; z-index: 9999; transition: width 0.35s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+  }
+
+  /* LOGO INACAP -- insignia fija, tomada de las rubricas de evaluacion */
+  .inacap-badge {
+    position: fixed; top: 18px; right: 24px; z-index: 500;
+    background: white; border-radius: 8px; padding: 8px 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18); pointer-events: none;
+  }
+  .inacap-badge-crop { width: 110px; height: 30px; overflow: hidden; position: relative; }
+  .inacap-badge-crop img { position: absolute; top: 0; left: -112px; width: 222px; height: 30px; }
+  .anim {
+    opacity: 0; transform: translateY(22px);
+    transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+  }
+  .slide.visible .anim { opacity: 1; transform: none; }
+  .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+  .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+  .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+  .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+  .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+  .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div class="inacap-badge"><div class="inacap-badge-crop"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA9YAAACDCAYAAABoQoNrAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAKH5JREFUeNrsnU1247bShqvvyVy6g4ylTDOI1SswvQIrK7C8glavwPIKWl5B0yuIvAJLK4icQaaRxxlcaQX9GaeBj2U2f0ASlCjpec7hcbfNH6BQAOsFQEAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKCzfMAEAAAAB2HwdkxSv7s/hoT/+9uvl28/IorwMPz819/3WAEAAGENAAAAIkacLo/xvfwmrO/efswowoMJa+I3AICO8R9MAAAAAAAAAICwBgAAAAAAAEBYAwAAAAAAACCsAQAAAAAAABDWAAAAAAAAAICwBoBD8vXteH47rjEFAAAAACCsAQCqYcT0xP77CXMAAAAAAMIaAMCf3tsxfzu2b8cYcwAAAADAqfMTJgCAwAzfjvjtWL4dO8wBAAAAAOcsrAeSTOW897jXjQ2oTTC9Ur+/fDuit2Pzdjx63Kfo/KxnfHo7+m/H4u148bi/GU2b2n/PVeB/52mzdLq0ndKYEbt1yh5FXMj3Eb5I/W5tD5Pn1wq2uitI/6ZCmrKoavOQaSmydxHaZ5wf+eDj+9e2HEYZ5bZIiUtnizijPItsV3Z+z9plpPK2sWmIPQRu1XQV1V3nv5G1+7Kmv/XU/UYpv3G2rVInsu7v6tsw5Svm/k8125Kq5PnjVvnRrsF96vr1vvw8791RdJ+q75X0dT40qQsAAABwZnwoCUCWHuc5nm3AMksFbXf2d2KD2LJg1Z1vnn3l8YyvVlCYIOjWM/iMbUD2i/r9twoC7SrHTlIgsOcFwWzPpqls2uwoJWSLbPXNI00Le32V4HFgbScVbB4yLT72zkL7zHOF4PpDSQfDzHYy5BGlxMI3JUg+VrBdVCBO76zA63vmv+5zijqE5iU2Xdt6WqXzq06eiuqEvv9MieI6Za/bErF5e5R6+Pjjwtp41fA+vnkL5ec+/pT37ii6j085F71ffKhTF6qS1Z59kCPg399+rWJLCMzPf/39ASsAAHSLfU8FN0HoUMJOD41tUDu2gXLZvSfqurz7bQqu35QE+pqhJKNhM/vzNkesj9TzF1ZsOjE9svnr17TPJiXO3aimtpuvKJimbDmtUJ4h0rLJCeYiSUaw4hwbZ/2ujkhPd4RsbJktVbkNbd62BZ0kd1Jv5FDzVfn00qZjrZ4xVqLF/Ttk/buwz+3bvMbKDn37vIlNy9pDgA5sHkbKtrG91tmyb/++qZneWN1/rcou7ZdV6kKVOpRH2h+Hqfo/tuL6c8X71CWEn3eVTcE7wKetBwAAADiYsF7bAMwEM78HvO/KBkBDGwCWBe2Rh7CuO0pxXyJ+JjYo1Wm8UUF8lPFs9/9bG+jWEdZZ+bm0YitStvARBlrEOdH0sMe0vBbY2QlrX7G6rCls50psTHPyvyqx59rm2Xc6fRZfVHlkCdaVTduNEpMzD2Hmy0CJ6nWOaH+SZGRxZG23lOyZCT37t6EVahPJn+FSZ6XxnrKDW1htlVN2PgJdi/uR/d1LA3vm+ePA2nAiySj+bQt+3Yafd1lY3wsAAABAIPa5KvjGiggTqH0KfO+5/Vk2ldr9fSH7/XbuVgXg45w0+XyLHXKk0TzrSgnZuQ3gi7ixQf1SklHj6YHSciiuU2L2oaHPLmp2mAyU7Scl4uZRpXlqOzJCMCsR1dpvI3teX4o7tZyojiT8Nl0zJaojaTbNd6rSHAesC1m82jZE+931kfg5AAAAAMI6MH0beG5tgBtSOC2USB14BMOLA9h6o+yQtovI4aZSOtHfl/Lv5SZKTOiZApcHSMuh0D702NAf5pJ8JlBHJIr8OAOiSFwvU+XYhEFKrJd1+uyU7aKMejqQpJPJ/HwJXG49ld5Zw/v3VFq1sB5LvU4SXx7lfefTMfg5AAAAAMK6BV4lGeVaBL6vFtdZXEgyGnaIQHGYI6A3SmxcHMgPZiW2c8InkmShMZH3CzftMy2HQn9KMAuU140VMVVHIMepMvAhDmhb/d2t78jvSvJnbkxVR0EbC0a5NQqM/z4EutfStj2vkkyJH++prg5bbC9C+zkAAAAAwroFHiT53vIu4H3jVIAuOYF7fIA8f1LCepGTbicqPsn+p0Ev7c9+wbP1CNYuQ1gP9piWQ+G+hTfiLMSI6k7ezwLwHe0cSDLTYXkg245qPF+fPwp0v7bT69uWxHsSoq/y/rvuY/BzAAAAAIR1S0wkmRIeatTlyd5zmHNP3xE+E3h/yzmeS669TB2f7DVu2qb5xjRrgSlnj7491wTOf8r3xamu91Ae+nvzYUGZibyfgqpnCkz2mJZQzArK+luB4FgHTMPK2rQv/p0+wxx77dO27vpNxes2Oc+P9iSsm5adW7QsPfPlUbU/ly377aakDKv6dZt+vixJyzfx3yIsJFFJmi4FAAAA4AiE9asSYnUXb8oizhF515IsstTmCMwydei9fYv2+X20wexU3m+VNLX2+WdPAjuPmwL7xYGF9Tny2dq2jYX9ToXnHAF0t+d0FM18oS4AAAAAIKz3zpMVjUMJN30yL7CdFATDaYz4/ZBzXHkK64363cyKUiOediWdDWaa/EdJvtV06R1aW7U1iqI7NrIWUXP2W8uPo/JbSUbqrveQlpDMCsr6w57rw0SlaUDT1En0omWbjLqwVmXZ5iJmZQsedsmvo5K0fJD2ZimUtdVFaVrh7gAAAHAswtoFoCY4DLUF0IskW/pcZwTDccv5ubKH3t82kurbZO1sx8OtJNNODW2tBBylbKjRCxlN5MdR+aUK9Cctp+XQrDPSGIoXSTphyvxUB/1V6s1lzj3qCpM6tohS1/va9qqhGAtRdmPl6/OMehCn2ra2xH0bnyTsy88BAAAAzlpY+4y+9Gs8v+7iTUWk97TWonq3J7vqfJngtMn03hcVsLe1WJHe3zuNm/q6yRHVSyVyyrY7a5qWrghrQxtT8+8l2RP6k2daxjVsuw5oi6hCve0psbYOkJ+205tXF9YF9WCdOretumo621ZH6ucAAAAAZyWsVxnBXFHAXHfV3Sdptp9vGr2Ylt67dt9CbaXyM2soONucEn0p2QuTScp+5udVwbFU57WRli7wqvLZpnDy2es9Tvm5j6gNadsn5Ze+ttCdNE85+RlJO588LGqkN+2bbvZIVFAPImlvEbOeKrv5kfs5AAAAwNkIay1Gy4KrmRKAdUZRZpLs5ztsmKedvN96K8oJ5PfBvSRTpZsEwiFHGtNiYaHKepXx3L747VUcNxTWZWnpCs7XjV99bUnUzCSZEr4psPdGkv2UeyWCbKHKchHYFubnTcm51+r8rLqwUmLOpC/0Hs079Vyf9KaZqLTtSp4TeqV8w0C1JRtpv+OpbT8HAAAAOCth7YI3M1LzLD+OoJmA/YsS3nWDPT11OkQwGqc6BOID2nhiOxzGkj2t8pPkT7c09v5DktkAswDpubCi4lkF6uscu1cpV73d0HULaekKK2WPiU37dYkgqorb6z2S/I4mXWdG9vzLnA4Ldy/nh6E+iXhQYtjUsbsMgd+zv1+o8x5y7udG650f3EnYhdzcVHuXjq8FAr6n8lJ1tF/7R5PPWwbWt75aMT1qoQwP6ecAAAAAZyOsV/L+W2ET3P1pg6xnSRYec4HqfcNAbhYoXytJRvOqCmsjFMr2Xa0yxVNvLRZnBNpjKzq+pWz7j83DWAXrdUbd0/lZ23RESqx/zAjUL5Sg9x3hLBupq5uWtph5lHXWdk6f5f2Iniu/51T5fWvQSeBEZpmfu/OcuP6fSsP/7O/0FOaXhv7/nOO/zp5b5cd/SjKt3fn/bcGzd7YjYanut0nlyeUrqmnXKOWn65z7b5X/uzLciN+Cei+SzDSYNPDHjU3rRNWvoUca6vr1Ify8KVHN9trnumdCBAAAAAglrA2PNghxwe7I/t8Ftm6E8TZAevSIUlNiJRReD2znJ5uerBWf5zm2HapgOrJBbghcsD616cnrDJmq5/vaTy8cNwiYli5yb8toLu9XgNflt5X8qdxl7DzFypNKhxvtdWnoK2HrI8jqpvN3W+ZpP9brLkSebYS535UScuk8uXy5+y5rpjeydTHv/hv58ZvsKjNy5qlr67C1+XPl9/seO5325ecAAAAAJ0GdPU117//6AIHeKXMh7/eofcEkR4NewM91GhyiQ2cgSafModIQcluvdJ7ayFf6/rRr3ffzU8F9qtH0vbx3/v3tVzPrYUYRHoaf//r7A1YAAOgWP9W4ZoXZWgMhfbzsOlI3XjsgdFZHlqcu2Aw/BwAAADhi/oMJAAAAAAAAABDWAAAAAAAAAAhrAAAAAAAAgGPjJ0wAAAAAcFaYhfPMYqmjDqTFLBi5FRaOBACENQAAAMDZUXdl7qzV4PfNsqM2ddsMmqPKdp8h+bbHZ7lOhSr2MddspBvbyTbB1INIvu/KoY99YZ5dZTHOLu+EoP3C+ca+Fxrton3Wqk1Z25+tdt4hrAEAAACgC5hR9LE95jYYnluRfYqj2XVmDIzVv52IiqX7OzYMVNlGuHrwehNliO2FPZ7O1C6ufkUpsR1LSx13fGMNAAAAAF0NjGMrID9hjh8Yvh0TK67/eTtuOphGk6ZnW4ZzRPVexfbECsiu+sah2pS59Ufjl9cIawAAAAA4J5FgguE/344LzJErsuMO2ejGCroYMd0Z3zBCcoA5/h/jlwtbZy4R1gAAAABwLpjRJjOVk9HrchsdaoTy0gqVWPb7zTT4CclD+kaX68zy7fhDGnY8IKwBAAAA4Jgwo9dfMUMh8Z5t1Hs7vliBMsL8naVvfQNx/SPm+3/T8VB7ejjCGgAAAACOjQniujM2GlhBPcXkRwPiOhvT8WCmh98hrAEAAADgnIQj08LLbdSmgDLfc5tRPkapj1Ncs2ZBNjOp0SmFsAYAAACAY2WOODiYjcw9l/J9lA+OEzM628MMmUyqimv2sYZ9Y76/cdtnPKb+9mx/zsRvP0Z3vpl69JLx94H9WyTve1LNS2BtGxP3nBtbgaqin52Vt+ca9zRp+5xKl/5dFZtc2BdqVbLKx9l0ZvPpbLqV9/sCVt1rtCiNW1VWLyV5zsKVte8ejk3zV8WPrjzzkOcbmp59bnp/0LU9lhnl6etbPVWPopRtl9Yurx422bwdtx55rOrzdzZdJi33DdsgADhecfALZsjFrap+haiGFEP7jr/HFLnieuNrH4Q17JuRCoLTROoFOfQQaJF6YWQF5/OcvzmBYBqSD6phiWq+rIryFjW0V9V0pW3Sr5mGZY4gmebYwNl0YxuhVUUbFqVxbMXu0v57l5PnInts7LUvJYKraf7q+lETP7lQdSarvo3Ui2FVMa2+9ciUz4OHTXxeTlVs6ER/X5K9KXcN2iAAOF5xcIc4KH3PXFZ8Pxe1vQtE9clg3qOxFHeSnzMmxvEapEFYQxdxKxb+XvP6S3u9E4jzVGW4VGLDEecE2nNJRrfijL+vawgmJwDy/r4NaMt1zjMmkowKZonJTer/X5W9nC3cy3lgnzGzwY0TwE810hvliKyJEkNRjniapsqjr64dqmuzxHXo/OXZ1eflVuRT24zgZmnzurFp1KPqF9bfxjXScpNRj5b23j0lqiP7N2ObshFml76XQP49lvedSOb/jEIDnK848OlcO3eBEGLUOha20jq1uNvEQHRMlfv8DmENx8bCBsg3NYPkqRKHWS+QlT30CNurZPfUbdW96vTyrhr+vSm7nGdEKn9labhTonOSUSav9ncLSbbZ8GqAPOyxsvde2nu6DpGHHDGbvv5JdZr0bVDx+x7yt61ZtuuK102UsIwyfPjFHlXrke6cMj9vM/zqyR6uU2Iq7z+vyKvXcUHnSN26Hqs0IKwBzlscPDS8T9SBvERSv1O07L4X0qxz87qFdB0D9x0QnrqzPHQZMB28vH2ZS8knbQhr6CIu8HYjZFWnpozVfaAZPSVeykTLzpbb2orO0gaoAo/2+e6FUiVwerG+MM14EXUlf3Vx+alTT4qYKTFclsdbSUaLjZ1/KXgpzdTxuWEaXYCxsWlwgWjToBEA/NuIEMHqWMKNfk4DCOtVB+y7Sr2jZgHvPWnQ/vb2EFttJFkfpO3nHBu6s7xn/WIasC6aTpOnA+ZvFigfIduUdN2Ji9oIhDV0ka2tXHPrwFcNKhc0b0TcNGOfYGVnyy62DdttYL8IfW2X8tf0RRKKC0lGbHxf2FP1IisStnPxG932faYT/+7n1B63VF2AVgk5svXZBvRxgLasrA06NnbW1gtJZm01ZdxAWE9biq029v1g8sl3vv6+8dnaLNT37tGBhXWoduWzbQemUm9h4jLxn6tL2G4LuooROUtbyatu0r5WooktOJq/gLV48WGhxN5lwLSM1Au4zssi69ou5a8Oa2Wbm8Blvq4Q4LyqtIxLAoGJsmPdLT566jnz1M+xsHUIwLHxZNvpEGuMnOI05RdJFtBsiul8GNRsd6eB87W174RfbNyHqK7OKmDdiU6sztza+Cjk7IeoqP4grKHLTCQZva4ikGdK+Bhxbr4BvcacjcTsssI1u5TgC8FXSXpj44rXflIvi3hP+XOiO+8osnfeNVl1YK5epiZvf1iB3dtzmevzy8p8JclK43HNNI5V/X5V4n4pyXeWAHB8gfA8wH2iE7XPLmDbVufdrBeLDMHSinzWxehO3RmdqG1Mm7AIeM9Z3h+YCg5dxgTKbguAWPwXPHqS5HtPF2RPVEPuplSxcmg57iVatSd0m7rel8vUsyN5/61MLPnThyepgGpo/++uXWe8eNrK36hEmH7I+f28JAi5yqgjkSRTBPWCJm7/6rlUGwXYR5nPVNnWWaRwmtNR4tqJEN9ZAsD+iaX5d5bRCdtnJclijU0FVNUpv9PA5cwnO2G5lzBT9U9xnRIT75uFa/+UcJ9T3CKs4Rh5VGLBvGx9vwsyL4z/SrJ6ZaSEViTJgg/0lHaLZYFom0vx9zd5gcbGvsT3udrlVupNPVoXCNq8+5kX4Ef7MnSdCyN1uC1oPneonN3Ii+vsWFYQ/27Rsm1G/X2UZOuvUPu1AsD+CDUV+JQXMVzI/mflDCTcaOYaUd1p3zjl9YnG1v/6AWyUudAbwhqOgYkVR3UWPHpSjj+QZOEkNw11LawgXCYQ+zUaobqjnsuM/6/Fr2c9tn7Sl/cjmrcHyJ9Jc51F96YNxOCLEs/uG+SZFZlT8V+gre5sg6pl/iLJCuFxBXtN1XOy1l/YSLItG8Ia4Dw5ZXFwiMWlQn23vpXz3KrrmIT1KWM67uYSZvXxKKsu8o01HAP6u6JY6n8/airUvbyfJjbFvIWsVQPiS0+Snu2qo7ZXqeO+QhAR2/M/q0bT+M1Fh/K3zzrzKMl2VFV8vY5N9PlVbHJvzzfXfvK0vQvKhvJ++y53jFTZs4gZwPGxCXCPETYKShToPlU/TYLqHRdQ7oOtLZKIsIZj4ckKp6E072kyI2VLFZwfQyPpk85BC43roqgBKWlsTBoONWJ4rwRefIL5qyKw44q+vlCBqe/KsXqaYNUFQiaSLFI48LC92x5tVnBs1L0B4PxEYx8bdU5Yu0+6AA4dF4VYyMzEVD2ENRwzbjqr+dl0m6NjeenqDoCyldEj9fIKNb19oZ7vO6I48xC0+2BsbWEE390J5q8tX39RQZtvEOTOq/NphZsS7rNK+Ez9vC84ZqrNAACA+gwCxUyxsGhs26wxQaXYuik/zIzhG2s4JtyU8KUk39MOa9znQuqPru2bF5VPI16uCgTfvIU8vUoyCuimzzwWpGFh07qVMN+wNE37xKbJrS7/ekL580FPna7iF66emWvNVmdF36l/Uc+oK2QfJFlkMI9LZfuyvCzseUNhETMAaL+d3ffU830ODgwD3WdxZn5xSdU4+Q6IUTq+QFjDseH2wC0K4P+UZGGyVUpQj9W1GzmOUUe3aFtk82YE3VNKOLl9gdsQfPf2GSNJtjOKlW0Hkqy07oRPJN3omXafEEwkf4GsLuXPJzhbq2d/VUJT/z6dZqnoF7qeTSTp2FnaZ/Qk2dYqUmK8iYCdSPK9dd7fXXBWZns31WtSkK6hR+CDIAeAtIh2nYAjOf1vuUXCfV+9OhO/iKT7nxmeO6Fmdf7QwYWwhmPks3qp5YmTsimsaxtwH8O0pCclDEeS3+vrBF8bC4M4kTaV9/uCp9nYl0uXVlqfqpedme790OH8zT3LYqXEoRO4UuAXkxpp/izJt8xRQXC1lTBb1+kZBllBiyuT2PN+sSrLaUZdLypnxweaWwB440aSrT+hOssTzdfAviMnFPFZYuKie4Q1HJK1Eih5Da/PwlsTJUK2GY7uRiCjlCha28D9MUB66567rfGSebTXzOTHXvKlzVNcoaNgI8lWVj7srNCKrUjRaXB7Nsc1xVUde1Txm50ko/pRjp1C5a+qXesEHdsMcRjZ9PZTaS7yC5+0Pkgy8psW10t7zEv8ropNnuz9RqnzI3uPKgvGrWza+/J+Wwy+QQMAXy4lWTj1XBnhBghq8IPeeAAAgMMF7ctjfC//+9uvd3Ic6wx0MYbKKvdK/PzX30395FuH48dnaT792PjmfYPre1ZQn+oIdRX7hCgP4+9XJ2K7a+sbp7ryvCnrOtP2Q7wT9vn++xbgHj/4NauCAwAAAAB8ZyDJ4o0AafG4kNPfzg1qwlRwAAAAAIDvI9VrhBPkiOoZZgBFlP4FI9YAAAAAAN9HqhHVkOYaUQ0+IKwBAAAA4NwxI5Is1PUj0Znn331vD5BmibAGAAAAAEhwqzwDpDE7hTCLAbKIENYAAAAAAAmIasiiZ4U1QBZrhDUAAAAAQCKeWAE8n+0Z5934BaPV4F03ENYAAAAAcK5EiKdC1mcurAG8YbstAAAAADhnYR2K2B6rBvcw33sPS85ZUmxHJaxN58Ts7XhqOb2X+EalMmm6WOEWYQ0A8CMX8n3EYvN2vJ5QvnrqxbGimAEAfiDESuBbK9BfAtzrtWPvoU2AexzjjIBBoPvEb8ct1exkxfk7mAoOAOeOEZ/Lt2MhpzcdcGrzNqGYAQBaE9azQKL6KMRDTRv3jizfwwD32AqLn51yvd8grAEA3jO3gnp6YoGR2z5mzYsdAM6MKmKwaYeqEU8PJ2zLZaD7nOP3yvHbsaM6Bq+zTbloK80IawA4Z8z3SBP5Plr9eIIvdLH548UOAOfEPleyPvXFvUyH8ybAfc6xg3dJVexknZ0ErBvv4Bvr96QXjOCbxOoiBdvV8zfz0nrFJLm4b6Bd4xtyZDk6UZtdBa7TXfXRY0gjAJwu57Bq9iKAMDZTb2/k9DqxuyIWwY9eIGG9zPolI9bfxc2Xt+MfG5Qt1fHt7fgzI4j75nncpa69s7//R/y+NXHnP2f8ruqhg8+i856tPXwXbbi013zLsJ35/XXNcslL3z/2vp880tikrKqmy/d+Pfu3/6X8bWN/98XDN5qWnz6/Svl8ST3Hh//Z8z/VFExf7T3WylZre88vHvWlDZ/VfnXhmQ93flO/+pZTBiF93QQ+f2TYx/noTep8Z8s/PMv1uSAdWe1ViDRm8UfFdAMA5AnGUycOdJ+5hFsUDKAOMwmzns4CYZ0dnLnvD4eqB8Id25YazGHARio0kbXHxiM4/WrtFNn/r5Xwcfda2MC1F9B2kW2cN55CtCtc2DS7Sr1N+Vpf2f56D+Un4t8DXaeH70Y1XlV7ur9IsuhW2lbLBsFMaJ9dyPEtyFJUxs+2bXLfwm1SHRp9yV/QZVyzA2WfaXQM1PVjAj0AgEJeJMzIfP/E3ptwfLov1CcJCOsUdzY469uAzARXH+T79El3/LckQPtQctwXXDuuKZ7uc57lxMYs5++rHBGmz+nbdLnGMy5I41cltJxQ/Gjt9tH+f6byumggFHUaR/a5SyXYlh6NdJOy8klX2f0ubDr71r6R9S/ta5ESBsZelxXTUKX8RKXDR1SMVdp9maQ6RC49r3tWDV9sy/y/qbr5oYbQb8Nnh+qaJmT5UFTy96uAvt6zAjWynRgzm7dflM0/2uvjgnzMWhSpodIoGb4zEQAAKGIe6D4jG0tcYFLYI9cBfdj47yvCOuFSBcOxDcjyNm1v43u92AaGsXRrpGRn7RBJslDFLKfHZ6IC0nv5cXGknf39RInAEKNZptf00ZaZC7BHDYT7vlikRHVWR8dKiWvnJ70Wyk+nqewcSZ0Te6ZloMpnWkG83ClBac6/lfzvqavUzTZ81o12T6X+DIOu+afbi/W+wL6vBUFXv8W6GCKNaSE9QVgDAHjxKGEWMTMM7Tv0Tk579LqP23SCOwm7pWquQD9XYe0MspTDbNo+tMF4X7o5JXyn0jUqEFkzKV+E4jF1fkhWSoRF4jf1+RDc2DJ3gmBXYnsnSIc1A/6y8tPC0DAuebFdqpegb6OkR5xjJV6KntOr6FtVaMNnR6p8qnaCdIlrVY/GUn9hONdZOBL/NQv2nUZ3L+fPj/bn8AQ6RwDgMAzPKK+hV/aeWbFu3hmn+EnOmOpx8Pj7n8D6YysFAwjnKKwvlNiYHDAdj5J86/npiOx3rV4ivlMq3Hn9FoLXFyXcurqVgxaZPtse7VJitC2cEOqXNP6TiuUtKcG5U43QxOMa85K9PxKffZVkWnl8pG2iLqtVAF9307QvOppGfS/ZU10DgNMW1p/OJK9PEn4Lqb4S2G5x2ssTsdfkhPLSNn1rqxCHW5Q6lvAdX/OiWP4chbUTELnz4/dc4ba2kC462Bg4O2lcp8RS/PfG3UmzBafKiFu8dwhcuqpMkV00zFNe+eXZbpbz94HyU9/0u0XL1pKMLPp0foxr2KmK/dvy2Xub130s3tVmmxjC7jvleyEXqAmVRr1oWVpYs4gZQDfYHGGaTRz3Vc7ju2EXE7RBZG1p3r/fWj7u9mSvpfUNZkWVx2rLQMdU2plJ4jRbLj+dacGJhOlxuyupSGUjK260a26Du48dsM/ApmeoXhbpRq+O/Zb22kjCjkZKys6XOXZvWlZZL5bI43519/b2yVOd8st6ztrWi6znTJT42FWwTfrZTzZYGtqXy1PLdXPfPjuxdpxZ8XfITrsqvn6R+lsInqwNxtYenxveL2Qas/zZzRCZ2JfxZwGAcxLWawnTMT9RbczyhMvn1baVMX5YyzfaSKdLK990t8u0LBY+R2HdV70OTZmV/M1HDD3YwN0EoV/2HNTNU3YYyvseHvP3xxMp9xBllRWgh7rfIcvPdexMM9I99RToWthHkj3CHVvbTHKEdci6uW9erK3mNt8fj8TX9Ut4FzANrqPBrdr/FKDNDpFGLazTvukCH4Q1wHmxlPAz3qITt9mjzePkhPP4KsmAQJcZynl953/IdqI0pv4JO7UWwC4rBnsbG4Qu9iTKJOdF4gRRvMd0HFNZ6UB8E/B+hyy/hb3OTYV1o61uSvdS/Edgp+qeuxxhnX7OqfBg82aCDTNqfH8ivl4HNyV8Kck3TrsDl4/71n6TUTdWKoC6kdPpUAQAv/f5FDNU5tbGIaMTzuNcwm3RBMeLi5FL+elMjSMSpncnVODsglAniEZ7CkLNi8St9BwrEVW0Uvqmpv2GqetDoqeKrlsuK/0i9hGuOr9VxOQg5x5Nyy/P/1xgMVG2mqgXiy/uGiMun3PqXz/1nPTfhhK2U2efPjuR91PCX2T/VPH1bU3/9GFlfcdNGfy9YZvdNI3ON/s5vqnPQ1gDnA8vknz6A9WIpJ0R/64QS7JAKZyvqI58ddk5Ll62Vo1Bl3DfJQ4l/LZURbZY2We7oNP0yFy3YL+oRPg2bdidANp1rFxflTCIauRpWyAk6pRfHvOU+HBTujfiP433Rr18hpJ8n6yPfuo5+6ib+/TZV6m+5/ehA0ppsU2cWR+q65eh0qgXLevn+OZQPYNFzADOi4kc52dIh8ZtEbo+4fxNKOazptIWn+corBcq8O/aEvgTSaaE7zttT/J+ldxeQPtdqqA19IrPPXm/nVWXfW5S0Req2Mu3/IoE4VKSxcXq2HSiRHpUcGwle9/ghWrEegeu80189sFe08Z+zl3xzypBybiBX4ZKo7tuWeKbS3se00IBzotX6n1jcR2faP6e5PQXaoMf2do4rtIMynMU1i8qeJoHDuBDNE4TFYTue+qJnlo8LxFgvvbrqXu1sVqyWwG7dAn8A+IaZPPiufE4/0aSkbl54PIrs6UTtuOKz79QaZ7ZhijviHNEUizJdPCQZXkIn51Isp9z16fIzSv6Z502dybN9vpumka9CF+Rb85b7GQAgG7ziIBqFL/ennDnxC2+cVasbbxR+XO+/5ypwVzFd3umdWna30qJxeiAwt78vCwRDc5+vQKB4kbutoEbXJO251R6dx31Nx2wxyXC4EadO69YqX3LLw+3JdbE+l9cwaZ6hLvsGi3gB6n0z1T6v0q4jq99+2y6LLrMSpIRYVN+bezFrff67u85je4ThY2Uf9bg6kC/pU4GAOi+gGKxqvo82Pfn+kR9A3F9+szrimrDua4K/mKD3dg2ABsbtC1TjcFICYwsA/tM86yzaNbMFuroQLZx2wY5+6SFkt7D0NkvtvZzI46RtXFfkg//6478RakyceUi9t4Tj4C5rbKqU6axJIvVrVW+xiqv5pzPLZVfWYMyTwngMnqSjHD7TJt+lWTf0EnK7g/q9xN7X1c3N+q8yPqA70Jt+/RZLdLiAwjrOr4+kWQBGrfg2ELZR6xdRg3qin6GNLy+ShonFXzTnecW8mMRM4Dz47MkOxqwaFW9OMRsOflJTm/hr1tJFijFN06LpX33N1p09py323q0lcP1TOjpr1mBVp5YakOsudGuQ/X46W2DZjkCz9nPCZWpZI/uNXXUPFGylWS1Rh/h2FZZVSnTj1b0OJEd5eRr3jAtPuWXR2yfv65QZm4UciP+C53Nlei8z3hxLSSZuTEp8IPbGnW+bZ/VTOX9wlj7oI6va/+c2vQW2aeOf7op4fMAdcg3jQOp/lnFXJXbKW4LBwDlPNk2Zi58GtIkFnHv+amczl7Lbh2VGb5x9GxVvBlkF5dz38faGPFKkhVjR6mKv1aHYyP1V+1eSrJKrk/aXJp8zo/t/ZcVAu9NiVhyAWsvR7y6XsnLDKHo0lJ326Q8G28qiL4mZdXEdmWCxr2otb9tlOjbtVx+Rde7Tp1NRR+eSbWOoIVKR5Z4ebLHhaoH/VQ61jXqVwifreJXbvGucQ1fqfKcUL5+b49ra/Mo9QJay48djVXangf7s59zvo9vV0nj0N5zW0Egu9kNbus3hDXAeeK+G54hohrZ8MEe1+p9eOyjva8p3ziFPJ0LGxt/uBlvQT8j/YB9AQAADsJlRgfDUbyX//3tVzf75pz5ELDcK/HzX3839ZNvHY4fQ/hWJPU79vPoKWEY7UlILVu6byyH/dRFd26PDiRKjY+FnKnoOg6GR96u1Z2x17Teuo7xkKztfd2919LyekwIawAAAIR1VWFN6R2QN2GNEeCU6EmyPkYU6J4bKZ79ZP7GjKRwNBXW5l14dexG+Ak/AAAAAACAA2FGEd0MgxXmAIQ1AAAAVMFMT1tiBgAAAIQ1AAAA1MMtoAkAAABHzn8wAQAAAAAAAADCGgAAAAAAAABhDQAAAAAAAICwBgAAAAAAAEBYAwAAAAAAAADCGgAAAAAAAABhDQAAAAAAAICwBgAAAAAAAEBYAwAAAAAAAADCGgAAAAAAAABhDQAAAAAAAICwBgAAAAAAAEBYAwAAAAAAACCsAQAAAAAAAABhDQAAAAAAAICwBgAAAAAAAEBYAwAAAAAAACCsAQAAAAAAAABhDQAAAAAAAICwBgAAAAAAAEBYAwAAAAAAACCsAQAAAAAAAMDyEyYAAAAAAACAmsRvx7LB9VuENQAAAAAAAJwzr/Y4a/5PgAEA37RAHs81Qc0AAAAASUVORK5CYII=" alt="INACAP"></div></div>
+
+
+<!-- PORTADA -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Modelamiento de Soluciones Informáticas &middot; TI3V25 &middot; Bienvenida al bimestre</div>
+  <div class="cover-title anim">¿Quién es<br>el <span>Profe</span>?</div>
+  <p class="cover-desc anim">
+    Antes de abrir el primer correo de un cliente,
+    un poco de contexto sobre quién va a acompañarte este bimestre.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>103-2B-F1</span></span>
+    <span class="cover-chip">Lunes 10 de agosto 2026</span>
+    <span class="cover-chip">Laboratorio A404</span>
+    <span class="cover-chip">INACAP Puente Alto</span>
+  </div>
+</div>
+
+
+<!-- AGENDA -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">Antes de entrar en materia</div>
+  <div class="sep-title anim">Lo que vemos<br>en <span>10 minutos</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Quién es el profe</div>
+      <div class="index-type">2 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Resumen profesional</div>
+      <div class="index-type">1 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Resumen personal</div>
+      <div class="index-type">2 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Reglas de la clase</div>
+      <div class="index-type">3 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Mi estilo y contacto</div>
+      <div class="index-type">2 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">06</div>
+      <div class="index-name">¿Dudas?</div>
+      <div class="index-type">1 min</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- QUIEN ES EL PROFE -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Quién es el profe</span>
+  <div class="concept-label anim">Michael Alexis Arjel Mayerovich</div>
+  <div class="concept-title anim">El <span>profe</span></div>
+  <div class="concept-body anim">
+    <div class="bio-grid">
+      <img class="bio-photo" src="https://i.ibb.co/7dw7KmSQ/Sin-t-tulo.jpg" alt="Michael Arjel">
+      <ul>
+        <li>38 años, sureño de nacimiento.</li>
+        <li>Analista Programador e Ingeniero en Informática.</li>
+        <li>Casado.</li>
+        <li>Corredor y ciclista &mdash; el running y la bici son mi forma de desconectar.</li>
+        <li>Trabajo actualmente en la industria de software mientras hago clases en INACAP.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- RESUMEN PROFESIONAL -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Trayectoria</span>
+  <div class="concept-label anim">Empresas donde he trabajado</div>
+  <div class="concept-title anim">Resumen <span>Profesional</span></div>
+  <div class="concept-body wide anim">
+    <p>Antes de pararme frente a una sala pasé por distintas industrias, desde retail hasta telecomunicaciones. Ese recorrido es el que traigo a las clases.</p>
+    <div class="logos-grid">
+      <div class="logo-slot current"><img src="https://play-lh.googleusercontent.com/fhU92XgwmmSc_QhbXjmyNiw6iiTEU_Thc3vgUKOMm_Q8zhlPgQ4p7QJBiBMmH4-PPAI" alt="Buk"></div>
+      <div class="logo-slot"><img src="https://media.licdn.com/dms/image/v2/D4E0BAQEp4R5kRNvPsA/company-logo_200_200/B4EZU4f1OlGgAM-/0/1740409623927/claro_chile_sa_logo?e=2147483647&v=beta&t=pJa20GNyD0yD9X3ieaUh44qy-nvLAvg0hB-_aSXFKPg" alt="Claro"></div>
+      <div class="logo-slot"><img src="https://static.vecteezy.com/system/resources/previews/023/871/769/non_2x/reebok-brand-logo-white-symbol-clothes-design-icon-abstract-illustration-with-black-background-free-vector.jpg" alt="Reebok"></div>
+      <div class="logo-slot"><img src="https://i.pinimg.com/564x/56/95/9f/56959f89f824b0f965de561a3b564824.jpg" alt="U. Federico Santa María"></div>
+      <div class="logo-slot"><img src="https://www.totalmedios.com/img/noticias/2024/01/65b83df8ab82b__838x390.jpg" alt="Infracommerce"></div>
+      <div class="logo-slot"><img src="https://cdn.worldvectorlogo.com/logos/victorias-secret.svg" alt="Victoria's Secret"></div>
+      <div class="logo-slot"><img src="https://firstjob.me/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBeFdVQmc9PSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--4084571a5a73320802f2914df932d7bfb796f77e/a711329c12e2ab4c4ebee86a3bf3ad2d_logo_colgram_-01.jpg" alt="Colgram"></div>
+      <div class="logo-slot"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPNheyksMR0-2Pcex7AbiaJ6oCKhKVjiLbXQ&s" alt="Ficcus"></div>
+      <div class="logo-slot"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdkZZd66CUgC_2uyF70KyZY2mW0Ytp3uzUZQ&s" alt="Antártica"></div>
+      <div class="logo-slot"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuNlPZvz2Vh14YHhoRGy4R8Ddc_d7DKKXMCQ&s" alt="GeoVictoria"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- RESUMEN PERSONAL -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Fuera del trabajo</span>
+  <div class="concept-label anim">Lo que hay detrás del profe</div>
+  <div class="concept-title anim">Resumen <span>Personal</span></div>
+  <div class="concept-body wide anim">
+    <div class="photo-grid">
+      <div class="photo-item"><img src="https://i.ibb.co/fG9WGFrV/mascota.jpg" alt="Mascota"><span>Mascota</span></div>
+      <div class="photo-item"><img src="https://i.ibb.co/ccptRHzd/mascota2.jpg" alt="Mascota"><span>Mascota</span></div>
+      <div class="photo-item"><img src="https://i.ibb.co/kgyZ90dm/Hermana1.jpg" alt="Hermanas"><span>Hermanas</span></div>
+      <div class="photo-item"><img src="https://i.ibb.co/d8Zw8MP/Whats-App-Image-2026-05-26-at-02-03-17.jpg" alt="Hermana"><span>Hermana</span></div>
+      <div class="photo-item"><img src="https://i.ibb.co/1fYVFqLj/Whats-App-Image-2026-05-26-at-02-00-57.jpg" alt="Hermana"><span>Hermana</span></div>
+      <div class="photo-item"><img src="https://i.ibb.co/nNW4GG9w/papa.jpg" alt="Papá"><span>Papá</span></div>
+      <div class="photo-item"><img src="https://i.ibb.co/gbG0xGPc/mama.jpg" alt="Mamá"><span>Mamá</span></div>
+      <div class="photo-item"><img src="https://i.ibb.co/pj9Rryvc/esposa.jpg" alt="Esposa"><span>Esposa</span></div>
+      <div class="photo-item"><img src="https://i.ibb.co/gFwVPj36/Whats-App-Image-2026-05-26-at-02-07-15.jpg" alt="Radio"><span>Radio</span></div>
+      <div class="photo-item"><img src="https://i.ibb.co/qYPqQ7T3/running.jpg" alt="Running"><span>Running</span></div>
+      <div class="photo-item"><img src="https://i.ibb.co/8DmnM3Lp/running2.jpg" alt="Running"><span>Running</span></div>
+      <div class="photo-item"><img src="https://i.ibb.co/Q7WH6zD2/Doc.jpg" alt="Doc"><span>Doc</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- REGLAS DE LA CLASE -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Reglas</span>
+  <div class="concept-label anim">Cómo se convive en esta sala</div>
+  <div class="concept-title anim">Reglas de<br>la <span>clase</span></div>
+  <div class="concept-body wide anim">
+    <div class="reglas-grid">
+
+      <div class="regla-card">
+        <div class="regla-icon red">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E31E24" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+          </svg>
+        </div>
+        <div class="regla-info">
+          <div class="regla-title">Cero discriminación</div>
+          <div class="regla-desc">Cualquier insinuación de discriminación por raza, género, tendencia sexual, religión o color político será sancionada.</div>
+        </div>
+      </div>
+
+      <div class="regla-card">
+        <div class="regla-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2">
+            <path d="M3 11l3-3m0 0l3 3m-3-3v8"/><path d="M21 11l-3-3m0 0l-3 3m3-3v8"/><path d="M9 8h6"/>
+          </svg>
+        </div>
+        <div class="regla-info">
+          <div class="regla-title">Comer en clase</div>
+          <div class="regla-desc">No hay problema con consumir alimentos en clase, bajo los estándares de convivencia lógica.</div>
+        </div>
+      </div>
+
+      <div class="regla-card">
+        <div class="regla-icon red">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E31E24" stroke-width="2">
+            <path d="M8 3a4 4 0 0 1 4 4c0 3-4 5-4 9h8c0-4-4-6-4-9a4 4 0 0 1 4-4"/><line x1="4" y1="21" x2="20" y2="3"/>
+          </svg>
+        </div>
+        <div class="regla-info">
+          <div class="regla-title">Prohibido el alcohol</div>
+          <div class="regla-desc">Está prohibido ingresar a clase bajo los efectos del alcohol o consumir bebidas alcohólicas en el aula.</div>
+        </div>
+      </div>
+
+      <div class="regla-card">
+        <div class="regla-icon amber">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="12" y1="12" x2="12" y2="18"/>
+          </svg>
+        </div>
+        <div class="regla-info">
+          <div class="regla-title">Plagio</div>
+          <div class="regla-desc">Los informes serán sometidos a detectores de plagio e IA. Si se detecta uso no autorizado, la nota será 1.0.</div>
+        </div>
+      </div>
+
+      <div class="regla-card">
+        <div class="regla-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <div class="regla-info">
+          <div class="regla-title">Diferencias de opinión</div>
+          <div class="regla-desc">Podemos tener diferencias, pero como profesionales debemos resolverlas con respeto y argumentos.</div>
+        </div>
+      </div>
+
+      <div class="regla-card">
+        <div class="regla-icon red">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E31E24" stroke-width="2">
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
+          </svg>
+        </div>
+        <div class="regla-info">
+          <div class="regla-title">Prohibido rendirse</div>
+          <div class="regla-desc">Retroceder nunca, rendirse jamás.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- MI ESTILO -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Mi estilo</span>
+  <div class="concept-label anim">Cómo enfoco esta asignatura</div>
+  <div class="concept-title anim">Mi <span>Estilo</span></div>
+  <div class="concept-body anim">
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">IA como herramienta</div>
+        <div class="voc-desc">Potencio el uso de inteligencia artificial en clases, pero bien utilizada: para aprender y resolver problemas, no para saltarse el proceso.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Mundo laboral real</div>
+        <div class="voc-desc">Las clases están diseñadas para acercarse lo más posible a cómo funcionan las cosas en la industria. Nada de ejercicios de relleno.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Me gusta trabajar</div>
+        <div class="voc-desc">Disfruto bastante lo que hago, tanto en el mundo laboral como en la sala de clases. Esa energía la traigo a cada sesión.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Contacto</div>
+        <div class="voc-desc">
+          <a href="mailto:michael.arjel@inacapmail.cl">michael.arjel@inacapmail.cl</a><br>
+          <a href="https://www.linkedin.com/in/michael-arjel-mayerovich/" target="_blank">linkedin.com/in/michael-arjel-mayerovich</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- DUDAS -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Antes de seguir</span>
+  <div class="sep-num anim">El momento es ahora</div>
+  <div class="sep-title anim">¿<span>Dudas</span>?</div>
+  <p class="sep-desc anim">El momento ideal para preguntar es ahora, no al final de la unidad.</p>
+</div>
+
+
+<!-- CIERRE -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Modelamiento de Soluciones Informáticas &middot; Otoño 2026</div>
+  <div class="sep-title anim">¡Comencemos<br>a <span>trabajar</span>!</div>
+  <p class="sep-desc anim">TI3V25 &middot; 103-2B-F1 &middot; Laboratorio A404</p>
+</div>
+
+
+<script>
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
