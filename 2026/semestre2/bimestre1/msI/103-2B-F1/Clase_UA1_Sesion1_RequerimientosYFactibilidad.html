@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA1 Sesion 1 - Requerimientos y factibilidad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0; color: var(--text);
+      scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white; justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 620px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px; border-bottom: 6px solid var(--red);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+    .slide-separator.sep-blue   { border-color: var(--blue); }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+    }
+    .sep-green .sep-num { color: #AFAFAF; }
+    .sep-orange .sep-num { color: #D98A8E; }
+    .sep-blue .sep-num { color: #E08B80; }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .cover-title span, .sep-title span, .concept-title span { color: var(--red) !important; }
+    .sep-desc { font-size: 22px; color: rgba(255,255,255,0.45); max-width: 620px; line-height: 1.65; }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 60px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark); margin-bottom: 30px;
+    }
+    .concept-body { max-width: 920px; }
+    .concept-body p { font-size: 21px; line-height: 1.7; color: #333; margin-bottom: 18px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body ul { margin-left: 24px; margin-bottom: 18px; }
+    .concept-body li { font-size: 20px; line-height: 1.7; color: #333; margin-bottom: 8px; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 18px 22px; margin: 20px 0;
+      max-width: 920px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+    }
+    .callout-content p { font-size: 18px; line-height: 1.6; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+
+    /* INDICE */
+    .index-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 32px; max-width: 720px; }
+    .index-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 18px 20px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 32px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 8px;
+    }
+    .index-name { font-size: 16px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-pasos    { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-practica { background: #F7E3E3; color: #8E1A1F; border: 1px solid #E2CACA; }
+    .badge-cierre   { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* RESUMEN */
+    .resumen-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 28px; max-width: 880px; }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .resumen-cmd { font-size: 16px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* TWO COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 920px; margin-top: 20px; }
+    .col-card { background: #F8F8F8; border: 1px solid #E0E0E0; border-radius: 8px; padding: 20px 22px; }
+    .col-card.bad  { border-left: 4px solid var(--red); }
+    .col-card.good { border-left: 4px solid var(--green); }
+    .col-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 12px;
+    }
+    .col-card ul { margin-left: 18px; }
+    .col-card li { font-size: 17px; line-height: 1.7; color: #444; margin-bottom: 4px; }
+
+    /* TABLA */
+    .tbl { width: 100%; max-width: 920px; border-collapse: collapse; margin-top: 18px; font-size: 17px; }
+    .tbl th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 10px 16px; text-align: left;
+    }
+    .tbl td { padding: 12px 16px; border-bottom: 1px solid #E0E0E0; vertical-align: middle; line-height: 1.45; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:nth-child(even) td { background: #F8F8F8; }
+
+    /* VOCABULARIO */
+    .voc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; max-width: 920px; margin-top: 22px; }
+    .voc-grid.tres { grid-template-columns: repeat(3, 1fr); }
+    .voc-card {
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 18px 22px;
+    }
+    .voc-nombre {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 4px;
+    }
+    .voc-code { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--blue); margin-bottom: 8px; }
+    .voc-desc { font-size: 16px; color: #555; line-height: 1.55; }
+
+    /* DEFINICION */
+    .definicion {
+      background: #FFF6F6; border: 2px solid #F3C9CB; border-left: 6px solid var(--red);
+      border-radius: 8px; padding: 22px 26px; margin: 16px 0; max-width: 920px;
+    }
+    .def-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .def-txt { font-size: 23px; line-height: 1.55; color: var(--dark); font-weight: 500; }
+    .def-txt strong { font-weight: 800; }
+    .def-ej { font-size: 18px; line-height: 1.55; color: #666; margin-top: 12px; font-style: italic; }
+
+    /* CORREO */
+    .correo {
+      background: #FAFAFA; border: 1px solid #E0E0E0; border-radius: 8px;
+      padding: 24px 28px; margin: 18px 0; max-width: 920px;
+    }
+    .correo-head {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #888;
+      margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px dashed #DADADA; line-height: 1.7;
+    }
+    .correo-head strong { color: var(--dark); }
+    .correo-body { font-size: 16px; line-height: 1.75; color: #333; }
+    .correo-body p { margin-bottom: 14px; }
+    .correo-body p:last-child { margin-bottom: 0; }
+    .correo-firma { margin-top: 14px; font-size: 16px; color: #333; }
+
+    /* ACTIVIDAD */
+    .actividad {
+      background: #1A1A1A; border-radius: 8px; padding: 22px 26px;
+      margin: 16px 0; max-width: 950px;
+    }
+    .act-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .act-t { font-size: 22px; line-height: 1.5; color: white; font-weight: 600; }
+    .act-d { font-size: 17px; line-height: 1.55; color: rgba(255,255,255,0.55); margin-top: 8px; }
+    .act-list { margin-top: 12px; }
+    .act-li {
+      font-size: 18px; color: rgba(255,255,255,0.85); line-height: 1.7;
+      padding-left: 22px; position: relative;
+    }
+    .act-li::before { content: "\2192"; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+    /* GRILLA DE NEGOCIOS */
+    .negocios {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 10px; max-width: 950px; margin-top: 16px;
+    }
+    .neg {
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 3px solid var(--red);
+      border-radius: 6px; padding: 11px 14px; font-size: 17px; color: #333; font-weight: 500;
+    }
+    .neg.mio { background: var(--dark); border-color: var(--dark); color: white; }
+    .neg.mio span { color: rgba(255,255,255,0.5); font-size: 14px; display: block; margin-top: 2px; }
+
+    /* CHECKPOINT */
+    .chk { max-width: 920px; margin-top: 18px; }
+    .chk-item {
+      display: flex; gap: 18px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 18px 22px; margin-bottom: 14px;
+    }
+    .chk-num {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 900;
+      color: var(--red); line-height: 1; flex-shrink: 0; width: 40px;
+    }
+    .chk-cont { flex: 1; }
+    .chk-tit { font-size: 20px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .chk-desc { font-size: 17px; color: #555; line-height: 1.5; }
+
+    /* LINEA DE TIEMPO (etapas del desarrollo) */
+    .timeline { display: flex; align-items: flex-start; margin-top: 32px; position: relative; }
+    .timeline::before {
+      content: ''; position: absolute; top: 26px; left: 10%; right: 10%; height: 3px;
+      background: var(--border); z-index: 0;
+    }
+    .tl-step { flex: 1; text-align: center; position: relative; z-index: 1; padding: 0 6px; }
+    .tl-dot {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: white; border: 3px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 18px; color: #aaa;
+    }
+    .tl-step.done .tl-dot { border-color: var(--green); background: var(--green); color: white; }
+    .tl-step.now .tl-dot {
+      width: 56px; height: 56px; margin-top: -5px;
+      border-color: var(--red); background: var(--red); color: white; font-size: 22px;
+      box-shadow: 0 6px 18px rgba(227,30,36,0.4);
+    }
+    .tl-tag {
+      display: inline-block; font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      color: white; background: var(--red); border-radius: 10px; padding: 2px 10px; margin-bottom: 8px;
+    }
+    .tl-title {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 800;
+      text-transform: uppercase; color: var(--dark); margin-bottom: 6px; letter-spacing: 0.01em;
+    }
+    .tl-step.now .tl-title { color: var(--red); }
+    .tl-desc { font-size: 13px; color: #666; line-height: 1.5; max-width: 165px; margin: 0 auto; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: #EBEBEB; padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    #progress {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--red);
+      width: 0%; z-index: 9999; transition: width 0.35s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+    }
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- PORTADA -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Modelamiento de Soluciones Informáticas &middot; TI3V25 &middot; Unidad 1 &middot; Sesión 1</div>
+  <div class="cover-title anim">Requerimientos<br>y <span>factibilidad</span></div>
+  <p class="cover-desc anim">
+    Hoy conoces el módulo, aprendes cómo se levanta un requerimiento
+    y eliges el negocio que vas a modelar durante las próximas cuatro semanas.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>103-2B-F1</span></span>
+    <span class="cover-chip">Lunes 10 de agosto 2026</span>
+    <span class="cover-chip">120 minutos</span>
+    <span class="cover-chip">INACAP Puente Alto</span>
+  </div>
+</div>
+
+
+<!-- AGENDA -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">Después del encuadre</div>
+  <div class="sep-title anim">Lo que vemos<br><span>hoy</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Presentación del módulo, reglas y etapas del desarrollo</div>
+      <div class="index-type">Encuadre &middot; 20 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Qué es un requerimiento</div>
+      <div class="index-type">Concepto + actividad &middot; 20 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Técnicas de toma de requerimientos</div>
+      <div class="index-type">Concepto + actividad + resolución &middot; 35 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Criterios de factibilidad</div>
+      <div class="index-type">Concepto + actividad &middot; 20 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Tu negocio para el bimestre</div>
+      <div class="index-type">Cierre &middot; 25 min</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 01: PRESENTACION ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-practica">Bloque 01</span>
+  <div class="sep-num anim">01 &middot; Encuadre &middot; 20 min</div>
+  <div class="sep-title anim">El <span>módulo</span><br>y sus reglas</div>
+  <p class="sep-desc anim">
+    Qué vas a saber hacer al terminar el bimestre, y cómo se trabaja
+    en este laboratorio.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">El módulo</span>
+  <div class="concept-label anim">Al final de estas 13 sesiones</div>
+  <div class="concept-title anim">Qué vas a<br>saber <span>hacer</span></div>
+  <div class="concept-body anim">
+    <p>
+      Vas a ser capaz de <strong>elaborar diagramas UML, evaluar y analizar requerimientos,
+      crear diseños de interfaz y aplicar modelos de procesos de negocio (BPMN)</strong>,
+      pensando siempre en resolver un problema real y no solo en dibujar por dibujar.
+    </p>
+    <table class="tbl">
+      <thead>
+        <tr><th>Unidad</th><th>Qué aprendes</th><th>Cómo lo practicas</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>UA1 &middot; UML</td><td>Levantar requerimientos y dibujarlos en tres diagramas</td><td>Individual, sobre tu propio negocio</td></tr>
+        <tr><td>UA2 &middot; Paradigma 4+1</td><td>Mirar ese mismo sistema desde cinco vistas de arquitectura</td><td>Individual, mismo negocio</td></tr>
+        <tr><td>UA3 &middot; Procesos de negocio</td><td>Modelar un negocio completo con CANVAS y BPMN</td><td>En duplas, negocio nuevo</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>No te preocupes si algún término no te suena todavía</strong>
+        <p>UML, CANVAS, BPMN, factibilidad. Ninguno se supone que lo sepas hoy: es el temario
+        del bimestre. Cada uno se explica desde cero cuando llegue su sesión.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Cómo se trabaja</span>
+  <div class="concept-label anim">El caso de clases y tu propio negocio</div>
+  <div class="concept-title anim">Un <span>demo</span>,<br>y tu propia práctica</div>
+  <div class="concept-body anim">
+    <p>
+      En clases vamos a usar siempre el mismo ejemplo para explicar cada técnica: <strong>un
+      taller mecánico</strong> que atiende autos, motos y camiones, y que cotiza sus repuestos
+      importados en dólares. Yo lo modelo primero, en vivo.
+    </p>
+    <p>
+      Después de cada demostración, <strong>tú aplicas la misma técnica sobre tu propio
+      negocio</strong>, uno que eliges hoy de una lista de 14. El taller es solo el ejemplo
+      del profesor: nadie lo entrega.
+    </p>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Trabajo individual, con apoyo de tu compañero de al lado</strong>
+        <p>Las actividades de hoy y de casi todas las sesiones de la UA1 y la UA2 se hacen
+        en parejas, pero cada uno entrega su propio informe. En la UA3 sí es en duplas
+        de verdad, con una sola entrega por pareja. Eso lo vemos llegado el momento.</p>
+      </div>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Sobre asistentes de IA</strong>
+        <p>Puedes usarlos para armar un diagrama o redactar un informe. Lo que se evalúa
+        es que puedas explicar cada decisión que tomaste. Si no puedes explicarla,
+        no cuenta como tuya.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Contexto</span>
+  <div class="concept-label anim">Antes de levantar el primer requerimiento</div>
+  <div class="concept-title anim">Etapas del<br><span>desarrollo</span> de software</div>
+  <div class="concept-body anim">
+    <p>
+      Este módulo completo vive en las primeras etapas de un proceso más largo. Antes de
+      escribir una línea de código, un sistema real pasa por varias fases, en orden.
+    </p>
+    <div class="timeline">
+      <div class="tl-step now">
+        <div class="tl-dot">1</div>
+        <div class="tl-tag">Hoy</div>
+        <div class="tl-title">Análisis</div>
+        <div class="tl-desc">Entender qué necesita el negocio: requerimientos, factibilidad. Es toda la UA1.</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">2</div>
+        <div class="tl-title">Diseño</div>
+        <div class="tl-desc">Decidir cómo se organiza el sistema: las cinco vistas del paradigma 4+1. Es la UA2.</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">3</div>
+        <div class="tl-title">Implementación</div>
+        <div class="tl-desc">Escribir el código, siguiendo el diseño ya decidido.</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">4</div>
+        <div class="tl-title">Pruebas</div>
+        <div class="tl-desc">Verificar que el sistema hace lo que el negocio pidió, sin errores.</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">5</div>
+        <div class="tl-title">Mantenimiento</div>
+        <div class="tl-desc">El sistema sigue vivo después de entregado: se corrigen errores y se agregan cosas nuevas.</div>
+      </div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Dónde estamos, y dónde no</strong>
+        <p>UA1 y UA2 de este módulo cubren análisis y diseño: vas a levantar requerimientos y
+        dibujar cinco vistas de arquitectura, pero no vas a programar nada aquí. La
+        implementación de esos mismos diagramas la practicas en paralelo en POO Seguro. La
+        UA3 (procesos de negocio) es otra cosa: no es una etapa del desarrollo de software,
+        es un análisis del negocio mismo, con otras herramientas (CANVAS, BPMN).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 02: REQUERIMIENTO ============ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Concepto &middot; 20 min</div>
+  <div class="sep-title anim">¿Qué es un<br><span>requerimiento</span>?</div>
+  <p class="sep-desc anim">
+    La palabra que vas a usar todos los días hasta la ES1. Todo lo que
+    vas a dibujar en esta unidad sale de aquí.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">La base de todo lo que viene</div>
+  <div class="concept-title anim">Requerimiento<br>del <span>sistema</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Requerimiento</div>
+      <div class="def-txt">
+        <strong>Una necesidad o condición que el sistema debe cumplir</strong> para que sea
+        útil a quien lo va a usar.
+      </div>
+      <div class="def-ej">
+        "El taller necesita que el sistema avise cuándo un repuesto no tiene stock"
+        es un requerimiento. No es código todavía: es lo que el cliente necesita,
+        dicho con sus palabras.
+      </div>
+    </div>
+    <p>
+      <strong>Por qué importa levantarlo bien.</strong> Todo lo que vas a dibujar en las
+      próximas tres sesiones, y todo lo que vas a modelar en la UA2, sale de acá.
+      Un requerimiento mal entendido se arrastra hasta el final del bimestre.
+    </p>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>No todos los requerimientos son del mismo tipo</strong>
+        <p>Hay dos clases distintas, y confundirlas es el primer error típico. Veámoslas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Dos tipos de requerimiento</div>
+  <div class="concept-title anim">Funcional<br>y no <span>funcional</span></div>
+  <div class="concept-body anim">
+    <div class="two-col">
+      <div class="col-card good">
+        <div class="col-card-title">Funcional</div>
+        <p>Describe algo que el sistema debe <strong>hacer</strong>: una acción,
+        un cálculo, un proceso.</p>
+        <p style="margin-top:10px;"><em>"El sistema debe calcular el precio del repuesto
+        importado según el dólar del día."</em></p>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title">No funcional</div>
+        <p>Describe una <strong>cualidad</strong> que el sistema debe tener, no una acción.</p>
+        <p style="margin-top:10px;"><em>"El sistema debe responder en menos de 2 segundos"
+        o "debe funcionar aunque no haya internet en el taller."</em></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 03: TECNICAS ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 03</span>
+  <div class="sep-num anim">03 &middot; Concepto &middot; 35 min</div>
+  <div class="sep-title anim">Cómo se<br><span>levantan</span></div>
+  <p class="sep-desc anim">
+    Un requerimiento no aparece solo. Hay que ir a buscarlo,
+    y existen tres formas distintas de hacerlo.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">Tres técnicas de toma de requerimientos</div>
+  <div class="concept-title anim">Entrevista, observación<br>y <span>encuesta</span></div>
+  <div class="concept-body anim">
+    <div class="voc-grid tres">
+      <div class="voc-card">
+        <div class="voc-nombre">Entrevista</div>
+        <div class="voc-desc">Conversación directa con el cliente o usuario, para levantar sus necesidades con sus propias palabras.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Observación</div>
+        <div class="voc-desc">Ver al usuario trabajar en su contexto real, sin que te lo cuente él mismo.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Encuesta</div>
+        <div class="voc-desc">Preguntas estructuradas que se aplican a varias personas, para levantar patrones.</div>
+      </div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>En el taller</th><th>Técnica que uso</th></tr></thead>
+      <tbody>
+        <tr><td>Le pregunto al dueño cómo atiende hoy a un cliente que llega con su auto</td><td>Entrevista</td></tr>
+        <tr><td>Paso una mañana viendo cómo el recepcionista anota las órdenes a mano</td><td>Observación</td></tr>
+        <tr><td>Le pregunto a 30 clientes qué tan rápido esperan que los atiendan</td><td>Encuesta</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Ninguna reemplaza a la otra</strong>
+        <p>La entrevista te da profundidad con pocas personas. La encuesta te da alcance
+        con muchas. La observación te muestra lo que el usuario hace, no solo lo que dice
+        que hace, y muchas veces son distintos.</p>
+      </div>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>En la vida real, nadie te entrega los requerimientos ordenados</strong>
+        <p>El cliente no dice "aquí van mis cinco requerimientos funcionales". Te escribe
+        como le sale: mezclado, con opiniones de por medio y hasta pidiendo cosas que se
+        contradicen entre sí. Leamos un ejemplo real de eso.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">El correo</span>
+  <div class="concept-label anim">Así llega un requerimiento de verdad</div>
+  <div class="concept-title anim">El dueño del<br>taller te <span>escribe</span></div>
+  <div class="concept-body anim">
+    <div class="correo">
+      <div class="correo-head">
+        <strong>De:</strong> Pedro Larraín, dueño del taller mecánico<br>
+        <strong>Asunto:</strong> Necesitamos un sistema para el taller
+      </div>
+      <div class="correo-body">
+        <p>Estimado/a: le escribo porque en el taller seguimos anotando todo en un cuaderno y ya perdimos el rastro de más de una orden de trabajo. Necesito que el sistema registre cada vehículo que ingresa, con su patente y su dueño. También necesito que registre la orden de trabajo de ese vehículo, con los repuestos usados y las horas trabajadas. El sistema tiene que calcular la mano de obra según el tipo de vehículo, porque un auto, una moto y un camión se cobran distinto. Y necesito que avise cuando un repuesto no tiene stock.</p>
+        <p>Varios repuestos son importados y se cotizan en dólares, así que necesito que el precio en pesos se actualice solo, según el dólar del día. El sistema tiene que ser simple de usar, porque el recepcionista no es de tecnología. Los datos de los clientes deben quedar protegidos. Aprovecho de comentarle que el taller necesita una mano de pintura hace tiempo, los clientes lo notan apenas entran. Lo último, y en esto todavía no me decido: por un lado quiero que se pueda entregar un vehículo aunque el pago quede pendiente, si es un cliente conocido de toda la vida, pero por otro lado también quiero que el sistema no deje entregar ningún vehículo que no esté pagado, porque ya nos ha pasado que después no nos pagan.</p>
+      </div>
+      <div class="correo-firma">Saludos,<br>Pedro</div>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 15 min &middot; en parejas</div>
+      <div class="act-t">Léanlo como analistas, no como lectores.</div>
+      <div class="act-list">
+        <div class="act-li">Encuentren tres requerimientos funcionales</div>
+        <div class="act-li">Encuentren dos requerimientos no funcionales</div>
+        <div class="act-li">Encuentren la frase que no es un requerimiento del sistema, sino un comentario aparte</div>
+        <div class="act-li">Encuentren las dos frases que se contradicen entre sí, y decidan qué le responderían a Pedro</div>
+      </div>
+      <div class="act-d">Guarden su clasificación: la vamos a revisar juntos antes de seguir.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Resolución</span>
+  <div class="concept-label anim">Revisemos juntos el correo de Pedro</div>
+  <div class="concept-title anim">Lo que<br>encontramos <span>juntos</span></div>
+  <div class="concept-body anim">
+    <div class="two-col">
+      <div class="col-card good">
+        <div class="col-card-title">Funcionales</div>
+        <ul>
+          <li>Registrar cada vehículo que ingresa, con su patente y su dueño</li>
+          <li>Registrar la orden de trabajo, con los repuestos y las horas trabajadas</li>
+          <li>Calcular la mano de obra según el tipo de vehículo</li>
+          <li>Avisar cuando un repuesto no tiene stock</li>
+          <li>Actualizar el precio de los repuestos importados según el dólar del día</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title">No funcionales</div>
+        <ul>
+          <li>Ser simple de usar, porque el recepcionista no es de tecnología</li>
+          <li>Proteger los datos de los clientes</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>¿Encontraron más de tres funcionales?</strong>
+        <p>La actividad pedía al menos tres, pero el correo en realidad tiene cinco. Si
+        encontraron más de tres, leyeron mejor de lo que pedía el mínimo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Resolución</span>
+  <div class="concept-label anim">Lo que no era tan directo</div>
+  <div class="concept-title anim">El comentario<br>y la <span>contradicción</span></div>
+  <div class="concept-body anim">
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El comentario que no es un requerimiento</strong>
+        <p>"El taller necesita una mano de pintura hace tiempo" habla del local físico,
+        no del sistema que van a construir. Ningún diagrama de esta unidad va a representar
+        eso.</p>
+      </div>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La contradicción</strong>
+        <p>"Que se pueda entregar un vehículo aunque el pago quede pendiente, si es un
+        cliente conocido" contra "que el sistema no deje entregar ningún vehículo que no
+        esté pagado". Pedro pide las dos cosas a la vez, y no pueden ser ciertas al mismo
+        tiempo.</p>
+      </div>
+    </div>
+    <p>
+      <strong>¿Qué le responderían a Pedro?</strong> Con lo que saben hoy, la respuesta
+      honesta es: hay que volver a preguntarle cuál de las dos pesa más para el negocio.
+      No hay una forma ordenada todavía de decidirlo solo con lo visto en esta sesión.
+    </p>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El sábado aprenden a resolver esto sin adivinar</strong>
+        <p>La actividad online O1 enseña el método MoSCoW, una forma ordenada de decidir
+        cuál de dos requerimientos que chocan es más crítico para el negocio. Van a aplicarlo
+        a esta misma contradicción, sobre el correo de su propio cliente.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 04: FACTIBILIDAD ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 04</span>
+  <div class="sep-num anim">04 &middot; Concepto &middot; 20 min</div>
+  <div class="sep-title anim">¿Se puede<br>hacer <span>de verdad</span>?</div>
+  <p class="sep-desc anim">
+    Levantar un requerimiento no basta. Antes de proponerlo como solución,
+    hay que revisar si es viable.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Tres preguntas antes de proponer una solución</div>
+  <div class="concept-title anim">Criterios de<br><span>factibilidad</span></div>
+  <div class="concept-body anim">
+    <div class="voc-grid tres">
+      <div class="voc-card">
+        <div class="voc-nombre">Técnica</div>
+        <div class="voc-desc">¿Existe la tecnología para construir esto? ¿El equipo sabe usarla?</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Operativa</div>
+        <div class="voc-desc">¿La organización puede usar y mantener esto en su día a día?</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Económica</div>
+        <div class="voc-desc">¿El costo de construirlo se justifica con el beneficio que trae?</div>
+      </div>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 10 min &middot; en parejas</div>
+      <div class="act-t">El taller pide: "que el sistema reconozca la patente automáticamente con una cámara al entrar el vehículo".</div>
+      <div class="act-d">Evalúen esa idea en las tres dimensiones: técnica, operativa y económica. ¿La recomendarían para la primera versión del sistema, o para más adelante? Justifiquen en una frase por dimensión.</div>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Esto vuelve en la sesión 2</strong>
+        <p>El diagrama de casos de uso que dibujas mañana se construye a partir de
+        requerimientos que ya pasaron por este filtro de factibilidad.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 05: TU NEGOCIO ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-cierre">Bloque 05</span>
+  <div class="sep-num anim">05 &middot; Cierre &middot; 25 min</div>
+  <div class="sep-title anim">Elige tu<br><span>negocio</span></div>
+  <p class="sep-desc anim">
+    Lo que vas a modelar de aquí hasta la ES2, con todo lo que hoy y
+    en las próximas sesiones vas aprendiendo.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-cierre">Tu negocio</span>
+  <div class="concept-label anim">Uno solo, hasta la ES2</div>
+  <div class="concept-title anim">Elige uno<br>de estos <span>17</span></div>
+  <div class="concept-body anim">
+    <p>Trabajo individual. Se elige hoy y se mantiene durante la UA1 y la UA2 completas.</p>
+    <div class="negocios anim">
+      <div class="neg">Biblioteca</div>
+      <div class="neg">Clínica veterinaria</div>
+      <div class="neg">Hotel</div>
+      <div class="neg">Gimnasio</div>
+      <div class="neg">Tienda de e-commerce</div>
+      <div class="neg">Restaurante</div>
+      <div class="neg">Colegio</div>
+      <div class="neg">Farmacia</div>
+      <div class="neg">Inmobiliaria</div>
+      <div class="neg">Banco</div>
+      <div class="neg">Cine</div>
+      <div class="neg">Agencia de viajes</div>
+      <div class="neg">Clínica dental</div>
+      <div class="neg">Lavandería</div>
+      <div class="neg">Peluquería</div>
+      <div class="neg">Ferretería</div>
+      <div class="neg">Óptica</div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>No se puede repetir</strong>
+        <p>Cada negocio lo reserva un solo estudiante, por orden de llegada, a través
+        del portal. Si tu primera opción ya está tomada cuando entres, elige otro de
+        la lista.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-cierre">Checkpoint</span>
+  <div class="concept-label anim">Antes de irnos &middot; sin nota</div>
+  <div class="concept-title anim">Checkpoint<br>de <span>salida</span></div>
+  <div class="concept-body anim">
+    <p>Entrega estas dos cosas antes de salir de la sala.</p>
+    <div class="chk">
+      <div class="chk-item">
+        <div class="chk-num">1</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Tu negocio elegido</div>
+          <div class="chk-desc">Uno de los 14. Esta es la elección que mantienes hasta la ES2.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">2</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Tu clasificación del correo de Pedro</div>
+          <div class="chk-desc">Los tres funcionales, los dos no funcionales, el comentario que no es un requerimiento y qué decidieron sobre la contradicción.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Este sábado: actividad online O1</strong>
+        <p>Vas a recibir en el AAI el correo del cliente de tu propio negocio, el mismo tipo
+        de correo que acabas de leer de Pedro, más una clase online que enseña herramientas
+        nuevas que hoy no vimos: cómo redactar un requerimiento verificable, cómo resolver
+        una contradicción con el método MoSCoW, y el escenario paso a paso de un caso de uso.
+        Disponible en el AAI el sábado 15 de agosto.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- CIERRE -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen de la sesión</div>
+  <div class="sep-title anim">Lo que te<br><span>llevas</span> hoy</div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">El módulo</div>
+      <div class="resumen-desc">UML individual, paradigma 4+1 individual, procesos de negocio en duplas</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Requerimiento</div>
+      <div class="resumen-desc">Una necesidad que el sistema debe cumplir. Funcional es lo que hace, no funcional es una cualidad que tiene</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Tres técnicas</div>
+      <div class="resumen-desc">Entrevista, observación y encuesta. Cada una levanta algo distinto</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Tres factibilidades</div>
+      <div class="resumen-desc">Técnica, operativa y económica. Se revisan antes de proponer la solución</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Tu negocio</div>
+      <div class="resumen-desc">Elegido hoy, se mantiene hasta la ES2</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Este sábado</div>
+      <div class="resumen-desc">Actividad online O1 en el AAI, disponible el sábado 15 de agosto</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Próxima sesión (miércoles 12/08 &middot; 80 min)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,0.6); line-height:1.6;">
+      Qué es UML y su catálogo de diagramas &middot;
+      Diagrama de casos de uso: actores, casos de uso, <code>include</code> y <code>extend</code> &middot;
+      Taller: transformar los requerimientos de esta semana en un diagrama de casos de uso
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
