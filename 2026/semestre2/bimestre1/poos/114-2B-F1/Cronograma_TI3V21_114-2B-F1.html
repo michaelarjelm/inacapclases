@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cronograma TI3V21 - 114-2B-F1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0; color: var(--text);
+      scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white; justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 620px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px; border-bottom: 6px solid var(--red);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+    .slide-separator.sep-blue   { border-color: var(--blue); }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+    }
+    .sep-green .sep-num { color: #AFAFAF; }
+    .sep-orange .sep-num { color: #D98A8E; }
+    .sep-blue .sep-num { color: #E08B80; }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .cover-title span, .sep-title span, .concept-title span { color: var(--red) !important; }
+    .sep-desc { font-size: 22px; color: rgba(255,255,255,0.45); max-width: 640px; line-height: 1.65; }
+    .sep-meta {
+      display: flex; gap: 28px; margin-top: 32px; flex-wrap: wrap;
+    }
+    .sep-meta-item { }
+    .sep-meta-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 4px;
+    }
+    .sep-meta-v {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px; font-weight: 700; color: white;
+    }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 56px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 48px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark); margin-bottom: 26px;
+    }
+    .concept-body { max-width: 960px; }
+    .concept-body p { font-size: 20px; line-height: 1.7; color: #333; margin-bottom: 16px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 16px 20px; margin: 18px 0;
+      max-width: 960px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 13px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px;
+    }
+    .callout-content p { font-size: 17px; line-height: 1.55; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-ua1 { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-ua2 { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-ua3 { background: #F7E3E3; color: var(--orange); border: 1px solid #E2CACA; }
+    .badge-ua4 { background: #FBEEEC; color: var(--blue); border: 1px solid #ECCFCB; }
+    .badge-general { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* TABLA */
+    .tbl { width: 100%; max-width: 960px; border-collapse: collapse; margin-top: 16px; font-size: 16px; }
+    .tbl th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 10px 14px; text-align: left;
+    }
+    .tbl td { padding: 11px 14px; border-bottom: 1px solid #E0E0E0; vertical-align: top; line-height: 1.45; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:nth-child(even) td { background: #F8F8F8; }
+    .tbl .cod {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      font-weight: 700; color: var(--red); white-space: nowrap;
+    }
+    .tbl .fecha {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+      color: var(--purple); font-weight: 600; white-space: nowrap;
+    }
+    .tbl .ses {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      font-weight: 700; color: var(--dark); white-space: nowrap;
+    }
+
+    /* TIMELINE */
+    .timeline { max-width: 960px; margin-top: 22px; }
+    .tl-track { display: flex; gap: 5px; align-items: stretch; }
+    .tl-seg {
+      border-radius: 5px; padding: 18px 16px; color: white;
+      display: flex; flex-direction: column; justify-content: space-between; min-height: 168px;
+    }
+    .tl-u1 { background: var(--red); flex: 4; }
+    .tl-u2 { background: var(--dark); flex: 6; }
+    .tl-u3 { background: var(--orange); flex: 4; }
+    .tl-u4 { background: var(--blue); flex: 3; }
+    .tl-ua {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.55); margin-bottom: 4px;
+    }
+    .tl-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 28px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; margin-bottom: 10px;
+    }
+    .tl-meta { font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.45; }
+    .tl-foot {
+      margin-top: 12px; padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.22);
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; color: rgba(255,255,255,0.85);
+    }
+    .tl-dates {
+      display: flex; justify-content: space-between; margin-top: 10px;
+      font-size: 14px; color: var(--muted); font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* LISTA DE CRITERIOS */
+    .crit { max-width: 960px; margin-top: 8px; }
+    .crit-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 10px 0; border-bottom: 1px solid #EDEDED;
+    }
+    .crit-item:last-child { border-bottom: none; }
+    .crit-cod {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700;
+      color: var(--red); flex-shrink: 0; width: 48px; padding-top: 2px;
+    }
+    .crit-txt { font-size: 18px; line-height: 1.5; color: #333; }
+
+    /* CHIPS DE CONTENIDO */
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; max-width: 960px; }
+    .chip {
+      background: #F4F4F4; border: 1px solid #DFDFDF; border-radius: 20px;
+      padding: 8px 16px; font-size: 16px; color: #333; font-weight: 500;
+    }
+
+    /* SESIONES */
+    .ses-list { max-width: 960px; margin-top: 14px; }
+    .ses-row {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 12px 0; border-bottom: 1px solid #EDEDED;
+    }
+    .ses-row:last-child { border-bottom: none; }
+    .ses-row.eval { background: #FFF6F6; }
+    .ses-id {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 900;
+      color: var(--red); width: 46px; flex-shrink: 0; line-height: 1.2;
+    }
+    .ses-fecha {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #888;
+      width: 82px; flex-shrink: 0; padding-top: 4px;
+    }
+    .ses-cont { flex: 1; }
+    .ses-tit { font-size: 19px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .ses-desc { font-size: 16px; color: #555; line-height: 1.5; }
+    .ses-tag {
+      display: inline-block; margin-top: 6px;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      background: var(--red); color: white; padding: 3px 10px; border-radius: 12px;
+    }
+    .ses-tag.online { background: var(--green); }
+
+    /* RESUMEN */
+    .resumen-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 26px; max-width: 900px; }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .resumen-cmd { font-size: 16px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: #EBEBEB; padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    #progress {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--red);
+      width: 0%; z-index: 9999; transition: width 0.35s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+    }
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- PORTADA -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Programación Orientada a Objeto Seguro &middot; TI3V21 &middot; Bimestre 1 2026</div>
+  <div class="cover-title anim">Cronograma<br>del <span>módulo</span></div>
+  <p class="cover-desc anim">
+    Qué se ve en cada una de las 17 sesiones, unidad por unidad,
+    con los aprendizajes esperados y los contenidos mínimos que exige el descriptor.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-2B-F1</span></span>
+    <span class="cover-chip">10 ago al 6 oct 2026</span>
+    <span class="cover-chip">17 sesiones + 4 online</span>
+    <span class="cover-chip">INACAP Puente Alto</span>
+  </div>
+</div>
+
+
+<!-- PANORAMA -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-general">Panorama</span>
+  <div class="concept-label anim">Estructura del bimestre</div>
+  <div class="concept-title anim">Cuatro unidades,<br><span>nueve</span> semanas</div>
+  <div class="concept-body anim">
+    <div class="timeline">
+      <div class="tl-track">
+        <div class="tl-seg tl-u1">
+          <div>
+            <div class="tl-ua">UA1</div>
+            <div class="tl-name">Diseñar</div>
+            <div class="tl-meta">Modelo de clases del sistema</div>
+          </div>
+          <div class="tl-foot">4 sesiones &middot; 16 h</div>
+        </div>
+        <div class="tl-seg tl-u2">
+          <div>
+            <div class="tl-ua">UA2</div>
+            <div class="tl-name">Construir</div>
+            <div class="tl-meta">Herencia, encapsulamiento, polimorfismo, excepciones, base de datos y CRUD seguro</div>
+          </div>
+          <div class="tl-foot">6 sesiones &middot; 24 h</div>
+        </div>
+        <div class="tl-seg tl-u3">
+          <div>
+            <div class="tl-ua">UA3</div>
+            <div class="tl-name">Asegurar</div>
+            <div class="tl-meta">Hash, autenticación y consumo de APIs</div>
+          </div>
+          <div class="tl-foot">4 sesiones &middot; 16 h</div>
+        </div>
+        <div class="tl-seg tl-u4">
+          <div>
+            <div class="tl-ua">UA4</div>
+            <div class="tl-name">Defender</div>
+            <div class="tl-meta">Informe técnico y presentación</div>
+          </div>
+          <div class="tl-foot">3 sesiones &middot; 16 h</div>
+        </div>
+      </div>
+      <div class="tl-dates">
+        <span>10 de agosto</span>
+        <span>6 de octubre</span>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Seis de diecisiete sesiones son de programación</strong>
+        <p>El ancho de cada bloque es proporcional a sus sesiones. La UA2 es el corazón del módulo:
+        todo lo que se construye ahí se evalúa junto con la UA3.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ UA1 ============ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-ua1">Unidad 1</span>
+  <div class="sep-num anim">Unidad de aprendizaje 1</div>
+  <div class="sep-title anim">Programación<br>orientada a <span>objeto</span></div>
+  <p class="sep-desc anim">
+    Diseñar la solución antes de escribirla. Qué objetos existen en el sistema,
+    qué sabe y qué hace cada uno, cómo se relacionan y cómo se dibuja todo eso.
+  </p>
+  <div class="sep-meta anim">
+    <div class="sep-meta-item"><div class="sep-meta-k">Sesiones</div><div class="sep-meta-v">4</div></div>
+    <div class="sep-meta-item"><div class="sep-meta-k">Horas</div><div class="sep-meta-v">16</div></div>
+    <div class="sep-meta-item"><div class="sep-meta-k">Fechas</div><div class="sep-meta-v">10 al 18 ago</div></div>
+    <div class="sep-meta-item"><div class="sep-meta-k">Evaluación</div><div class="sep-meta-v">ES1 &middot; 20 %</div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-ua1">UA1</span>
+  <div class="concept-label anim">Aprendizaje esperado y criterios</div>
+  <div class="concept-title anim">Qué se espera<br>que <span>logres</span></div>
+  <div class="concept-body anim">
+    <div class="callout callout-important">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>AE 1.1</strong>
+        <p>Elabora modelo de solución a problemática planteada, para facilitar su codificación,
+        según el diagrama de clases y el estándar UML.</p>
+      </div>
+    </div>
+    <div class="crit">
+      <div class="crit-item"><div class="crit-cod">1.1.1</div><div class="crit-txt">Distingue los conceptos asociados a la programación orientada a objetos, considerando clases, objetos, atributos, métodos, polimorfismo y herencia.</div></div>
+      <div class="crit-item"><div class="crit-cod">1.1.2</div><div class="crit-txt">Reconoce los símbolos de los diagramas de clases, considerando el estándar UML.</div></div>
+      <div class="crit-item"><div class="crit-cod">1.1.3</div><div class="crit-txt">Identifica las relaciones entre las distintas clases, de acuerdo con el tipo de problema analizado.</div></div>
+      <div class="crit-item"><div class="crit-cod">1.1.4</div><div class="crit-txt">Desarrolla diagrama de clases, considerando la simbología y las interacciones de la solución.</div></div>
+    </div>
+    <div class="chips anim">
+      <span class="chip">Conceptos básicos de POO: encapsulamiento, herencia y polimorfismo</span>
+      <span class="chip">Diagrama de clases: relaciones, cardinalidad, notaciones</span>
+      <span class="chip">Características del lenguaje UML</span>
+      <span class="chip">Metodologías para la resolución y representación de problemas</span>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-ua1">UA1</span>
+  <div class="concept-label anim">Sesión a sesión</div>
+  <div class="concept-title anim">Las <span>cuatro</span><br>sesiones</div>
+  <div class="concept-body anim">
+    <div class="ses-list">
+      <div class="ses-row">
+        <div class="ses-id">S1</div>
+        <div class="ses-fecha">Lun 10-ago</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Encuadre y encargo del cliente</div>
+          <div class="ses-desc">Presentación del módulo, del sistema de evaluación y de las reglas del laboratorio. Diagnóstico de entrada. El caso del bimestre: un taller mecánico. Definición y propósito de la POO: el mismo problema resuelto en código procedural y con clases, lado a lado. Clases y objetos.</div>
+        </div>
+      </div>
+      <div class="ses-row">
+        <div class="ses-id">S2</div>
+        <div class="ses-fecha">Mar 11-ago</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Los cuatro pilares y las relaciones entre clases</div>
+          <div class="ses-desc">Atributos y métodos. Abstracción, encapsulamiento, herencia y polimorfismo a nivel conceptual. Relaciones entre clases y cardinalidad. Taller: identificar las clases candidatas del sistema a partir del enunciado.</div>
+        </div>
+      </div>
+      <div class="ses-row">
+        <div class="ses-id">S3</div>
+        <div class="ses-fecha">Lun 17-ago</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Del enunciado al modelo</div>
+          <div class="ses-desc">Los símbolos de cada relación y la multiplicidad. Tipos de dato en el diagrama. Método de cinco pasos para pasar del enunciado al modelo. Los seis errores típicos y taller final.</div>
+        </div>
+      </div>
+      <div class="ses-row eval">
+        <div class="ses-id">S4</div>
+        <div class="ses-fecha">Mar 18-ago</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Cierre del modelo y diagrama en digital</div>
+          <div class="ses-desc">Cierre del modelo del taller, pasándolo por la checklist del modelo terminado. Herramienta para diagramar en digital, con práctica guiada. Cómo se estructura el informe de propuesta y la diferencia entre describir y justificar.</div>
+          <span class="ses-tag">Se muestra la ES1</span>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Esta unidad no es de programación</strong>
+        <p>Su evidencia es un modelo, no un programa. UML se aplica apoyándose en lo que
+        traen de Modelamiento de Soluciones Informáticas; aquí no se enseña la notación desde cero.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ UA2 ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-ua2">Unidad 2</span>
+  <div class="sep-num anim">Unidad de aprendizaje 2</div>
+  <div class="sep-title anim">Herencia, encapsulamiento,<br>polimorfismo y métodos<br>en <span>Python</span></div>
+  <p class="sep-desc anim">
+    El corazón del módulo. Llevar el modelo a código que funciona,
+    y conectarlo a una base de datos de forma segura.
+  </p>
+  <div class="sep-meta anim">
+    <div class="sep-meta-item"><div class="sep-meta-k">Sesiones</div><div class="sep-meta-v">6</div></div>
+    <div class="sep-meta-item"><div class="sep-meta-k">Horas</div><div class="sep-meta-v">24</div></div>
+    <div class="sep-meta-item"><div class="sep-meta-k">Fechas</div><div class="sep-meta-v">24 ago al 8 sep</div></div>
+    <div class="sep-meta-item"><div class="sep-meta-k">Evaluación</div><div class="sep-meta-v">junto con UA3</div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-ua2">UA2</span>
+  <div class="concept-label anim">Aprendizaje esperado y criterios</div>
+  <div class="concept-title anim">Qué se espera<br>que <span>logres</span></div>
+  <div class="concept-body anim">
+    <div class="callout callout-tip">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>AE 2.1</strong>
+        <p>Construye software en Python para resolver una problemática, aplicando paradigma de
+        programación orientada a objetos y su conexión segura a una base de datos.</p>
+      </div>
+    </div>
+    <div class="crit">
+      <div class="crit-item"><div class="crit-cod">2.1.1</div><div class="crit-txt">Verifica diagrama de clases con solución propuesta, considerando el estándar UML.</div></div>
+      <div class="crit-item"><div class="crit-cod">2.1.2</div><div class="crit-txt">Desarrolla el código Python con la solución propuesta, considerando la herencia, el encapsulamiento y el polimorfismo.</div></div>
+      <div class="crit-item"><div class="crit-cod">2.1.3</div><div class="crit-txt">Utiliza librerías Python de conexión a base de datos, considerando repositorios oficiales y la pertinencia con el sistema gestor.</div></div>
+      <div class="crit-item"><div class="crit-cod">2.1.4</div><div class="crit-txt">Ejecuta métodos para creación, actualización, eliminación y listado de registros, de acuerdo con el diagrama de clases y la conexión segura.</div></div>
+      <div class="crit-item"><div class="crit-cod">2.1.5</div><div class="crit-txt">Resuelve errores de ejecución de aplicación en Python, considerando las excepciones originadas y su estructura.</div></div>
+    </div>
+    <div class="chips anim">
+      <span class="chip">IDEs y editores de código fuente</span>
+      <span class="chip">Sintaxis de Python para codificar diagramas de clases</span>
+      <span class="chip">Librerías de conexión a motores de base de datos</span>
+      <span class="chip">Manipulación segura de información</span>
+      <span class="chip">Excepciones y sus jerarquías</span>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-ua2">UA2</span>
+  <div class="concept-label anim">Sesión a sesión</div>
+  <div class="concept-title anim">Las <span>seis</span><br>sesiones</div>
+  <div class="concept-body anim">
+    <div class="ses-list">
+      <div class="ses-row">
+        <div class="ses-id">S5</div>
+        <div class="ses-fecha">Lun 24-ago</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Del modelo al código</div>
+          <div class="ses-desc">IDEs y editores. Configuración del entorno Python. Definición de clases, <code>__init__</code>, atributos, métodos, <code>self</code> e instanciación. Verificación del modelo contra el código.</div>
+          <span class="ses-tag">Se rinde la ES1</span>
+        </div>
+      </div>
+      <div class="ses-row">
+        <div class="ses-id">S6</div>
+        <div class="ses-fecha">Mar 25-ago</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Herencia</div>
+          <div class="ses-desc">Jerarquías de clases, <code>super()</code>, sobrescritura, herencia múltiple y orden de resolución de métodos.</div>
+        </div>
+      </div>
+      <div class="ses-row">
+        <div class="ses-id">S7</div>
+        <div class="ses-fecha">Lun 31-ago</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Encapsulamiento y polimorfismo</div>
+          <div class="ses-desc">Atributos protegidos y privados, <code>property</code>, validación de datos. Métodos con igual nombre y distinto comportamiento, duck typing y clases abstractas con <code>abc</code>.</div>
+        </div>
+      </div>
+      <div class="ses-row">
+        <div class="ses-id">S8</div>
+        <div class="ses-fecha">Mar 01-sep</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Excepciones y sus jerarquías</div>
+          <div class="ses-desc"><code>try</code>, <code>except</code>, <code>finally</code>. Excepciones propias del dominio. Resolución de errores según la excepción originada.</div>
+        </div>
+      </div>
+      <div class="ses-row">
+        <div class="ses-id">S9</div>
+        <div class="ses-fecha">Lun 07-sep</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Conexión a base de datos</div>
+          <div class="ses-desc">Librerías de conexión y repositorios oficiales. Establecimiento de la conexión y patrón DAO o repositorio.</div>
+        </div>
+      </div>
+      <div class="ses-row">
+        <div class="ses-id">S10</div>
+        <div class="ses-fecha">Mar 08-sep</div>
+        <div class="ses-cont">
+          <div class="ses-tit">CRUD seguro e inyección SQL</div>
+          <div class="ses-desc">Consultas parametrizadas, transacciones y cierre de conexiones. Demostración en vivo de inyección SQL sobre una consulta concatenada.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Encapsulamiento y polimorfismo van juntos</strong>
+        <p>Son los dos pilares que tratan de cómo el objeto se comporta hacia afuera:
+        qué deja tocar y cómo responde. Por eso comparten sesión.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ UA3 ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-ua3">Unidad 3</span>
+  <div class="sep-num anim">Unidad de aprendizaje 3</div>
+  <div class="sep-title anim">Librerías de seguridad<br>y consumo de<br>servicios <span>externos</span></div>
+  <p class="sep-desc anim">
+    Proteger lo construido y conectarlo con el mundo:
+    contraseñas que no se guardan en texto plano y datos que llegan desde otro sistema.
+  </p>
+  <div class="sep-meta anim">
+    <div class="sep-meta-item"><div class="sep-meta-k">Sesiones</div><div class="sep-meta-v">4</div></div>
+    <div class="sep-meta-item"><div class="sep-meta-k">Horas</div><div class="sep-meta-v">16</div></div>
+    <div class="sep-meta-item"><div class="sep-meta-k">Fechas</div><div class="sep-meta-v">14 al 22 sep</div></div>
+    <div class="sep-meta-item"><div class="sep-meta-k">Evaluación</div><div class="sep-meta-v">ES2 &middot; 35 %</div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-ua3">UA3</span>
+  <div class="concept-label anim">Aprendizaje esperado y criterios</div>
+  <div class="concept-title anim">Qué se espera<br>que <span>logres</span></div>
+  <div class="concept-body anim">
+    <div class="callout callout-warn">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>AE 3.1</strong>
+        <p>Genera scripts de Python, para consumo de servicios externos (APIs) y persistencia
+        local de datos, considerando la seguridad de la información.</p>
+      </div>
+    </div>
+    <div class="crit">
+      <div class="crit-item"><div class="crit-cod">3.1.1</div><div class="crit-txt">Elabora scripts seguros para incluir autentificación, considerando hash en datos sensibles.</div></div>
+      <div class="crit-item"><div class="crit-cod">3.1.2</div><div class="crit-txt">Implementa librerías para consumo de datos externos, de acuerdo con el manejo de excepciones.</div></div>
+      <div class="crit-item"><div class="crit-cod">3.1.3</div><div class="crit-txt">Crea clase de Python para deserializar, según el formato de la data (JSON, XML, etc).</div></div>
+      <div class="crit-item"><div class="crit-cod">3.1.4</div><div class="crit-txt">Registra la data obtenida en base de datos, según requerimientos.</div></div>
+    </div>
+    <div class="chips anim">
+      <span class="chip">Métodos de autentificación segura</span>
+      <span class="chip">Librerías de hash</span>
+      <span class="chip">Consumo de APIs existentes</span>
+      <span class="chip">Librería Requests</span>
+      <span class="chip">Deserialización de data a objeto Python</span>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-ua3">UA3</span>
+  <div class="concept-label anim">Sesión a sesión</div>
+  <div class="concept-title anim">Las <span>cuatro</span><br>sesiones</div>
+  <div class="concept-body anim">
+    <div class="ses-list">
+      <div class="ses-row">
+        <div class="ses-id">S11</div>
+        <div class="ses-fecha">Lun 14-sep</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Hash, salting y autenticación</div>
+          <div class="ses-desc">Método del Caso: análisis de una filtración real por almacenamiento inseguro de contraseñas. Librerías de hash y tratamiento de datos sensibles. Login con permisos por rol.</div>
+        </div>
+      </div>
+      <div class="ses-row">
+        <div class="ses-id">S12</div>
+        <div class="ses-fecha">Mar 15-sep</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Consumo de API externa</div>
+          <div class="ses-desc">Librería <code>requests</code>, peticiones HTTP, autenticación por token o API key, manejo de excepciones y timeouts.</div>
+        </div>
+      </div>
+      <div class="ses-row">
+        <div class="ses-id">S13</div>
+        <div class="ses-fecha">Lun 21-sep</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Deserialización y persistencia</div>
+          <div class="ses-desc">Convertir la data obtenida a objeto Python según formato (JSON, XML) y registrarla en la base de datos según los requerimientos.</div>
+        </div>
+      </div>
+      <div class="ses-row eval">
+        <div class="ses-id">S14</div>
+        <div class="ses-fecha">Mar 22-sep</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Integración final del sistema</div>
+          <div class="ses-desc">Cierre e integración de todo lo construido en las unidades 2 y 3: POO en código, base de datos, autenticación y consumo de API funcionando en conjunto.</div>
+          <span class="ses-tag">Se muestra la ES2</span>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La ES2 cubre las unidades 2 y 3</strong>
+        <p>Se muestra al cierre de esta unidad y se rinde al comenzar la sesión 15,
+        pero evalúa los nueve criterios de ambas: del 2.1.1 al 2.1.5 y del 3.1.1 al 3.1.4.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ UA4 ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-ua4">Unidad 4</span>
+  <div class="sep-num anim">Unidad de aprendizaje 4</div>
+  <div class="sep-title anim">Unidad integradora<br>de la <span>competencia</span></div>
+  <p class="sep-desc anim">
+    Documentar y defender lo construido. Es la evaluación intermedia
+    del perfil de egreso de la carrera, no solo de este módulo.
+  </p>
+  <div class="sep-meta anim">
+    <div class="sep-meta-item"><div class="sep-meta-k">Sesiones</div><div class="sep-meta-v">3</div></div>
+    <div class="sep-meta-item"><div class="sep-meta-k">Horas</div><div class="sep-meta-v">16</div></div>
+    <div class="sep-meta-item"><div class="sep-meta-k">Fechas</div><div class="sep-meta-v">28 sep al 6 oct</div></div>
+    <div class="sep-meta-item"><div class="sep-meta-k">Evaluación</div><div class="sep-meta-v">ES3 &middot; 35 %</div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-ua4">UA4</span>
+  <div class="concept-label anim">Aprendizaje esperado y criterios</div>
+  <div class="concept-title anim">Qué se espera<br>que <span>logres</span></div>
+  <div class="concept-body anim">
+    <div class="callout callout-info">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>AE 4.1</strong>
+        <p>Diseña software seguro en Python con conexión a base de datos, para solucionar una
+        problemática, considerando la utilización de metodologías ágiles en la gestión del tiempo
+        y los roles del equipo.</p>
+      </div>
+    </div>
+    <div class="crit">
+      <div class="crit-item"><div class="crit-cod">4.1.1</div><div class="crit-txt">Identifica requerimientos de la solución, de acuerdo con la problemática.</div></div>
+      <div class="crit-item"><div class="crit-cod">4.1.2</div><div class="crit-txt">Diseña diagramas de clases y casos de uso para la solución, de acuerdo con la notación UML.</div></div>
+      <div class="crit-item"><div class="crit-cod">4.1.3</div><div class="crit-txt">Representa los procesos de negocios involucrados por la solución, considerando BPMN.</div></div>
+      <div class="crit-item"><div class="crit-cod">4.1.4</div><div class="crit-txt">Aplica metodologías ágiles de desarrollo, considerando los roles del equipo y los plazos de entrega.</div></div>
+      <div class="crit-item"><div class="crit-cod">4.1.5</div><div class="crit-txt">Construye solución con autenticación segura (hash) y conectada a base de datos según requerimientos identificados.</div></div>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Esta unidad no comprende nuevos contenidos</strong>
+        <p>Lo dice el descriptor. No se arranca un proyecto nuevo: se consolida, documenta
+        y defiende el que se viene construyendo desde la sesión 1.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-ua4">UA4</span>
+  <div class="concept-label anim">Sesión a sesión</div>
+  <div class="concept-title anim">Las <span>tres</span><br>sesiones</div>
+  <div class="concept-body anim">
+    <div class="ses-list">
+      <div class="ses-row eval">
+        <div class="ses-id">S15</div>
+        <div class="ses-fecha">Lun 28-sep</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Ágiles, roles y requerimientos</div>
+          <div class="ses-desc">La sesión parte con la ES2 y su defensa individual. Después: metodologías ágiles, roles del equipo, plazos y estándares de calidad, formalizando cómo trabajó cada equipo. Identificación y formalización de los requerimientos en el informe técnico.</div>
+          <span class="ses-tag">Se rinde la ES2 &middot; Se muestra la ES3</span>
+        </div>
+      </div>
+      <div class="ses-row">
+        <div class="ses-id">S16</div>
+        <div class="ses-fecha">Lun 05-oct</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Asesoría de avance</div>
+          <div class="ses-desc">Cierre de la solución con autenticación segura y conexión a base de datos. Revisión del borrador del informe técnico y de la documentación. Ensayo de la presentación.</div>
+          <span class="ses-tag">Hito de avance obligatorio</span>
+        </div>
+      </div>
+      <div class="ses-row eval">
+        <div class="ses-id">S17</div>
+        <div class="ses-fecha">Mar 06-oct</div>
+        <div class="ses-cont">
+          <div class="ses-tit">Presentación al cliente</div>
+          <div class="ses-desc">Entrega del informe técnico y presentación oral de la solución en equipos de 2 a 3 personas, con defensa individual.</div>
+          <span class="ses-tag">Se rinde la ES3</span>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La ES3 es la excepción a la regla</strong>
+        <p>Las demás evaluaciones se muestran en una clase y se rinden al comenzar la siguiente.
+        La ES3 se muestra en la sesión 15 y se rinde en la 17 porque el 6 de octubre es el último
+        día de clases: no hay una sesión posterior. El hito de avance de la sesión 16 existe
+        para que nadie llegue con el informe en blanco.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SABADOS ONLINE -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-general">Componente online</span>
+  <div class="concept-label anim">Los cuatro sábados</div>
+  <div class="concept-title anim">Bloques <span>asincrónicos</span></div>
+  <div class="concept-body anim">
+    <p>
+      El descriptor asigna 9 horas online asincrónicas al módulo, repartidas en cuatro bloques de sábado.
+      <strong>No se dicta clase en ellos.</strong> Son la ventana formal para rendir la evaluación
+      acumulativa en el Ambiente de Aprendizaje, y no requieren conectarse a una hora exacta.
+    </p>
+    <table class="tbl">
+      <thead>
+        <tr><th>Bloque</th><th>Fecha</th><th>Horario</th><th>Cubre</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="cod">O1</td><td class="fecha">Sáb 22-ago</td><td class="fecha">15:10-16:50</td><td>S1 a S4: conceptos de POO, los cuatro pilares y el diagrama de clases completo</td></tr>
+        <tr><td class="cod">O2</td><td class="fecha">Sáb 29-ago</td><td class="fecha">15:10-16:50</td><td>S5 y S6: sintaxis de clases en Python, instanciación, herencia y <code>super()</code></td></tr>
+        <tr><td class="cod">O3</td><td class="fecha">Sáb 12-sep</td><td class="fecha">15:10-16:50</td><td>S7 a S10: encapsulamiento, polimorfismo, excepciones, base de datos y CRUD seguro</td></tr>
+        <tr><td class="cod">O4</td><td class="fecha">Sáb 26-sep</td><td class="fecha">15:10-15:55</td><td>S11 a S14: hash y autenticación, consumo de APIs, deserialización y persistencia</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- CIERRE -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-general">Resumen</span>
+  <div class="sep-num anim">Cronograma completo</div>
+  <div class="sep-title anim">El bimestre<br>de un <span>vistazo</span></div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">UA1 &middot; S1 a S4 &middot; 10 al 18 de agosto</div>
+      <div class="resumen-desc">Diseñar. Conceptos de POO, diagrama de clases y el modelo del taller terminado. Cierra mostrando la ES1</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">UA2 &middot; S5 a S10 &middot; 24 de agosto al 8 de septiembre</div>
+      <div class="resumen-desc">Construir. Herencia, encapsulamiento, polimorfismo, excepciones, base de datos y CRUD. Parte rindiendo la ES1</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">UA3 &middot; S11 a S14 &middot; 14 al 22 de septiembre</div>
+      <div class="resumen-desc">Asegurar. Hash, autenticación, APIs y deserialización. Cierra con ES2</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">UA4 &middot; S15 a S17 &middot; 28 de septiembre al 6 de octubre</div>
+      <div class="resumen-desc">Defender. Ágiles, informe técnico y presentación. Cierra con ES3</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Sábados online</div>
+      <div class="resumen-desc">22-ago, 29-ago, 12-sep y 26-sep. Solo evaluación acumulativa, sin clase</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Sin clase</div>
+      <div class="resumen-desc">Martes 29 de septiembre. Por eso la UA4 tiene 3 sesiones y no 4</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Documento complementario</div>
+    <div style="font-size:18px; color:rgba(255,255,255,0.6); line-height:1.6;">
+      La definición completa de las evaluaciones, sus criterios, instrumentos y plazos
+      está en <strong style="color:white;">Evaluaciones_TI3V21_114-2B-F1</strong>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>

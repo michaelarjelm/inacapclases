@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evaluaciones TI3V21 - 114-2B-F1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0; color: var(--text);
+      scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white; justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 620px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px; border-bottom: 6px solid var(--red);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+    .slide-separator.sep-blue   { border-color: var(--blue); }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+    }
+    .sep-green .sep-num { color: #AFAFAF; }
+    .sep-orange .sep-num { color: #D98A8E; }
+    .sep-blue .sep-num { color: #E08B80; }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .cover-title span, .sep-title span, .concept-title span { color: var(--red) !important; }
+    .sep-desc { font-size: 22px; color: rgba(255,255,255,0.45); max-width: 640px; line-height: 1.65; }
+    .sep-meta { display: flex; gap: 28px; margin-top: 32px; flex-wrap: wrap; }
+    .sep-meta-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 4px;
+    }
+    .sep-meta-v { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: white; }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 56px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 48px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark); margin-bottom: 26px;
+    }
+    .concept-body { max-width: 960px; }
+    .concept-body p { font-size: 20px; line-height: 1.7; color: #333; margin-bottom: 16px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 16px 20px; margin: 18px 0;
+      max-width: 960px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 13px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px;
+    }
+    .callout-content p { font-size: 17px; line-height: 1.55; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-es1 { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-es2 { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-es3 { background: #FBEEEC; color: var(--blue); border: 1px solid #ECCFCB; }
+    .badge-acum { background: #F7E3E3; color: var(--orange); border: 1px solid #E2CACA; }
+    .badge-general { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* TABLA */
+    .tbl { width: 100%; max-width: 960px; border-collapse: collapse; margin-top: 16px; font-size: 16px; }
+    .tbl th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 10px 14px; text-align: left;
+    }
+    .tbl td { padding: 11px 14px; border-bottom: 1px solid #E0E0E0; vertical-align: top; line-height: 1.45; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:nth-child(even) td { background: #F8F8F8; }
+    .tbl .k { font-weight: 700; color: var(--dark); white-space: nowrap; }
+    .tbl .peso { font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 700; color: var(--red); white-space: nowrap; }
+    .tbl .fecha { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--purple); font-weight: 600; white-space: nowrap; }
+    .tbl .cod { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--red); white-space: nowrap; }
+
+    /* BARRA DE PESOS */
+    .pesos { display: flex; gap: 5px; max-width: 960px; margin-top: 22px; }
+    .peso-seg {
+      border-radius: 5px; padding: 20px 16px; color: white;
+      display: flex; flex-direction: column; justify-content: space-between; min-height: 150px;
+    }
+    .p-es1 { background: var(--red); flex: 20; }
+    .p-es2 { background: var(--dark); flex: 35; }
+    .p-es3 { background: var(--blue); flex: 35; }
+    .p-acum { background: var(--orange); flex: 10; }
+    .peso-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 42px; font-weight: 900; line-height: 1; margin-bottom: 6px;
+    }
+    .peso-nom {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 17px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; margin-bottom: 8px;
+    }
+    .peso-desc { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.4; }
+
+    /* RUTA */
+    .ruta { display: flex; flex-direction: column; max-width: 900px; margin-top: 18px; }
+    .ruta-step { display: flex; align-items: flex-start; gap: 18px; }
+    .ruta-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .ruta-num {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--red); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ruta-line { width: 2px; flex: 1; min-height: 16px; background: #ECCFCB; margin: 4px 0; }
+    .ruta-content { padding-bottom: 18px; padding-top: 4px; }
+    .ruta-title { font-size: 19px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .ruta-desc { font-size: 17px; color: #555; line-height: 1.5; }
+
+    /* CRITERIOS */
+    .crit { max-width: 960px; margin-top: 8px; }
+    .crit-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 9px 0; border-bottom: 1px solid #EDEDED;
+    }
+    .crit-item:last-child { border-bottom: none; }
+    .crit-cod {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700;
+      color: var(--red); flex-shrink: 0; width: 48px; padding-top: 2px;
+    }
+    .crit-txt { font-size: 17px; line-height: 1.5; color: #333; }
+
+    /* CHECKLIST */
+    .check { max-width: 960px; margin-top: 14px; }
+    .check-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 10px 0; border-bottom: 1px solid #EDEDED;
+    }
+    .check-item:last-child { border-bottom: none; }
+    .check-box {
+      width: 20px; height: 20px; border: 2px solid var(--red);
+      border-radius: 3px; flex-shrink: 0; margin-top: 3px;
+    }
+    .check-txt { font-size: 18px; line-height: 1.5; color: #333; }
+
+    /* RESUMEN */
+    .resumen-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 26px; max-width: 900px; }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .resumen-cmd { font-size: 16px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: #EBEBEB; padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    #progress {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--red);
+      width: 0%; z-index: 9999; transition: width 0.35s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+    }
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- PORTADA -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Programación Orientada a Objeto Seguro &middot; TI3V21 &middot; Bimestre 1 2026</div>
+  <div class="cover-title anim">Las<br><span>evaluaciones</span></div>
+  <p class="cover-desc anim">
+    Qué se entrega en cada una, con qué instrumento se corrige,
+    qué criterios del descriptor cubre y cuándo se rinde.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-2B-F1</span></span>
+    <span class="cover-chip">3 sumativas + acumulativas</span>
+    <span class="cover-chip">INACAP Puente Alto</span>
+  </div>
+</div>
+
+
+<!-- PANORAMA -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-general">Panorama</span>
+  <div class="concept-label anim">De dónde sale tu nota</div>
+  <div class="concept-title anim">Cuatro <span>componentes</span></div>
+  <div class="concept-body anim">
+    <div class="pesos">
+      <div class="peso-seg p-es1">
+        <div>
+          <div class="peso-num">20%</div>
+          <div class="peso-nom">ES1</div>
+        </div>
+        <div class="peso-desc">Modelo del sistema</div>
+      </div>
+      <div class="peso-seg p-es2">
+        <div>
+          <div class="peso-num">35%</div>
+          <div class="peso-nom">ES2</div>
+        </div>
+        <div class="peso-desc">El sistema funcionando en Python</div>
+      </div>
+      <div class="peso-seg p-es3">
+        <div>
+          <div class="peso-num">35%</div>
+          <div class="peso-nom">ES3</div>
+        </div>
+        <div class="peso-desc">Informe técnico y presentación</div>
+      </div>
+      <div class="peso-seg p-acum">
+        <div>
+          <div class="peso-num">10%</div>
+          <div class="peso-nom">Acum.</div>
+        </div>
+        <div class="peso-desc">Sábados</div>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Las tres sumativas son entregas del mismo sistema</strong>
+        <p>Primero lo diseñas, después lo construyes y al final lo documentas y lo defiendes.
+        No son tres trabajos distintos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- REGLA DE ENTREGA -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-general">Regla</span>
+  <div class="concept-label anim">Cómo funciona cada evaluación</div>
+  <div class="concept-title anim">Se muestra al cerrar<br>la unidad, se rinde<br>una <span>semana</span> después</div>
+  <div class="concept-body anim">
+    <div class="ruta">
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">1</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">En clase se muestra la evaluación</div>
+          <div class="ruta-desc">El enunciado completo y el instrumento con el que se va a corregir, con tiempo para preguntar ahí mismo.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">2</div><div class="ruta-line"></div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Tienes una semana para prepararlo</div>
+          <div class="ruta-desc">Y el contenido sigue avanzando: la unidad siguiente parte igual, sin esperar la entrega.</div>
+        </div>
+      </div>
+      <div class="ruta-step">
+        <div class="ruta-left"><div class="ruta-num">3</div></div>
+        <div class="ruta-content">
+          <div class="ruta-title">Esa clase parte con la evaluación</div>
+          <div class="ruta-desc">Se rinde al comenzar la sesión, antes de pasar materia nueva. Después la clase sigue normal.</div>
+        </div>
+      </div>
+    </div>
+    <table class="tbl">
+      <thead>
+        <tr><th>Evaluación</th><th>Se muestra</th><th>Se rinde</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="k">ES1</td><td class="fecha">S4 &middot; mar 18-ago</td><td class="fecha">S5 &middot; lun 24-ago</td></tr>
+        <tr><td class="k">ES2</td><td class="fecha">S14 &middot; mar 22-sep</td><td class="fecha">S15 &middot; lun 28-sep</td></tr>
+        <tr><td class="k">ES3</td><td class="fecha">S15 &middot; lun 28-sep</td><td class="fecha">S17 &middot; mar 06-oct</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Por qué el contenido no espera</strong>
+        <p>Mientras preparas la entrega ya empezaste la unidad siguiente. Eso es a propósito:
+        si al programar el modelo descubres que estaba mal, todavía alcanzas a corregirlo
+        antes de entregarlo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ES1 -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-es1">Evaluación 1</span>
+  <div class="sep-num anim">Unidad de aprendizaje 1</div>
+  <div class="sep-title anim">El <span>modelo</span><br>del sistema</div>
+  <p class="sep-desc anim">
+    Diseñar la solución antes de escribir una línea de código:
+    qué objetos existen, qué sabe y qué hace cada uno, y cómo se relacionan.
+  </p>
+  <div class="sep-meta anim">
+    <div><div class="sep-meta-k">Peso</div><div class="sep-meta-v">20 %</div></div>
+    <div><div class="sep-meta-k">Instrumento</div><div class="sep-meta-v">Rúbrica</div></div>
+    <div><div class="sep-meta-k">Se muestra</div><div class="sep-meta-v">18 ago</div></div>
+    <div><div class="sep-meta-k">Se rinde</div><div class="sep-meta-v">24 ago</div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-es1">ES1</span>
+  <div class="concept-label anim">Evaluación sumativa 1 &middot; 20 %</div>
+  <div class="concept-title anim">Qué se <span>entrega</span></div>
+  <div class="concept-body anim">
+    <div class="check">
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Informe con la propuesta de solución al encargo del cliente</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Diagrama de clases del sistema: clases, atributos y métodos de cada una</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Relaciones entre clases con su cardinalidad, en notación UML</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Justificación individual: cada integrante fundamenta una decisión de diseño del modelo</div></div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th colspan="2">Condiciones</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Modalidad</td><td>Grupal, con componente individual</td></tr>
+        <tr><td class="k">Instrumento</td><td>Rúbrica. Se califica el modelo y su coherencia con el encargo</td></tr>
+        <tr><td class="k">Criterios evaluados</td><td><span class="cod">1.1.1</span> conceptos de POO &middot; <span class="cod">1.1.2</span> símbolos UML &middot; <span class="cod">1.1.3</span> relaciones entre clases &middot; <span class="cod">1.1.4</span> desarrollo del diagrama</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Este modelo es el que vas a programar</strong>
+        <p>No es un ejercicio aparte. Lo que diseñes aquí es lo que construyes en la ES2,
+        así que un modelo mal pensado se paga dos veces.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ES2 -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-es2">Evaluación 2</span>
+  <div class="sep-num anim">Unidades de aprendizaje 2 y 3</div>
+  <div class="sep-title anim">El sistema<br><span>funcionando</span></div>
+  <p class="sep-desc anim">
+    La evaluación más grande del módulo. Cubre todo lo que programaste
+    desde la sesión 4: nueve criterios de dos unidades distintas.
+  </p>
+  <div class="sep-meta anim">
+    <div><div class="sep-meta-k">Peso</div><div class="sep-meta-v">35 %</div></div>
+    <div><div class="sep-meta-k">Instrumento</div><div class="sep-meta-v">Pauta de cotejo</div></div>
+    <div><div class="sep-meta-k">Se muestra</div><div class="sep-meta-v">22 sep</div></div>
+    <div><div class="sep-meta-k">Se rinde</div><div class="sep-meta-v">28 sep</div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-es2">ES2</span>
+  <div class="concept-label anim">Evaluación sumativa 2 &middot; 35 %</div>
+  <div class="concept-title anim">Qué se <span>entrega</span></div>
+  <div class="concept-body anim">
+    <div class="check">
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Código Python que implementa el modelo, con herencia, encapsulamiento y polimorfismo</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Excepciones propias del dominio y manejo de errores de ejecución</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Conexión a base de datos con CRUD completo y consultas parametrizadas</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Autenticación de usuario con contraseña hasheada</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Consumo de una API externa, con los datos deserializados y guardados en la base</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Defensa individual: cada integrante explica una porción del código elegida al azar</div></div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th colspan="2">Condiciones</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Modalidad</td><td>Grupal, con defensa individual</td></tr>
+        <tr><td class="k">Instrumento</td><td>Pauta de cotejo. Cada requisito está o no está, sin puntos intermedios</td></tr>
+        <tr><td class="k">Criterios UA2</td><td><span class="cod">2.1.1</span> verifica el diagrama &middot; <span class="cod">2.1.2</span> código con los tres pilares &middot; <span class="cod">2.1.3</span> librerías de conexión &middot; <span class="cod">2.1.4</span> métodos CRUD &middot; <span class="cod">2.1.5</span> resuelve excepciones</td></tr>
+        <tr><td class="k">Criterios UA3</td><td><span class="cod">3.1.1</span> hash en datos sensibles &middot; <span class="cod">3.1.2</span> consumo de datos externos &middot; <span class="cod">3.1.3</span> deserialización &middot; <span class="cod">3.1.4</span> registro en base de datos</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Se construye desde la sesión 4, no la semana antes</strong>
+        <p>Son nueve criterios de dos unidades. Cada sesión de la UA2 y la UA3 agrega una pieza
+        de esta entrega: si te atrasas, no hay forma de recuperar seis semanas de código en una.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ES3 -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-es3">Evaluación 3</span>
+  <div class="sep-num anim">Unidad de aprendizaje 4 &middot; integradora</div>
+  <div class="sep-title anim">Informe técnico<br>y <span>presentación</span></div>
+  <p class="sep-desc anim">
+    La evaluación intermedia del perfil de egreso de tu carrera.
+    No mide solo este módulo: mide el avance de tu formación.
+  </p>
+  <div class="sep-meta anim">
+    <div><div class="sep-meta-k">Peso</div><div class="sep-meta-v">35 %</div></div>
+    <div><div class="sep-meta-k">Instrumento</div><div class="sep-meta-v">Rúbrica</div></div>
+    <div><div class="sep-meta-k">Se muestra</div><div class="sep-meta-v">28 sep</div></div>
+    <div><div class="sep-meta-k">Se rinde</div><div class="sep-meta-v">6 oct</div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-es3">ES3</span>
+  <div class="concept-label anim">Evaluación sumativa 3 &middot; 35 %</div>
+  <div class="concept-title anim">Qué se <span>entrega</span></div>
+  <div class="concept-body anim">
+    <div class="check">
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Informe técnico del diseño y desarrollo de la solución</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Requerimientos identificados a partir del encargo del cliente</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Diagramas de clases y de casos de uso en notación UML</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Procesos de negocio de la solución representados en BPMN</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Evidencia del trabajo con metodologías ágiles: roles del equipo y plazos</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Código del sistema con autenticación segura y conexión a base de datos</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Presentación oral de la solución, en equipos de 2 a 3 personas</div></div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th colspan="2">Condiciones</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Modalidad</td><td>Grupal de 2 a 3 personas, con defensa individual de la parte presentada</td></tr>
+        <tr><td class="k">Instrumento</td><td>Rúbrica</td></tr>
+        <tr><td class="k">Criterios</td><td><span class="cod">4.1.1</span> requerimientos &middot; <span class="cod">4.1.2</span> clases y casos de uso &middot; <span class="cod">4.1.3</span> BPMN &middot; <span class="cod">4.1.4</span> metodologías ágiles &middot; <span class="cod">4.1.5</span> solución con hash y base de datos</td></tr>
+        <tr><td class="k">Hito obligatorio</td><td>Sesión 16, lunes 5 de octubre: revisión del borrador del informe y ensayo de la presentación</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>No hay fecha de recuperación</strong>
+        <p>El 6 de octubre es el último día de clases del bimestre. Lo que no se presente ese día
+        no tiene otra instancia.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ACUMULATIVAS -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-acum">Acumulativas</span>
+  <div class="sep-num anim">Todas las unidades</div>
+  <div class="sep-title anim">Las evaluaciones<br><span>breves</span> online</div>
+  <p class="sep-desc anim">
+    Cuatro pruebas cortas en el Ambiente de Aprendizaje, una por cada bloque
+    virtual de sábado. Se cuentan las tres mejores.
+  </p>
+  <div class="sep-meta anim">
+    <div><div class="sep-meta-k">Peso total</div><div class="sep-meta-v">10 %</div></div>
+    <div><div class="sep-meta-k">Instrumento</div><div class="sep-meta-v">Prueba mixta</div></div>
+    <div><div class="sep-meta-k">Modalidad</div><div class="sep-meta-v">Individual</div></div>
+    <div><div class="sep-meta-k">Se cuentan</div><div class="sep-meta-v">3 de 4</div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-acum">Acumulativas</span>
+  <div class="concept-label anim">10 % en conjunto</div>
+  <div class="concept-title anim">Cuándo y <span>qué entra</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead>
+        <tr><th>Breve</th><th>Fecha</th><th>Horario</th><th>Qué entra</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="cod">1</td><td class="fecha">Sáb 22-ago</td><td class="fecha">15:10-16:50</td><td>Conceptos de POO, modelado del sistema y sintaxis de clases en Python</td></tr>
+        <tr><td class="cod">2</td><td class="fecha">Sáb 29-ago</td><td class="fecha">15:10-16:50</td><td>Herencia, <code>super()</code>, encapsulamiento y <code>property</code></td></tr>
+        <tr><td class="cod">3</td><td class="fecha">Sáb 12-sep</td><td class="fecha">15:10-16:50</td><td>Polimorfismo, clases abstractas, excepciones, base de datos y CRUD seguro</td></tr>
+        <tr><td class="cod">4</td><td class="fecha">Sáb 26-sep</td><td class="fecha">15:10-15:55</td><td>Hash y autenticación, consumo de APIs, deserialización y persistencia</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Son asincrónicas</strong>
+        <p>No hay que conectarse a una hora exacta. El bloque de sábado es la ventana en la que
+        la evaluación está disponible en el AAI.</p>
+      </div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Tienes una de descarte, no la gastes en la primera</strong>
+        <p>Se consideran las 3 mejores de 4. Si no rindes las tres primeras, la cuarta
+        deja de ser un descarte y pasa a ser obligatoria.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- REGLAS COMUNES -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-general">Reglas comunes</span>
+  <div class="concept-label anim">Aplica a las tres sumativas</div>
+  <div class="concept-title anim">Grupal, pero<br>la nota <span>no del todo</span></div>
+  <div class="concept-body anim">
+    <p>
+      Las tres evaluaciones sumativas se entregan en equipo. En cada una,
+      <strong>a cada integrante se le pide explicar o fundamentar una parte elegida al azar</strong>,
+      y eso modula su nota individual dentro de la del equipo.
+    </p>
+    <table class="tbl">
+      <thead>
+        <tr><th>Evaluación</th><th>Qué se te va a pedir explicar</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="k">ES1</td><td>Una decisión de diseño del modelo: por qué esa clase, esa relación o esa cardinalidad</td></tr>
+        <tr><td class="k">ES2</td><td>Una porción del código: qué hace, por qué está escrita así y qué pasa si se cambia</td></tr>
+        <tr><td class="k">ES3</td><td>La parte del informe y de la presentación que te tocó exponer</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Sobre el uso de asistentes de IA</strong>
+        <p>Puedes usarlos. Lo que se evalúa es que puedas explicar cada línea de lo que entregaste.
+        Si no puedes explicarlo, no cuenta como tuyo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- CIERRE -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-general">Resumen</span>
+  <div class="sep-num anim">Calendario de evaluaciones</div>
+  <div class="sep-title anim">Todas las <span>fechas</span></div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">ES1 &middot; 20 %</div>
+      <div class="resumen-desc">Se muestra mar 18-ago, se rinde lun 24-ago. Modelo del sistema, rúbrica</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Breve 1 y 2</div>
+      <div class="resumen-desc">Sáb 22-ago y sáb 29-ago en el AAI</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Breve 3 y 4</div>
+      <div class="resumen-desc">Sáb 12-sep y sáb 26-sep en el AAI</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">ES2 &middot; 35 %</div>
+      <div class="resumen-desc">Se muestra mar 22-sep, se rinde lun 28-sep. Sistema funcionando, pauta de cotejo</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Hito de avance</div>
+      <div class="resumen-desc">Lun 5-oct. Borrador del informe y ensayo de la presentación</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">ES3 &middot; 35 %</div>
+      <div class="resumen-desc">Se muestra lun 28-sep, se rinde mar 6-oct. Informe y presentación, rúbrica</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Documento complementario</div>
+    <div style="font-size:18px; color:rgba(255,255,255,0.6); line-height:1.6;">
+      El detalle de qué se ve en cada sesión, unidad por unidad, está en
+      <strong style="color:white;">Cronograma_TI3V21_114-2B-F1</strong>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
