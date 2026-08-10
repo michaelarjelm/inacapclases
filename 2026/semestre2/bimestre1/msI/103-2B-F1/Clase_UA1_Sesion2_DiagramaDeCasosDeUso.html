@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA1 Sesion 2 - Diagrama de casos de uso</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0; color: var(--text);
+      scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white; justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 620px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px; border-bottom: 6px solid var(--red);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+    .slide-separator.sep-blue   { border-color: var(--blue); }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+    }
+    .sep-green .sep-num { color: #AFAFAF; }
+    .sep-orange .sep-num { color: #D98A8E; }
+    .sep-blue .sep-num { color: #E08B80; }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .cover-title span, .sep-title span, .concept-title span { color: var(--red) !important; }
+    .sep-desc { font-size: 22px; color: rgba(255,255,255,0.45); max-width: 620px; line-height: 1.65; }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 60px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark); margin-bottom: 30px;
+    }
+    .concept-body { max-width: 920px; }
+    .concept-body p { font-size: 21px; line-height: 1.7; color: #333; margin-bottom: 18px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 18px 22px; margin: 20px 0;
+      max-width: 920px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+    }
+    .callout-content p { font-size: 18px; line-height: 1.6; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+
+    /* INDICE */
+    .index-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 32px; max-width: 720px; }
+    .index-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 18px 20px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 32px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 8px;
+    }
+    .index-name { font-size: 16px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-pasos    { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-practica { background: #F7E3E3; color: #8E1A1F; border: 1px solid #E2CACA; }
+    .badge-cierre   { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* RESUMEN */
+    .resumen-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 28px; max-width: 880px; }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .resumen-cmd { font-size: 16px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* TWO COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 920px; margin-top: 20px; }
+    .col-card { background: #F8F8F8; border: 1px solid #E0E0E0; border-radius: 8px; padding: 20px 22px; }
+    .col-card.bad  { border-left: 4px solid var(--red); }
+    .col-card.good { border-left: 4px solid var(--green); }
+    .col-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 12px;
+    }
+    .col-card p { font-size: 17px; line-height: 1.6; color: #444; }
+    .col-card p + p { margin-top: 8px; }
+
+    /* TABLA */
+    .tbl { width: 100%; max-width: 920px; border-collapse: collapse; margin-top: 18px; font-size: 17px; }
+    .tbl th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 10px 16px; text-align: left;
+    }
+    .tbl td { padding: 12px 16px; border-bottom: 1px solid #E0E0E0; vertical-align: middle; line-height: 1.45; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:nth-child(even) td { background: #F8F8F8; }
+
+    /* VOCABULARIO */
+    .voc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; max-width: 920px; margin-top: 22px; }
+    .voc-card {
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 18px 22px;
+    }
+    .voc-nombre {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 4px;
+    }
+    .voc-desc { font-size: 16px; color: #555; line-height: 1.55; }
+
+    /* DEFINICION */
+    .definicion {
+      background: #FFF6F6; border: 2px solid #F3C9CB; border-left: 6px solid var(--red);
+      border-radius: 8px; padding: 22px 26px; margin: 16px 0; max-width: 920px;
+    }
+    .def-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .def-txt { font-size: 23px; line-height: 1.55; color: var(--dark); font-weight: 500; }
+    .def-txt strong { font-weight: 800; }
+    .def-ej { font-size: 18px; line-height: 1.55; color: #666; margin-top: 12px; font-style: italic; }
+
+    /* DIAGRAMA */
+    .diagrama {
+      background: white; border: 1px solid #E0E0E0; border-radius: 8px;
+      padding: 16px; margin: 18px 0; max-width: 920px;
+    }
+    .diagrama-cap {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 8px; text-align: center;
+    }
+
+    /* ACTIVIDAD */
+    .actividad {
+      background: #1A1A1A; border-radius: 8px; padding: 22px 26px;
+      margin: 16px 0; max-width: 950px;
+    }
+    .act-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .act-t { font-size: 22px; line-height: 1.5; color: white; font-weight: 600; }
+    .act-d { font-size: 17px; line-height: 1.55; color: rgba(255,255,255,0.55); margin-top: 8px; }
+    .act-list { margin-top: 12px; }
+    .act-li {
+      font-size: 18px; color: rgba(255,255,255,0.85); line-height: 1.7;
+      padding-left: 22px; position: relative;
+    }
+    .act-li::before { content: "\2192"; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+    /* CHECKPOINT */
+    .chk { max-width: 920px; margin-top: 18px; }
+    .chk-item {
+      display: flex; gap: 18px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 18px 22px; margin-bottom: 14px;
+    }
+    .chk-num {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 900;
+      color: var(--red); line-height: 1; flex-shrink: 0; width: 40px;
+    }
+    .chk-cont { flex: 1; }
+    .chk-tit { font-size: 20px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .chk-desc { font-size: 17px; color: #555; line-height: 1.5; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: #EBEBEB; padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    #progress {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--red);
+      width: 0%; z-index: 9999; transition: width 0.35s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+    }
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- PORTADA -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Modelamiento de Soluciones Informáticas &middot; TI3V25 &middot; Unidad 1 &middot; Sesión 2</div>
+  <div class="cover-title anim">Diagrama de<br><span>casos de uso</span></div>
+  <p class="cover-desc anim">
+    Hoy conoces UML por primera vez y dibujas tu primer diagrama:
+    qué puede hacer cada actor con el sistema de tu propio negocio.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>103-2B-F1</span></span>
+    <span class="cover-chip">Miércoles 12 de agosto 2026</span>
+    <span class="cover-chip">80 minutos</span>
+    <span class="cover-chip">INACAP Puente Alto</span>
+  </div>
+</div>
+
+
+<!-- AGENDA -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">Antes de empezar</div>
+  <div class="sep-title anim">Lo que vemos<br><span>hoy</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Qué es UML y su catálogo de diagramas</div>
+      <div class="index-type">Concepto &middot; 10 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Actor y caso de uso</div>
+      <div class="index-type">Concepto + demo &middot; 25 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Relaciones include y extend</div>
+      <div class="index-type">Concepto + demo &middot; 20 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Taller: tu propio diagrama</div>
+      <div class="index-type">Práctica individual &middot; 20 min</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 01: QUE ES UML ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 01</span>
+  <div class="sep-num anim">01 &middot; Concepto &middot; 10 min</div>
+  <div class="sep-title anim">¿Qué es<br><span>UML</span>?</div>
+  <p class="sep-desc anim">
+    La palabra que le da nombre a esta unidad. Antes de dibujar nada,
+    hay que saber qué es y para qué sirve.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">La base de toda la unidad</div>
+  <div class="concept-title anim">Lenguaje<br><span>Unificado</span> de<br>Modelado</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">UML &middot; Unified Modeling Language</div>
+      <div class="def-txt">
+        Un <strong>lenguaje visual estándar</strong> para representar el diseño de un
+        sistema mediante diagramas normalizados: cualquier persona del área los lee
+        igual, sin importar quién los dibujó.
+      </div>
+      <div class="def-ej">
+        No es un lenguaje de programación. No se "ejecuta": se dibuja, y sirve para
+        pensar y comunicar el diseño antes de escribir una sola línea de código.
+      </div>
+    </div>
+    <p>
+      UML no es un solo diagrama, es una <strong>familia de diagramas</strong>, cada uno
+      pensado para mostrar un aspecto distinto del sistema. Algunos muestran estructura
+      (qué partes tiene el sistema), otros muestran comportamiento (qué hace el sistema
+      paso a paso).
+    </p>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Hoy vemos solo uno de todos esos diagramas</strong>
+        <p>El diagrama de casos de uso. Los demás (de base de datos, de flujo, de clases,
+        de componentes, de secuencia) los vas a ir viendo uno por uno en las próximas
+        sesiones, cada uno cuando corresponda. No necesitas conocerlos todos hoy.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 02: ACTOR Y CASO DE USO ============ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Concepto + demo &middot; 25 min</div>
+  <div class="sep-title anim">Actor y<br>caso de <span>uso</span></div>
+  <p class="sep-desc anim">
+    El primer diagrama de UML que vas a dibujar. Muestra qué puede hacer
+    cada quién con el sistema, sin explicar cómo funciona por dentro.
+  </p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">El diagrama de hoy</div>
+  <div class="concept-title anim">Diagrama de<br>casos de <span>uso</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Diagrama de casos de uso</div>
+      <div class="def-txt">
+        Un diagrama UML que muestra <strong>qué puede hacer un usuario con el sistema</strong>,
+        sin explicar cómo lo hace por dentro.
+      </div>
+      <div class="def-ej">
+        Responde la pregunta "¿qué se puede hacer aquí?", no "¿cómo está programado
+        por dentro?". Eso último lo vas a ver en otra unidad.
+      </div>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Actor</div>
+        <div class="voc-desc">Una persona o sistema externo que interactúa con el sistema. Se dibuja como una figura de palitos, fuera del sistema.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Caso de uso</div>
+        <div class="voc-desc">Una acción concreta que el actor puede realizar con el sistema. Se dibuja como un óvalo, con un verbo en infinitivo adentro, dentro del sistema.</div>
+      </div>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>De dónde salen los actores y los casos de uso</strong>
+        <p>De tu propio correo. Cada persona que mencionas y cada requerimiento funcional
+        que identifiques ahí es material directo para este diagrama.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 1 de 4</span>
+  <div class="concept-label anim">No partimos del diagrama terminado: lo armamos pieza por pieza</div>
+  <div class="concept-title anim">Primero,<br>el <span>sistema y un actor</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de casos de uso &middot; paso 1 de 4</div>
+      <svg viewBox="0 0 900 460" style="width:100%; height:auto; display:block;">
+        <rect x="220" y="30" width="500" height="400" rx="6" fill="#FAFAFA" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="470" y="55" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#1A1A1A">SISTEMA DEL TALLER</text>
+
+        <g>
+          <circle cx="90" cy="150" r="14" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="164" x2="90" y2="210" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="180" x2="68" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="180" x2="112" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="210" x2="72" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="210" x2="108" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="90" y="268" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="14" font-weight="600" fill="#1A1A1A">Recepcionista</text>
+        </g>
+      </svg>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: límite del sistema</div>
+        <div class="voc-desc"><strong>Función:</strong> el rectángulo separa qué está adentro (lo que hace el software) de qué está afuera (los actores).</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> "SISTEMA DEL TALLER", el límite de todo lo que estamos modelando hoy.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Actor</div>
+        <div class="voc-desc"><strong>Función:</strong> una persona o sistema externo que interactúa con el sistema. Siempre se dibuja afuera del rectángulo.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> Recepcionista, sacado de las personas que mencionaba el correo de Pedro en la sesión 1.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 2 de 4</span>
+  <div class="concept-label anim">El actor se conecta a lo primero que puede hacer</div>
+  <div class="concept-title anim">Se agrega<br>el primer <span>caso de uso</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de casos de uso &middot; paso 2 de 4</div>
+      <svg viewBox="0 0 900 460" style="width:100%; height:auto; display:block;">
+        <rect x="220" y="30" width="500" height="400" rx="6" fill="#FAFAFA" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="470" y="55" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#1A1A1A">SISTEMA DEL TALLER</text>
+
+        <g>
+          <circle cx="90" cy="150" r="14" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="164" x2="90" y2="210" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="180" x2="68" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="180" x2="112" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="210" x2="72" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="210" x2="108" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="90" y="268" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="14" font-weight="600" fill="#1A1A1A">Recepcionista</text>
+        </g>
+
+        <ellipse cx="380" cy="100" rx="95" ry="30" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+        <text x="380" y="105" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1A1A1A">Registrar vehículo</text>
+
+        <line x1="122" y1="185" x2="285" y2="105" stroke="#1A1A1A" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Caso de uso</div>
+        <div class="voc-desc"><strong>Función:</strong> una acción concreta que el actor puede realizar. Siempre un verbo en infinitivo, siempre adentro del rectángulo.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> "Registrar vehículo", un requerimiento funcional directo de la sesión 1, conectado a Recepcionista con una línea simple.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 3 de 4</span>
+  <div class="concept-label anim">Un mismo actor puede tener más de un caso de uso</div>
+  <div class="concept-title anim">Segundo caso<br>de <span>uso</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de casos de uso &middot; paso 3 de 4</div>
+      <svg viewBox="0 0 900 460" style="width:100%; height:auto; display:block;">
+        <rect x="220" y="30" width="500" height="400" rx="6" fill="#FAFAFA" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="470" y="55" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#1A1A1A">SISTEMA DEL TALLER</text>
+
+        <g>
+          <circle cx="90" cy="150" r="14" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="164" x2="90" y2="210" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="180" x2="68" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="180" x2="112" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="210" x2="72" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="210" x2="108" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="90" y="268" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="14" font-weight="600" fill="#1A1A1A">Recepcionista</text>
+        </g>
+
+        <ellipse cx="380" cy="100" rx="95" ry="30" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+        <text x="380" y="105" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1A1A1A">Registrar vehículo</text>
+
+        <ellipse cx="380" cy="190" rx="105" ry="32" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+        <text x="380" y="195" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1A1A1A">Generar orden de trabajo</text>
+
+        <line x1="122" y1="185" x2="285" y2="105" stroke="#1A1A1A" stroke-width="1.5"/>
+        <line x1="122" y1="200" x2="277" y2="192" stroke="#1A1A1A" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Caso de uso (segunda aparición)</div>
+        <div class="voc-desc"><strong>Función:</strong> un actor casi nunca tiene un solo caso de uso. Cada línea nueva desde el mismo actor es otra cosa distinta que puede hacer.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> "Generar orden de trabajo", el segundo caso de uso de Recepcionista.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 4 de 4</span>
+  <div class="concept-label anim">El diagrama puede tener más de un actor</div>
+  <div class="concept-title anim">Segundo actor,<br>diagrama <span>básico completo</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de casos de uso &middot; paso 4 de 4 (básico)</div>
+      <svg viewBox="0 0 900 460" style="width:100%; height:auto; display:block;">
+        <rect x="220" y="30" width="500" height="400" rx="6" fill="#FAFAFA" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="470" y="55" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#1A1A1A">SISTEMA DEL TALLER</text>
+
+        <g>
+          <circle cx="90" cy="150" r="14" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="164" x2="90" y2="210" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="180" x2="68" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="180" x2="112" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="210" x2="72" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="210" x2="108" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="90" y="268" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="14" font-weight="600" fill="#1A1A1A">Recepcionista</text>
+        </g>
+
+        <g>
+          <circle cx="810" cy="150" r="14" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="164" x2="810" y2="210" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="180" x2="788" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="180" x2="832" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="210" x2="792" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="210" x2="828" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="810" y="268" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="14" font-weight="600" fill="#1A1A1A">Mecánico</text>
+        </g>
+
+        <ellipse cx="380" cy="100" rx="95" ry="30" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+        <text x="380" y="105" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1A1A1A">Registrar vehículo</text>
+
+        <ellipse cx="380" cy="190" rx="105" ry="32" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+        <text x="380" y="195" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1A1A1A">Generar orden de trabajo</text>
+
+        <ellipse cx="600" cy="130" rx="95" ry="30" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+        <text x="600" y="135" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1A1A1A">Actualizar estado</text>
+
+        <line x1="122" y1="185" x2="285" y2="105" stroke="#1A1A1A" stroke-width="1.5"/>
+        <line x1="122" y1="200" x2="277" y2="192" stroke="#1A1A1A" stroke-width="1.5"/>
+        <line x1="778" y1="185" x2="694" y2="140" stroke="#1A1A1A" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Actor (segunda aparición)</div>
+        <div class="voc-desc"><strong>Función:</strong> un sistema real casi siempre tiene más de un tipo de usuario, cada uno con casos de uso propios.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> Mecánico, con su propio caso de uso "Actualizar estado".</div>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Este es el diagrama básico: dos actores, tres casos de uso</strong>
+        <p>Todavía faltan dos casos de uso y dos relaciones especiales, que se agregan
+        recién en el bloque 03, después de explicar qué significan.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 03: INCLUDE Y EXTEND ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 03</span>
+  <div class="sep-num anim">03 &middot; Concepto + demo &middot; 20 min</div>
+  <div class="sep-title anim">Include<br>y <span>extend</span></div>
+  <p class="sep-desc anim">
+    No todos los casos de uso se conectan directo a un actor.
+    Algunos dependen de otro caso de uso.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Dos relaciones entre casos de uso</div>
+  <div class="concept-title anim">Siempre ocurre<br>vs a <span>veces</span> ocurre</div>
+  <div class="concept-body anim">
+    <div class="two-col">
+      <div class="col-card good">
+        <div class="col-card-title">Include</div>
+        <p>Un caso de uso que <strong>SIEMPRE</strong> ocurre como parte de otro. No es
+        opcional: cada vez que pasa el primero, pasa también el incluido.</p>
+        <p>Se dibuja con una flecha punteada, apuntando desde el caso de uso base hacia
+        el caso de uso incluido, con la etiqueta <code>&lt;&lt;include&gt;&gt;</code>.</p>
+      </div>
+      <div class="col-card bad">
+        <div class="col-card-title">Extend</div>
+        <p>Un caso de uso que ocurre <strong>SOLO A VECES</strong>, como una extensión
+        opcional de otro. Depende de una condición.</p>
+        <p>Se dibuja con una flecha punteada, apuntando desde la extensión hacia el
+        caso de uso base, con la etiqueta <code>&lt;&lt;extend&gt;&gt;</code>.</p>
+      </div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>En el taller</th><th>Relación</th><th>Por qué</th></tr></thead>
+      <tbody>
+        <tr><td>Generar orden de trabajo &rarr; Validar patente</td><td style="color:var(--red); font-weight:700;">Include</td><td>Toda orden de trabajo necesita una patente válida. Nunca se salta este paso.</td></tr>
+        <tr><td>Cotizar repuesto importado &rarr; Generar orden de trabajo</td><td style="color:var(--muted); font-weight:700;">Extend</td><td>Solo pasa si la orden incluye un repuesto importado. La mayoría de las veces no aplica.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La pregunta para decidir cuál usar</strong>
+        <p>"¿Esto pasa siempre, o solo a veces?" Si la respuesta es siempre, es include.
+        Si depende de una condición, es extend.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 5 de 6</span>
+  <div class="concept-label anim">Ahora que ya sabes qué es include, se agrega al diagrama básico del bloque 02</div>
+  <div class="concept-title anim">Aquí aparece<br>el <span>include</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de casos de uso &middot; paso 5 de 6</div>
+      <svg viewBox="0 0 900 460" style="width:100%; height:auto; display:block;">
+        <defs>
+          <marker id="arrowRed-s2" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+            <path d="M0,0 L7,3.5 L0,7" fill="none" stroke="#E31E24" stroke-width="1.6"/>
+          </marker>
+        </defs>
+
+        <rect x="220" y="30" width="500" height="400" rx="6" fill="#FAFAFA" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="470" y="55" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#1A1A1A">SISTEMA DEL TALLER</text>
+
+        <g>
+          <circle cx="90" cy="150" r="14" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="164" x2="90" y2="210" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="180" x2="68" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="180" x2="112" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="210" x2="72" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="210" x2="108" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="90" y="268" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="14" font-weight="600" fill="#1A1A1A">Recepcionista</text>
+        </g>
+
+        <g>
+          <circle cx="810" cy="150" r="14" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="164" x2="810" y2="210" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="180" x2="788" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="180" x2="832" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="210" x2="792" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="210" x2="828" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="810" y="268" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="14" font-weight="600" fill="#1A1A1A">Mecánico</text>
+        </g>
+
+        <ellipse cx="380" cy="100" rx="95" ry="30" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+        <text x="380" y="105" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1A1A1A">Registrar vehículo</text>
+
+        <ellipse cx="380" cy="190" rx="105" ry="32" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+        <text x="380" y="195" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1A1A1A">Generar orden de trabajo</text>
+
+        <ellipse cx="600" cy="130" rx="95" ry="30" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+        <text x="600" y="135" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1A1A1A">Actualizar estado</text>
+
+        <ellipse cx="480" cy="295" rx="92" ry="30" fill="#F4F4F4" stroke="#666666" stroke-width="2"/>
+        <text x="480" y="300" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12" font-weight="600" fill="#1A1A1A">Validar patente</text>
+
+        <line x1="122" y1="185" x2="285" y2="105" stroke="#1A1A1A" stroke-width="1.5"/>
+        <line x1="122" y1="200" x2="277" y2="192" stroke="#1A1A1A" stroke-width="1.5"/>
+        <line x1="778" y1="185" x2="694" y2="140" stroke="#1A1A1A" stroke-width="1.5"/>
+
+        <line x1="430" y1="217" x2="465" y2="270" stroke="#E31E24" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrowRed-s2)"/>
+        <text x="452" y="248" font-family="'JetBrains Mono',monospace" font-size="11" fill="#E31E24" font-weight="700">&lt;&lt;include&gt;&gt;</text>
+      </svg>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: relación include</div>
+        <div class="voc-desc"><strong>Función:</strong> conecta un caso de uso base con otro que ocurre siempre como parte de él. Flecha punteada, apuntando hacia el caso incluido.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> "Generar orden de trabajo" incluye "Validar patente": toda orden necesita una patente válida, sin excepción.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 6 de 6</span>
+  <div class="concept-label anim">El último elemento: una relación que depende de una condición</div>
+  <div class="concept-title anim">Aquí aparece<br>el <span>extend</span>, diagrama completo</div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de casos de uso &middot; Sistema del taller (completo)</div>
+      <svg viewBox="0 0 900 460" style="width:100%; height:auto; display:block;">
+        <defs>
+          <marker id="arrowRed" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+            <path d="M0,0 L7,3.5 L0,7" fill="none" stroke="#E31E24" stroke-width="1.6"/>
+          </marker>
+          <marker id="arrowGray" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+            <path d="M0,0 L7,3.5 L0,7" fill="none" stroke="#666666" stroke-width="1.6"/>
+          </marker>
+        </defs>
+
+        <rect x="220" y="30" width="500" height="400" rx="6" fill="#FAFAFA" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="470" y="55" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#1A1A1A">SISTEMA DEL TALLER</text>
+
+        <g>
+          <circle cx="90" cy="150" r="14" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="164" x2="90" y2="210" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="180" x2="68" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="180" x2="112" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="210" x2="72" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="90" y1="210" x2="108" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="90" y="268" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="14" font-weight="600" fill="#1A1A1A">Recepcionista</text>
+        </g>
+
+        <g>
+          <circle cx="810" cy="150" r="14" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="164" x2="810" y2="210" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="180" x2="788" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="180" x2="832" y2="200" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="210" x2="792" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="810" y1="210" x2="828" y2="245" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="810" y="268" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="14" font-weight="600" fill="#1A1A1A">Mecánico</text>
+        </g>
+
+        <ellipse cx="380" cy="100" rx="95" ry="30" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+        <text x="380" y="105" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1A1A1A">Registrar vehículo</text>
+
+        <ellipse cx="380" cy="190" rx="105" ry="32" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+        <text x="380" y="195" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1A1A1A">Generar orden de trabajo</text>
+
+        <ellipse cx="600" cy="130" rx="95" ry="30" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+        <text x="600" y="135" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1A1A1A">Actualizar estado</text>
+
+        <ellipse cx="480" cy="295" rx="92" ry="30" fill="#F4F4F4" stroke="#666666" stroke-width="2"/>
+        <text x="480" y="300" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12" font-weight="600" fill="#1A1A1A">Validar patente</text>
+
+        <ellipse cx="600" cy="375" rx="112" ry="32" fill="#F4F4F4" stroke="#666666" stroke-width="2"/>
+        <text x="600" y="380" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12" font-weight="600" fill="#1A1A1A">Cotizar repuesto importado</text>
+
+        <line x1="122" y1="185" x2="285" y2="105" stroke="#1A1A1A" stroke-width="1.5"/>
+        <line x1="122" y1="200" x2="277" y2="192" stroke="#1A1A1A" stroke-width="1.5"/>
+        <line x1="778" y1="185" x2="694" y2="140" stroke="#1A1A1A" stroke-width="1.5"/>
+
+        <line x1="430" y1="217" x2="465" y2="270" stroke="#E31E24" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrowRed)"/>
+        <text x="452" y="248" font-family="'JetBrains Mono',monospace" font-size="11" fill="#E31E24" font-weight="700">&lt;&lt;include&gt;&gt;</text>
+
+        <path d="M560,348 Q620,250 440,210" fill="none" stroke="#666666" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrowGray)"/>
+        <text x="585" y="278" font-family="'JetBrains Mono',monospace" font-size="11" fill="#666666" font-weight="700">&lt;&lt;extend&gt;&gt;</text>
+      </svg>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: relación extend</div>
+        <div class="voc-desc"><strong>Función:</strong> conecta una extensión opcional con el caso de uso base. Flecha punteada, apuntando desde la extensión hacia el caso base.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> "Cotizar repuesto importado" extiende "Generar orden de trabajo": solo pasa si la orden incluye un repuesto importado, la mayoría de las veces no aplica.</div>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Este es el diagrama completo</strong>
+        <p>Dos actores, cinco casos de uso, una relación include y una extend. Los
+        mismos seis elementos que vas a identificar en tu propio negocio en el bloque 04.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 04: TALLER ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-practica">Bloque 04</span>
+  <div class="sep-num anim">04 &middot; Práctica individual &middot; 25 min</div>
+  <div class="sep-title anim">Tu propio<br><span>diagrama</span></div>
+  <p class="sep-desc anim">
+    Con tu propio correo al lado. Vas a identificar tus requerimientos
+    y transformarlos en un diagrama de casos de uso.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Taller guiado</span>
+  <div class="concept-label anim">Individual, sobre tu propio negocio</div>
+  <div class="concept-title anim">De tu correo<br>al <span>diagrama</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 25 min &middot; individual</div>
+      <div class="act-t">Dibuja el diagrama de casos de uso de tu propio negocio.</div>
+      <div class="act-list">
+        <div class="act-li">Antes de dibujar, identifica al menos tres requerimientos funcionales de tu propio correo, con la misma técnica que usaron recién sobre el correo de Pedro</div>
+        <div class="act-li">Identifica al menos dos actores, a partir de las personas que mencionaba el correo de tu negocio</div>
+        <div class="act-li">Identifica al menos cuatro casos de uso, a partir de esos requerimientos funcionales</div>
+        <div class="act-li">Dibuja el rectángulo del sistema, los actores afuera y los casos de uso adentro, conectados con líneas</div>
+        <div class="act-li">Agrega al menos una relación include o extend entre dos de tus casos de uso</div>
+      </div>
+      <div class="act-d">Puedes dibujarlo en papel, en draw.io o en cualquier herramienta que conozcas. Lo importante hoy es la lógica, no la prolijidad del dibujo.</div>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Este diagrama va directo a tu ES1</strong>
+        <p>Es uno de los tres diagramas que tienes que entregar. Guárdalo: en la sesión 3
+        le agregas el diagrama de base de datos y el de flujo, y en la sesión 4 armas
+        el informe completo.</p>
+      </div>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Este sábado: actividad online O1</strong>
+        <p>Contenido nuevo, no visto hoy: la fórmula para redactar un requerimiento
+        verificable, el método MoSCoW para resolver la contradicción de tu correo, y
+        el escenario paso a paso de uno de tus casos de uso (flujo normal y alternativo).
+        Vas a necesitar este último para el diagrama de flujo de la sesión 3. Disponible
+        en el AAI el sábado 15 de agosto.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- CIERRE -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen de la sesión</div>
+  <div class="sep-title anim">Lo que te<br><span>llevas</span> hoy</div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">UML</div>
+      <div class="resumen-desc">Lenguaje visual estándar para representar el diseño de un sistema con diagramas normalizados</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Actor y caso de uso</div>
+      <div class="resumen-desc">Actor es quien interactúa con el sistema, caso de uso es lo que puede hacer con él</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Include</div>
+      <div class="resumen-desc">Un caso de uso que siempre ocurre como parte de otro</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Extend</div>
+      <div class="resumen-desc">Un caso de uso que ocurre solo a veces, como extensión opcional</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Tu diagrama</div>
+      <div class="resumen-desc">Ya tienes el primero de los tres diagramas de la ES1</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Este sábado: actividad online O1</div>
+      <div class="resumen-desc">Redacta requerimientos verificables, resuelve tu contradicción con MoSCoW y escribe el escenario de uno de tus casos de uso. Disponible el sábado 15 de agosto</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Próxima sesión (lunes 17/08 &middot; 120 min)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,0.6); line-height:1.6;">
+      Diagrama de base de datos: entidades, atributos y cardinalidad &middot;
+      Diagrama de flujo: símbolos y cómo representar una decisión &middot;
+      Taller guiado sobre tu propio negocio
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
