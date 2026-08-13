@@ -182,6 +182,8 @@
     }
     .col-card p { font-size: 17px; line-height: 1.6; color: #444; }
     .col-card p + p { margin-top: 8px; }
+    .col-card ul { margin-left: 18px; }
+    .col-card li { font-size: 17px; line-height: 1.7; color: #444; margin-bottom: 4px; }
 
     /* TABLA */
     .tbl { width: 100%; max-width: 920px; border-collapse: collapse; margin-top: 18px; font-size: 17px; }
@@ -298,7 +300,7 @@
   <div class="cover-eyebrow anim">Modelamiento de Soluciones Informáticas &middot; TI3V25 &middot; Unidad 1 &middot; Sesión 2</div>
   <div class="cover-title anim">Diagrama de<br><span>casos de uso</span></div>
   <p class="cover-desc anim">
-    Hoy conoces UML por primera vez y dibujas tu primer diagrama:
+    Hoy dibujas tu primer diagrama de modelamiento:
     qué puede hacer cada actor con el sistema de tu propio negocio.
   </p>
   <div class="cover-chips anim">
@@ -318,82 +320,86 @@
   <div class="index-grid anim">
     <div class="index-item">
       <div class="index-num">01</div>
-      <div class="index-name">Qué es UML y su catálogo de diagramas</div>
-      <div class="index-type">Concepto &middot; 10 min</div>
+      <div class="index-name">Actor y caso de uso</div>
+      <div class="index-type">Concepto + demo &middot; 35 min</div>
     </div>
     <div class="index-item">
       <div class="index-num">02</div>
-      <div class="index-name">Actor y caso de uso</div>
-      <div class="index-type">Concepto + demo &middot; 25 min</div>
-    </div>
-    <div class="index-item">
-      <div class="index-num">03</div>
       <div class="index-name">Relaciones include y extend</div>
       <div class="index-type">Concepto + demo &middot; 20 min</div>
     </div>
     <div class="index-item">
-      <div class="index-num">04</div>
+      <div class="index-num">03</div>
       <div class="index-name">Taller: tu propio diagrama</div>
-      <div class="index-type">Práctica individual &middot; 20 min</div>
+      <div class="index-type">Práctica individual &middot; 25 min</div>
     </div>
   </div>
 </div>
 
 
-<!-- ============ BLOQUE 01: QUE ES UML ============ -->
+<!-- ============ CONTEXTO: REQUERIMIENTOS DE LA SESION 1 ============ -->
 <div class="slide slide-separator sep-orange">
-  <span class="slide-badge badge-concepto">Bloque 01</span>
-  <div class="sep-num anim">01 &middot; Concepto &middot; 10 min</div>
-  <div class="sep-title anim">¿Qué es<br><span>UML</span>?</div>
+  <span class="slide-badge badge-concepto">Contexto</span>
+  <div class="sep-num anim">Antes de construir</div>
+  <div class="sep-title anim">Los requerimientos<br>de la <span>sesión 1</span></div>
   <p class="sep-desc anim">
-    La palabra que le da nombre a esta unidad. Antes de dibujar nada,
-    hay que saber qué es y para qué sirve.
+    El mismo correo de Pedro, el dueño del taller mecánico. Esta es la clasificación
+    que hicimos juntos en la sesión 1: la vamos a usar hoy para construir el diagrama.
   </p>
 </div>
 
 <div class="slide slide-concept orange-accent">
-  <span class="slide-badge badge-concepto">Definición</span>
-  <div class="concept-label anim">La base de toda la unidad</div>
-  <div class="concept-title anim">Lenguaje<br><span>Unificado</span> de<br>Modelado</div>
+  <span class="slide-badge badge-concepto">Repaso &middot; sesión 1</span>
+  <div class="concept-label anim">Lo que sacamos del correo de Pedro</div>
+  <div class="concept-title anim">Requerimientos<br>del <span>taller</span></div>
   <div class="concept-body anim">
-    <div class="definicion">
-      <div class="def-k">UML &middot; Unified Modeling Language</div>
-      <div class="def-txt">
-        Un <strong>lenguaje visual estándar</strong> para representar el diseño de un
-        sistema mediante diagramas normalizados: cualquier persona del área los lee
-        igual, sin importar quién los dibujó.
+    <div class="two-col">
+      <div class="col-card good">
+        <div class="col-card-title">Funcionales</div>
+        <ul>
+          <li>Registrar cada vehículo que ingresa, con su patente y su dueño</li>
+          <li>Registrar la orden de trabajo, con los repuestos y las horas trabajadas</li>
+          <li>Calcular la mano de obra según el tipo de vehículo</li>
+          <li>Avisar cuando un repuesto no tiene stock</li>
+          <li>Actualizar el precio de los repuestos importados según el dólar del día</li>
+        </ul>
       </div>
-      <div class="def-ej">
-        No es un lenguaje de programación. No se "ejecuta": se dibuja, y sirve para
-        pensar y comunicar el diseño antes de escribir una sola línea de código.
+      <div class="col-card">
+        <div class="col-card-title">No funcionales</div>
+        <ul>
+          <li>Ser simple de usar, porque el recepcionista no es de tecnología</li>
+          <li>Proteger los datos de los clientes</li>
+        </ul>
       </div>
     </div>
-    <p>
-      UML no es un solo diagrama, es una <strong>familia de diagramas</strong>, cada uno
-      pensado para mostrar un aspecto distinto del sistema. Algunos muestran estructura
-      (qué partes tiene el sistema), otros muestran comportamiento (qué hace el sistema
-      paso a paso).
-    </p>
-    <div class="callout callout-tip anim">
+    <div class="callout callout-info anim">
       <div class="callout-icon">&#9679;</div>
       <div class="callout-content">
-        <strong>Hoy vemos solo uno de todos esos diagramas</strong>
-        <p>El diagrama de casos de uso. Los demás (de base de datos, de flujo, de clases,
-        de componentes, de secuencia) los vas a ir viendo uno por uno en las próximas
-        sesiones, cada uno cuando corresponda. No necesitas conocerlos todos hoy.</p>
+        <strong>El comentario que no es un requerimiento</strong>
+        <p>"El taller necesita una mano de pintura hace tiempo" habla del local físico,
+        no del sistema que van a construir. No aparece en ningún diagrama.</p>
+      </div>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La contradicción, todavía sin resolver</strong>
+        <p>"Que se pueda entregar un vehículo aunque el pago quede pendiente, si es un
+        cliente conocido" contra "que el sistema no deje entregar ningún vehículo que no
+        esté pagado". Se resuelve el sábado con el método MoSCoW en la actividad O1.</p>
       </div>
     </div>
   </div>
 </div>
 
 
-<!-- ============ BLOQUE 02: ACTOR Y CASO DE USO ============ -->
+<!-- ============ BLOQUE 01: ACTOR Y CASO DE USO ============ -->
 <div class="slide slide-separator">
-  <span class="slide-badge badge-concepto">Bloque 02</span>
-  <div class="sep-num anim">02 &middot; Concepto + demo &middot; 25 min</div>
+  <span class="slide-badge badge-concepto">Bloque 01</span>
+  <div class="sep-num anim">01 &middot; Concepto + demo &middot; 35 min</div>
   <div class="sep-title anim">Actor y<br>caso de <span>uso</span></div>
   <p class="sep-desc anim">
-    El primer diagrama de UML que vas a dibujar. Muestra qué puede hacer
+    El primer diagrama que vas a dibujar. Muestra qué puede hacer
     cada quién con el sistema, sin explicar cómo funciona por dentro.
   </p>
 </div>
@@ -406,7 +412,7 @@
     <div class="definicion">
       <div class="def-k">Diagrama de casos de uso</div>
       <div class="def-txt">
-        Un diagrama UML que muestra <strong>qué puede hacer un usuario con el sistema</strong>,
+        Un diagrama que muestra <strong>qué puede hacer un usuario con el sistema</strong>,
         sin explicar cómo lo hace por dentro.
       </div>
       <div class="def-ej">
@@ -607,17 +613,17 @@
       <div class="callout-content">
         <strong>Este es el diagrama básico: dos actores, tres casos de uso</strong>
         <p>Todavía faltan dos casos de uso y dos relaciones especiales, que se agregan
-        recién en el bloque 03, después de explicar qué significan.</p>
+        recién en el bloque 02, después de explicar qué significan.</p>
       </div>
     </div>
   </div>
 </div>
 
 
-<!-- ============ BLOQUE 03: INCLUDE Y EXTEND ============ -->
+<!-- ============ BLOQUE 02: INCLUDE Y EXTEND ============ -->
 <div class="slide slide-separator sep-blue">
-  <span class="slide-badge badge-concepto">Bloque 03</span>
-  <div class="sep-num anim">03 &middot; Concepto + demo &middot; 20 min</div>
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Concepto + demo &middot; 20 min</div>
   <div class="sep-title anim">Include<br>y <span>extend</span></div>
   <p class="sep-desc anim">
     No todos los casos de uso se conectan directo a un actor.
@@ -666,7 +672,7 @@
 
 <div class="slide slide-concept blue-accent">
   <span class="slide-badge badge-pasos">Construcción &middot; 5 de 6</span>
-  <div class="concept-label anim">Ahora que ya sabes qué es include, se agrega al diagrama básico del bloque 02</div>
+  <div class="concept-label anim">Ahora que ya sabes qué es include, se agrega al diagrama básico del bloque 01</div>
   <div class="concept-title anim">Aquí aparece<br>el <span>include</span></div>
   <div class="concept-body anim">
     <div class="diagrama">
@@ -809,17 +815,17 @@
       <div class="callout-content">
         <strong>Este es el diagrama completo</strong>
         <p>Dos actores, cinco casos de uso, una relación include y una extend. Los
-        mismos seis elementos que vas a identificar en tu propio negocio en el bloque 04.</p>
+        mismos seis elementos que vas a identificar en tu propio negocio en el bloque 03.</p>
       </div>
     </div>
   </div>
 </div>
 
 
-<!-- ============ BLOQUE 04: TALLER ============ -->
+<!-- ============ BLOQUE 03: TALLER ============ -->
 <div class="slide slide-separator sep-green">
-  <span class="slide-badge badge-practica">Bloque 04</span>
-  <div class="sep-num anim">04 &middot; Práctica individual &middot; 25 min</div>
+  <span class="slide-badge badge-practica">Bloque 03</span>
+  <div class="sep-num anim">03 &middot; Práctica individual &middot; 25 min</div>
   <div class="sep-title anim">Tu propio<br><span>diagrama</span></div>
   <p class="sep-desc anim">
     Con tu propio correo al lado. Vas a identificar tus requerimientos
@@ -875,8 +881,8 @@
   <div class="sep-title anim">Lo que te<br><span>llevas</span> hoy</div>
   <div class="resumen-grid anim">
     <div class="resumen-item">
-      <div class="resumen-cmd">UML</div>
-      <div class="resumen-desc">Lenguaje visual estándar para representar el diseño de un sistema con diagramas normalizados</div>
+      <div class="resumen-cmd">Diagrama de casos de uso</div>
+      <div class="resumen-desc">Técnica visual para representar qué puede hacer cada actor con el sistema, antes de programarlo</div>
     </div>
     <div class="resumen-item">
       <div class="resumen-cmd">Actor y caso de uso</div>
