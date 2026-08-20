@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA1 Sesion 1 - Arranque: el encargo y por que existen los objetos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0; color: var(--text);
+      scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white; justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 620px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px; border-bottom: 6px solid var(--red);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+    .slide-separator.sep-blue   { border-color: var(--blue); }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+    }
+    .sep-green .sep-num { color: #AFAFAF; }
+    .sep-orange .sep-num { color: #D98A8E; }
+    .sep-blue .sep-num { color: #E08B80; }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .cover-title span, .sep-title span, .concept-title span { color: var(--red) !important; }
+    .sep-desc { font-size: 22px; color: rgba(255,255,255,0.45); max-width: 620px; line-height: 1.65; }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 60px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark); margin-bottom: 30px;
+    }
+    .concept-body { max-width: 920px; }
+    .concept-body p { font-size: 21px; line-height: 1.7; color: #333; margin-bottom: 18px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body ul { margin-left: 24px; margin-bottom: 18px; }
+    .concept-body li { font-size: 20px; line-height: 1.7; color: #333; margin-bottom: 8px; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 18px 22px; margin: 20px 0;
+      max-width: 920px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+    }
+    .callout-content p { font-size: 18px; line-height: 1.6; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+
+    /* INDICE */
+    .index-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 32px; max-width: 720px; }
+    .index-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 18px 20px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 32px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 8px;
+    }
+    .index-name { font-size: 16px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-pasos    { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-practica { background: #F7E3E3; color: #8E1A1F; border: 1px solid #E2CACA; }
+    .badge-cierre   { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* RESUMEN */
+    .resumen-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 28px; max-width: 880px; }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .resumen-cmd { font-size: 16px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* TWO COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 920px; margin-top: 20px; }
+    .col-card { background: #F8F8F8; border: 1px solid #E0E0E0; border-radius: 8px; padding: 20px 22px; }
+    .col-card.bad  { border-left: 4px solid var(--red); }
+    .col-card.good { border-left: 4px solid var(--green); }
+    .col-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 12px;
+    }
+    .col-card ul { margin-left: 18px; }
+    .col-card li { font-size: 17px; line-height: 1.7; color: #444; margin-bottom: 4px; }
+
+    /* TABLA */
+    .tbl { width: 100%; max-width: 920px; border-collapse: collapse; margin-top: 18px; font-size: 17px; }
+    .tbl th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 10px 16px; text-align: left;
+    }
+    .tbl td { padding: 12px 16px; border-bottom: 1px solid #E0E0E0; vertical-align: middle; line-height: 1.45; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:nth-child(even) td { background: #F8F8F8; }
+
+    /* CODIGO */
+    .code-block { background: #1A1A1A; border-radius: 8px; padding: 22px 26px; margin: 18px 0; max-width: 920px; overflow-x: auto; }
+    .code-block pre { font-family: 'JetBrains Mono', monospace; font-size: 15px; color: #EDEDED; line-height: 1.75; }
+    .code-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 14px;
+    }
+    .kw  { color: #FF8A80; font-weight: 700; }
+    .cls { color: #FFD2CC; font-weight: 700; }
+    .str { color: #FFCDD2; }
+    .cmt { color: #6E6E6E; font-style: italic; }
+    .fn  { color: #FFAB91; }
+    .num { color: #F5B7B1; }
+
+    /* VOCABULARIO */
+    .voc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; max-width: 920px; margin-top: 22px; }
+    .voc-card {
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 18px 22px;
+    }
+    .voc-nombre {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 4px;
+    }
+    .voc-code { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--blue); margin-bottom: 8px; }
+    .voc-desc { font-size: 16px; color: #555; line-height: 1.55; }
+
+    /* DEFINICION */
+    .definicion {
+      background: #FFF6F6; border: 2px solid #F3C9CB; border-left: 6px solid var(--red);
+      border-radius: 8px; padding: 22px 26px; margin: 16px 0; max-width: 920px;
+    }
+    .def-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .def-txt { font-size: 23px; line-height: 1.55; color: var(--dark); font-weight: 500; }
+    .def-txt strong { font-weight: 800; }
+    .def-ej { font-size: 18px; line-height: 1.55; color: #666; margin-top: 12px; font-style: italic; }
+
+    /* GUIA DE LECTURA DE CODIGO */
+    .guia { max-width: 920px; margin-top: 14px; }
+    .guia-item {
+      display: flex; gap: 16px; align-items: baseline;
+      padding: 9px 0; border-bottom: 1px solid #EDEDED;
+    }
+    .guia-item:last-child { border-bottom: none; }
+    .guia-cod {
+      font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+      color: var(--red); flex-shrink: 0; width: 150px;
+    }
+    .guia-txt { font-size: 17px; line-height: 1.5; color: #333; }
+
+    /* ACTIVIDAD */
+    .actividad {
+      background: #1A1A1A; border-radius: 8px; padding: 22px 26px;
+      margin: 16px 0; max-width: 950px;
+    }
+    .act-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .act-t { font-size: 22px; line-height: 1.5; color: white; font-weight: 600; }
+    .act-d { font-size: 17px; line-height: 1.55; color: rgba(255,255,255,0.55); margin-top: 8px; }
+    .act-list { margin-top: 12px; }
+    .act-li {
+      font-size: 18px; color: rgba(255,255,255,0.85); line-height: 1.7;
+      padding-left: 22px; position: relative;
+    }
+    .act-li::before { content: "\2192"; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+    /* GRILLA DE NEGOCIOS */
+    .negocios {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 10px; max-width: 950px; margin-top: 16px;
+    }
+    .neg {
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 3px solid var(--red);
+      border-radius: 6px; padding: 11px 14px; font-size: 17px; color: #333; font-weight: 500;
+    }
+    .neg.mio { background: var(--dark); border-color: var(--dark); color: white; }
+    .neg.mio span { color: rgba(255,255,255,0.5); font-size: 14px; display: block; margin-top: 2px; }
+
+    /* REQUISITOS */
+    .req { max-width: 950px; margin-top: 14px; }
+    .req-i {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 11px 0; border-bottom: 1px solid #EDEDED;
+    }
+    .req-i:last-child { border-bottom: none; }
+    .req-n {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 24px; font-weight: 900;
+      color: var(--red); line-height: 1.1; flex-shrink: 0; width: 30px;
+    }
+    .req-c { flex: 1; }
+    .req-t { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+    .req-d { font-size: 16px; color: #666; line-height: 1.45; }
+
+    /* CHECKPOINT */
+    .chk { max-width: 920px; margin-top: 18px; }
+    .chk-item {
+      display: flex; gap: 18px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 18px 22px; margin-bottom: 14px;
+    }
+    .chk-num {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 900;
+      color: var(--red); line-height: 1; flex-shrink: 0; width: 40px;
+    }
+    .chk-cont { flex: 1; }
+    .chk-tit { font-size: 20px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .chk-desc { font-size: 17px; color: #555; line-height: 1.5; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: #EBEBEB; padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    #progress {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--red);
+      width: 0%; z-index: 9999; transition: width 0.35s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+    }
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- PORTADA -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Programación Orientada a Objeto Seguro &middot; TI3V21 &middot; Unidad 1 &middot; Sesión 1</div>
+  <div class="cover-title anim">El encargo<br>y por qué existen<br>los <span>objetos</span></div>
+  <p class="cover-desc anim">
+    Hoy conoces el sistema que vamos a construir durante todo el bimestre
+    y ves el primer código: el mismo programa escrito de dos formas,
+    para entender por qué una se rompe antes que la otra.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-2A-F2</span></span>
+    <span class="cover-chip">Miércoles 19 de agosto 2026</span>
+    <span class="cover-chip">19:50 a 22:30</span>
+    <span class="cover-chip">INACAP Puente Alto</span>
+  </div>
+</div>
+
+
+<!-- AGENDA -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">Después del encuadre</div>
+  <div class="sep-title anim">Lo que vemos<br><span>hoy</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">El caso del bimestre y las reglas del lab</div>
+      <div class="index-type">Proyecto &middot; 20 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Por qué existen los objetos</div>
+      <div class="index-type">Concepto + actividad &middot; 25 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Qué es la programación orientada a objetos</div>
+      <div class="index-type">Concepto &middot; 10 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Vocabulario: clase, objeto, atributo, método</div>
+      <div class="index-type">Concepto + actividad &middot; 10 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Checkpoint de salida: tus candidatos a clase</div>
+      <div class="index-type">Formativa individual &middot; 40 min</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 01: EL ENCARGO ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-practica">Bloque 01</span>
+  <div class="sep-num anim">01 &middot; Proyecto &middot; 20 min</div>
+  <div class="sep-title anim">El <span>caso</span><br>del bimestre</div>
+  <p class="sep-desc anim">
+    El sistema que vamos a construir juntos, sesión a sesión,
+    y las reglas con las que se trabaja en este laboratorio.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">El caso</span>
+  <div class="concept-label anim">El sistema que vamos a construir juntos</div>
+  <div class="concept-title anim">Un <span>taller</span><br>mecánico</div>
+  <div class="concept-body anim">
+    <p>
+      Un taller mecánico lleva sus órdenes de trabajo en un cuaderno y quiere un sistema real.
+      Esto es lo que pidió, tal como lo contó:
+    </p>
+    <div class="req">
+      <div class="req-i">
+        <div class="req-n">1</div>
+        <div class="req-c">
+          <div class="req-t">Autos, motos y camiones, cada uno a su tarifa</div>
+          <div class="req-d">Cobra la mano de obra distinto según el tipo de vehículo, sin preguntar
+          "de qué tipo eres" en cada parte del código. <strong>Vas a aprender:</strong> herencia y polimorfismo.</div>
+        </div>
+      </div>
+      <div class="req-i">
+        <div class="req-n">2</div>
+        <div class="req-c">
+          <div class="req-t">Mecánicos y recepcionistas no hacen lo mismo</div>
+          <div class="req-d">Cada uno necesita ver y poder hacer cosas distintas en el sistema.
+          <strong>Vas a aprender:</strong> tipos de usuario y permisos, con contraseñas hasheadas.</div>
+        </div>
+      </div>
+      <div class="req-i">
+        <div class="req-n">3</div>
+        <div class="req-c">
+          <div class="req-t">Ninguna patente ni RUT inválido</div>
+          <div class="req-d">Si algo está mal escrito, el sistema lo rechaza ahí mismo, no lo deja pasar.
+          <strong>Vas a aprender:</strong> encapsulamiento y validación.</div>
+        </div>
+      </div>
+      <div class="req-i">
+        <div class="req-n">4</div>
+        <div class="req-c">
+          <div class="req-t">Cada orden lleva varios repuestos, con su cantidad y precio</div>
+          <div class="req-d">No es un repuesto suelto: es una lista dentro de la orden.
+          <strong>Vas a aprender:</strong> una transacción con líneas de detalle.</div>
+        </div>
+      </div>
+      <div class="req-i">
+        <div class="req-n">5</div>
+        <div class="req-c">
+          <div class="req-t">Dos reglas que nunca se pueden romper</div>
+          <div class="req-d">No se entrega un vehículo que nunca ingresó al taller, ni se usa un repuesto sin stock.
+          <strong>Vas a aprender:</strong> excepciones propias.</div>
+        </div>
+      </div>
+      <div class="req-i">
+        <div class="req-n">6</div>
+        <div class="req-c">
+          <div class="req-t">El dólar del repuesto importado, actualizado</div>
+          <div class="req-d">Varios repuestos son importados: el precio en pesos cambia todos los días
+          según el valor del dólar de hoy. <strong>Vas a aprender:</strong> consumo de una API externa.</div>
+        </div>
+      </div>
+      <div class="req-i">
+        <div class="req-n">7</div>
+        <div class="req-c">
+          <div class="req-t">Nada se puede perder al cerrar el programa</div>
+          <div class="req-d">Hoy todo vive en un cuaderno de papel; el dueño quiere que sobreviva
+          aunque se apague el computador. <strong>Vas a aprender:</strong> base de datos y CRUD.</div>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:18px;">
+      <strong>Este es el caso con el que vamos a trabajar en clases.</strong>
+      Todo lo que veamos se va a construir sobre él, sesión a sesión,
+      hasta tener el sistema completo.
+    </p>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>No te preocupes si no conoces las palabras "vas a aprender"</strong>
+        <p>Herencia, polimorfismo, CRUD, hash, excepciones. Ninguna se supone que la sepas hoy:
+        esa es la lista del temario del bimestre. Cada una tiene su sesión y se explica desde cero
+        cuando llegue.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Reglas</span>
+  <div class="concept-label anim">Cómo se trabaja en este laboratorio</div>
+  <div class="concept-title anim">Cuatro <span>reglas</span></div>
+  <div class="concept-body anim">
+    <div class="two-col">
+      <div class="col-card good">
+        <div class="col-card-title">En clases</div>
+        <ul>
+          <li>Se trabaja en el equipo del lab, no en el celular</li>
+          <li>Si no entiendes algo, se pregunta en la sesión, no la noche antes de una entrega</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title">Sobre el código</div>
+        <ul>
+          <li>Se guarda donde puedas recuperarlo, no en el escritorio del computador del lab</li>
+          <li>Puedes usar asistentes de IA, pero tienes que poder explicar cada línea</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Los equipos se forman más adelante</strong>
+        <p>Las evaluaciones son grupales, pero eso lo vemos cuando llegue el momento.
+        Estas primeras clases trabajamos todos sobre el mismo taller.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 02: POR QUE OBJETOS ============ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Concepto &middot; 25 min</div>
+  <div class="sep-title anim">¿Por qué existen<br>los <span>objetos</span>?</div>
+  <p class="sep-desc anim">
+    No vamos a empezar con la definición. Vamos a escribir el mismo programa
+    de dos formas y a ver cuál se rompe primero.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Dos palabras antes de ver código</div>
+  <div class="concept-title anim">Estado y regla<br>de <span>negocio</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">El estado de un programa</div>
+      <div class="def-txt">
+        <strong>Todos los datos que el programa tiene guardados en un momento dado.</strong>
+      </div>
+      <div class="def-ej">
+        En el taller: qué vehículos hay, cuáles están adentro y cuáles ya se entregaron.
+        Si el estado se corrompe, el programa empieza a mentir.
+      </div>
+    </div>
+    <div class="definicion">
+      <div class="def-k">Una regla de negocio</div>
+      <div class="def-txt">
+        <strong>Una condición que el negocio real exige y que el programa tiene que respetar siempre.</strong>
+      </div>
+      <div class="def-ej">
+        "No se puede entregar un vehículo que nunca ingresó al taller."
+        No es una regla de programación: es una regla del taller.
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Por qué importan estas dos</strong>
+        <p>Toda la comparación que viene ahora se trata de una sola pregunta:
+        ¿dónde vive el estado y quién se hace cargo de que las reglas se cumplan?</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Demostración</span>
+  <div class="concept-label anim">Versión 1</div>
+  <div class="concept-title anim">El taller<br>como <span>siempre</span></div>
+  <div class="concept-body anim">
+    <div class="code-block">
+      <div class="code-title">taller_v1.py &middot; procedural</div>
+<pre><span class="cmt"># Todo el estado vive suelto, en una lista global</span>
+vehiculos = []
+
+<span class="kw">def</span> <span class="fn">ingresar</span>(patente, modelo, tipo):
+    vehiculos.append({<span class="str">"patente"</span>: patente, <span class="str">"modelo"</span>: modelo,
+                      <span class="str">"tipo"</span>: tipo, <span class="str">"en_taller"</span>: <span class="kw">True</span>})
+
+<span class="kw">def</span> <span class="fn">entregar</span>(patente):
+    <span class="kw">for</span> v <span class="kw">in</span> vehiculos:
+        <span class="kw">if</span> v[<span class="str">"patente"</span>] == patente <span class="kw">and</span> v[<span class="str">"en_taller"</span>]:
+            v[<span class="str">"en_taller"</span>] = <span class="kw">False</span>
+            <span class="kw">return</span> <span class="kw">True</span>
+    <span class="kw">return</span> <span class="kw">False</span>
+
+<span class="kw">def</span> <span class="fn">calcular_mano_obra</span>(patente, horas):
+    <span class="kw">for</span> v <span class="kw">in</span> vehiculos:
+        <span class="kw">if</span> v[<span class="str">"patente"</span>] == patente:
+            <span class="kw">if</span> v[<span class="str">"tipo"</span>] == <span class="str">"auto"</span>:   <span class="kw">return</span> horas * <span class="num">25000</span>
+            <span class="kw">if</span> v[<span class="str">"tipo"</span>] == <span class="str">"moto"</span>:   <span class="kw">return</span> horas * <span class="num">15000</span>
+            <span class="kw">if</span> v[<span class="str">"tipo"</span>] == <span class="str">"camion"</span>: <span class="kw">return</span> horas * <span class="num">40000</span>
+    <span class="kw">return</span> <span class="num">0</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Esto es Python como ya lo conoces</strong>
+        <p>Una lista, diccionarios y tres funciones. Nada nuevo todavía.
+        El estado del programa es esa lista <code>vehiculos</code>, y la regla de negocio
+        está dentro de <code>entregar</code>.</p>
+      </div>
+    </div>
+    <p>Funciona. Y sin embargo, en tres meses este archivo es un problema.</p>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 4 min &middot; en parejas</div>
+      <div class="act-t">El cliente llama y dice: "ahora también atendemos buses".</div>
+      <div class="act-d">Anoten en el cuaderno: ¿qué partes de este código hay que tocar? Cuenten cuántos lugares. Después lo vemos juntos.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Demostración</span>
+  <div class="concept-label anim">Qué se rompe</div>
+  <div class="concept-title anim">El cliente pide<br><span>un cambio</span></div>
+  <div class="concept-body anim">
+    <p><em>"Ahora también atendemos buses, y el cliente con deuda no puede dejar su vehículo."</em></p>
+    <div class="two-col">
+      <div class="col-card bad">
+        <div class="col-card-title">Lo que tienes que tocar</div>
+        <ul>
+          <li>Otro <code>if</code> en <code>calcular_mano_obra</code></li>
+          <li>Otro <code>if</code> en cada función que revise el tipo</li>
+          <li>Buscar todos los lugares donde se lee <code>v["tipo"]</code></li>
+        </ul>
+      </div>
+      <div class="col-card bad">
+        <div class="col-card-title">Lo que nadie te avisa</div>
+        <ul>
+          <li>Si escribes <code>v["en_talier"]</code>, Python no reclama hasta que explota</li>
+          <li>Cualquier parte del programa puede cambiar <code>en_taller</code> sin pasar por <code>entregar</code></li>
+          <li>La regla de negocio quedó repartida en varias funciones</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El problema de fondo</strong>
+        <p>Los datos están por un lado y el comportamiento por otro.
+        Nada obliga a que un vehículo se entregue solo a través de <code>entregar()</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Demostración</span>
+  <div class="concept-label anim">Versión 2</div>
+  <div class="concept-title anim">El mismo taller<br>con <span>objetos</span></div>
+  <div class="concept-body anim">
+    <div class="code-block">
+      <div class="code-title">taller_v2.py &middot; orientado a objetos</div>
+<pre><span class="kw">class</span> <span class="cls">Vehiculo</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, modelo):
+        self.patente = patente
+        self.modelo  = modelo
+        self._en_taller = <span class="kw">False</span>     <span class="cmt"># nadie lo toca desde afuera</span>
+
+    <span class="kw">def</span> <span class="fn">ingresar</span>(self):
+        self._en_taller = <span class="kw">True</span>
+
+    <span class="kw">def</span> <span class="fn">entregar</span>(self):
+        <span class="kw">if</span> <span class="kw">not</span> self._en_taller:
+            <span class="kw">raise</span> <span class="cls">VehiculoNoIngresadoError</span>(self.patente)
+        self._en_taller = <span class="kw">False</span>
+
+    <span class="kw">def</span> <span class="fn">tarifa_hora</span>(self):
+        <span class="kw">raise</span> <span class="cls">NotImplementedError</span>
+
+
+<span class="kw">class</span> <span class="cls">Auto</span>(<span class="cls">Vehiculo</span>):
+    <span class="kw">def</span> <span class="fn">tarifa_hora</span>(self): <span class="kw">return</span> <span class="num">25000</span>
+
+<span class="kw">class</span> <span class="cls">Camion</span>(<span class="cls">Vehiculo</span>):
+    <span class="kw">def</span> <span class="fn">tarifa_hora</span>(self): <span class="kw">return</span> <span class="num">40000</span></pre>
+    </div>
+    <p>
+      Agregar buses ahora es <strong>una clase nueva de dos líneas</strong>.
+      Ningún <code>if</code> existente se toca.
+    </p>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Guía</span>
+  <div class="concept-label anim">Todo lo que acabas de ver por primera vez</div>
+  <div class="concept-title anim">Cómo se lee<br>ese <span>código</span></div>
+  <div class="concept-body anim">
+    <p>
+      Aparecieron seis cosas nuevas. Hoy solo necesitas <strong>reconocerlas</strong>;
+      cada una tiene su sesión más adelante.
+    </p>
+    <div class="guia">
+      <div class="guia-item">
+        <div class="guia-cod">class Vehiculo:</div>
+        <div class="guia-txt">Declara un molde nuevo llamado <code>Vehiculo</code>. Todo lo que va indentado debajo le pertenece.</div>
+      </div>
+      <div class="guia-item">
+        <div class="guia-cod">__init__</div>
+        <div class="guia-txt">Un método especial que se ejecuta solo, en el momento en que se crea el objeto. Sirve para dejarle sus datos iniciales. En la próxima sesión lo vemos en detalle.</div>
+      </div>
+      <div class="guia-item">
+        <div class="guia-cod">self</div>
+        <div class="guia-txt">La palabra con la que el objeto se refiere a sí mismo. <code>self.patente</code> es "la patente de este vehículo", no la de otro.</div>
+      </div>
+      <div class="guia-item">
+        <div class="guia-cod">_en_taller</div>
+        <div class="guia-txt">El guion bajo del principio es una señal para el equipo: "este dato es interno, no lo toques desde afuera".</div>
+      </div>
+      <div class="guia-item">
+        <div class="guia-cod">class Auto(Vehiculo):</div>
+        <div class="guia-txt">El paréntesis significa que <code>Auto</code> hereda de <code>Vehiculo</code>: recibe gratis todo lo que el padre ya tenía.</div>
+      </div>
+      <div class="guia-item">
+        <div class="guia-cod">raise</div>
+        <div class="guia-txt">Avisa que ocurrió un error y detiene la operación. Es la forma de hacer cumplir una regla de negocio. El nombre <code>VehiculoNoIngresadoError</code> es un error que inventamos nosotros para este dominio. Todo esto se ve completo en la sesión 8.</div>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Si algo de esto no te quedó claro, está bien</strong>
+        <p>Hoy la meta es entender <em>por qué</em> conviene escribir así, no memorizar la sintaxis.
+        La próxima sesión empezamos por atributos y métodos, desde cero.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Síntesis</span>
+  <div class="concept-label anim">Comparación</div>
+  <div class="concept-title anim">Qué ganamos<br>de <span>verdad</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead>
+        <tr><th>Situación</th><th>Procedural</th><th>Orientado a objetos</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Agregar un tipo de vehículo</td><td>Tocar todos los <code>if</code></td><td>Una clase nueva, sin tocar lo anterior</td></tr>
+        <tr><td>Proteger el estado</td><td>Cualquiera edita el diccionario</td><td>Solo los métodos de la clase pueden cambiarlo</td></tr>
+        <tr><td>Un nombre de dato mal escrito</td><td>Se crea un dato nuevo en silencio y el error aparece lejos, en otra parte del programa</td><td>Los nombres están definidos una sola vez, dentro de la clase</td></tr>
+        <tr><td>Dónde vive la regla de negocio</td><td>Repartida entre varias funciones</td><td>Dentro del objeto al que le corresponde</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Vieron la diferencia. Ahora, el nombre</strong>
+        <p>Esta segunda forma de escribir tiene nombre, y es el nombre de esta asignatura.
+        Lo vemos en el bloque que sigue.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Antes de ponerle nombre al estilo</div>
+  <div class="concept-title anim">¿Qué es un<br><span>objeto</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Objeto</div>
+      <div class="def-txt">
+        Una <strong>unidad que junta datos y comportamiento</strong>: sabe cosas de sí misma
+        y sabe hacer cosas con esas cosas que sabe.
+      </div>
+      <div class="def-ej">
+        En <code>taller_v2.py</code>, cada vehículo que crean con <code>Auto(...)</code> es un objeto:
+        sabe su patente y su modelo, y sabe ingresar y entregarse. En la versión 1 eso mismo
+        vivía repartido en un diccionario y tres funciones sueltas.
+      </div>
+    </div>
+    <p>
+      Por eso el programa de la versión 2 se organiza distinto: en vez de preguntar
+      <em>¿qué pasos hay que ejecutar?</em>, cada objeto responde por sus propios datos
+      y sus propias reglas.
+    </p>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Todavía no es toda la palabra</strong>
+        <p>Objeto es una de cuatro palabras que van a necesitar (clase, objeto, atributo, método).
+        Las otras tres llegan más adelante, hoy mismo, en el bloque de vocabulario.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 03: VOCABULARIO ============ -->
+<!-- ============ BLOQUE 03: QUE ES LA POO ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 03</span>
+  <div class="sep-num anim">03 &middot; Concepto &middot; 10 min</div>
+  <div class="sep-title anim">Qué es la<br>programación<br>orientada a <span>objetos</span></div>
+  <p class="sep-desc anim">
+    Ya vieron las dos formas de escribir el mismo programa.
+    Ahora, cómo se llama cada una y por qué.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Empecemos por la palabra grande</div>
+  <div class="concept-title anim">¿Qué es un<br><span>paradigma</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Paradigma de programación</div>
+      <div class="def-txt">
+        Una <strong>forma de organizar el código</strong>. No es un lenguaje:
+        es una manera de pensar cómo se arma el programa.
+      </div>
+      <div class="def-ej">
+        Python permite varias. El mismo lenguaje, dos formas distintas de escribir
+        lo mismo: exactamente lo que acaban de ver.
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="col-card bad">
+        <div class="col-card-title">Paradigma procedural</div>
+        <p>El programa es una <strong>secuencia de instrucciones y funciones</strong>
+        que operan sobre datos sueltos.</p>
+        <p style="margin-top:10px;">La pregunta que uno se hace al programar:
+        <em>¿qué pasos hay que ejecutar?</em></p>
+        <p style="margin-top:10px;"><strong>Es la versión 1 del taller.</strong></p>
+      </div>
+      <div class="col-card good">
+        <div class="col-card-title">Paradigma orientado a objetos</div>
+        <p>El programa es un <strong>conjunto de objetos</strong> que guardan sus
+        propios datos y saben hacer cosas con ellos.</p>
+        <p style="margin-top:10px;">La pregunta que uno se hace:
+        <em>¿qué cosas existen en este problema y qué sabe hacer cada una?</em></p>
+        <p style="margin-top:10px;"><strong>Es la versión 2.</strong></p>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Ninguno es "el correcto"</strong>
+        <p>El procedural sirve perfecto para un script de veinte líneas. La orientación
+        a objetos gana cuando el programa crece y hay que seguir cambiándolo,
+        que es justo lo que vieron recién.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">El nombre de esta asignatura</div>
+  <div class="concept-title anim">Programación<br>orientada a <span>objetos</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Programación orientada a objetos &middot; POO</div>
+      <div class="def-txt">
+        El paradigma que <strong>organiza el programa en objetos</strong>: unidades
+        que juntan datos y comportamiento, y que representan cosas del problema
+        que se está resolviendo.
+      </div>
+      <div class="def-ej">En inglés se abrevia OOP, de object oriented programming.</div>
+    </div>
+    <p>
+      <strong>Por qué se llama "orientada a".</strong> Porque el programa entero
+      se orienta, se organiza, alrededor de esos objetos. En el procedural el centro
+      son las funciones y los datos andan sueltos. Aquí el centro son los objetos,
+      y cada uno se hace cargo de lo suyo.
+    </p>
+    <table class="tbl">
+      <thead><tr><th>En el taller de verdad</th><th>En tu programa</th></tr></thead>
+      <tbody>
+        <tr><td>Todos los camiones, como categoría</td><td>Una <strong>clase</strong></td></tr>
+        <tr><td>El camión de patente JKLM12, ese en particular</td><td>Un <strong>objeto</strong></td></tr>
+        <tr><td>Su patente, su modelo</td><td>Sus <strong>atributos</strong></td></tr>
+        <tr><td>Ingresar al taller, ser entregado</td><td>Sus <strong>métodos</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Y el "Seguro" del nombre del módulo</strong>
+        <p>Es la segunda mitad de la asignatura: escribir estos objetos de manera que
+        protejan los datos, no filtren contraseñas y no dejen que cualquiera los
+        corrompa. Empieza en la sesión 10 y es toda la unidad 3.</p>
+      </div>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El objetivo final</strong>
+        <p>Que el programa <strong>se parezca al problema</strong>. Si el dueño del taller
+        mirara su modelo, debería reconocer su negocio ahí adentro aunque no sepa programar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 04: VOCABULARIO ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 04</span>
+  <div class="sep-num anim">04 &middot; Concepto &middot; 10 min</div>
+  <div class="sep-title anim">El <span>vocabulario</span><br>mínimo</div>
+  <p class="sep-desc anim">
+    Las cuatro palabras de la tabla anterior, ahora una por una.
+    Las van a usar todos los días hasta el final del bimestre.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">Vocabulario</div>
+  <div class="concept-title anim">Clase, objeto,<br>atributo, <span>método</span></div>
+  <div class="concept-body anim">
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Clase</div>
+        <div class="voc-code">class Auto:</div>
+        <div class="voc-desc">El molde. Define qué datos y qué acciones va a tener cada auto. No es un auto: es la definición de lo que es ser un auto.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Objeto</div>
+        <div class="voc-code">v = Auto("KXPR84", "Yaris 2019")</div>
+        <div class="voc-desc">Un ejemplar concreto hecho con ese molde. De una clase salen miles de objetos, cada uno con sus propios valores.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Atributo</div>
+        <div class="voc-code">self.patente</div>
+        <div class="voc-desc">Un dato que el objeto guarda. Es lo que el objeto <em>sabe</em> de sí mismo.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Método</div>
+        <div class="voc-code">def entregar(self):</div>
+        <div class="voc-desc">Una acción que el objeto puede realizar. Es lo que el objeto <em>hace</em>.</div>
+      </div>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; en parejas</div>
+      <div class="act-t">Clasifiquen estas ocho palabras del taller en clase, objeto, atributo o método.</div>
+      <div class="act-list">
+        <div class="act-li">patente &middot; Mecanico &middot; ingresar &middot; el camión de patente JKLM12</div>
+        <div class="act-li">OrdenTrabajo &middot; horas trabajadas &middot; calcular_total &middot; Cliente</div>
+      </div>
+      <div class="act-d">Dos de estas son objetos y no clases. Encuéntrenlas.</div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La regla para modelar</strong>
+        <p>Los sustantivos del enunciado suelen ser clases. Los verbos suelen ser métodos.
+        Es la técnica que vas a usar mañana para identificar las clases de tu sistema.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ CHECKPOINT ============ -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Checkpoint</span>
+  <div class="concept-label anim">Antes de irnos &middot; 40 min &middot; sin nota</div>
+  <div class="concept-title anim">Checkpoint<br>de <span>salida</span></div>
+  <div class="concept-body anim">
+    <p>
+      Este trabajo es <strong>individual</strong>, en tu cuaderno y con tu nombre.
+      Todavía no hay equipos: hoy cada uno modela solo, y lo juntamos en la pizarra al final.
+    </p>
+    <div class="chk">
+      <div class="chk-item">
+        <div class="chk-num">1</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Cinco candidatos a clase &middot; 20 min &middot; individual</div>
+          <div class="chk-desc">Cinco sustantivos del encargo del taller que podrían ser clases del sistema, cada uno con <strong>un atributo y un método</strong>. No tienen que estar perfectos: es el borrador cero del modelo, y nadie parte con el modelo bueno a la primera.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">2</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Los juntamos en la pizarra &middot; 15 min &middot; todos</div>
+          <div class="chk-desc">Cada uno aporta los suyos, se eliminan los repetidos y <strong>discutimos los discutibles</strong>. ¿"Patente" es una clase o es un atributo de Vehículo? ¿"Reparación" es una clase o es un método? No hay una sola respuesta correcta: lo que importa es con qué argumento la defiendes.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">3</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Una frase &middot; 5 min &middot; individual</div>
+          <div class="chk-desc">¿Por qué el código procedural se rompe cuando el cliente pide algo nuevo? Una sola frase, con tus palabras. Esa hoja me la entregas antes de salir.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>No lleva nota</strong>
+        <p>Sirve para saber desde dónde parte cada uno y ajustar la sesión que viene.
+        Si algo no está claro, este es el momento de que se note.</p>
+      </div>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Esto no se pierde</strong>
+        <p>La próxima sesión partimos de esta lista para armar el modelo del taller,
+        y ese modelo es lo que se entrega en la primera evaluación.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- CIERRE -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen de la sesión</div>
+  <div class="sep-title anim">Lo que te<br><span>llevas</span> hoy</div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">El caso</div>
+      <div class="resumen-desc">Un taller mecánico. Lo vamos a construir entre todos, sesión a sesión, hasta tenerlo completo</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Las reglas</div>
+      <div class="resumen-desc">Puedes usar IA, pero tienes que poder explicar cada línea de lo que entregues</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Qué es la POO</div>
+      <div class="resumen-desc">Un paradigma: el programa se organiza en objetos que juntan datos y comportamiento, y se extiende sin romper lo que ya funciona</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Vocabulario</div>
+      <div class="resumen-desc">Clase es el molde, objeto es el ejemplar, atributo es lo que sabe, método es lo que hace</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Sustantivos y verbos</div>
+      <div class="resumen-desc">Los sustantivos del enunciado son candidatos a clase; los verbos, a método</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Para esta noche</div>
+      <div class="resumen-desc">Responder el diagnóstico de entrada en el AAI y leer el enunciado completo del taller</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Próxima sesión (120 min)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,0.6); line-height:1.6;">
+      Los cuatro pilares: abstracción, encapsulamiento, herencia y polimorfismo &middot;
+      Qué es un diagrama de clases &middot;
+      Taller: del checkpoint de hoy al modelo del taller
+    </div>
+  </div>
+  <div class="callout callout-tip anim" style="margin-top:20px;">
+    <div class="callout-icon">&#9679;</div>
+    <div class="callout-content">
+      <strong>Aviso para más adelante</strong>
+      <p>Cuando lleguemos a la Evaluación 1 van a elegir con quién trabajar.
+      Todavía falta, pero se los voy a ir recordando.</p>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
