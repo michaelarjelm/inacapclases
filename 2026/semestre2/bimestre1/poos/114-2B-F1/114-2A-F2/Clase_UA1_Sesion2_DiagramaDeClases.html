@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA1 Sesion 2 - El diagrama de clases</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0; color: var(--text);
+      scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white; justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 78px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 650px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px; border-bottom: 6px solid var(--red);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+    .slide-separator.sep-blue   { border-color: var(--blue); }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+    }
+    .sep-green .sep-num { color: #AFAFAF; }
+    .sep-orange .sep-num { color: #D98A8E; }
+    .sep-blue .sep-num { color: #E08B80; }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 70px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .cover-title span, .sep-title span, .concept-title span { color: var(--red) !important; }
+    .sep-desc { font-size: 22px; color: rgba(255,255,255,0.45); max-width: 620px; line-height: 1.65; }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 58px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 50px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark); margin-bottom: 26px;
+    }
+    .concept-body { max-width: 940px; }
+    .concept-body p { font-size: 20px; line-height: 1.7; color: #333; margin-bottom: 16px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body ul { margin-left: 24px; margin-bottom: 16px; }
+    .concept-body li { font-size: 19px; line-height: 1.7; color: #333; margin-bottom: 6px; }
+    .concept-body strong { color: var(--dark); }
+
+    /* DEFINICION: el bloque de "que es" */
+    .definicion {
+      background: #FFF6F6; border: 2px solid #F3C9CB; border-left: 6px solid var(--red);
+      border-radius: 8px; padding: 22px 26px; margin: 16px 0; max-width: 940px;
+    }
+    .def-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .def-txt { font-size: 23px; line-height: 1.55; color: var(--dark); font-weight: 500; }
+    .def-txt strong { font-weight: 800; }
+    .def-ej { font-size: 18px; line-height: 1.55; color: #666; margin-top: 12px; font-style: italic; }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 16px 20px; margin: 16px 0;
+      max-width: 940px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 19px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 13px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px;
+    }
+    .callout-content p { font-size: 17px; line-height: 1.55; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+
+    /* INDICE */
+    .index-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 30px; max-width: 760px; }
+    .index-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 30px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 6px;
+    }
+    .index-name { font-size: 16px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-pasos    { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-practica { background: #F7E3E3; color: #8E1A1F; border: 1px solid #E2CACA; }
+    .badge-cierre   { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* RESUMEN */
+    .resumen-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 26px; max-width: 900px; }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 15px 18px;
+    }
+    .resumen-cmd { font-size: 16px; color: white; margin-bottom: 5px; font-weight: 700; }
+    .resumen-desc { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* TWO COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; max-width: 940px; margin-top: 16px; }
+    .col-card { background: #F8F8F8; border: 1px solid #E0E0E0; border-radius: 8px; padding: 18px 22px; }
+    .col-card.bad  { border-left: 4px solid var(--red); }
+    .col-card.good { border-left: 4px solid var(--green); }
+    .col-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 21px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 10px;
+    }
+    .col-card ul { margin-left: 18px; }
+    .col-card li { font-size: 17px; line-height: 1.65; color: #444; margin-bottom: 4px; }
+    .col-card p { font-size: 17px; line-height: 1.6; color: #444; }
+
+    /* TABLA */
+    .tbl { width: 100%; max-width: 940px; border-collapse: collapse; margin-top: 14px; font-size: 17px; }
+    .tbl th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 10px 16px; text-align: left;
+    }
+    .tbl td { padding: 11px 16px; border-bottom: 1px solid #E0E0E0; vertical-align: top; line-height: 1.45; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:nth-child(even) td { background: #F8F8F8; }
+    .tbl .mono { font-family: 'JetBrains Mono', monospace; font-size: 15px; color: var(--blue); font-weight: 600; white-space: nowrap; }
+    .tbl .card { font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--red); font-weight: 700; white-space: nowrap; }
+    .tbl .sym { font-family: 'JetBrains Mono', monospace; font-size: 20px; color: var(--red); font-weight: 700; text-align: center; }
+
+    /* CODIGO */
+    .code-block { background: #1A1A1A; border-radius: 8px; padding: 20px 24px; margin: 14px 0; max-width: 940px; overflow-x: auto; }
+    .code-block pre { font-family: 'JetBrains Mono', monospace; font-size: 15px; color: #EDEDED; line-height: 1.75; }
+    .code-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 12px;
+    }
+    .kw  { color: #FF8A80; font-weight: 700; }
+    .cls { color: #FFD2CC; font-weight: 700; }
+    .str { color: #FFCDD2; }
+    .cmt { color: #6E6E6E; font-style: italic; }
+    .fn  { color: #FFAB91; }
+    .num { color: #F5B7B1; }
+
+    /* CAJA UML */
+    .uml-row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; margin: 16px 0; max-width: 940px; }
+    .uml-box {
+      border: 2px solid var(--dark); border-radius: 5px; background: white;
+      min-width: 200px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .uml-box.child { border-color: var(--orange); }
+    .uml-head {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800; font-size: 18px; text-transform: uppercase;
+      padding: 8px 14px; letter-spacing: 0.04em;
+    }
+    .uml-box.child .uml-head { background: var(--orange); }
+    .uml-sec { padding: 8px 14px; border-bottom: 1px solid #E4E4E4; }
+    .uml-sec:last-child { border-bottom: none; }
+    .uml-line { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #333; line-height: 1.9; }
+    .uml-line .vis { color: var(--red); font-weight: 700; }
+    .uml-note {
+      font-family: 'Barlow', sans-serif; font-size: 14px; color: var(--muted);
+      font-style: italic; padding-top: 6px;
+    }
+    /* CAJA UML CON ANOTACION ALINEADA POR FILA (grid: cada fila crece con su seccion) */
+    .uml-diagram { display: grid; grid-template-columns: auto 1fr; max-width: 640px; margin: 16px 0; }
+    .uml-diagram .uml-head {
+      grid-column: 1; min-width: 210px;
+      border: 2px solid var(--dark); border-bottom: none; border-radius: 5px 5px 0 0;
+    }
+    .uml-diagram .uml-sec { grid-column: 1; border-left: 2px solid var(--dark); border-right: 2px solid var(--dark); }
+    .uml-diagram .uml-sec:last-of-type { border-bottom: 2px solid var(--dark); border-radius: 0 0 5px 5px; }
+    .uml-anot-line {
+      grid-column: 2; display: flex; align-items: center; padding-left: 18px;
+      font-size: 16px; color: var(--red); font-weight: 600;
+    }
+
+    /* SIMBOLOS DE RELACION (notacion real de draw.io) */
+    .rel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin: 18px 0; max-width: 940px; }
+    .rel-card { background: #F8F8F8; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+    .rel-name {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 800;
+      text-transform: uppercase; color: var(--dark); margin-bottom: 2px;
+    }
+    .rel-read { font-size: 13px; color: var(--red); font-weight: 600; margin-bottom: 8px; }
+    .rel-svg { width: 100%; height: auto; display: block; margin-bottom: 8px; }
+    .rel-ej { font-size: 13px; color: #666; line-height: 1.5; }
+
+    /* CRITERIOS: candidato a clase */
+    .crit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 18px 0; max-width: 940px; }
+    .crit-card { background: #F8F8F8; border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; }
+    .crit-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; border-radius: 50%; background: var(--red); color: white;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 900;
+      margin-right: 8px; flex-shrink: 0;
+    }
+    .crit-title {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 800;
+      text-transform: uppercase; color: var(--dark); margin-bottom: 6px;
+      display: flex; align-items: center;
+    }
+    .crit-desc { font-size: 15px; color: #444; line-height: 1.55; }
+
+    /* PILAR */
+    .pilar-head { display: flex; align-items: center; gap: 18px; margin-bottom: 16px; }
+    .pilar-num {
+      width: 50px; height: 50px; border-radius: 8px; background: var(--red); color: white;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 25px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .pilar-frase { font-size: 22px; font-weight: 600; color: var(--dark); line-height: 1.4; }
+
+    /* ACTIVIDAD */
+    .actividad {
+      background: #1A1A1A; border-radius: 8px; padding: 22px 26px;
+      margin: 16px 0; max-width: 950px;
+    }
+    .act-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .act-t { font-size: 22px; line-height: 1.5; color: white; font-weight: 600; }
+    .act-d { font-size: 17px; line-height: 1.55; color: rgba(255,255,255,0.55); margin-top: 8px; }
+    .act-list { margin-top: 12px; }
+    .act-li {
+      font-size: 18px; color: rgba(255,255,255,0.85); line-height: 1.7;
+      padding-left: 22px; position: relative;
+    }
+    .act-li::before { content: "\2192"; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+    /* REQUISITOS */
+    .req { max-width: 950px; margin-top: 14px; }
+    .req-i {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 11px 0; border-bottom: 1px solid #EDEDED;
+    }
+    .req-i:last-child { border-bottom: none; }
+    .req-n {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 24px; font-weight: 900;
+      color: var(--red); line-height: 1.1; flex-shrink: 0; width: 30px;
+    }
+    .req-c { flex: 1; }
+    .req-t { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+    .req-d { font-size: 16px; color: #666; line-height: 1.45; }
+
+    /* CHECKPOINT */
+    .chk { max-width: 940px; margin-top: 14px; }
+    .chk-item {
+      display: flex; gap: 18px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 15px 20px; margin-bottom: 11px;
+    }
+    .chk-num {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 30px; font-weight: 900;
+      color: var(--red); line-height: 1; flex-shrink: 0; width: 36px;
+    }
+    .chk-cont { flex: 1; }
+    .chk-tit { font-size: 19px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .chk-desc { font-size: 17px; color: #555; line-height: 1.5; }
+
+    /* LINEA DE TIEMPO (etapas del desarrollo) */
+    .timeline { display: flex; align-items: flex-start; margin-top: 32px; position: relative; }
+    .timeline::before {
+      content: ''; position: absolute; top: 26px; left: 10%; right: 10%; height: 3px;
+      background: var(--border); z-index: 0;
+    }
+    .tl-step { flex: 1; text-align: center; position: relative; z-index: 1; padding: 0 6px; }
+    .tl-dot {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: white; border: 3px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 18px; color: #aaa;
+    }
+    .tl-step.done .tl-dot { border-color: var(--green); background: var(--green); color: white; }
+    .tl-step.now .tl-dot {
+      width: 56px; height: 56px; margin-top: -5px;
+      border-color: var(--red); background: var(--red); color: white; font-size: 22px;
+      box-shadow: 0 6px 18px rgba(227,30,36,0.4);
+    }
+    .tl-tag {
+      display: inline-block; font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      color: white; background: var(--red); border-radius: 10px; padding: 2px 10px; margin-bottom: 8px;
+    }
+    .tl-title {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 800;
+      text-transform: uppercase; color: var(--dark); margin-bottom: 6px; letter-spacing: 0.01em;
+    }
+    .tl-step.now .tl-title { color: var(--red); }
+    .tl-desc { font-size: 13px; color: #666; line-height: 1.5; max-width: 165px; margin: 0 auto; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: #EBEBEB; padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    #progress {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--red);
+      width: 0%; z-index: 9999; transition: width 0.35s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+    }
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+  
+
+  /* --- extra de S3 (relaciones: arbol, pasos, uml-conn, etc) --- */
+
+    .uml-anot {
+      display: flex; flex-direction: column; gap: 8px; justify-content: center;
+      font-size: 16px; color: var(--red); font-weight: 600; max-width: 260px;
+    }
+    .rel-nombre {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 2px;
+    }
+    .rel-lee { font-size: 15px; color: var(--red); font-weight: 600; margin-bottom: 10px; }
+    .rel-desc { font-size: 15px; color: #555; line-height: 1.5; margin-top: 10px; }
+    .uml-row-rel { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; max-width: 950px; margin: 18px 0 8px; }
+    .uml-conn { flex-shrink: 0; width: 100px; }
+    .uml-conn-svg { width: 100px; height: 50px; display: block; }
+    .ejemplo-txt-full {
+      font-size: 18px; line-height: 1.6; color: #333; max-width: 950px;
+      background: #F8F8F8; border-left: 4px solid var(--red); border-radius: 6px;
+      padding: 14px 20px; margin-top: 4px;
+    }
+    .arbol { display: flex; flex-direction: column; gap: 0; max-width: 900px; margin-top: 16px; }
+    .arbol-nodo {
+      background: #F8F8F8; border: 2px solid var(--dark); border-radius: 8px;
+      padding: 16px 22px; margin-bottom: 6px;
+    }
+    .arbol-preg { font-size: 19px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+    .arbol-op { display: flex; gap: 14px; flex-wrap: wrap; }
+    .arbol-op-item {
+      flex: 1; min-width: 260px; border-radius: 6px; padding: 10px 14px;
+      font-size: 16px; line-height: 1.45;
+    }
+    .arbol-flecha { text-align: center; font-size: 22px; color: #999; margin: 2px 0; }
+    .arbol-tag {
+      display: inline-block; font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+      padding: 3px 9px; border-radius: 10px; margin-left: 8px; vertical-align: middle;
+    }
+    .pasos { display: flex; flex-direction: column; max-width: 950px; margin-top: 14px; }
+    .paso { display: flex; align-items: flex-start; gap: 18px; }
+    .paso-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .paso-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--red); color: white;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .paso-line { width: 2px; flex: 1; min-height: 14px; background: #ECCFCB; margin: 4px 0; }
+    .paso-cont { padding-bottom: 16px; padding-top: 5px; }
+    .paso-tit { font-size: 19px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .paso-desc { font-size: 17px; color: #555; line-height: 1.5; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Programación Orientada a Objeto Seguro &middot; TI3V21 &middot; Unidad 1 &middot; Sesión 2</div>
+  <div class="cover-title anim">El diagrama<br>de <span>clases</span></div>
+  <p class="cover-desc anim">
+    Ya viste que un objeto junta datos y comportamiento. Hoy vas a aprender
+    <strong>qué guarda una clase, qué hace, y cómo se dibuja</strong> para poder mostrársela a
+    otra persona. Todo teoría hoy; el miércoles se dibuja el diagrama completo del taller,
+    de principio a fin.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-2A-F2</span></span>
+    <span class="cover-chip">Lunes 24 de agosto 2026</span>
+    <span class="cover-chip">80 minutos</span>
+    <span class="cover-chip">Criterios 1.1.1 y 1.1.3</span>
+  </div>
+</div>
+
+
+<!-- OBJETIVOS -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Objetivos</span>
+  <div class="sep-num anim">¿Qué van a lograr hoy?</div>
+  <div class="sep-title anim">Objetivos<br>de la <span>sesión</span></div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">Atributos y métodos</div>
+      <div class="resumen-desc">Qué guarda una clase y qué puede hacer, con su notación correcta</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Los cuatro pilares</div>
+      <div class="resumen-desc">Abstracción, encapsulamiento, herencia y polimorfismo, con ejemplos del taller</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Notación de un diagrama de clases</div>
+      <div class="resumen-desc">Cómo se dibuja una clase, y una primera mirada a la herencia</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Llegar listos para el miércoles</div>
+      <div class="resumen-desc">Con toda la base teórica para dibujar el diagrama del taller completo, de una sola vez</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- AGENDA -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">¿Qué vemos hoy?</div>
+  <div class="sep-title anim">Contenido<br>de la <span>sesión</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Atributos y métodos</div>
+      <div class="index-type">Concepto &middot; 15 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Los cuatro pilares</div>
+      <div class="index-type">Concepto &middot; 25 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Qué es un diagrama de clases</div>
+      <div class="index-type">Concepto &middot; 10 min</div>
+    </div>
+  </div>
+  <p style="margin-top:20px; color:rgba(255,255,255,.5); font-size:16px;">
+    Sesión 100% teórica, sin práctica de por medio. El miércoles 26 se dibuja el diagrama
+    completo del taller mecánico de una sola vez -- clases, relaciones, cardinalidad -- y se
+    muestra la Evaluación 1.
+  </p>
+</div>
+
+
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 01</span>
+  <div class="sep-num anim">01 &middot; Concepto &middot; 15 min</div>
+  <div class="sep-title anim">Atributos<br>y <span>métodos</span></div>
+  <p class="sep-desc anim">
+    Todo modelo se reduce a responder dos preguntas por cada clase:
+    qué sabe y qué hace. Hoy los vemos solo en el diagrama, todavía no en código.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Primera pregunta</div>
+  <div class="concept-title anim">¿Qué es un<br><span>atributo</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Atributo</div>
+      <div class="def-txt">
+        Un <strong>dato que el objeto guarda dentro de sí mismo</strong>.
+        Es lo que el objeto sabe.
+      </div>
+      <div class="def-ej">
+        Una orden de trabajo del taller sabe su número, qué hay que repararle
+        y cuántas horas lleva. En el diagrama, cada uno de esos datos es una
+        línea con un <code>-</code> delante: <code>- numero</code>,
+        <code>- descripcion</code>, <code>- horas</code>.
+      </div>
+    </div>
+    <p>
+      Cada objeto tiene <strong>sus propios valores</strong>. Dos órdenes de trabajo
+      son de la misma clase, pero una tiene 3 horas y la otra 8. El molde es el mismo;
+      lo que guarda cada una, no.
+    </p>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Cómo reconocerlo en el enunciado</strong>
+        <p>Los atributos suelen ser sustantivos que describen a otro sustantivo:
+        el <em>número</em> de la orden, la <em>patente</em> del vehículo, el <em>rut</em> del cliente.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Segunda pregunta</div>
+  <div class="concept-title anim">¿Qué es un<br><span>método</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Método</div>
+      <div class="def-txt">
+        Una <strong>acción que el objeto sabe hacer</strong>.
+        Por dentro es una función, pero vive dentro de la clase.
+      </div>
+      <div class="def-ej">
+        Una orden de trabajo sabe agregarse horas y sabe cerrarse. En el diagrama, cada una
+        de esas acciones es una línea con un <code>+</code> delante:
+        <code>+ agregar_horas()</code> y <code>+ cerrar()</code>.
+      </div>
+    </div>
+    <p>
+      La diferencia con una función normal es <strong>dónde vive</strong>.
+      Ayer, en la versión procedural, <code>calcular_mano_obra</code> era una función suelta
+      que había que pasarle los datos. Ahora la acción vive dentro del objeto
+      que tiene esos datos.
+    </p>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Cómo reconocerlo en el enunciado</strong>
+        <p>Los métodos suelen ser verbos: <em>ingresar</em> un vehículo, <em>cerrar</em> una orden,
+        <em>calcular</em> el total, <em>validar</em> una patente.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">Los dos juntos</div>
+  <div class="concept-title anim">Todo lo que hay<br>en una <span>clase</span></div>
+  <div class="concept-body anim">
+    <p>
+      La orden de trabajo que venimos usando junta cuatro atributos y dos métodos.
+      Todavía no la dibujamos como caja: por ahora, solo la lista de lo que
+      sabe y lo que hace.
+    </p>
+    <div class="two-col">
+      <div class="col-card">
+        <div class="col-card-title">Lo que sabe</div>
+        <ul>
+          <li><code>- numero</code></li>
+          <li><code>- descripcion</code></li>
+          <li><code>- horas</code></li>
+          <li><code>- cerrada</code></li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title">Lo que hace</div>
+        <ul>
+          <li><code>+ agregar_horas()</code></li>
+          <li><code>+ cerrar()</code></li>
+        </ul>
+      </div>
+    </div>
+    <p>
+      Cuatro atributos y dos métodos. Eso es todo lo que hay en una clase:
+      <strong>lo que sabe y lo que hace</strong>.
+    </p>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 6 min &middot; en papel, en equipo</div>
+      <div class="act-t">Definan tres atributos y dos métodos para la clase <code style="background:#333;color:#FFCDD2;">Cliente</code> del taller.</div>
+      <div class="act-d">Anótenlos con <code style="background:#333;color:#FFCDD2;">-</code> y <code style="background:#333;color:#FFCDD2;">+</code>, como recién. Pregunta guía: ¿qué necesita saber el taller de un cliente, y qué necesita que el cliente sepa hacer? Todavía no lo dibujen.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Concepto &middot; 25 min</div>
+  <div class="sep-title anim">Los cuatro<br><span>pilares</span></div>
+  <p class="sep-desc anim">
+    La POO se apoya en cuatro ideas. Cada una resuelve
+    un problema concreto que ya viste ayer.
+  </p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Pilar 1</span>
+  <div class="concept-label anim">Abstracción</div>
+  <div class="concept-title anim">Quedarse con lo<br>que <span>importa</span></div>
+  <div class="concept-body anim">
+    <div class="pilar-head">
+      <div class="pilar-num">1</div>
+      <div class="pilar-frase">Modelar solo lo que tu sistema necesita saber, y nada más.</div>
+    </div>
+    <p>
+      Un auto real tiene miles de características: color, tapiz, número de chasis,
+      kilómetros, marca de los neumáticos. Para el taller,
+      un <code>Vehiculo</code> necesita <strong>patente, modelo y si está en el taller</strong>.
+      El color del tapiz existe en la realidad, pero no existe en tu modelo,
+      porque el sistema nunca lo usa.
+    </p>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Cómo decidir</strong>
+        <p>Tapa un atributo con el dedo y pregúntate: ¿alguna cosa que pide el cliente deja
+        de funcionar? Si no, ese atributo sobra. Un modelo con datos que nadie usa es peor, no mejor.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Pilar 2</span>
+  <div class="concept-label anim">Encapsulamiento</div>
+  <div class="concept-title anim">Proteger el <span>dato</span></div>
+  <div class="concept-body anim">
+    <div class="pilar-head">
+      <div class="pilar-num">2</div>
+      <div class="pilar-frase">Los datos solo se cambian a través de los métodos del objeto.</div>
+    </div>
+    <p>
+      Encapsular significa <strong>poner los datos bajo llave</strong> y dejar
+      que solo la propia clase los toque. Desde afuera se pide, no se manipula.
+    </p>
+    <div class="two-col">
+      <div class="col-card bad">
+        <div class="col-card-title">Sin encapsular</div>
+        <p>Cualquier parte del programa escribe <code>v.en_taller = False</code>
+        y se salta toda validación. Nadie revisó si el vehículo había ingresado.</p>
+      </div>
+      <div class="col-card good">
+        <div class="col-card-title">Encapsulado</div>
+        <p>El dato se llama <code>_en_taller</code> y solo el método <code>entregar()</code>
+        lo cambia, después de revisar que efectivamente estaba en el taller.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El guion bajo</strong>
+        <p>En Python, un nombre que empieza con <code>_</code> es una señal para el resto
+        del equipo: "esto es interno, no lo toques desde afuera".</p>
+      </div>
+    </div>
+    <p>
+      En <code>OrdenTrabajo</code>, no todos los atributos necesitan la misma protección.
+      <code>descripcion</code> es información libre, se corrige mientras se diagnostica.
+      <code>horas</code> cambia seguido, pero acumula con <code>agregar_horas()</code> sin
+      una regla de negocio detrás. <code>cerrada</code>, en cambio, representa un estado
+      del negocio: una orden cerrada no debería poder recibir más horas ni reabrirse sin
+      revisión. Por eso <code>cerrada</code> es la que no se toca directo desde afuera:
+      se cambia con su propio método, <code>cerrar()</code>, que puede revisar reglas
+      antes de dejar pasar el cambio. Es el mismo patrón que <code>_en_taller</code>
+      y <code>entregar()</code>.
+    </p>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Pilar 3</span>
+  <div class="concept-label anim">Herencia</div>
+  <div class="concept-title anim">Escribir una vez<br>lo que se <span>comparte</span></div>
+  <div class="concept-body anim">
+    <div class="pilar-head">
+      <div class="pilar-num">3</div>
+      <div class="pilar-frase">Lo común se escribe una vez en la clase padre; lo particular, en cada hija.</div>
+    </div>
+    <p>
+      Autos, motos y camiones comparten casi todo: todos tienen patente y modelo,
+      todos ingresan y se entregan. Lo único distinto es cuánto se cobra la hora.
+      En vez de escribir tres clases casi idénticas, se escribe <strong>una clase padre
+      con lo común</strong> y tres hijas que solo agregan lo que cambia.
+    </p>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La prueba del "es un"</strong>
+        <p>Solo hay herencia si puedes decir la frase completa: un <code>Camion</code>
+        <strong>es un</strong> <code>Vehiculo</code>. Si la frase suena rara, no es herencia.</p>
+      </div>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Un error común</strong>
+        <p>Un <code>Cliente</code> no es un <code>Vehiculo</code>: lo <em>tiene</em>.
+        Eso no es herencia, es otra relación que vemos más adelante.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Pilar 4</span>
+  <div class="concept-label anim">Polimorfismo</div>
+  <div class="concept-title anim">Mismo mensaje,<br>distinta <span>respuesta</span></div>
+  <div class="concept-body anim">
+    <div class="pilar-head">
+      <div class="pilar-num">4</div>
+      <div class="pilar-frase">Le pides lo mismo a objetos distintos y cada uno responde a su manera.</div>
+    </div>
+    <p>
+      Las tres clases hijas tienen un método con <strong>el mismo nombre</strong>,
+      <code>tarifa_hora()</code>, pero cada una devuelve un valor distinto.
+      Quien lo llama no necesita saber de qué tipo es el vehículo.
+    </p>
+    <table class="tbl">
+      <thead><tr><th>Clase</th><th>tarifa_hora()</th></tr></thead>
+      <tbody>
+        <tr><td><code>Auto</code></td><td class="mono">25.000</td></tr>
+        <tr><td><code>Moto</code></td><td class="mono">15.000</td></tr>
+        <tr><td><code>Camion</code></td><td class="mono">40.000</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Quien calcula el total de una orden solo pide <code>tarifa_hora()</code> al vehículo
+      que tiene, sin preguntar de qué tipo es. Por eso nunca hace falta escribir
+      "si es auto... si es moto... si es camión" en ninguna parte del sistema.
+    </p>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Este pilar resolvió el problema de ayer</strong>
+        <p>Cuando el cliente pida buses, se agrega la clase <code>Bus</code> con su propia
+        <code>tarifa_hora()</code>, y todo lo que ya calculaba el total sigue funcionando
+        sin tocar una línea.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Síntesis</span>
+  <div class="concept-label anim">Los cuatro juntos</div>
+  <div class="concept-title anim">Qué problema<br>resuelve <span>cada uno</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead>
+        <tr><th>Pilar</th><th>En una frase</th><th>En el taller</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Abstracción</strong></td>
+          <td>Guardar solo lo que se usa</td>
+          <td>Decidir qué necesita saber el taller de cada vehículo</td>
+        </tr>
+        <tr>
+          <td><strong>Encapsulamiento</strong></td>
+          <td>Los datos bajo llave</td>
+          <td>Que no se registre una patente o un RUT inválido</td>
+        </tr>
+        <tr>
+          <td><strong>Herencia</strong></td>
+          <td>Lo común, una sola vez</td>
+          <td>Auto, moto y camión comparten patente, modelo e ingreso</td>
+        </tr>
+        <tr>
+          <td><strong>Polimorfismo</strong></td>
+          <td>Mismo nombre, distinto resultado</td>
+          <td>Que la mano de obra se cobre distinto según el vehículo</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Criterio 1.1.1</strong>
+        <p>Distinguir estos cuatro conceptos es lo primero que se evalúa en la ES1,
+        y también entra en la acumulativa del sábado 22.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 03</span>
+  <div class="sep-num anim">03 &middot; Concepto &middot; 10 min</div>
+  <div class="sep-title anim">Qué es un<br><span>diagrama</span><br>de clases</div>
+  <p class="sep-desc anim">
+    Hasta aquí hablamos de clases con palabras.
+    Ahora hay que dibujarlas, porque eso es lo que se entrega en la ES1.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Contexto</span>
+  <div class="concept-label anim">Por qué no llegamos y codeamos</div>
+  <div class="concept-title anim">Etapas del<br><span>desarrollo</span> de software</div>
+  <div class="concept-body anim">
+    <p>
+      Escribir código es solo una parte del trabajo. Un sistema real pasa por varias
+      etapas, en orden, y saltarse una sale caro más adelante.
+    </p>
+    <div class="timeline">
+      <div class="tl-step done">
+        <div class="tl-dot">&#10003;</div>
+        <div class="tl-title">Análisis</div>
+        <div class="tl-desc">Entender qué pide el cliente. Ya lo hicieron ayer: la lista
+        de requisitos del taller.</div>
+      </div>
+      <div class="tl-step now">
+        <div class="tl-dot">2</div>
+        <div class="tl-tag">Hoy</div>
+        <div class="tl-title">Diseño</div>
+        <div class="tl-desc">Decidir cómo se organiza el sistema antes de escribir una línea:
+        qué clases existen, qué saben, qué hacen y cómo se conectan.</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">3</div>
+        <div class="tl-title">Implementación</div>
+        <div class="tl-desc">Recién aquí se escribe código, siguiendo el diseño ya decidido.
+        Empieza en la Unidad 2.</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">4</div>
+        <div class="tl-title">Pruebas</div>
+        <div class="tl-desc">Verificar que el sistema hace lo que el cliente pidió, sin
+        errores ni casos que se rompan.</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">5</div>
+        <div class="tl-title">Mantenimiento</div>
+        <div class="tl-desc">El sistema sigue vivo después de entregado: se corrigen errores
+        y se agregan cosas nuevas.</div>
+      </div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Dónde estamos hoy</strong>
+        <p>Ya hicieron el análisis. Hoy entramos al diseño, y el diagrama de clases
+        es la herramienta de esta etapa: el plano que se dibuja antes de programar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Antes de dibujar nada</div>
+  <div class="concept-title anim">¿Qué es y<br>para qué <span>sirve</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Diagrama de clases</div>
+      <div class="def-txt">
+        Un <strong>dibujo que muestra todas las clases de un sistema, qué guarda cada una,
+        qué hace, y cómo se conectan entre sí</strong>.
+      </div>
+      <div class="def-ej">
+        Es el plano del sistema. Igual que el plano de una casa se hace antes de levantar
+        las paredes, el diagrama se hace antes de escribir el código.
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="col-card good">
+        <div class="col-card-title">Para qué sirve</div>
+        <ul>
+          <li>Ponerse de acuerdo en el equipo antes de programar</li>
+          <li>Detectar clases que faltan o que sobran</li>
+          <li>Mostrarle la solución al cliente sin mostrarle código</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title">Qué es UML</div>
+        <p><strong>UML</strong> es el idioma en el que se dibujan estos diagramas.
+        Es un estándar: cualquier programador del mundo lee un diagrama UML
+        y entiende lo mismo. Por eso no se dibuja como uno quiera.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Con qué lo vamos a dibujar</strong>
+        <p><strong>draw.io</strong> (app.diagrams.net), gratis y sin cuenta obligatoria. Ya trae
+        las formas de UML listas para usar. Hoy lo vemos en papel; en la próxima clase lo abrimos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Notación</span>
+  <div class="concept-label anim">Cómo se dibuja una clase</div>
+  <div class="concept-title anim">Un rectángulo<br>en <span>tres</span> partes</div>
+  <div class="concept-body anim">
+    <div class="uml-diagram">
+      <div class="uml-head">OrdenTrabajo</div>
+      <div class="uml-anot-line">&larr; el nombre de la clase</div>
+      <div class="uml-sec">
+        <div class="uml-line"><span class="vis">-</span> numero : int</div>
+        <div class="uml-line"><span class="vis">-</span> horas : int</div>
+        <div class="uml-line"><span class="vis">-</span> cerrada : bool</div>
+      </div>
+      <div class="uml-anot-line">&larr; los atributos, lo que sabe</div>
+      <div class="uml-sec">
+        <div class="uml-line"><span class="vis">+</span> agregar_horas()</div>
+        <div class="uml-line"><span class="vis">+</span> cerrar()</div>
+      </div>
+      <div class="uml-anot-line">&larr; los métodos, lo que hace</div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Símbolo</th><th>Se llama</th><th>Significa</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="sym">-</td>
+          <td>Privado</td>
+          <td>Solo la propia clase puede tocarlo. Es el encapsulamiento del pilar 2</td>
+        </tr>
+        <tr>
+          <td class="sym">+</td>
+          <td>Público</td>
+          <td>Cualquiera puede usarlo desde afuera</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El tipo de dato, después de los dos puntos</strong>
+        <p>Cada atributo se anota <code>nombre : tipo</code>: <code>str</code> para texto,
+        <code>int</code> para número entero, <code>bool</code> para verdadero o falso.
+        Un método que devuelve algo también lleva su tipo al final, como
+        <code>tarifa_hora() : int</code>. Si no devuelve nada, no lleva tipo.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La regla práctica</strong>
+        <p>Los atributos casi siempre van con <code>-</code> y los métodos casi siempre
+        con <code>+</code>. Los datos se protegen; las acciones se ofrecen.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Notación</span>
+  <div class="concept-label anim">Cómo se dibuja la herencia</div>
+  <div class="concept-title anim">El padre <span>arriba</span>,<br>las hijas abajo</div>
+  <div class="concept-body anim">
+    <div class="uml-row">
+      <div class="uml-box">
+        <div class="uml-head">Vehiculo</div>
+        <div class="uml-sec">
+          <div class="uml-line"><span class="vis">-</span> patente : str</div>
+          <div class="uml-line"><span class="vis">-</span> anio : int</div>
+          <div class="uml-line"><span class="vis">-</span> _en_taller : bool</div>
+        </div>
+        <div class="uml-sec">
+          <div class="uml-line"><span class="vis">+</span> ingresar()</div>
+          <div class="uml-line"><span class="vis">+</span> entregar()</div>
+          <div class="uml-line"><span class="vis">+</span> tarifa_hora() : int</div>
+        </div>
+        <div class="uml-sec"><div class="uml-note">Clase padre: lo que comparten todos</div></div>
+      </div>
+      <div class="uml-box child">
+        <div class="uml-head">Auto</div>
+        <div class="uml-sec"><div class="uml-line"><span class="cmt">hereda todo lo de arriba</span></div></div>
+        <div class="uml-sec"><div class="uml-line"><span class="vis">+</span> tarifa_hora() : int</div></div>
+        <div class="uml-sec"><div class="uml-note">25.000 por hora</div></div>
+      </div>
+      <div class="uml-box child">
+        <div class="uml-head">Moto</div>
+        <div class="uml-sec"><div class="uml-line"><span class="cmt">hereda todo lo de arriba</span></div></div>
+        <div class="uml-sec"><div class="uml-line"><span class="vis">+</span> tarifa_hora() : int</div></div>
+        <div class="uml-sec"><div class="uml-note">15.000 por hora</div></div>
+      </div>
+      <div class="uml-box child">
+        <div class="uml-head">Camion</div>
+        <div class="uml-sec"><div class="uml-line"><span class="cmt">hereda todo lo de arriba</span></div></div>
+        <div class="uml-sec"><div class="uml-line"><span class="vis">+</span> tarifa_hora() : int</div></div>
+        <div class="uml-sec"><div class="uml-note">40.000 por hora</div></div>
+      </div>
+    </div>
+    <p>
+      Las tres hijas no repiten patente ni modelo: <strong>ya los tienen</strong> por herencia.
+      Solo escriben el método que en cada una es distinto. Ahí está el pilar 4, el polimorfismo.
+    </p>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>En UML de verdad</strong>
+        <p>La herencia se dibuja con una flecha de punta triangular hueca que va
+        desde la hija hacia el padre.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- ============ CIERRE ============ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen de la sesión</div>
+  <div class="sep-title anim">Lo que te<br><span>llevas</span> hoy</div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">Atributos y métodos</div>
+      <div class="resumen-desc">Con su notación: - privado, + público, y el tipo de dato al lado</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Los cuatro pilares</div>
+      <div class="resumen-desc">Abstracción, encapsulamiento, herencia y polimorfismo, cada uno con su ejemplo</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Cómo se dibuja una clase</div>
+      <div class="resumen-desc">Tres secciones: nombre, atributos, métodos -- y el triángulo de la herencia</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Listos para dibujar</div>
+      <div class="resumen-desc">Toda la base teórica que hace falta antes de tocar el lápiz el miércoles</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Próxima clase (miércoles 26/08 &middot; 19:50-22:30 &middot; Laboratorio A407)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,.6); line-height:1.6;">
+      Herencia, agregación, composición, el árbol de decisión y cardinalidad -- y con todo eso,
+      dibujamos el diagrama completo del taller de una sola vez, entre todos. Se muestra la
+      Evaluación 1.
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const progress = document.getElementById('progress');
+  let current = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.1 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
