@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA1 Sesion 3 - El diagrama completo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0; color: var(--text);
+      scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white; justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 78px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 650px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px; border-bottom: 6px solid var(--red);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+    .slide-separator.sep-blue   { border-color: var(--blue); }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+    }
+    .sep-green .sep-num { color: #AFAFAF; }
+    .sep-orange .sep-num { color: #D98A8E; }
+    .sep-blue .sep-num { color: #E08B80; }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 70px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .cover-title span, .sep-title span, .concept-title span { color: var(--red) !important; }
+    .sep-desc { font-size: 22px; color: rgba(255,255,255,0.45); max-width: 620px; line-height: 1.65; }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 58px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 50px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark); margin-bottom: 26px;
+    }
+    .concept-body { max-width: 940px; }
+    .concept-body p { font-size: 20px; line-height: 1.7; color: #333; margin-bottom: 16px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body ul { margin-left: 24px; margin-bottom: 16px; }
+    .concept-body li { font-size: 19px; line-height: 1.7; color: #333; margin-bottom: 6px; }
+    .concept-body strong { color: var(--dark); }
+
+    /* DEFINICION: el bloque de "que es" */
+    .definicion {
+      background: #FFF6F6; border: 2px solid #F3C9CB; border-left: 6px solid var(--red);
+      border-radius: 8px; padding: 22px 26px; margin: 16px 0; max-width: 940px;
+    }
+    .def-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .def-txt { font-size: 23px; line-height: 1.55; color: var(--dark); font-weight: 500; }
+    .def-txt strong { font-weight: 800; }
+    .def-ej { font-size: 18px; line-height: 1.55; color: #666; margin-top: 12px; font-style: italic; }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 16px 20px; margin: 16px 0;
+      max-width: 940px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 19px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 13px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px;
+    }
+    .callout-content p { font-size: 17px; line-height: 1.55; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+
+    /* INDICE */
+    .index-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 30px; max-width: 760px; }
+    .index-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 30px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 6px;
+    }
+    .index-name { font-size: 16px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-pasos    { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-practica { background: #F7E3E3; color: #8E1A1F; border: 1px solid #E2CACA; }
+    .badge-cierre   { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* RESUMEN */
+    .resumen-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 26px; max-width: 900px; }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 15px 18px;
+    }
+    .resumen-cmd { font-size: 16px; color: white; margin-bottom: 5px; font-weight: 700; }
+    .resumen-desc { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* TWO COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; max-width: 940px; margin-top: 16px; }
+    .col-card { background: #F8F8F8; border: 1px solid #E0E0E0; border-radius: 8px; padding: 18px 22px; }
+    .col-card.bad  { border-left: 4px solid var(--red); }
+    .col-card.good { border-left: 4px solid var(--green); }
+    .col-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 21px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 10px;
+    }
+    .col-card ul { margin-left: 18px; }
+    .col-card li { font-size: 17px; line-height: 1.65; color: #444; margin-bottom: 4px; }
+    .col-card p { font-size: 17px; line-height: 1.6; color: #444; }
+
+    /* TABLA */
+    .tbl { width: 100%; max-width: 940px; border-collapse: collapse; margin-top: 14px; font-size: 17px; }
+    .tbl th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 10px 16px; text-align: left;
+    }
+    .tbl td { padding: 11px 16px; border-bottom: 1px solid #E0E0E0; vertical-align: top; line-height: 1.45; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:nth-child(even) td { background: #F8F8F8; }
+    .tbl .mono { font-family: 'JetBrains Mono', monospace; font-size: 15px; color: var(--blue); font-weight: 600; white-space: nowrap; }
+    .tbl .card { font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--red); font-weight: 700; white-space: nowrap; }
+    .tbl .sym { font-family: 'JetBrains Mono', monospace; font-size: 20px; color: var(--red); font-weight: 700; text-align: center; }
+
+    /* CODIGO */
+    .code-block { background: #1A1A1A; border-radius: 8px; padding: 20px 24px; margin: 14px 0; max-width: 940px; overflow-x: auto; }
+    .code-block pre { font-family: 'JetBrains Mono', monospace; font-size: 15px; color: #EDEDED; line-height: 1.75; }
+    .code-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 12px;
+    }
+    .kw  { color: #FF8A80; font-weight: 700; }
+    .cls { color: #FFD2CC; font-weight: 700; }
+    .str { color: #FFCDD2; }
+    .cmt { color: #6E6E6E; font-style: italic; }
+    .fn  { color: #FFAB91; }
+    .num { color: #F5B7B1; }
+
+    /* CAJA UML */
+    .uml-row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; margin: 16px 0; max-width: 940px; }
+    .uml-box {
+      border: 2px solid var(--dark); border-radius: 5px; background: white;
+      min-width: 200px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .uml-box.child { border-color: var(--orange); }
+    .uml-head {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800; font-size: 18px; text-transform: uppercase;
+      padding: 8px 14px; letter-spacing: 0.04em;
+    }
+    .uml-box.child .uml-head { background: var(--orange); }
+    .uml-sec { padding: 8px 14px; border-bottom: 1px solid #E4E4E4; }
+    .uml-sec:last-child { border-bottom: none; }
+    .uml-line { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #333; line-height: 1.9; }
+    .uml-line .vis { color: var(--red); font-weight: 700; }
+    .uml-note {
+      font-family: 'Barlow', sans-serif; font-size: 14px; color: var(--muted);
+      font-style: italic; padding-top: 6px;
+    }
+    /* CAJA UML CON ANOTACION ALINEADA POR FILA (grid: cada fila crece con su seccion) */
+    .uml-diagram { display: grid; grid-template-columns: auto 1fr; max-width: 640px; margin: 16px 0; }
+    .uml-diagram .uml-head {
+      grid-column: 1; min-width: 210px;
+      border: 2px solid var(--dark); border-bottom: none; border-radius: 5px 5px 0 0;
+    }
+    .uml-diagram .uml-sec { grid-column: 1; border-left: 2px solid var(--dark); border-right: 2px solid var(--dark); }
+    .uml-diagram .uml-sec:last-of-type { border-bottom: 2px solid var(--dark); border-radius: 0 0 5px 5px; }
+    .uml-anot-line {
+      grid-column: 2; display: flex; align-items: center; padding-left: 18px;
+      font-size: 16px; color: var(--red); font-weight: 600;
+    }
+
+    /* SIMBOLOS DE RELACION (notacion real de draw.io) */
+    .rel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin: 18px 0; max-width: 940px; }
+    .rel-card { background: #F8F8F8; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+    .rel-name {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 800;
+      text-transform: uppercase; color: var(--dark); margin-bottom: 2px;
+    }
+    .rel-read { font-size: 13px; color: var(--red); font-weight: 600; margin-bottom: 8px; }
+    .rel-svg { width: 100%; height: auto; display: block; margin-bottom: 8px; }
+    .rel-ej { font-size: 13px; color: #666; line-height: 1.5; }
+
+    /* CRITERIOS: candidato a clase */
+    .crit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 18px 0; max-width: 940px; }
+    .crit-card { background: #F8F8F8; border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; }
+    .crit-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; border-radius: 50%; background: var(--red); color: white;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 900;
+      margin-right: 8px; flex-shrink: 0;
+    }
+    .crit-title {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 800;
+      text-transform: uppercase; color: var(--dark); margin-bottom: 6px;
+      display: flex; align-items: center;
+    }
+    .crit-desc { font-size: 15px; color: #444; line-height: 1.55; }
+
+    /* PILAR */
+    .pilar-head { display: flex; align-items: center; gap: 18px; margin-bottom: 16px; }
+    .pilar-num {
+      width: 50px; height: 50px; border-radius: 8px; background: var(--red); color: white;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 25px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .pilar-frase { font-size: 22px; font-weight: 600; color: var(--dark); line-height: 1.4; }
+
+    /* ACTIVIDAD */
+    .actividad {
+      background: #1A1A1A; border-radius: 8px; padding: 22px 26px;
+      margin: 16px 0; max-width: 950px;
+    }
+    .act-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .act-t { font-size: 22px; line-height: 1.5; color: white; font-weight: 600; }
+    .act-d { font-size: 17px; line-height: 1.55; color: rgba(255,255,255,0.55); margin-top: 8px; }
+    .act-list { margin-top: 12px; }
+    .act-li {
+      font-size: 18px; color: rgba(255,255,255,0.85); line-height: 1.7;
+      padding-left: 22px; position: relative;
+    }
+    .act-li::before { content: "\2192"; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+    /* REQUISITOS */
+    .req { max-width: 950px; margin-top: 14px; }
+    .req-i {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 11px 0; border-bottom: 1px solid #EDEDED;
+    }
+    .req-i:last-child { border-bottom: none; }
+    .req-n {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 24px; font-weight: 900;
+      color: var(--red); line-height: 1.1; flex-shrink: 0; width: 30px;
+    }
+    .req-c { flex: 1; }
+    .req-t { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+    .req-d { font-size: 16px; color: #666; line-height: 1.45; }
+
+    /* CHECKPOINT */
+    .chk { max-width: 940px; margin-top: 14px; }
+    .chk-item {
+      display: flex; gap: 18px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 15px 20px; margin-bottom: 11px;
+    }
+    .chk-num {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 30px; font-weight: 900;
+      color: var(--red); line-height: 1; flex-shrink: 0; width: 36px;
+    }
+    .chk-cont { flex: 1; }
+    .chk-tit { font-size: 19px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .chk-desc { font-size: 17px; color: #555; line-height: 1.5; }
+
+    /* LINEA DE TIEMPO (etapas del desarrollo) */
+    .timeline { display: flex; align-items: flex-start; margin-top: 32px; position: relative; }
+    .timeline::before {
+      content: ''; position: absolute; top: 26px; left: 10%; right: 10%; height: 3px;
+      background: var(--border); z-index: 0;
+    }
+    .tl-step { flex: 1; text-align: center; position: relative; z-index: 1; padding: 0 6px; }
+    .tl-dot {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: white; border: 3px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 18px; color: #aaa;
+    }
+    .tl-step.done .tl-dot { border-color: var(--green); background: var(--green); color: white; }
+    .tl-step.now .tl-dot {
+      width: 56px; height: 56px; margin-top: -5px;
+      border-color: var(--red); background: var(--red); color: white; font-size: 22px;
+      box-shadow: 0 6px 18px rgba(227,30,36,0.4);
+    }
+    .tl-tag {
+      display: inline-block; font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      color: white; background: var(--red); border-radius: 10px; padding: 2px 10px; margin-bottom: 8px;
+    }
+    .tl-title {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 800;
+      text-transform: uppercase; color: var(--dark); margin-bottom: 6px; letter-spacing: 0.01em;
+    }
+    .tl-step.now .tl-title { color: var(--red); }
+    .tl-desc { font-size: 13px; color: #666; line-height: 1.5; max-width: 165px; margin: 0 auto; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: #EBEBEB; padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    #progress {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--red);
+      width: 0%; z-index: 9999; transition: width 0.35s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+    }
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+  
+
+  /* --- extra de S3 (relaciones: arbol, pasos, uml-conn, etc) --- */
+
+    .uml-anot {
+      display: flex; flex-direction: column; gap: 8px; justify-content: center;
+      font-size: 16px; color: var(--red); font-weight: 600; max-width: 260px;
+    }
+    .rel-nombre {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 2px;
+    }
+    .rel-lee { font-size: 15px; color: var(--red); font-weight: 600; margin-bottom: 10px; }
+    .rel-desc { font-size: 15px; color: #555; line-height: 1.5; margin-top: 10px; }
+    .uml-row-rel { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; max-width: 950px; margin: 18px 0 8px; }
+    .uml-conn { flex-shrink: 0; width: 100px; }
+    .uml-conn-svg { width: 100px; height: 50px; display: block; }
+    .ejemplo-txt-full {
+      font-size: 18px; line-height: 1.6; color: #333; max-width: 950px;
+      background: #F8F8F8; border-left: 4px solid var(--red); border-radius: 6px;
+      padding: 14px 20px; margin-top: 4px;
+    }
+    .arbol { display: flex; flex-direction: column; gap: 0; max-width: 900px; margin-top: 16px; }
+    .arbol-nodo {
+      background: #F8F8F8; border: 2px solid var(--dark); border-radius: 8px;
+      padding: 16px 22px; margin-bottom: 6px;
+    }
+    .arbol-preg { font-size: 19px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+    .arbol-op { display: flex; gap: 14px; flex-wrap: wrap; }
+    .arbol-op-item {
+      flex: 1; min-width: 260px; border-radius: 6px; padding: 10px 14px;
+      font-size: 16px; line-height: 1.45;
+    }
+    .arbol-flecha { text-align: center; font-size: 22px; color: #999; margin: 2px 0; }
+    .arbol-tag {
+      display: inline-block; font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+      padding: 3px 9px; border-radius: 10px; margin-left: 8px; vertical-align: middle;
+    }
+    .pasos { display: flex; flex-direction: column; max-width: 950px; margin-top: 14px; }
+    .paso { display: flex; align-items: flex-start; gap: 18px; }
+    .paso-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .paso-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--red); color: white;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .paso-line { width: 2px; flex: 1; min-height: 14px; background: #ECCFCB; margin: 4px 0; }
+    .paso-cont { padding-bottom: 16px; padding-top: 5px; }
+    .paso-tit { font-size: 19px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .paso-desc { font-size: 17px; color: #555; line-height: 1.5; }
+  
+  .negocios {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 9px; max-width: 950px; margin-top: 14px;
+  }
+  .neg {
+    background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 3px solid var(--red);
+    border-radius: 6px; padding: 10px 13px; font-size: 16px; color: #333; font-weight: 500;
+  }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Programación Orientada a Objeto Seguro &middot; TI3V21 &middot; Unidad 1 &middot; Sesión 3</div>
+  <div class="cover-title anim">El diagrama<br><span>completo</span></div>
+  <p class="cover-desc anim">
+    El lunes vieron atributos, métodos, los cuatro pilares y la notación de una clase.
+    Hoy suman las relaciones y la cardinalidad, y dibujan <strong>el diagrama completo del
+    taller mecánico, de una sola vez</strong>. Cerramos mostrando la Evaluación 1.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-2A-F2</span></span>
+    <span class="cover-chip">Miércoles 26 de agosto 2026</span>
+    <span class="cover-chip">160 minutos</span>
+    <span class="cover-chip">Criterios 1.1.1, 1.1.3 y 1.1.4</span>
+  </div>
+</div>
+
+
+<!-- OBJETIVOS -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Objetivos</span>
+  <div class="sep-num anim">¿Qué van a lograr hoy?</div>
+  <div class="sep-title anim">Objetivos<br>de la <span>sesión</span></div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">Las tres relaciones, con regla objetiva</div>
+      <div class="resumen-desc">Herencia, agregación y composición, aplicando dos preguntas en orden</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Cardinalidad y dirección de lectura</div>
+      <div class="resumen-desc">Qué número va en cada punta de una línea, y por qué</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">El diagrama completo del taller</div>
+      <div class="resumen-desc">Todas las clases, atributos, métodos y relaciones, de una sola vez</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Conocer la Evaluación 1</div>
+      <div class="resumen-desc">Qué se pide, cómo se rinde, y con qué negocio propio la van a resolver</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- AGENDA -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">¿Qué vemos hoy?</div>
+  <div class="sep-title anim">Contenido<br>de la <span>sesión</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Las tres relaciones, con ejemplos</div>
+      <div class="index-type">Concepto + ejemplos &middot; 35 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Cardinalidad</div>
+      <div class="index-type">Concepto &middot; 20 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">El diagrama del taller, completo</div>
+      <div class="index-type">Práctica &middot; 75 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">La Evaluación 1</div>
+      <div class="index-type">Evaluación &middot; pendiente de armar</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 01</span>
+  <div class="sep-num anim">01 &middot; Concepto + ejemplos &middot; 35 min</div>
+  <div class="sep-title anim">El árbol<br>de <span>decisión</span></div>
+  <p class="sep-desc anim">
+    Las tres relaciones que dibuja un diagrama de clases: qué significan, cómo se ven, y
+    varios ejemplos de cada una para reconocerlas a simple vista.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Triángulo hueco, apuntando al padre</div>
+  <div class="concept-title anim">"Es un"</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Herencia</div>
+      <div class="def-txt">
+        Una clase (la <strong>hija</strong>) comparte TODOS los atributos y métodos de
+        otra (la <strong>madre</strong>), y agrega o sobrescribe algo propio.
+      </div>
+      <div class="def-ej">La prueba es literal: si la frase "un X ES UN Y" suena natural, es herencia. Si suena forzada, no lo es.</div>
+    </div>
+    <svg viewBox="0 0 360 70" style="max-width:420px; display:block; margin:16px 0;">
+      <rect x="0" y="18" width="120" height="36" fill="#fff" stroke="#1A1A1A" stroke-width="2" rx="3"/>
+      <text x="60" y="41" text-anchor="middle" font-family="Barlow Condensed" font-size="15" font-weight="700" fill="#1A1A1A">Camion</text>
+      <line x1="120" y1="36" x2="222" y2="36" stroke="#1A1A1A" stroke-width="2"/>
+      <polygon points="240,36 222,26 222,46" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+      <rect x="240" y="18" width="120" height="36" fill="#fff" stroke="#1A1A1A" stroke-width="2" rx="3"/>
+      <text x="300" y="41" text-anchor="middle" font-family="Barlow Condensed" font-size="15" font-weight="700" fill="#1A1A1A">Vehiculo</text>
+    </svg>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>No se pone multiplicidad en herencia</strong>
+        <p>No tiene sentido preguntar "cuántos Auto por cada Vehiculo": un Auto no es una
+        cantidad de vehículos, es un tipo específico de vehículo. Por eso el triángulo
+        nunca lleva números en las puntas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 1 &middot; Hospital</span>
+  <div class="concept-label anim">Herencia &middot; “es un”</div>
+  <div class="concept-title anim">Cardiologo <span>es un</span> Medico</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Cardiologo</div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> realizarEcografia() : void</div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><line x1="0" y1="25" x2="62" y2="25" stroke="#1A1A1A" stroke-width="2"/><polygon points="80,25 62,17 62,33" fill="#fff" stroke="#1A1A1A" stroke-width="2"/><text x="4" y="18" font-family="Barlow Condensed" font-size="12" font-weight="700" fill="#8E1A1F">es un</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Medico</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> nombre : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> especialidad : <span class="tipo">Especialidad</span></div><div class="uml-line"><span class="vis">-</span> turno : <span class="tipo">String</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> atenderPaciente(p : Paciente) : void</div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim">Cardiologo hereda nombre, especialidad y turno de Medico sin volver a escribirlos, y agrega su propio método. También existe Pediatra, con la misma herencia y otro método propio.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 2 &middot; Universidad</span>
+  <div class="concept-label anim">Herencia &middot; “es un”</div>
+  <div class="concept-title anim">EstudiantePregrado <span>es un</span> Estudiante</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">EstudiantePregrado</div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> calcularArancel() : int</div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><line x1="0" y1="25" x2="62" y2="25" stroke="#1A1A1A" stroke-width="2"/><polygon points="80,25 62,17 62,33" fill="#fff" stroke="#1A1A1A" stroke-width="2"/><text x="4" y="18" font-family="Barlow Condensed" font-size="12" font-weight="700" fill="#8E1A1F">es un</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Estudiante</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> rut : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> carrera : <span class="tipo">Carrera</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> inscribirRamo(c : Curso) : void</div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim">EstudiantePregrado hereda rut y carrera de Estudiante. También existe EstudiantePostgrado, con la misma herencia pero su propio cálculo de arancel.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 3 &middot; Aeropuerto</span>
+  <div class="concept-label anim">Herencia &middot; “es un”</div>
+  <div class="concept-title anim">VueloNacional <span>es un</span> Vuelo</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">VueloNacional</div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> calcularImpuesto() : int</div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><line x1="0" y1="25" x2="62" y2="25" stroke="#1A1A1A" stroke-width="2"/><polygon points="80,25 62,17 62,33" fill="#fff" stroke="#1A1A1A" stroke-width="2"/><text x="4" y="18" font-family="Barlow Condensed" font-size="12" font-weight="700" fill="#8E1A1F">es un</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Vuelo</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> numero : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> horario : <span class="tipo">Date</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> registrarPasajero(p : String) : void</div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim">VueloNacional hereda numero y horario de Vuelo. VueloInternacional también hereda de Vuelo, pero además exige pasaporte antes de registrar al pasajero.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 4 &middot; Supermercado</span>
+  <div class="concept-label anim">Herencia &middot; “es un”</div>
+  <div class="concept-title anim">ProductoRefrigerado <span>es un</span> Producto</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">ProductoRefrigerado</div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> fechaVencimiento() : Date</div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><line x1="0" y1="25" x2="62" y2="25" stroke="#1A1A1A" stroke-width="2"/><polygon points="80,25 62,17 62,33" fill="#fff" stroke="#1A1A1A" stroke-width="2"/><text x="4" y="18" font-family="Barlow Condensed" font-size="12" font-weight="700" fill="#8E1A1F">es un</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Producto</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> codigo : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> precio : <span class="tipo">int</span></div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim">ProductoRefrigerado hereda codigo y precio de Producto, y agrega su propio control de vencimiento. ProductoSeco hereda igual, pero sin ese método.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Rombo hueco, del lado del que posee</div>
+  <div class="concept-title anim">"Tiene",<br>y la parte <span>sobrevive</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Agregación &middot; regla objetiva</div>
+      <div class="def-txt">
+        Una clase referencia a otra, y el lado <strong>"muchos" acepta cero</strong> —
+        la parte sigue existiendo perfectamente sola si se borra el todo.
+      </div>
+      <div class="def-ej">Esta es la categoría por defecto: toda relación entre dos clases que no es herencia ni cumple la regla de composición, es agregación.</div>
+    </div>
+    <svg viewBox="0 0 360 70" style="max-width:420px; display:block; margin:16px 0;">
+      <rect x="0" y="18" width="120" height="36" fill="#fff" stroke="#1A1A1A" stroke-width="2" rx="3"/>
+      <text x="60" y="41" text-anchor="middle" font-family="Barlow Condensed" font-size="15" font-weight="700" fill="#1A1A1A">Cliente</text>
+      <polygon points="120,36 137,28 154,36 137,44" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+      <line x1="154" y1="36" x2="240" y2="36" stroke="#1A1A1A" stroke-width="2"/>
+      <text x="160" y="28" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text>
+      <text x="222" y="28" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">0..*</text>
+      <rect x="240" y="18" width="120" height="36" fill="#fff" stroke="#1A1A1A" stroke-width="2" rx="3"/>
+      <text x="300" y="41" text-anchor="middle" font-family="Barlow Condensed" font-size="15" font-weight="700" fill="#1A1A1A">Vehiculo</text>
+    </svg>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La prueba: el lado "muchos" puede ser cero</strong>
+        <p>Si se borra un Cliente, el Vehiculo sigue existiendo y siendo válido — solo le
+        falta su dueño. Y un Cliente puede tener 0 vehículos (recién se registró, aún
+        no trae ninguno). Ese <code>0..*</code> es toda la prueba que necesitan.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 0 &middot; Taller mecánico</span>
+  <div class="concept-label anim">Agregación &middot; el caso que ya conocen</div>
+  <div class="concept-title anim">OrdenTrabajo <span>tiene</span> Vehiculo</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">OrdenTrabajo</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> numero : <span class="tipo">int</span></div><div class="uml-line"><span class="vis">-</span> vehiculo : <span class="tipo">Vehiculo</span></div><div class="uml-line"><span class="vis">-</span> usuario : <span class="tipo">Usuario</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> total() : int</div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><polygon points="0,25 12,17 24,25 12,33" fill="#fff" stroke="#1A1A1A" stroke-width="2"/><line x1="24" y1="25" x2="100" y2="25" stroke="#1A1A1A" stroke-width="2"/><text x="28" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">0..*</text><text x="76" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Vehiculo</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> patente : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> anio : <span class="tipo">int</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> tarifa_hora() : int</div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim">Esta relación está en su propio modelo del taller. OrdenTrabajo tiene rombo hueco hacia Vehiculo porque OrdenTrabajo (el lado "muchos") acepta cero — un Vehiculo recién registrado puede no tener ninguna orden todavía. Mismo caso para OrdenTrabajo--Usuario y LineaDetalle--Repuesto.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 1 &middot; Hospital</span>
+  <div class="concept-label anim">Agregación &middot; posee, pero la parte sobrevive</div>
+  <div class="concept-title anim">Medico <span>tiene</span> Especialidad</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Medico</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> nombre : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> especialidad : <span class="tipo">Especialidad</span></div><div class="uml-line"><span class="vis">-</span> turno : <span class="tipo">String</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> atenderPaciente(p : Paciente) : void</div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><polygon points="0,25 12,17 24,25 12,33" fill="#fff" stroke="#1A1A1A" stroke-width="2"/><line x1="24" y1="25" x2="100" y2="25" stroke="#1A1A1A" stroke-width="2"/><text x="28" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">0..*</text><text x="76" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Especialidad</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> nombre : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> duracionMin : <span class="tipo">int</span></div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim">Varios médicos comparten la misma Especialidad (“Cardiología”). Si se va un médico, la especialidad sigue existiendo — por eso 0..* junto a Medico.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 2 &middot; Universidad</span>
+  <div class="concept-label anim">Agregación &middot; posee, pero la parte sobrevive</div>
+  <div class="concept-title anim">Estudiante <span>tiene</span> Carrera</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Estudiante</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> rut : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> carrera : <span class="tipo">Carrera</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> inscribirRamo(c : Curso) : void</div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><polygon points="0,25 12,17 24,25 12,33" fill="#fff" stroke="#1A1A1A" stroke-width="2"/><line x1="24" y1="25" x2="100" y2="25" stroke="#1A1A1A" stroke-width="2"/><text x="28" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">0..*</text><text x="76" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Carrera</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> nombre : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> duracionSemestres : <span class="tipo">int</span></div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim">Muchos estudiantes comparten la misma Carrera. Si un estudiante se retira, la carrera sigue dictándose.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 3 &middot; Aeropuerto</span>
+  <div class="concept-label anim">Agregación &middot; posee, pero la parte sobrevive</div>
+  <div class="concept-title anim">Vuelo <span>tiene</span> Aerolinea</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Vuelo</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> numero : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> horario : <span class="tipo">Date</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> registrarPasajero(p : String) : void</div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><polygon points="0,25 12,17 24,25 12,33" fill="#fff" stroke="#1A1A1A" stroke-width="2"/><line x1="24" y1="25" x2="100" y2="25" stroke="#1A1A1A" stroke-width="2"/><text x="28" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">0..*</text><text x="76" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Aerolinea</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> nombre : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> paisOrigen : <span class="tipo">String</span></div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim">Varios vuelos pertenecen a la misma Aerolinea. Si se cancela un vuelo, la aerolínea sigue operando.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 4 &middot; Supermercado</span>
+  <div class="concept-label anim">Agregación &middot; posee, pero la parte sobrevive</div>
+  <div class="concept-title anim">Producto <span>tiene</span> Categoria</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Producto</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> codigo : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> precio : <span class="tipo">int</span></div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><polygon points="0,25 12,17 24,25 12,33" fill="#fff" stroke="#1A1A1A" stroke-width="2"/><line x1="24" y1="25" x2="100" y2="25" stroke="#1A1A1A" stroke-width="2"/><text x="28" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">0..*</text><text x="76" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Categoria</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> nombre : <span class="tipo">String</span></div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim">Varios productos comparten la Categoria “Lácteos”. Una categoría puede existir con 0 productos todavía cargados: eso es lo que permite el 0..*.<div class="callout callout-important" style="margin-top:14px;"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>La agregación siempre se combina con la cardinalidad</strong><p>El rombo hueco por sí solo solo dice QUE hay posesión. Los números en las puntas dicen CUÁNTOS — y son los que permiten distinguir agregación de composición: si el lado "muchos" acepta 0..*, la parte sobrevive sola, es agregación de verdad. El rombo sin los números deja el diagrama incompleto.</p></div></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Rombo relleno, del lado del que posee</div>
+  <div class="concept-title anim">"Se compone de",<br>nunca <span>vacío</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Composición</div>
+      <div class="def-txt">
+        Igual que agregación, pero la parte <strong>no tiene sentido</strong> fuera del
+        todo. Si se borra el todo, sus partes desaparecen con él.
+      </div>
+      <div class="def-ej">La señal contraria a agregación: el lado "muchos" tiene mínimo obligatorio, nunca puede ser cero.</div>
+    </div>
+    <svg viewBox="0 0 360 70" style="max-width:420px; display:block; margin:16px 0;">
+      <rect x="0" y="18" width="120" height="36" fill="#fff" stroke="#1A1A1A" stroke-width="2" rx="3"/>
+      <text x="60" y="41" text-anchor="middle" font-family="Barlow Condensed" font-size="14" font-weight="700" fill="#1A1A1A">OrdenTrabajo</text>
+      <polygon points="120,36 137,28 154,36 137,44" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="2"/>
+      <line x1="154" y1="36" x2="240" y2="36" stroke="#1A1A1A" stroke-width="2"/>
+      <text x="160" y="28" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text>
+      <text x="215" y="28" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1..*</text>
+      <rect x="240" y="18" width="120" height="36" fill="#fff" stroke="#1A1A1A" stroke-width="2" rx="3"/>
+      <text x="300" y="41" text-anchor="middle" font-family="Barlow Condensed" font-size="14" font-weight="700" fill="#1A1A1A">LineaDetalle</text>
+    </svg>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Trampa común: no mires solo quién tiene el atributo</strong>
+        <p>Es tentador poner el rombo donde está el atributo que apunta al otro. Pero eso
+        no es la prueba — hay que fijarse en la cardinalidad mínima del lado "muchos".
+        En el modelo del taller, <code>Modelo</code> tiene un atributo <code>marca</code>,
+        pero el rombo va en <code>Marca</code>: una Marca nunca puede tener cero Modelos
+        (<code>1..*</code>), así que es composición, no agregación. "Toyota" existe
+        sin depender de ningún modelo puntual; "Corolla" no existe sin marca.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 1 &middot; Hospital</span>
+  <div class="concept-label anim">Composición &middot; posee, la parte NO sobrevive</div>
+  <div class="concept-title anim">FichaClinica <span>se compone de</span> Diagnostico</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">FichaClinica</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> numero : <span class="tipo">int</span></div><div class="uml-line"><span class="vis">-</span> fechaApertura : <span class="tipo">Date</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> agregarDiagnostico(d : Diagnostico) : void</div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><polygon points="0,25 12,17 24,25 12,33" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="2"/><line x1="24" y1="25" x2="100" y2="25" stroke="#1A1A1A" stroke-width="2"/><text x="28" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text><text x="76" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1..*</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Diagnostico</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> descripcion : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> gravedad : <span class="tipo">String</span></div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim">Los diagnósticos no tienen sentido sin la ficha que los contiene. Si se elimina la ficha, sus diagnósticos desaparecen con ella — por eso 1..* junto a Diagnostico, nunca 0..*.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 2 &middot; Universidad</span>
+  <div class="concept-label anim">Composición &middot; posee, la parte NO sobrevive</div>
+  <div class="concept-title anim">Matricula <span>se compone de</span> AsignaturaInscrita</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Matricula</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> anio : <span class="tipo">int</span></div><div class="uml-line"><span class="vis">-</span> semestre : <span class="tipo">int</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> inscribirAsignatura(a : AsignaturaInscrita) : void</div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><polygon points="0,25 12,17 24,25 12,33" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="2"/><line x1="24" y1="25" x2="100" y2="25" stroke="#1A1A1A" stroke-width="2"/><text x="28" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text><text x="76" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1..*</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">AsignaturaInscrita</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> codigo : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> nota : <span class="tipo">double</span></div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim">Las asignaturas inscritas no existen sin la matrícula del semestre que las contiene.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 3 &middot; Aeropuerto</span>
+  <div class="concept-label anim">Composición &middot; posee, la parte NO sobrevive</div>
+  <div class="concept-title anim">Boleto <span>se compone de</span> TramoDeVuelo</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Boleto</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> numero : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> precio : <span class="tipo">int</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> emitir() : void</div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><polygon points="0,25 12,17 24,25 12,33" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="2"/><line x1="24" y1="25" x2="100" y2="25" stroke="#1A1A1A" stroke-width="2"/><text x="28" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text><text x="76" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1..*</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">TramoDeVuelo</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> origen : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> destino : <span class="tipo">String</span></div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim">Un boleto con escalas tiene tramos. Sin el boleto, los tramos sueltos no tienen sentido.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 4 &middot; Supermercado</span>
+  <div class="concept-label anim">Composición &middot; posee, la parte NO sobrevive</div>
+  <div class="concept-title anim">Boleta <span>se compone de</span> LineaBoleta</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Boleta</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> numero : <span class="tipo">int</span></div><div class="uml-line"><span class="vis">-</span> fecha : <span class="tipo">Date</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> calcularTotal() : int</div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><polygon points="0,25 12,17 24,25 12,33" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="2"/><line x1="24" y1="25" x2="100" y2="25" stroke="#1A1A1A" stroke-width="2"/><text x="28" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text><text x="76" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1..*</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">LineaBoleta</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> cantidad : <span class="tipo">int</span></div><div class="uml-line"><span class="vis">-</span> precioUnitario : <span class="tipo">int</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> subtotal() : int</div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim">Igual que en el taller mecánico: una boleta nunca puede estar vacía, y sus líneas desaparecen si se anula.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Síntesis</span>
+  <div class="concept-label anim">Cierre: las tres relaciones, en una sola idea</div>
+  <div class="concept-title anim">Dos preguntas,<br>en <span>orden</span></div>
+  <div class="concept-body anim">
+    <div class="arbol">
+      <div class="arbol-nodo">
+        <div class="arbol-preg">1. ¿Una clase es un tipo específico de la otra? <span class="arbol-tag regla">Regla objetiva</span></div>
+        <div class="arbol-op">
+          <div class="arbol-op-item si"><b>Sí, "es un" suena natural</b>Herencia. Triángulo hueco, sin multiplicidad.</div>
+          <div class="arbol-op-item no"><b>No</b>Sigue a la pregunta 2.</div>
+        </div>
+      </div>
+      <div class="arbol-flecha">&darr;</div>
+      <div class="arbol-nodo">
+        <div class="arbol-preg">2. ¿El lado "muchos" puede tener cero? <span class="arbol-tag regla">Regla objetiva</span></div>
+        <div class="arbol-op">
+          <div class="arbol-op-item si"><b>Sí (0..*)</b>Agregación. Rombo hueco.</div>
+          <div class="arbol-op-item no"><b>No, nunca (1..*)</b>Composición. Rombo relleno.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>No queda ninguna pregunta de juicio</strong>
+        <p>Con estas dos preguntas alcanza para clasificar cualquier relación que no sea
+        herencia, y las dos se pueden verificar con una regla objetiva — nunca hace
+        falta "sentir" si hay posesión.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Concepto &middot; 20 min</div>
+  <div class="sep-title anim">Cómo se lee<br>la <span>cardinalidad</span></div>
+  <p class="sep-desc anim">
+    Los números en las puntas de la línea son la parte que más se lee al revés.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Multiplicidad: cómo escribe UML la cardinalidad</div>
+  <div class="concept-title anim">La regla<br>de <span>lectura</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">La regla, textual, para no confundirse nunca más</div>
+      <div class="def-txt">
+        El número que aparece <strong>junto a una clase</strong> dice cuántos objetos de
+        ESA clase participan por cada objeto de la clase del OTRO extremo.
+      </div>
+      <div class="def-ej">No es "cuántos tiene esta clase" — es "cuántos de esta clase hay por cada uno del otro lado".</div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Se escribe</th><th>Significa</th><th>En el taller</th></tr></thead>
+      <tbody>
+        <tr><td class="mult">1</td><td>Exactamente uno, obligatorio</td><td>Una orden pertenece a un vehículo, siempre</td></tr>
+        <tr><td class="mult">0..1</td><td>Ninguno o uno</td><td>Una persona puede o no tener cuenta de usuario</td></tr>
+        <tr><td class="mult">0..*</td><td>Cualquier cantidad, incluido cero</td><td>Un rol puede tener cero usuarios asignados todavía</td></tr>
+        <tr><td class="mult">1..*</td><td>Al menos uno, nunca cero</td><td>Una orden tiene al menos una línea de detalle</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El ejemplo que más confunde: Usuario -- Rol</strong>
+        <p>El diagrama dice <code>0..*</code> junto a Usuario y <code>1</code> junto a Rol.
+        Leído mal, parece que "un Usuario puede tener 0 roles" — al revés. Leído bien:
+        el <code>0..*</code> describe cuántos Usuario hay por cada Rol (un rol puede
+        tener cero usuarios asignados). El <code>1</code> describe cuántos Rol hay por
+        cada Usuario: exactamente uno, siempre. Todo Usuario tiene su rol obligatorio.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 1 &middot; Taller mecánico</span>
+  <div class="concept-label anim">Dirección de lectura &middot; el caso que más confunde</div>
+  <div class="concept-title anim">Usuario <span>--</span> Rol</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Usuario</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> usuario : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> rol : <span class="tipo">Rol</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> puede(accion) : boolean</div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><polygon points="0,25 12,17 24,25 12,33" fill="#fff" stroke="#1A1A1A" stroke-width="2"/><line x1="24" y1="25" x2="100" y2="25" stroke="#1A1A1A" stroke-width="2"/><text x="28" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">0..*</text><text x="76" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Rol</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> nombre : <span class="tipo">String</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> tiene_permiso(accion) : boolean</div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim"><strong>Así se lee, en este orden:</strong> el <code>0..*</code> está junto a Usuario, así que describe cuántos Usuario hay por cada Rol — un Rol puede tener cero usuarios asignados todavía. El <code>1</code> está junto a Rol, así que describe cuántos Rol hay por cada Usuario — exactamente uno, siempre. Ningún Usuario existe sin su rol.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 2 &middot; Taller mecánico</span>
+  <div class="concept-label anim">Dirección de lectura &middot; el mínimo que nunca es cero</div>
+  <div class="concept-title anim">Marca <span>--</span> Modelo</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Marca</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> nombre : <span class="tipo">String</span></div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><polygon points="0,25 12,17 24,25 12,33" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="2"/><line x1="24" y1="25" x2="100" y2="25" stroke="#1A1A1A" stroke-width="2"/><text x="28" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text><text x="72" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1..*</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Modelo</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> nombre : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> marca : <span class="tipo">Marca</span></div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim"><strong>Así se lee:</strong> el <code>1</code> está junto a Marca, así que describe cuántas Marca hay por cada Modelo — exactamente una. El <code>1..*</code> está junto a Modelo, así que describe cuántos Modelo hay por cada Marca — al menos uno, nunca cero. Por eso esta es composición: el lado "muchos" (Modelo) nunca puede quedar vacío.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 3 &middot; Hospital</span>
+  <div class="concept-label anim">Dirección de lectura &middot; el lado que sí acepta cero</div>
+  <div class="concept-title anim">Medico <span>--</span> Especialidad</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Medico</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> nombre : <span class="tipo">String</span></div><div class="uml-line"><span class="vis">-</span> especialidad : <span class="tipo">Especialidad</span></div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><polygon points="0,25 12,17 24,25 12,33" fill="#fff" stroke="#1A1A1A" stroke-width="2"/><line x1="24" y1="25" x2="100" y2="25" stroke="#1A1A1A" stroke-width="2"/><text x="28" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">0..*</text><text x="76" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">Especialidad</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> nombre : <span class="tipo">String</span></div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim"><strong>Así se lee:</strong> el <code>0..*</code> está junto a Medico, así que describe cuántos Medico hay por cada Especialidad — puede haber cero médicos con esa especialidad todavía. El <code>1</code> está junto a Especialidad, así que describe cuántas Especialidad hay por cada Medico — exactamente una, obligatoria.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Ejemplo 4 &middot; Taller mecánico</span>
+  <div class="concept-label anim">Dirección de lectura &middot; composición, sin ambigüedad</div>
+  <div class="concept-title anim">OrdenTrabajo <span>--</span> LineaDetalle</div>
+  <div class="concept-body anim">
+    <div class="uml-row-rel">
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">OrdenTrabajo</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> numero : <span class="tipo">int</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> total() : int</div></div></div>
+      <div class="uml-conn"><svg viewBox="0 0 100 50" class="uml-conn-svg"><polygon points="0,25 12,17 24,25 12,33" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="2"/><line x1="24" y1="25" x2="100" y2="25" stroke="#1A1A1A" stroke-width="2"/><text x="28" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1</text><text x="72" y="17" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#E31E24">1..*</text></svg></div>
+      <div class="uml-box" style="min-width:230px;"><div class="uml-head">LineaDetalle</div><div class="uml-sec"><div class="uml-line"><span class="vis">-</span> cantidad : <span class="tipo">int</span></div></div><div class="uml-sec"><div class="uml-line"><span class="vis">+</span> subtotal() : int</div></div></div>
+    </div>
+    <div class="ejemplo-txt-full anim"><strong>Así se lee:</strong> el <code>1</code> está junto a OrdenTrabajo, así que describe cuántas OrdenTrabajo hay por cada LineaDetalle — exactamente una. El <code>1..*</code> está junto a LineaDetalle, así que describe cuántas LineaDetalle hay por cada OrdenTrabajo — al menos una, nunca cero. Con estos cuatro ejemplos queda fijada la misma dirección de lectura para todo el curso.</div>
+  </div>
+</div>
+
+
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-practica">Bloque 03</span>
+  <div class="sep-num anim">03 &middot; Práctica &middot; 100 min</div>
+  <div class="sep-title anim">Manos a<br>la <span>obra</span></div>
+  <p class="sep-desc anim">
+    Con el enunciado del taller a mano, armamos entre todos el diagrama completo: clases,
+    atributos, métodos, relaciones y cardinalidad.
+  </p>
+</div>
+
+
+
+
+
+
+<!-- CIERRE -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre de unidad 1</span>
+  <div class="sep-num anim">Termina la unidad 1</div>
+  <div class="sep-title anim">Lo que ya<br>saben <span>hacer</span></div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">S1 &middot; Por qué existen los objetos</div>
+      <div class="resumen-desc">Datos y comportamiento juntos. Clase, objeto, atributo y método</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">S2 &middot; Los cuatro pilares</div>
+      <div class="resumen-desc">Abstracción, encapsulamiento, herencia y polimorfismo. La caja de tres partes</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">S3 &middot; El diagrama completo</div>
+      <div class="resumen-desc">Las tres relaciones, cardinalidad, y el modelo del taller de punta a punta</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Su equipo y su negocio</div>
+      <div class="resumen-desc">Reservado hoy, distinto al del taller mecánico</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Para el miércoles 2 de septiembre</div>
+      <div class="resumen-desc">Entrega de la Evaluación 1: el modelo del negocio que reservaron hoy</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Próxima clase (lunes 31/08 &middot; 20:30-22:30 &middot; Laboratorio A407)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,.6); line-height:1.6;">
+      Arranca la Unidad 2: Construir -- entorno de desarrollo y herramientas, para empezar a
+      escribir código de verdad. La Evaluación 1 se sigue trabajando por su cuenta, se entrega
+      el miércoles 2 de septiembre.
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const progress = document.getElementById('progress');
+  let current = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.1 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
