@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UA2 Sesion 6 - Del diagrama al codigo</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --red:#E31E24; --blue:#C0392B; --green:#4A4A4A; --orange:#8E1A1F;
+    --dark:#1A1A1A; --border:#E0E0E0; --text:#1A1A1A; --muted:#666;
+  }
+
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Barlow', sans-serif; background:#F0F0F0; color:var(--text);
+    scroll-snap-type:y mandatory; overflow-y:scroll; height:100vh;
+  }
+  .slide {
+    min-height:100vh; scroll-snap-align:start; scroll-snap-stop:always;
+    display:flex; flex-direction:column; position:relative;
+  }
+
+  /* PORTADA */
+  .slide-cover {
+    background:linear-gradient(135deg,#1A1A1A 0%,#2C2C2C 100%); color:#fff;
+    justify-content:center; padding:80px; border-bottom:6px solid var(--red);
+  }
+  .cover-eyebrow {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:24px;
+  }
+  .cover-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:76px; font-weight:900;
+    text-transform:uppercase; line-height:.92; letter-spacing:-.01em; margin-bottom:32px;
+  }
+  .cover-title span { color:var(--red); }
+  .cover-desc { font-size:22px; color:rgba(255,255,255,.5); max-width:660px; line-height:1.65; margin-bottom:48px; }
+  .cover-chips { display:flex; flex-wrap:wrap; gap:12px; }
+  .cover-chip {
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    color:rgba(255,255,255,.7); font-size:15px; font-weight:600; padding:8px 16px; border-radius:20px;
+  }
+  .cover-chip span { color:#fff; }
+
+  /* SEPARADOR */
+  .slide-separator {
+    background:var(--dark); color:#fff; justify-content:center; padding:80px; border-bottom:6px solid var(--red);
+  }
+  .slide-separator.sep-green  { border-color:var(--green); }
+  .slide-separator.sep-orange { border-color:var(--orange); }
+  .slide-separator.sep-blue   { border-color:var(--blue); }
+  .sep-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--red); margin-bottom:16px;
+  }
+  .sep-green .sep-num  { color:#AFAFAF; }
+  .sep-orange .sep-num { color:#D98A8E; }
+  .sep-blue .sep-num   { color:#E08B80; }
+  .sep-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:68px; font-weight:900;
+    text-transform:uppercase; line-height:.92; letter-spacing:-.01em; margin-bottom:24px;
+  }
+  .sep-title span { color:var(--red); }
+  .cover-title span, .sep-title span, .concept-title span { color:var(--red)!important; }
+  .sep-desc { font-size:22px; color:rgba(255,255,255,.45); max-width:630px; line-height:1.65; }
+
+  /* CONCEPTO */
+  .slide-concept { background:#fff; padding:56px 80px; border-bottom:3px solid var(--border); justify-content:center; }
+  .slide-concept.blue-accent   { border-top:6px solid var(--blue); }
+  .slide-concept.green-accent  { border-top:6px solid var(--green); }
+  .slide-concept.orange-accent { border-top:6px solid var(--orange); }
+  .slide-concept.red-accent    { border-top:6px solid var(--red); }
+  .concept-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:12px;
+  }
+  .concept-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:48px; font-weight:900;
+    text-transform:uppercase; line-height:.95; letter-spacing:-.01em; color:var(--dark); margin-bottom:24px;
+  }
+  .concept-body { max-width:950px; }
+  .concept-body p { font-size:20px; line-height:1.7; color:#333; margin-bottom:14px; }
+  .concept-body p:last-child { margin-bottom:0; }
+  .concept-body strong { color:var(--dark); }
+
+  /* DEFINICION */
+  .definicion {
+    background:#FFF6F6; border:2px solid #F3C9CB; border-left:6px solid var(--red);
+    border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px;
+  }
+  .def-k {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--red); margin-bottom:8px;
+  }
+  .def-txt { font-size:22px; line-height:1.55; color:var(--dark); font-weight:500; }
+  .def-txt strong { font-weight:800; }
+  .def-ej { font-size:18px; line-height:1.55; color:#666; margin-top:10px; font-style:italic; }
+
+  /* CALLOUTS */
+  .callout { border-radius:6px; padding:16px 20px; margin:14px 0; max-width:950px; display:flex; gap:14px; align-items:flex-start; }
+  .callout-icon { font-size:19px; flex-shrink:0; }
+  .callout-content { flex:1; }
+  .callout-content > strong { display:block; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+  .callout-content p { font-size:17px; line-height:1.55; margin:0; }
+  .callout-important { background:#FFF1F2; border:1px solid #FECDD3; }
+  .callout-important strong { color:var(--red); }
+  .callout-important p { color:#881337; }
+  .callout-tip { background:#F2F2F2; border:1px solid #DADADA; }
+  .callout-tip strong { color:var(--green); }
+  .callout-tip p { color:#333; }
+  .callout-info { background:#FBEEEC; border:1px solid #ECCFCB; }
+  .callout-info strong { color:var(--blue); }
+  .callout-info p { color:#7A1E16; }
+  .callout-warn { background:#F7EFEF; border:1px solid #E2CACA; }
+  .callout-warn strong { color:var(--orange); }
+  .callout-warn p { color:#5A1418; }
+
+  /* INDICE */
+  .index-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:30px; max-width:780px; }
+  .index-item { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:6px; padding:16px 18px; }
+  .index-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:30px; font-weight:900; color:var(--red); line-height:1; margin-bottom:6px;
+  }
+  .index-name { font-size:16px; font-weight:600; color:#fff; line-height:1.4; }
+  .index-type { font-size:12px; color:rgba(255,255,255,.3); margin-top:4px; text-transform:uppercase; letter-spacing:.06em; }
+
+  /* BADGE */
+  .slide-badge {
+    position:absolute; top:24px; right:32px; font-family:'Barlow Condensed',sans-serif;
+    font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; padding:5px 12px; border-radius:20px;
+  }
+  .badge-concepto { background:#FEF2F2; color:var(--red); border:1px solid #FECACA; }
+  .badge-pasos    { background:#F2F2F2; color:var(--green); border:1px solid #DADADA; }
+  .badge-practica { background:#F7E3E3; color:#8E1A1F; border:1px solid #E2CACA; }
+  .badge-cierre   { background:rgba(227,30,36,.10); color:var(--red); border:1px solid rgba(227,30,36,.3); }
+  .badge-prompt   { background:#1A1A1A; color:#FF8A80; border:1px solid #333; }
+
+  /* RESUMEN */
+  .resumen-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:26px; max-width:900px; }
+  .resumen-item { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:6px; padding:15px 18px; }
+  .resumen-cmd { font-size:16px; color:#fff; margin-bottom:5px; font-weight:700; }
+  .resumen-desc { font-size:15px; color:rgba(255,255,255,.4); line-height:1.4; }
+
+  /* TWO COL */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:22px; max-width:950px; margin-top:16px; }
+  .col-card { background:#F8F8F8; border:1px solid #E0E0E0; border-radius:8px; padding:18px 22px; }
+  .col-card.bad  { border-left:4px solid var(--red); }
+  .col-card.good { border-left:4px solid var(--green); }
+  .col-card-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:21px; font-weight:900; text-transform:uppercase;
+    color:var(--dark); margin-bottom:10px;
+  }
+  .col-card ul { margin-left:18px; }
+  .col-card li { font-size:17px; line-height:1.65; color:#444; margin-bottom:4px; }
+  .col-card p { font-size:17px; line-height:1.6; color:#444; }
+
+  /* TABLA */
+  .tbl { width:100%; max-width:950px; border-collapse:collapse; margin-top:14px; font-size:17px; }
+  .tbl th {
+    background:var(--dark); color:#fff; font-family:'Barlow Condensed',sans-serif; font-size:13px;
+    font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:10px 16px; text-align:left;
+  }
+  .tbl td { padding:11px 16px; border-bottom:1px solid #E0E0E0; vertical-align:top; line-height:1.45; }
+  .tbl tr:last-child td { border-bottom:none; }
+  .tbl tr:nth-child(even) td { background:#F8F8F8; }
+  .tbl .mono { font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--blue); font-weight:600; }
+
+  /* CODE BLOCK */
+  .code-block { background:#1A1A1A; border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px; overflow-x:auto; }
+  .code-block pre { font-family:'JetBrains Mono',monospace; font-size:15px; color:#EDEDED; line-height:1.75; }
+  .code-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:rgba(255,255,255,.35); margin-bottom:12px;
+  }
+  .kw{color:#FF8A80;font-weight:700} .cls{color:#FFD2CC;font-weight:700} .str{color:#FFCDD2}
+  .cmt{color:#6E6E6E;font-style:italic} .fn{color:#FFAB91} .num{color:#F5B7B1}
+
+  /* TERMINAL */
+  .terminal { background:#0D0D0D; border-radius:8px; padding:18px 24px; margin:14px 0; max-width:950px; overflow-x:auto; border:1px solid #2A2A2A; }
+  .term-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:#6E6E6E; margin-bottom:10px; display:flex; align-items:center; gap:8px;
+  }
+  .term-dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .terminal pre { font-family:'JetBrains Mono',monospace; font-size:14.5px; line-height:1.85; }
+  .term-prompt { color:#4ADE80; }
+  .term-out { color:#D4D4D4; }
+
+  /* PROMPT A ANTIGRAVITY */
+  .prompt-box { background:#1A1A1A; border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px; border-left:4px solid var(--red); }
+  .prompt-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--red); margin-bottom:10px; display:flex; align-items:center; gap:8px;
+  }
+  .prompt-label .dot { width:8px; height:8px; border-radius:50%; background:var(--red); display:inline-block; }
+  .prompt-text { font-family:'JetBrains Mono',monospace; font-size:16px; color:#fff; line-height:1.65; }
+
+  /* MAPEO diagrama -> codigo */
+  .mapeo-row { display:flex; gap:24px; align-items:center; margin:16px 0; max-width:950px; flex-wrap:wrap; }
+  .mapeo-box {
+    border:2px solid var(--dark); border-radius:5px; background:#fff; min-width:200px; overflow:hidden;
+    box-shadow:0 2px 6px rgba(0,0,0,.06);
+  }
+  .mapeo-head {
+    background:var(--dark); color:#fff; font-family:'Barlow Condensed',sans-serif; font-weight:800;
+    font-size:17px; text-transform:uppercase; padding:8px 14px; letter-spacing:.04em;
+  }
+  .mapeo-sec { padding:8px 14px; border-bottom:1px solid #E4E4E4; }
+  .mapeo-sec:last-child { border-bottom:none; }
+  .mapeo-line { font-family:'JetBrains Mono',monospace; font-size:13px; color:#333; line-height:1.9; }
+  .mapeo-line .vis { color:var(--red); font-weight:700; }
+  .mapeo-arrow { font-size:32px; color:var(--red); font-weight:700; flex-shrink:0; }
+
+  /* ACTIVIDAD */
+  .actividad { background:#1A1A1A; border-radius:8px; padding:22px 26px; margin:16px 0; max-width:950px; }
+  .act-k {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px;
+  }
+  .act-t { font-size:22px; line-height:1.5; color:#fff; font-weight:600; }
+  .act-d { font-size:17px; line-height:1.55; color:rgba(255,255,255,.55); margin-top:8px; }
+  .act-list { margin-top:12px; }
+  .act-li { font-size:18px; color:rgba(255,255,255,.85); line-height:1.7; padding-left:22px; position:relative; }
+  .act-li::before { content:"\2192"; position:absolute; left:0; color:var(--red); font-weight:700; }
+
+  /* CHECKLIST */
+  .chk { max-width:950px; margin-top:14px; }
+  .chk-item {
+    display:flex; gap:18px; align-items:flex-start; background:#F8F8F8; border:1px solid #E0E0E0;
+    border-left:4px solid var(--red); border-radius:8px; padding:15px 20px; margin-bottom:11px;
+  }
+  .chk-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:30px; font-weight:900; color:var(--red);
+    line-height:1; flex-shrink:0; width:36px;
+  }
+  .chk-cont { flex:1; }
+  .chk-tit { font-size:19px; font-weight:700; color:var(--dark); margin-bottom:3px; }
+  .chk-desc { font-size:17px; color:#555; line-height:1.5; }
+
+  code { font-family:'JetBrains Mono',monospace; font-size:14px; background:#EBEBEB; padding:2px 7px; border-radius:3px; color:#C0392B; }
+
+  #progress {
+    position:fixed; top:0; left:0; height:3px; background:var(--red); width:0%; z-index:9999;
+    transition:width .35s cubic-bezier(.16,1,.3,1); pointer-events:none;
+  }
+  .anim { opacity:0; transform:translateY(22px); transition:opacity .55s cubic-bezier(.16,1,.3,1), transform .55s cubic-bezier(.16,1,.3,1); }
+  .slide.visible .anim { opacity:1; transform:none; }
+  .slide.visible .anim:nth-child(1){transition-delay:0ms} .slide.visible .anim:nth-child(2){transition-delay:100ms}
+  .slide.visible .anim:nth-child(3){transition-delay:210ms} .slide.visible .anim:nth-child(4){transition-delay:330ms}
+  .slide.visible .anim:nth-child(5){transition-delay:450ms} .slide.visible .anim:nth-child(6){transition-delay:560ms}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- PORTADA -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Programación Orientada a Objeto Seguro &middot; TI3V21 &middot; Unidad 2 &middot; Sesión 6</div>
+  <div class="cover-title anim">Del diagrama<br>al <span>código</span></div>
+  <p class="cover-desc anim">
+    Con el entorno ya listo desde el lunes, hoy programan de verdad: usando el modelo del
+    Taller Mecánico como ejemplo guía, van construyendo su propia clase paso a paso, generando
+    cada parte con un prompt a Antigravity y verificando que diga exactamente lo mismo que
+    el diagrama. Codear poco, entender bastante.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-2B-F1</span></span>
+    <span class="cover-chip">Martes 25 de agosto de 2026</span>
+    <span class="cover-chip">18:30 &ndash; 21:10 &middot; 160 min</span>
+    <span class="cover-chip">Laboratorio <span>A403</span></span>
+  </div>
+</div>
+
+
+<!-- OBJETIVOS -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Objetivos</span>
+  <div class="sep-num anim">&iquest;Qué van a lograr hoy?</div>
+  <div class="sep-title anim">Objetivos<br>de la <span>sesión</span></div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">Traducir su diagrama a código</div>
+      <div class="resumen-desc">Verificando cada atributo y método contra lo que ya dibujaron</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Usar Antigravity con criterio</div>
+      <div class="resumen-desc">Prompts cortos, y entender cada resultado antes de seguir</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Reconocer clase, atributo, self</div>
+      <div class="resumen-desc">En cualquier clase, no solo en el ejemplo del Taller Mecánico</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Diferenciar métodos con y sin retorno</div>
+      <div class="resumen-desc">Y por qué esa diferencia importa al usarlos</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Aplicar encapsulación real</div>
+      <div class="resumen-desc">Visibilidad como decisión de diseño, conectada al eje Seguro</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Verificar con el criterio 2.1.1</div>
+      <div class="resumen-desc">Su propio modelo, con la misma checklist que hoy practican</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- AGENDA -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">&iquest;Qué vemos hoy?</div>
+  <div class="sep-title anim">Contenido<br>de la <span>sesión</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">00</div>
+      <div class="index-name">Recap: verificar que su entorno sigue funcionando</div>
+      <div class="index-type">Setup &middot; 8 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Elegir el modelo económico de Antigravity</div>
+      <div class="index-type">Setup &middot; 4 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Clase y objeto</div>
+      <div class="index-type">Concepto + prompt &middot; 10 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Atributos</div>
+      <div class="index-type">Concepto + prompt &middot; 10 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Constructor (con y sin parámetros)</div>
+      <div class="index-type">Concepto + prompt &middot; 12 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">main.py: dónde corren su código</div>
+      <div class="index-type">Concepto + prompt &middot; 6 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">06</div>
+      <div class="index-name">self</div>
+      <div class="index-type">Concepto &middot; 5 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">07</div>
+      <div class="index-name">Métodos (con/sin parámetros, con/sin retorno)</div>
+      <div class="index-type">Concepto + prompt &middot; 12 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">08</div>
+      <div class="index-name">Encapsulación, visibilidad y property</div>
+      <div class="index-type">Concepto + prompt &middot; 18 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">09</div>
+      <div class="index-name">Instanciación y estado independiente</div>
+      <div class="index-type">Concepto + prompt &middot; 10 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">10</div>
+      <div class="index-name">La checklist de verificación (criterio 2.1.1)</div>
+      <div class="index-type">Concepto &middot; 10 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">11</div>
+      <div class="index-name">Taller: apliquen todo a su propio modelo</div>
+      <div class="index-type">Práctica &middot; 40 min</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 00: RECAP ============ -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Antes de empezar</span>
+  <div class="concept-label anim">8 min</div>
+  <div class="concept-title anim">Verifiquen su<br><span>entorno</span></div>
+  <div class="concept-body anim">
+    <p>
+      Antes de tocar código, confirmen que todo lo que dejaron funcionando el lunes sigue en pie.
+      Si algo falla, avísenme ahora, no a mitad del taller.
+    </p>
+    <div class="chk anim">
+      <div class="chk-item">
+        <div class="chk-num">1</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Entrar a la carpeta de su repo</div>
+          <div class="chk-desc"><code>cd</code> hasta su carpeta, y <code>git status</code> debería
+          reconocerla como un repositorio, sin errores.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">2</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Verificar Antigravity</div>
+          <div class="chk-desc"><code>agy</code> debería abrir el CLI directamente.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">3</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Verificar GitHub CLI</div>
+          <div class="chk-desc"><code>gh auth status</code> debería mostrar que siguen autenticados.</div>
+        </div>
+      </div>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>terminal</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">cd poo-seguro-equipo-nombre</span>
+<span class="term-prompt">$</span> <span class="term-out">git status</span>
+<span class="term-prompt">$</span> <span class="term-out">agy</span>
+<span class="term-prompt">$</span> <span class="term-out">gh auth status</span></pre>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; individual</div>
+      <div class="act-t">Corran los 4 comandos de arriba, en ese orden.</div>
+      <div class="act-d">Si algo no responde igual que el lunes, levanten la mano antes de intentar arreglarlo solos.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 01: ELEGIR EL MODELO ECONOMICO ============ -->
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Setup</span>
+  <div class="concept-label anim">Van a hacer muchos prompts hoy</div>
+  <div class="concept-title anim">Elegir el modelo<br><span>económico</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Por qué importa</div>
+      <div class="def-txt">
+        Antigravity puede correr con <strong>distintos modelos de IA</strong> (Gemini, Claude, y
+        otros), y cada uno gasta cuota distinta. Hoy van a pedirle código muchas veces seguidas:
+        conviene dejarlo en el más económico desde ahora, antes del primer prompt.
+      </div>
+      <div class="def-ej">Un modelo más caro no significa mejor resultado para lo que van a pedir hoy: son tareas simples y acotadas.</div>
+    </div>
+    <div class="definicion">
+      <div class="def-k">Gemini 3.5 Flash (Low)</div>
+      <div class="def-txt">
+        El modelo <strong>más optimizado para ahorrar cuota</strong> dentro de Antigravity, pensado
+        justo para tareas cotidianas y repetitivas como las de hoy.
+      </div>
+      <div class="def-ej">Los modelos Pro (Gemini 3.1 Pro) o Claude consumen bastante más cuota y se agota más rápido.</div>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>agy</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">agy</span>
+<span class="term-prompt">&gt;</span> <span class="term-out">/model</span>
+<span class="cmt">  (elijan Gemini 3.5 Flash, variante Low, de la lista)</span>
+<span class="cmt">  &#9492; Model set to Gemini 3.5 Flash (Low)</span></pre>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 3 min &middot; individual</div>
+      <div class="act-t">Abran agy en su repo, corran /model y dejen seleccionado Gemini 3.5 Flash (Low).</div>
+      <div class="act-d">Háganlo antes del primer prompt del bloque siguiente. Si no aparece esa opción exacta, avísenme.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 02: CLASE Y OBJETO ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Concepto + prompt &middot; 10 min</div>
+  <div class="sep-title anim">Clase<br>y <span>objeto</span></div>
+  <p class="sep-desc anim">
+    La distinción más básica de todo el bimestre, ahora corriendo en código real.
+    Vamos a usar Vehiculo, del modelo del Taller Mecánico, como ejemplo guía.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Uno es el molde, el otro es lo real</div>
+  <div class="concept-title anim">¿Qué es una<br><span>clase</span>? ¿Y un objeto?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Clase</div>
+      <div class="def-txt">
+        El <strong>molde</strong>: define qué atributos y qué métodos va a tener cualquier cosa
+        creada a partir de ella. No es una cosa concreta, es la definición.
+      </div>
+      <div class="def-ej">Vehiculo es la clase: dice que todo vehículo tiene patente, año, y puede ingresar y entregar.</div>
+    </div>
+    <div class="definicion">
+      <div class="def-k">Objeto (instancia)</div>
+      <div class="def-txt">
+        Una <strong>realización concreta</strong> de esa clase, con valores propios. Se crea a
+        partir del molde, pero es independiente de cualquier otro objeto de la misma clase.
+      </div>
+      <div class="def-ej">El auto con patente KXPR84 es un objeto de la clase Vehiculo. El de patente JKLM12 es otro objeto distinto, misma clase.</div>
+    </div>
+    <div class="mapeo-row">
+      <div class="mapeo-box">
+        <div class="mapeo-head">Vehiculo</div>
+        <div class="mapeo-sec">
+          <div class="mapeo-line"><span class="vis">-</span> patente : str</div>
+          <div class="mapeo-line"><span class="vis">-</span> anio : int</div>
+          <div class="mapeo-line"><span class="vis">-</span> _en_taller : bool</div>
+          <div class="mapeo-line"><span class="vis">-</span> modelo : Modelo</div>
+        </div>
+        <div class="mapeo-sec">
+          <div class="mapeo-line"><span class="vis">+</span> ingresar()</div>
+          <div class="mapeo-line"><span class="vis">+</span> entregar()</div>
+          <div class="mapeo-line"><span class="vis">+</span> tarifa_hora() : int</div>
+        </div>
+      </div>
+    </div>
+    <p>
+      Esta es exactamente la caja de Vehiculo de su diagrama del Taller Mecánico. Hoy la vamos
+      a construir en código, pieza por pieza, empezando por el molde vacío.
+    </p>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">El primer prompt del día</div>
+  <div class="concept-title anim">Generemos<br>el <span>molde</span></div>
+  <div class="concept-body anim">
+    <p>
+      Todavía sin atributos ni métodos: solo el molde vacío, para ver qué es lo mínimo que
+      necesita una clase en Python.
+    </p>
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Generame en vehiculo.py la clase Vehiculo, vacía por ahora,
+      sin atributos ni métodos todavía. Agrega un comentario explicando que es solo el molde."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; generado por Antigravity</div>
+<pre><span class="cmt"># Vehiculo: por ahora solo el molde, sin atributos ni métodos</span>
+<span class="kw">class</span> <span class="cls">Vehiculo</span>:
+    <span class="kw">pass</span>  <span class="cmt"># pass = "todavía no hay nada adentro"</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>¿Por qué pass?</strong>
+        <p>Python no permite una clase completamente vacía por escrito: <code>pass</code> le dice
+        "no hagas nada, pero esto es válido". En los próximos bloques lo van a reemplazar.</p>
+      </div>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 4 min &middot; individual, siguiendo al profesor</div>
+      <div class="act-t">Ábranle a agy en su repo y pídanle exactamente ese prompt para su propia clase Vehiculo.</div>
+      <div class="act-d">Comparen: ¿el comentario que generó se parece al de arriba? No tiene que ser idéntico, pero sí decir lo mismo.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 03: ATRIBUTOS ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 03</span>
+  <div class="sep-num anim">03 &middot; Concepto + prompt &middot; 10 min</div>
+  <div class="sep-title anim">Atributos</div>
+  <p class="sep-desc anim">
+    El estado que cada objeto guarda. Vamos a sumarle a Vehiculo los que ya tienen
+    dibujados en el diagrama.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Lo que cada objeto "tiene" o "es"</div>
+  <div class="concept-title anim">¿Qué es un<br><span>atributo</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Atributo</div>
+      <div class="def-txt">
+        Un <strong>dato que cada objeto guarda para sí mismo</strong>. En el diagrama aparece
+        como <code>nombre : tipo</code>, dentro de la primera sección de la caja de la clase.
+      </div>
+      <div class="def-ej">patente, anio y _en_taller son atributos de Vehiculo.</div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Tipo en el diagrama</th><th>En Python</th><th>Ejemplo de valor</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">str</td><td>Texto, siempre entre comillas</td><td class="mono">"KXPR84"</td></tr>
+        <tr><td class="mono">int</td><td>Número entero, sin comillas</td><td class="mono">2019</td></tr>
+        <tr><td class="mono">bool</td><td>Verdadero o falso, sin comillas</td><td class="mono">False</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Los tres atributos que le vamos a agregar hoy a Vehiculo: <code>patente : str</code>,
+      <code>anio : int</code>, <code>_en_taller : bool</code>. El cuarto, <code>modelo</code>,
+      es una referencia a otra clase (Modelo) y lo dejamos para cuando veamos relaciones
+      entre clases, más adelante en el bimestre.
+    </p>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Seguimos sobre el mismo archivo</div>
+  <div class="concept-title anim">Agreguemos<br>los <span>atributos</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Agregale a la clase Vehiculo en vehiculo.py los atributos patente
+      (texto), anio (número entero) y _en_taller (verdadero o falso), con su tipo indicado, tal
+      como están en mi diagrama. Todavía sin constructor, solo la declaración."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; generado por Antigravity</div>
+<pre><span class="cmt"># Vehiculo: los atributos del diagrama, con su tipo. Todavía sin constructor.</span>
+<span class="kw">class</span> <span class="cls">Vehiculo</span>:
+    patente: <span class="cls">str</span>
+    anio: <span class="cls">int</span>
+    _en_taller: <span class="cls">bool</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Esto todavía no crea nada</strong>
+        <p>Es una declaración, no una asignación: le dice a quien lea el código qué atributos va
+        a tener un Vehiculo y de qué tipo, pero ningún objeto tiene esos valores todavía. Eso
+        llega en el próximo bloque, con el constructor.</p>
+      </div>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; individual, siguiendo al profesor</div>
+      <div class="act-t">Pídanle a agy ese mismo prompt sobre su propia clase Vehiculo.</div>
+      <div class="act-d">Verifiquen: ¿los tres tipos coinciden con los del diagrama? ¿escribió _en_taller con el guion bajo, tal como está en la caja?</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 04: CONSTRUCTOR ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 04</span>
+  <div class="sep-num anim">04 &middot; Concepto + prompt &middot; 12 min</div>
+  <div class="sep-title anim">Constructor</div>
+  <p class="sep-desc anim">
+    El método que le da valores reales a los atributos que declaramos recién.
+    Con parámetros, y sin ellos.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">De la declaración al valor real</div>
+  <div class="concept-title anim">¿Qué es el<br><span>constructor</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Constructor &middot; __init__</div>
+      <div class="def-txt">
+        Un <strong>método especial que Python ejecuta automáticamente</strong> cada vez que se
+        crea un objeto. Ahí es donde los atributos reciben su valor real por primera vez.
+      </div>
+      <div class="def-ej">Se escribe siempre igual: def __init__(self, ...).</div>
+    </div>
+    <div class="two-col">
+      <div class="col-card good">
+        <div class="col-card-title">Con parámetros</div>
+        <div class="code-block" style="margin:0;">
+<pre><span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio):
+    self.patente = patente
+    self.anio = anio</pre>
+        </div>
+        <p style="margin-top:10px;">El valor lo entrega quien crea el objeto. Es lo más común: cada objeto nace distinto.</p>
+      </div>
+      <div class="col-card good">
+        <div class="col-card-title">Sin parámetros</div>
+        <div class="code-block" style="margin:0;">
+<pre><span class="kw">def</span> <span class="fn">__init__</span>(self):
+    self.valor = <span class="num">0</span></pre>
+        </div>
+        <p style="margin-top:10px;">El valor inicial es siempre el mismo, no depende de nada externo. No hace falta pedirlo.</p>
+      </div>
+    </div>
+    <div class="definicion">
+      <div class="def-k">El caso de _en_taller</div>
+      <div class="def-txt">
+        No todos los atributos de un mismo constructor tienen que ser parámetros. Un vehículo
+        recién ingresado al sistema <strong>siempre empieza fuera del taller</strong>: ese valor
+        no lo entrega nadie, el constructor lo fija directamente.
+      </div>
+      <div class="def-ej">patente y anio son parámetros (cambian de objeto a objeto). _en_taller no: siempre parte en False.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Mezclando los dos casos en la misma clase</div>
+  <div class="concept-title anim">Agreguemos<br>el <span>constructor</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Agregale a Vehiculo un constructor que reciba patente y anio como
+      parámetros y los guarde. El atributo _en_taller no lo recibas como parámetro: fíjalo
+      siempre en False al crear el objeto, porque un vehículo recién registrado nunca parte
+      dentro del taller. Comenta cada línea."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; generado por Antigravity</div>
+<pre><span class="cmt"># Vehiculo: constructor con dos parámetros y un valor fijo</span>
+<span class="kw">class</span> <span class="cls">Vehiculo</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio):
+        self.patente = patente       <span class="cmt"># viene del parámetro</span>
+        self.anio = anio             <span class="cmt"># viene del parámetro</span>
+        self._en_taller = <span class="kw">False</span>  <span class="cmt"># siempre parte así, nadie lo pide</span></pre>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Ya no están las anotaciones de tipo sueltas</strong>
+        <p>Las líneas <code>patente: str</code> del bloque anterior desaparecieron: ahora el
+        tipo se define por el valor real que reciben, dentro del constructor. Es el mismo
+        atributo, solo que ahora sí existe de verdad en cada objeto.</p>
+      </div>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 6 min &middot; individual, siguiendo al profesor</div>
+      <div class="act-t">Pídanle a agy ese mismo prompt sobre su propia clase Vehiculo.</div>
+      <div class="act-d">Verifiquen: ¿cuáles atributos de su diagrama deberían ser parámetros, y cuáles deberían partir con un valor fijo como _en_taller? No todos los diagramas tienen un caso así — revisen el suyo.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 05: MAIN.PY ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 05</span>
+  <div class="sep-num anim">05 &middot; Concepto + prompt &middot; 6 min</div>
+  <div class="sep-title anim">main.py:<br>dónde <span>corren</span> su código</div>
+  <p class="sep-desc anim">
+    Tienen un constructor, pero ninguna forma de comprobar que sirve. Este archivo es
+    exactamente para eso.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Un archivo aparte, con un solo trabajo</div>
+  <div class="concept-title anim">¿Qué es<br><span>main.py</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">main.py</div>
+      <div class="def-txt">
+        El <strong>punto de entrada</strong> de su proyecto: el único archivo donde de verdad se
+        ejecuta algo. <code>vehiculo.py</code> solo define la clase; no hace nada por sí solo.
+      </div>
+      <div class="def-ej">Es el mismo patrón de la sesión pasada: un archivo por clase, y main.py que las une.</div>
+    </div>
+    <p>
+      Por ahora lo van a usar solo para una cosa: crear un Vehiculo y confirmar, imprimiendo
+      en la consola, que el constructor le puso los valores correctos.
+    </p>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">La primera vez que ven su código correr</div>
+  <div class="concept-title anim">Probemos<br>lo que <span>llevamos</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Creame main.py: importa la clase Vehiculo desde vehiculo.py,
+      crea un vehículo con patente 'KXPR84' y año 2019, y usa print() para mostrar su patente,
+      su año, y si está en el taller."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">main.py &middot; generado por Antigravity</div>
+<pre><span class="kw">from</span> vehiculo <span class="kw">import</span> Vehiculo
+
+v1 = <span class="cls">Vehiculo</span>(<span class="str">"KXPR84"</span>, <span class="num">2019</span>)
+<span class="fn">print</span>(v1.patente)
+<span class="fn">print</span>(v1.anio)
+<span class="fn">print</span>(v1._en_taller)</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>salida</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">python main.py</span>
+<span class="term-out">KXPR84
+2019
+False</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Esa consola es la prueba</strong>
+        <p>Si ven esos tres valores, el constructor del bloque anterior funciona de verdad.
+        Si algo sale distinto (por ejemplo, otro orden o un error), revisen primero el
+        constructor antes de tocar main.py.</p>
+      </div>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 4 min &middot; individual, siguiendo al profesor</div>
+      <div class="act-t">Pídanle a agy ese mismo prompt, corran python main.py, y confirmen la salida en su propia consola.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 06: SELF ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 06</span>
+  <div class="sep-num anim">06 &middot; Concepto &middot; 5 min</div>
+  <div class="sep-title anim">self</div>
+  <p class="sep-desc anim">
+    Ya lo escribieron varias veces sin que lo explicáramos. Ahora sí: qué es y por qué está ahí.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Ya está en su código, léanlo con esto en mente</div>
+  <div class="concept-title anim">¿Qué es<br><span>self</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">self</div>
+      <div class="def-txt">
+        La <strong>referencia al objeto específico</strong> sobre el que se está ejecutando el
+        método en ese momento. Python se lo pasa automáticamente a todo método de una clase,
+        como primer parámetro.
+      </div>
+      <div class="def-ej">Nadie lo escribe al llamar al método: v1.patente no necesita que le pasen self, Python lo hace solo.</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; el mismo constructor de hace dos bloques</div>
+<pre><span class="kw">def</span> <span class="fn">__init__</span>(<span class="str">self</span>, patente, anio):
+    <span class="str">self</span>.patente = patente       <span class="cmt"># "el patente DE ESTE objeto"</span>
+    <span class="str">self</span>.anio = anio             <span class="cmt"># "el anio DE ESTE objeto"</span>
+    <span class="str">self</span>._en_taller = <span class="kw">False</span>  <span class="cmt"># "el _en_taller DE ESTE objeto"</span></pre>
+    </div>
+    <p>
+      <code>patente</code> (sin <code>self</code>) es el valor que llega de afuera, por el
+      parámetro. <code>self.patente</code> es el atributo que va a quedar guardado en el objeto,
+      para siempre. Son dos cosas distintas que, por convención, se suelen llamar igual.
+    </p>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>self no es una palabra reservada</strong>
+        <p>Técnicamente podrían llamarlo de otra forma, Python no los obligaría. Pero
+        absolutamente todo el código Python del mundo usa <code>self</code>: cámbienlo y nadie
+        más va a entender su código a primera vista.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 07: METODOS ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 07</span>
+  <div class="sep-num anim">07 &middot; Concepto + prompt &middot; 12 min</div>
+  <div class="sep-title anim">Métodos</div>
+  <p class="sep-desc anim">
+    Lo que un objeto sabe <em>hacer</em>. Con parámetros o sin ellos, con retorno o sin él:
+    cuatro combinaciones, todas ya dibujadas en su diagrama.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Dos ejes independientes, no un solo tipo</div>
+  <div class="concept-title anim">¿Qué es un<br><span>método</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Método</div>
+      <div class="def-txt">
+        Una <strong>función que pertenece a una clase</strong> y que opera sobre
+        <code>self</code>, el objeto sobre el que se llama. En el diagrama aparece en la
+        segunda sección de la caja, siempre con paréntesis: <code>nombre()</code>.
+      </div>
+      <div class="def-ej">ingresar() y entregar() son métodos de Vehiculo. subtotal() lo es de LineaDetalle.</div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th></th><th>Sin parámetros</th><th>Con parámetros</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Sin retorno</strong></td><td class="mono">entregar()</td><td class="mono">agregar_horas(cantidad)</td></tr>
+        <tr><td><strong>Con retorno</strong></td><td class="mono">subtotal()</td><td>combina ambas ideas</td></tr>
+      </tbody>
+    </table>
+    <p>
+      entregar() es de Vehiculo, agregar_horas(cantidad) es de OrdenTrabajo, subtotal() es de
+      LineaDetalle. Ningún método de este diagrama mezcla las cuatro cosas a la vez, pero
+      pueden combinarse: un método puede perfectamente recibir parámetros y además retornar
+      un valor.
+    </p>
+    <div class="definicion">
+      <div class="def-k">Qué pasa con lo que retorna</div>
+      <div class="def-txt">
+        Un método con retorno no imprime nada por sí solo: entrega un valor hacia afuera.
+        Para no perderlo hay que <strong>asignarlo</strong> a una variable, tal como asignaron
+        valores a atributos dentro del constructor.
+      </div>
+      <div class="def-ej">sub = linea.subtotal() guarda el resultado en sub. Sin ese "sub =", el valor se calcula y se pierde.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Sin parámetros, sin retorno: solo cambian el estado</div>
+  <div class="concept-title anim">Métodos<br>sin <span>retorno</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Agregale a Vehiculo en vehiculo.py los métodos ingresar() y
+      entregar(): ninguno recibe parámetros ni retorna nada, solo cambian _en_taller a True o
+      a False según corresponda. Comenta cada línea."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; generado por Antigravity</div>
+<pre><span class="cmt"># Vehiculo: ingresar() y entregar(), sin parámetros ni retorno</span>
+<span class="kw">class</span> <span class="cls">Vehiculo</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio):
+        self.patente = patente
+        self.anio = anio
+        self._en_taller = <span class="kw">False</span>
+
+    <span class="kw">def</span> <span class="fn">ingresar</span>(self):
+        self._en_taller = <span class="kw">True</span>   <span class="cmt"># no recibe nada, no retorna nada</span>
+
+    <span class="kw">def</span> <span class="fn">entregar</span>(self):
+        self._en_taller = <span class="kw">False</span>  <span class="cmt"># solo cambia el estado del objeto</span></pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>salida</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">python main.py</span>
+<span class="term-out">True</span></pre>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 4 min &middot; individual, siguiendo al profesor</div>
+      <div class="act-t">Pídanle a agy ese mismo prompt sobre un método sin retorno de su propia clase principal.</div>
+      <div class="act-d">Llamen al método desde main.py e impriman el atributo que cambió, para comprobar que el estado del objeto se modificó.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Con retorno: el resultado hay que asignarlo</div>
+  <div class="concept-title anim">Métodos<br>con <span>retorno</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Creame un archivo linea_detalle.py con la clase LineaDetalle: un
+      constructor que reciba cantidad y precio_unitario como parámetros, y un método
+      subtotal() sin parámetros que retorne cantidad multiplicado por precio_unitario. Comenta
+      cada línea."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">linea_detalle.py &middot; generado por Antigravity</div>
+<pre><span class="cmt"># LineaDetalle: constructor con parámetros + método con retorno</span>
+<span class="kw">class</span> <span class="cls">LineaDetalle</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, cantidad, precio_unitario):
+        self.cantidad = cantidad
+        self.precio_unitario = precio_unitario
+
+    <span class="kw">def</span> <span class="fn">subtotal</span>(self):
+        <span class="kw">return</span> self.cantidad * self.precio_unitario  <span class="cmt"># retorna el valor, no lo imprime</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-title">main.py &middot; usando el resultado</div>
+<pre><span class="kw">from</span> linea_detalle <span class="kw">import</span> LineaDetalle
+
+linea = <span class="cls">LineaDetalle</span>(<span class="num">3</span>, <span class="num">15000</span>)
+sub = linea.subtotal()   <span class="cmt"># el resultado se asigna a la variable sub</span>
+<span class="fn">print</span>(sub)</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>salida</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">python main.py</span>
+<span class="term-out">45000</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El "sub =" no es opcional</strong>
+        <p>linea.subtotal() por sí solo calcula el valor y lo descarta, no aparece en ninguna
+        parte. sub = linea.subtotal() lo asigna a la variable sub, y recién ahí print(sub) lo
+        muestra. Es la misma idea de asignación que vieron con los atributos en el constructor,
+        aplicada ahora al resultado de un método.</p>
+      </div>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 6 min &middot; individual, siguiendo al profesor</div>
+      <div class="act-t">Pídanle a agy un método con retorno de alguna otra clase de su diagrama.</div>
+      <div class="act-d">En main.py, asignen el resultado a una variable antes de imprimirlo. Prueben también imprimir la llamada directa, sin asignar, y comparen: ¿por qué en ese caso no pueden reutilizar el valor después?</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 08: ENCAPSULACION Y VISIBILIDAD ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 08</span>
+  <div class="sep-num anim">08 &middot; Concepto + prompt &middot; 18 min</div>
+  <div class="sep-title anim">Encapsulación<br>y <span>visibilidad</span></div>
+  <p class="sep-desc anim">
+    La regla que van a aplicar de aquí en adelante, sin excepciones: métodos públicos,
+    variables privadas.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Ese signo que nunca explicamos, hasta ahora</div>
+  <div class="concept-title anim">¿Qué es la<br><span>visibilidad</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Visibilidad &middot; + y -</div>
+      <div class="def-txt">
+        En el diagrama, cada atributo y método lleva un signo antes del nombre: <code>+</code>
+        significa <strong>público</strong> (se puede usar desde afuera de la clase), <code>-</code>
+        significa <strong>privado</strong> (solo la propia clase debería tocarlo).
+      </div>
+      <div class="def-ej">Vuelvan a la caja de Vehiculo del bloque 02: los cuatro atributos tienen "-", los tres métodos tienen "+". No es casualidad.</div>
+    </div>
+    <div class="definicion">
+      <div class="def-k">La regla de este curso: métodos públicos, variables privadas</div>
+      <div class="def-txt">
+        Python en realidad ofrece tres niveles (público, protegido con un guion bajo, privado
+        con doble guion bajo), pero para no complicarse decidiendo caso a caso van a aplicar
+        siempre la misma regla: <strong>todo atributo se declara privado</strong> (doble guion
+        bajo), y <strong>todo lo que necesiten exponer se hace a través de un método público</strong>.
+        Cerrar el dato, abrir el comportamiento.
+      </div>
+      <div class="def-ej">patente, anio y _en_taller pasan a ser __patente, __anio y __en_taller. La única forma de leerlos desde afuera va a ser un método.</div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Nivel</th><th>Sintaxis</th><th>Lo usan en este curso</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Público</strong></td><td class="mono">variable</td><td>Sí, siempre, para los métodos.</td></tr>
+        <tr><td><strong>Protegido</strong></td><td class="mono">_variable</td><td>Más adelante, cuando trabajen con herencia.</td></tr>
+        <tr><td><strong>Privado</strong></td><td class="mono">__variable</td><td>Sí, siempre, para los atributos.</td></tr>
+      </tbody>
+    </table>
+    <p>
+      El mismo criterio ya está en su diagrama: Usuario guarda <code>password_hash</code> privado
+      y expone <code>autenticar()</code> público en vez de dejar leer la contraseña directo.
+      LineaDetalle hace lo mismo con <code>subtotal()</code>. Es un patrón que se repite.
+    </p>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Cerrando el dato, abriendo el comportamiento</div>
+  <div class="concept-title anim">Hagamos privados<br>los <span>atributos</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Modifica vehiculo.py: hacé privados los atributos patente, anio
+      y _en_taller, con doble guion bajo. Agregale a Vehiculo tres métodos públicos para
+      leerlos: obtener_patente(), obtener_anio() y esta_en_taller(), sin parámetros, que cada
+      uno retorne el valor privado correspondiente. Comenta cada línea."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; generado por Antigravity</div>
+<pre><span class="cmt"># Vehiculo: atributos privados, métodos públicos para leerlos</span>
+<span class="kw">class</span> <span class="cls">Vehiculo</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio):
+        self.__patente = patente     <span class="cmt"># privado: doble guion bajo</span>
+        self.__anio = anio           <span class="cmt"># privado: doble guion bajo</span>
+        self.__en_taller = <span class="kw">False</span>  <span class="cmt"># privado: doble guion bajo</span>
+
+    <span class="kw">def</span> <span class="fn">ingresar</span>(self):
+        self.__en_taller = <span class="kw">True</span>
+
+    <span class="kw">def</span> <span class="fn">entregar</span>(self):
+        self.__en_taller = <span class="kw">False</span>
+
+    <span class="kw">def</span> <span class="fn">obtener_patente</span>(self):
+        <span class="kw">return</span> self.__patente     <span class="cmt"># público: única forma de leerlo desde afuera</span>
+
+    <span class="kw">def</span> <span class="fn">obtener_anio</span>(self):
+        <span class="kw">return</span> self.__anio
+
+    <span class="kw">def</span> <span class="fn">esta_en_taller</span>(self):
+        <span class="kw">return</span> self.__en_taller</pre>
+    </div>
+    <div class="code-block">
+      <div class="code-title">main.py &middot; ya no se puede acceder directo</div>
+<pre><span class="kw">from</span> vehiculo <span class="kw">import</span> Vehiculo
+
+v1 = <span class="cls">Vehiculo</span>(<span class="str">"KXPR84"</span>, <span class="num">2019</span>)
+v1.ingresar()
+<span class="fn">print</span>(v1.obtener_patente())
+<span class="fn">print</span>(v1.obtener_anio())
+<span class="fn">print</span>(v1.esta_en_taller())</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>salida</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">python main.py</span>
+<span class="term-out">KXPR84
+2019
+True</span></pre>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>v1.patente ya no existe</strong>
+        <p>En el bloque 05 escribieron <code>print(v1.patente)</code> directo. Con el atributo
+        privado eso ya no funciona: hay que pasar por <code>v1.obtener_patente()</code>. Este
+        método que solo retorna un valor se llama comúnmente <strong>getter</strong>, y es
+        exactamente el "método con retorno" que vieron en el bloque 07.</p>
+      </div>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 4 min &middot; individual, siguiendo al profesor</div>
+      <div class="act-t">Pídanle a agy ese mismo prompt sobre los atributos de su propia clase principal.</div>
+      <div class="act-d">Verifiquen en main.py: si intentan acceder al atributo directo (sin guion bajo doble en el nombre), ¿qué error da Python? Después corrijan usando el método público correspondiente.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">La forma más "pythónica" de hacer lo mismo</div>
+  <div class="concept-title anim">property:<br>getters <span>sin paréntesis</span></div>
+  <div class="concept-body anim">
+    <p>
+      <code>obtener_patente()</code> funciona, pero no es el estilo más usado en Python. El
+      decorador <code>@property</code> deja llamar un método <strong>como si fuera un
+      atributo</strong>, sin paréntesis, mientras por dentro sigue siendo un método.
+    </p>
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Modifica vehiculo.py: reemplaza obtener_patente(),
+      obtener_anio() y esta_en_taller() por properties usando @property, llamadas patente,
+      anio y en_taller, que retornen los atributos privados correspondientes. Comenta qué hace
+      @property en cada una."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; generado por Antigravity</div>
+<pre><span class="cmt"># Vehiculo: los mismos getters, ahora como properties</span>
+<span class="kw">class</span> <span class="cls">Vehiculo</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio):
+        self.__patente = patente
+        self.__anio = anio
+        self.__en_taller = <span class="kw">False</span>
+
+    <span class="kw">def</span> <span class="fn">ingresar</span>(self):
+        self.__en_taller = <span class="kw">True</span>
+
+    <span class="kw">def</span> <span class="fn">entregar</span>(self):
+        self.__en_taller = <span class="kw">False</span>
+
+    <span class="cmt">@property</span>  <span class="cmt"># convierte el método de abajo en un atributo de solo lectura</span>
+    <span class="kw">def</span> <span class="fn">patente</span>(self):
+        <span class="kw">return</span> self.__patente
+
+    <span class="cmt">@property</span>
+    <span class="kw">def</span> <span class="fn">anio</span>(self):
+        <span class="kw">return</span> self.__anio
+
+    <span class="cmt">@property</span>
+    <span class="kw">def</span> <span class="fn">en_taller</span>(self):
+        <span class="kw">return</span> self.__en_taller</pre>
+    </div>
+    <div class="code-block">
+      <div class="code-title">main.py &middot; se llama sin paréntesis</div>
+<pre>v1 = <span class="cls">Vehiculo</span>(<span class="str">"KXPR84"</span>, <span class="num">2019</span>)
+v1.ingresar()
+<span class="fn">print</span>(v1.patente)     <span class="cmt"># sin paréntesis: parece atributo, es un método</span>
+<span class="fn">print</span>(v1.anio)
+<span class="fn">print</span>(v1.en_taller)</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>salida</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">python main.py</span>
+<span class="term-out">KXPR84
+2019
+True</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Se parece al bloque 05, pero no es lo mismo</strong>
+        <p><code>v1.patente</code> se ve igual que en el bloque 05, antes de hacerlo privado. La
+        diferencia: ahora <code>v1.patente = "OTRA"</code> da error, porque esta property no
+        tiene un <code>@patente.setter</code> definido. Sin ese setter, es de solo lectura por
+        diseño, no por accidente.</p>
+      </div>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 3 min &middot; individual, siguiendo al profesor</div>
+      <div class="act-t">Conviertan los getters de su propia clase a properties con @property.</div>
+      <div class="act-d">Prueben en main.py leer el valor sin paréntesis, y después intentar sobreescribirlo con "=". Confirmen que da error sin un setter.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 09: INSTANCIACION Y ESTADO INDEPENDIENTE ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 09</span>
+  <div class="sep-num anim">09 &middot; Concepto + prompt &middot; 10 min</div>
+  <div class="sep-title anim">Instanciación<br>y estado <span>independiente</span></div>
+  <p class="sep-desc anim">
+    Hasta ahora solo crearon un vehículo a la vez. ¿Qué pasa cuando hay dos al mismo tiempo?
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Mismo molde, memoria separada</div>
+  <div class="concept-title anim">¿Qué es<br><span>instanciar</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Instanciar</div>
+      <div class="def-txt">
+        Cada vez que escriben <code>Vehiculo(...)</code>, Python crea un
+        <strong>objeto nuevo, con su propia copia de los atributos</strong>, separada de
+        cualquier otro objeto de la misma clase. A eso se le llama instanciar.
+      </div>
+      <div class="def-ej">v1 = Vehiculo("KXPR84", 2019) y v2 = Vehiculo("JKLM12", 2016) son dos instancias distintas de la misma clase.</div>
+    </div>
+    <p>
+      La clase Vehiculo (el molde, los métodos) es una sola y se comparte. El
+      <strong>estado</strong> (los valores de <code>__patente</code>, <code>__anio</code>,
+      <code>__en_taller</code>) no se comparte nunca: cada objeto tiene el suyo, en un lugar
+      distinto de la memoria.
+    </p>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Por eso funcionan las properties del bloque 08</strong>
+        <p>Cuando leen <code>v1.patente</code>, self dentro de esa property es v1, no v2. Es la
+        misma idea que vieron con self: el método sabe sobre qué objeto específico está
+        trabajando, aunque se llame sin paréntesis.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Dos objetos, un solo cambio de estado</div>
+  <div class="concept-title anim">Creemos<br>dos <span>vehículos</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Modifica main.py: creá dos vehículos, v1 con patente 'KXPR84' y
+      año 2019, y v2 con patente 'JKLM12' y año 2016. Llamá a ingresar() solo en v1. Después
+      imprimí, para cada uno, su patente y si está en el taller, usando las properties."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">main.py &middot; generado por Antigravity</div>
+<pre><span class="kw">from</span> vehiculo <span class="kw">import</span> Vehiculo
+
+v1 = <span class="cls">Vehiculo</span>(<span class="str">"KXPR84"</span>, <span class="num">2019</span>)
+v2 = <span class="cls">Vehiculo</span>(<span class="str">"JKLM12"</span>, <span class="num">2016</span>)
+
+v1.ingresar()   <span class="cmt"># solo v1 entra al taller</span>
+
+<span class="fn">print</span>(v1.patente, v1.en_taller)
+<span class="fn">print</span>(v2.patente, v2.en_taller)</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>salida</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">python main.py</span>
+<span class="term-out">KXPR84 True
+JKLM12 False</span></pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>v2 nunca se enteró de lo que le pasó a v1</strong>
+        <p>Llamaron <code>ingresar()</code> una sola vez, sobre v1. v2 sigue con
+        <code>__en_taller</code> en False, tal como salió del constructor. Si fueran la misma
+        variable compartida, ambos mostrarían True. No lo son: cada objeto vive en su propia
+        memoria.</p>
+      </div>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; individual, siguiendo al profesor</div>
+      <div class="act-t">Creen dos instancias de su propia clase principal en main.py, con valores distintos.</div>
+      <div class="act-d">Cambien el estado de una sola instancia con un método sin retorno, e impriman ambas usando sus properties o getters. Confirmen en consola que la otra instancia no cambió.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 10: CHECKLIST CRITERIO 2.1.1 ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 10</span>
+  <div class="sep-num anim">10 &middot; Concepto &middot; 10 min</div>
+  <div class="sep-title anim">La checklist<br>de <span>verificación</span></div>
+  <p class="sep-desc anim">
+    Antes de programar el resto de su modelo en el taller, un repaso: ¿su código dice
+    exactamente lo mismo que su diagrama?
+  </p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Criterio 2.1.1</span>
+  <div class="concept-label anim">Verifica diagrama de clases con solución propuesta</div>
+  <div class="concept-title anim">Cinco puntos,<br>cada <span>clase</span></div>
+  <div class="concept-body anim">
+    <p>
+      Antes de seguir agregando clases en el taller, cada quien revisa que su código diga
+      exactamente lo mismo que su diagrama. Esta checklist se repite cada vez que terminan
+      una clase, no solo hoy.
+    </p>
+    <div class="chk">
+      <div class="chk-item">
+        <div class="chk-num">1</div>
+        <div class="chk-cont">
+          <div class="chk-tit">El nombre de la clase coincide</div>
+          <div class="chk-desc">Tal cual como está escrito en el diagrama, sin cambiar mayúsculas ni abreviarlo.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">2</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Cada atributo del diagrama está en el constructor</div>
+          <div class="chk-desc">Ninguno falta, y no sobra ninguno que el diagrama no tenía.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">3</div>
+        <div class="chk-cont">
+          <div class="chk-tit">La visibilidad se respeta</div>
+          <div class="chk-desc">Los atributos con <code>-</code> en el diagrama son privados (doble guion bajo), con un método público o property para leerlos. Ninguno se lee ni se cambia directo desde afuera.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">4</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Cada método del diagrama existe en el código</div>
+          <div class="chk-desc">Con el mismo nombre. Si todavía no puede completarse, se deja pendiente, no se inventa otro.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">5</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Se probó con al menos dos instancias</div>
+          <div class="chk-desc">Creando dos objetos con datos distintos y viendo, en consola, que cada uno guarda lo suyo por separado.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Vehiculo ya debería cumplir los cinco</strong>
+        <p>Si siguieron los bloques 02 al 09 tal cual, vehiculo.py ya pasa esta checklist
+        completa. Es un buen momento para confirmarlo antes de aplicarla a una clase que
+        todavía no programaron.</p>
+      </div>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 10 min &middot; individual, con apoyo del profesor</div>
+      <div class="act-t">Revisen vehiculo.py completo contra los cinco puntos, uno por uno, marcando cada uno.</div>
+      <div class="act-d">Guarden esta misma checklist a mano: la van a volver a usar en el taller final, con cada clase nueva de su propio modelo.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 11: TALLER ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-practica">Bloque 11</span>
+  <div class="sep-num anim">11 &middot; Práctica &middot; 40 min</div>
+  <div class="sep-title anim">Taller: de su<br>diagrama a su <span>código</span></div>
+  <p class="sep-desc anim">
+    Todo lo que hicieron hoy con Vehiculo, ahora con su propio modelo de negocio. En parejas,
+    con Antigravity, y con la checklist a mano.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Taller</span>
+  <div class="concept-label anim">En parejas &middot; 40 min &middot; con asesoría</div>
+  <div class="concept-title anim">Programen<br>su <span>modelo</span></div>
+  <div class="concept-body anim">
+    <div class="chk">
+      <div class="chk-item">
+        <div class="chk-num">1</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Elijan 2 o 3 clases de su propio diagrama</div>
+          <div class="chk-desc">No Taller Mecánico: el negocio que diseñaron ustedes. Empiecen por la más simple.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">2</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Para cada clase, repitan la secuencia de hoy</div>
+          <div class="chk-desc">Molde vacío &rarr; atributos con tipo &rarr; constructor &rarr; atributos privados con properties o métodos públicos &rarr; métodos del diagrama, con o sin retorno.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">3</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Prueben cada clase en main.py con dos instancias</div>
+          <div class="chk-desc">Datos distintos, print() de sus properties o getters, confirmando que cada objeto guarda lo suyo por separado.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">4</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Pasen cada clase por la checklist del criterio 2.1.1</div>
+          <div class="chk-desc">Los cinco puntos del bloque 10, uno por uno, antes de dar la clase por terminada.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">5</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Llámenme si un error no lo entienden</div>
+          <div class="chk-desc">Es mejor preguntar que adivinar, o que dejar que agy los resuelva sin entenderlos.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Prompts cortos, igual que toda la clase</strong>
+        <p>Sigan el mismo patrón de hoy: le piden un paso a la vez a agy, leen el código antes
+        de seguir, y lo verifican contra su diagrama. No le pidan una clase completa de una
+        sola vez: se pierde el "entender bastante".</p>
+      </div>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>No hace falta terminar todo el modelo hoy</strong>
+        <p>La herencia y las relaciones entre clases (como modelo en Vehiculo) se ven más
+        adelante en el bimestre. Por ahora cada clase se programa por separado, aunque en el
+        diagrama tenga una relación con otra.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ CIERRE ============ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen de la sesión</div>
+  <div class="sep-title anim">Lo que te<br><span>llevas</span> hoy</div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">Clase y objeto</div>
+      <div class="resumen-desc">Vehiculo como molde, con sus atributos tipados tal como en el diagrama</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Constructor y self</div>
+      <div class="resumen-desc">Con parámetros, con valores fijos, y qué es self dentro de cada método</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Métodos con y sin retorno</div>
+      <div class="resumen-desc">Y por qué un resultado hay que asignarlo para no perderlo</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Encapsulación real</div>
+      <div class="resumen-desc">Atributos privados, doble guion bajo, y properties para leerlos sin exponerlos</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Instanciación</div>
+      <div class="resumen-desc">Dos objetos, misma clase, estado completamente independiente</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Checklist del criterio 2.1.1</div>
+      <div class="resumen-desc">Aplicada a Vehiculo hoy, lista para usarse con su propio modelo</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Próxima clase (lunes 31/08 &middot; 18:30-20:30 &middot; Laboratorio A408)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,.6); line-height:1.6;">
+      Herencia: Auto, Moto y Camion heredan de Vehiculo, sobrescriben tarifa_hora(), y ven qué
+      significa "es un" en código, no solo en el diagrama.
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const progress = document.getElementById('progress');
+  let current = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.1 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
