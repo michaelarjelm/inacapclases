@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UA2 Sesion 8 - Duck typing, ABC y excepciones</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --red:#E31E24; --blue:#C0392B; --green:#4A4A4A; --orange:#8E1A1F;
+    --dark:#1A1A1A; --border:#E0E0E0; --text:#1A1A1A; --muted:#666;
+  }
+
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Barlow', sans-serif; background:#F0F0F0; color:var(--text);
+    scroll-snap-type:y mandatory; overflow-y:scroll; height:100vh;
+  }
+  .slide {
+    min-height:100vh; scroll-snap-align:start; scroll-snap-stop:always;
+    display:flex; flex-direction:column; position:relative;
+  }
+
+  /* PORTADA */
+  .slide-cover {
+    background:linear-gradient(135deg,#1A1A1A 0%,#2C2C2C 100%); color:#fff;
+    justify-content:center; padding:80px; border-bottom:6px solid var(--red);
+  }
+  .cover-eyebrow {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:24px;
+  }
+  .cover-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:76px; font-weight:900;
+    text-transform:uppercase; line-height:.92; letter-spacing:-.01em; margin-bottom:32px;
+  }
+  .cover-title span { color:var(--red); }
+  .cover-desc { font-size:22px; color:rgba(255,255,255,.5); max-width:660px; line-height:1.65; margin-bottom:48px; }
+  .cover-chips { display:flex; flex-wrap:wrap; gap:12px; }
+  .cover-chip {
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    color:rgba(255,255,255,.7); font-size:15px; font-weight:600; padding:8px 16px; border-radius:20px;
+  }
+  .cover-chip span { color:#fff; }
+
+  /* SEPARADOR */
+  .slide-separator {
+    background:var(--dark); color:#fff; justify-content:center; padding:80px; border-bottom:6px solid var(--red);
+  }
+  .slide-separator.sep-green  { border-color:var(--green); }
+  .slide-separator.sep-orange { border-color:var(--orange); }
+  .slide-separator.sep-blue   { border-color:var(--blue); }
+  .sep-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--red); margin-bottom:16px;
+  }
+  .sep-green .sep-num  { color:#AFAFAF; }
+  .sep-orange .sep-num { color:#D98A8E; }
+  .sep-blue .sep-num   { color:#E08B80; }
+  .sep-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:68px; font-weight:900;
+    text-transform:uppercase; line-height:.92; letter-spacing:-.01em; margin-bottom:24px;
+  }
+  .sep-title span { color:var(--red); }
+  .cover-title span, .sep-title span, .concept-title span { color:var(--red)!important; }
+  .sep-desc { font-size:22px; color:rgba(255,255,255,.45); max-width:630px; line-height:1.65; }
+
+  /* CONCEPTO */
+  .slide-concept { background:#fff; padding:56px 80px; border-bottom:3px solid var(--border); justify-content:center; }
+  .slide-concept.blue-accent   { border-top:6px solid var(--blue); }
+  .slide-concept.green-accent  { border-top:6px solid var(--green); }
+  .slide-concept.orange-accent { border-top:6px solid var(--orange); }
+  .slide-concept.red-accent    { border-top:6px solid var(--red); }
+  .concept-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:12px;
+  }
+  .concept-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:48px; font-weight:900;
+    text-transform:uppercase; line-height:.95; letter-spacing:-.01em; color:var(--dark); margin-bottom:24px;
+  }
+  .concept-body { max-width:950px; }
+  .concept-body p { font-size:20px; line-height:1.7; color:#333; margin-bottom:14px; }
+  .concept-body p:last-child { margin-bottom:0; }
+  .concept-body strong { color:var(--dark); }
+
+  /* DEFINICION */
+  .definicion {
+    background:#FFF6F6; border:2px solid #F3C9CB; border-left:6px solid var(--red);
+    border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px;
+  }
+  .def-k {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--red); margin-bottom:8px;
+  }
+  .def-txt { font-size:22px; line-height:1.55; color:var(--dark); font-weight:500; }
+  .def-txt strong { font-weight:800; }
+  .def-ej { font-size:18px; line-height:1.55; color:#666; margin-top:10px; font-style:italic; }
+
+  /* CALLOUTS */
+  .callout { border-radius:6px; padding:16px 20px; margin:14px 0; max-width:950px; display:flex; gap:14px; align-items:flex-start; }
+  .callout-icon { font-size:19px; flex-shrink:0; }
+  .callout-content { flex:1; }
+  .callout-content > strong { display:block; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+  .callout-content p { font-size:17px; line-height:1.55; margin:0; }
+  .callout-important { background:#FFF1F2; border:1px solid #FECDD3; }
+  .callout-important strong { color:var(--red); }
+  .callout-important p { color:#881337; }
+  .callout-tip { background:#F2F2F2; border:1px solid #DADADA; }
+  .callout-tip strong { color:var(--green); }
+  .callout-tip p { color:#333; }
+  .callout-info { background:#FBEEEC; border:1px solid #ECCFCB; }
+  .callout-info strong { color:var(--blue); }
+  .callout-info p { color:#7A1E16; }
+  .callout-warn { background:#F7EFEF; border:1px solid #E2CACA; }
+  .callout-warn strong { color:var(--orange); }
+  .callout-warn p { color:#5A1418; }
+
+  /* INDICE */
+  .index-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:30px; max-width:780px; }
+  .index-item { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:6px; padding:16px 18px; }
+  .index-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:30px; font-weight:900; color:var(--red); line-height:1; margin-bottom:6px;
+  }
+  .index-name { font-size:16px; font-weight:600; color:#fff; line-height:1.4; }
+  .index-type { font-size:12px; color:rgba(255,255,255,.3); margin-top:4px; text-transform:uppercase; letter-spacing:.06em; }
+
+  /* BADGE */
+  .slide-badge {
+    position:absolute; top:24px; right:32px; font-family:'Barlow Condensed',sans-serif;
+    font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; padding:5px 12px; border-radius:20px;
+  }
+  .badge-concepto { background:#FEF2F2; color:var(--red); border:1px solid #FECACA; }
+  .badge-pasos    { background:#F2F2F2; color:var(--green); border:1px solid #DADADA; }
+  .badge-practica { background:#F7E3E3; color:#8E1A1F; border:1px solid #E2CACA; }
+  .badge-cierre   { background:rgba(227,30,36,.10); color:var(--red); border:1px solid rgba(227,30,36,.3); }
+  .badge-prompt   { background:#1A1A1A; color:#FF8A80; border:1px solid #333; }
+
+  /* RESUMEN */
+  .resumen-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:26px; max-width:900px; }
+  .resumen-item { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:6px; padding:15px 18px; }
+  .resumen-cmd { font-size:16px; color:#fff; margin-bottom:5px; font-weight:700; }
+  .resumen-desc { font-size:15px; color:rgba(255,255,255,.4); line-height:1.4; }
+
+  /* TWO COL */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:22px; max-width:950px; margin-top:16px; }
+  .col-card { background:#F8F8F8; border:1px solid #E0E0E0; border-radius:8px; padding:18px 22px; }
+  .col-card.bad  { border-left:4px solid var(--red); }
+  .col-card.good { border-left:4px solid var(--green); }
+  .col-card-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:21px; font-weight:900; text-transform:uppercase;
+    color:var(--dark); margin-bottom:10px;
+  }
+  .col-card ul { margin-left:18px; }
+  .col-card li { font-size:17px; line-height:1.65; color:#444; margin-bottom:4px; }
+  .col-card p { font-size:17px; line-height:1.6; color:#444; }
+
+  /* TABLA */
+  .tbl { width:100%; max-width:950px; border-collapse:collapse; margin-top:14px; font-size:17px; }
+  .tbl th {
+    background:var(--dark); color:#fff; font-family:'Barlow Condensed',sans-serif; font-size:13px;
+    font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:10px 16px; text-align:left;
+  }
+  .tbl td { padding:11px 16px; border-bottom:1px solid #E0E0E0; vertical-align:top; line-height:1.45; }
+  .tbl tr:last-child td { border-bottom:none; }
+  .tbl tr:nth-child(even) td { background:#F8F8F8; }
+  .tbl .mono { font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--blue); font-weight:600; }
+
+  /* CODE BLOCK */
+  .code-block { background:#1A1A1A; border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px; overflow-x:auto; }
+  .code-block pre { font-family:'JetBrains Mono',monospace; font-size:15px; color:#EDEDED; line-height:1.75; }
+  .code-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:rgba(255,255,255,.35); margin-bottom:12px;
+  }
+  .kw{color:#FF8A80;font-weight:700} .cls{color:#FFD2CC;font-weight:700} .str{color:#FFCDD2}
+  .cmt{color:#6E6E6E;font-style:italic} .fn{color:#FFAB91} .num{color:#F5B7B1}
+
+  /* TERMINAL */
+  .terminal { background:#0D0D0D; border-radius:8px; padding:18px 24px; margin:14px 0; max-width:950px; overflow-x:auto; border:1px solid #2A2A2A; }
+  .term-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:#6E6E6E; margin-bottom:10px; display:flex; align-items:center; gap:8px;
+  }
+  .term-dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .terminal pre { font-family:'JetBrains Mono',monospace; font-size:14.5px; line-height:1.85; }
+  .term-prompt { color:#4ADE80; }
+  .term-out { color:#D4D4D4; }
+  .term-err { color:#F87171; }
+  .term-file { color:#7DD3FC; }
+
+  /* JERARQUIA EXCEPCIONES */
+  .exc-tree { max-width:950px; margin:16px 0; }
+  .exc-row { display:flex; align-items:center; gap:10px; padding:7px 0; font-family:'JetBrains Mono',monospace; font-size:15px; }
+  .exc-row.l0 { padding-left:0; font-weight:700; color:var(--dark); }
+  .exc-row.l1 { padding-left:36px; color:#333; }
+  .exc-branch { color:var(--red); font-weight:700; }
+  .exc-tag { font-family:'Barlow',sans-serif; font-size:12.5px; color:#888; margin-left:10px; font-style:italic; }
+
+  /* PROMPT A ANTIGRAVITY */
+  .prompt-box { background:#1A1A1A; border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px; border-left:4px solid var(--red); }
+  .prompt-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--red); margin-bottom:10px; display:flex; align-items:center; gap:8px;
+  }
+  .prompt-label .dot { width:8px; height:8px; border-radius:50%; background:var(--red); display:inline-block; }
+  .prompt-text { font-family:'JetBrains Mono',monospace; font-size:16px; color:#fff; line-height:1.65; }
+
+  /* ACTIVIDAD */
+  .actividad { background:#1A1A1A; border-radius:8px; padding:22px 26px; margin:16px 0; max-width:950px; }
+  .act-k {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px;
+  }
+  .act-t { font-size:22px; line-height:1.5; color:#fff; font-weight:600; }
+  .act-d { font-size:17px; line-height:1.55; color:rgba(255,255,255,.55); margin-top:8px; }
+  .act-list { margin-top:12px; }
+  .act-li { font-size:18px; color:rgba(255,255,255,.85); line-height:1.7; padding-left:22px; position:relative; }
+  .act-li::before { content:"\2192"; position:absolute; left:0; color:var(--red); font-weight:700; }
+
+  /* CHECKLIST */
+  .chk { max-width:950px; margin-top:14px; }
+  .chk-item {
+    display:flex; gap:18px; align-items:flex-start; background:#F8F8F8; border:1px solid #E0E0E0;
+    border-left:4px solid var(--red); border-radius:8px; padding:15px 20px; margin-bottom:11px;
+  }
+  .chk-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:30px; font-weight:900; color:var(--red);
+    line-height:1; flex-shrink:0; width:36px;
+  }
+  .chk-cont { flex:1; }
+  .chk-tit { font-size:19px; font-weight:700; color:var(--dark); margin-bottom:3px; }
+  .chk-desc { font-size:17px; color:#555; line-height:1.5; }
+
+  code { font-family:'JetBrains Mono',monospace; font-size:14px; background:#EBEBEB; padding:2px 7px; border-radius:3px; color:#C0392B; }
+
+  #progress {
+    position:fixed; top:0; left:0; height:3px; background:var(--red); width:0%; z-index:9999;
+    transition:width .35s cubic-bezier(.16,1,.3,1); pointer-events:none;
+  }
+  .anim { opacity:0; transform:translateY(22px); transition:opacity .55s cubic-bezier(.16,1,.3,1), transform .55s cubic-bezier(.16,1,.3,1); }
+  .slide.visible .anim { opacity:1; transform:none; }
+  .slide.visible .anim:nth-child(1){transition-delay:0ms} .slide.visible .anim:nth-child(2){transition-delay:100ms}
+  .slide.visible .anim:nth-child(3){transition-delay:210ms} .slide.visible .anim:nth-child(4){transition-delay:330ms}
+  .slide.visible .anim:nth-child(5){transition-delay:450ms} .slide.visible .anim:nth-child(6){transition-delay:560ms}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- PORTADA -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Programación Orientada a Objeto Seguro &middot; TI3V21 &middot; Unidad 2 &middot; Sesión 8</div>
+  <div class="cover-title anim">Duck typing, ABC<br>y <span>excepciones</span></div>
+  <p class="cover-desc anim">
+    Hasta ayer confiaban en que nadie iba a usar mal sus clases. Hoy dejan de confiar
+    y hacen que Python mismo lo impida: instancias que no deberían existir, errores
+    que no deberían tumbar el programa, y objetos de clases distintas que igual se
+    entienden entre sí sin heredar nada.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-2B-F1</span></span>
+    <span class="cover-chip">Martes 01 de septiembre de 2026</span>
+    <span class="cover-chip">18:30 &ndash; 21:10 &middot; 160 min</span>
+    <span class="cover-chip">Laboratorio <span>A403</span></span>
+  </div>
+</div>
+
+
+<!-- OBJETIVOS -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Objetivos</span>
+  <div class="sep-num anim">&iquest;Qué van a lograr hoy?</div>
+  <div class="sep-title anim">Objetivos<br>de la <span>sesión</span></div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">Reconocer duck typing</div>
+      <div class="resumen-desc">Polimorfismo entre clases que no comparten ninguna herencia</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Prohibir instanciar una clase con ABC</div>
+      <div class="resumen-desc">@abstractmethod hace que Python rechace crear el objeto, no solo avisar tarde</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Leer un traceback</div>
+      <div class="resumen-desc">De abajo hacia arriba, no de arriba hacia abajo</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Envolver código riesgoso</div>
+      <div class="resumen-desc">try / except / finally, sin dejar que el programa se caiga</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Reconocer la jerarquía de excepciones</div>
+      <div class="resumen-desc">Casi todas heredan de Exception, igual que su propio modelo hereda de una clase padre</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Crear su propia excepción de negocio</div>
+      <div class="resumen-desc">Requisito 5: dos reglas que impidan una operación</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Elegir la herramienta correcta</div>
+      <div class="resumen-desc">Herencia, duck typing o ABC no compiten entre sí: cada una resuelve un problema distinto</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Rama y push, ya como rutina</div>
+      <div class="resumen-desc">Segunda vez que cierran una sesión guardando y subiendo desarrollo a GitHub</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- AGENDA -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">&iquest;Qué vemos hoy?</div>
+  <div class="sep-title anim">Contenido<br>de la <span>sesión</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">00</div>
+      <div class="index-name">Traer su rama desarrollo desde GitHub</div>
+      <div class="index-type">Setup &middot; 8 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Duck typing</div>
+      <div class="index-type">Concepto &middot; 14 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Clases abstractas con ABC</div>
+      <div class="index-type">Concepto + prompt &middot; 20 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Traceback: leer un error sin manejar</div>
+      <div class="index-type">Concepto &middot; 10 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">try / except</div>
+      <div class="index-type">Concepto &middot; 18 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">finally y varios except</div>
+      <div class="index-type">Concepto &middot; 14 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">06</div>
+      <div class="index-name">La jerarquía de excepciones</div>
+      <div class="index-type">Concepto &middot; 12 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">07</div>
+      <div class="index-name">Excepciones propias del negocio</div>
+      <div class="index-type">Concepto + prompt &middot; 20 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">08</div>
+      <div class="index-name">Taller: aseguren su negocio</div>
+      <div class="index-type">Práctica &middot; 35 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">09</div>
+      <div class="index-name">Antes de irse: commit y push de su rama</div>
+      <div class="index-type">Concepto + prompt &middot; 6 min</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 00: SETUP ============ -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Antes de empezar</span>
+  <div class="concept-label anim">3 min</div>
+  <div class="concept-title anim">Sigan en la<br>misma <span>rama</span></div>
+  <div class="concept-body anim">
+    <p>
+      Ayer guardaron y subieron <code>desarrollo</code> a GitHub, sin mezclarla a
+      <code>master</code>. Hoy no crean una rama nueva: siguen en esa misma, para que lo de
+      hoy se sume a lo de ayer sin perderlo. <code>master</code> se queda tal como estaba
+      hasta que, más adelante, el trabajo esté maduro para mezclarse.
+    </p>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El hábito importa, no solo el resultado de hoy</strong>
+        <p>Antes de seguir construyendo, siempre se parte trayendo lo más reciente de la
+        rama en la que están trabajando -- si alguien más del equipo (o ustedes mismos,
+        desde otro computador) subió algo, hay que tenerlo primero.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Antes de empezar</span>
+  <div class="concept-label anim">5 min</div>
+  <div class="concept-title anim">Traigan su<br>rama <span>desarrollo</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le piden a agy</div>
+      <div class="prompt-text">"Si ya tengo el repo en este computador, andá a la rama
+      desarrollo y traé los cambios con git pull. Si es un computador distinto o no tengo el
+      repo, cloná el mío (o el del profesor si todavía no tengo uno propio) y cambiate a la
+      rama desarrollo que ya existe en GitHub."</div>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>lo que agy corrió por ustedes</div>
+      <pre><span class="cmt"># si ya tienen el repo en este compu</span>
+<span class="term-prompt">$</span> <span class="term-out">git checkout desarrollo</span>
+<span class="term-prompt">$</span> <span class="term-out">git pull origin desarrollo</span>
+
+<span class="cmt"># si es otro compu, o no tienen repo</span>
+<span class="term-prompt">$</span> <span class="term-out">git clone https://github.com/su-usuario/poo-seguro-equipo-nombre.git</span>
+<span class="term-prompt">$</span> <span class="term-out">git checkout desarrollo</span>
+<span class="cmt">  (git reconoce que existe en GitHub y la sigue automáticamente)</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Es la misma rama de ayer, no una nueva</strong>
+        <p>Nada de <code>git checkout -b</code> hoy: esa opción crea una rama nueva, y
+        <code>desarrollo</code> ya existe en GitHub desde ayer. Solo se cambian a ella
+        (<code>checkout</code> a secas) para seguir sumando commits en el mismo lugar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Antes de empezar</span>
+  <div class="concept-label anim">2 min</div>
+  <div class="concept-title anim">Verifiquen que<br>sigue <span>funcionando</span></div>
+  <div class="concept-body anim">
+    <p>
+      Ya en <code>desarrollo</code>, confirmen que les trajo todo lo de ayer: cuatro
+      archivos de clases, y <code>patente</code>/<code>en_taller</code> como property.
+    </p>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>terminal</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">ls</span>
+<span class="term-out">vehiculo.py  auto.py  moto.py  camion.py  main.py</span>
+<span class="term-prompt">$</span> <span class="term-out">python3 main.py</span>
+<span class="cmt">  (debería imprimir la tarifa de los 3 vehículos, igual que ayer)</span>
+<span class="term-prompt">$</span> <span class="term-out">agy</span></pre>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 2 min &middot; individual</div>
+      <div class="act-t">Corran los tres comandos de arriba.</div>
+      <div class="act-d">Si falta alguno de los cuatro archivos, o main.py no corre, avísenme antes de seguir: hoy construimos sobre esa base.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 01: DUCK TYPING ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 01</span>
+  <div class="sep-num anim">01 &middot; Concepto &middot; 14 min</div>
+  <div class="sep-title anim">Duck<br><span>typing</span></div>
+  <p class="sep-desc anim">
+    Otra forma de mirar el polimorfismo que ya usaron ayer con tarifa_hora().
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Si camina como pato y grazna como pato</div>
+  <div class="concept-title anim">¿Qué es<br><span>duck typing</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Duck typing</div>
+      <div class="def-txt">
+        La idea de que a Python <strong>no le importa de qué clase es un objeto</strong>,
+        sino si tiene el método o el atributo que se necesita usar en ese momento.
+      </div>
+      <div class="def-ej">
+        El nombre viene del dicho en inglés: "si camina como pato y grazna como pato,
+        entonces es un pato". No hace falta que algo sea oficialmente de una clase para
+        tratarlo como tal, basta con que tenga el método que hace falta usar.
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">duck_typing.py &middot; archivo de práctica, aparte del modelo real</div>
+<pre><span class="kw">class</span> <span class="cls">Repuesto</span>:
+    <span class="kw">def</span> <span class="fn">resumen</span>(self):
+        <span class="kw">return</span> <span class="str">"Filtro de aceite, stock: 12"</span>
+
+<span class="kw">class</span> <span class="cls">Cliente</span>:
+    <span class="kw">def</span> <span class="fn">resumen</span>(self):
+        <span class="kw">return</span> <span class="str">"Juan Perez, sin deuda"</span>
+
+<span class="kw">def</span> <span class="fn">mostrar</span>(objeto):
+    <span class="fn">print</span>(objeto.<span class="fn">resumen</span>())
+
+<span class="fn">mostrar</span>(<span class="cls">Repuesto</span>())
+<span class="fn">mostrar</span>(<span class="cls">Cliente</span>())</pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Repuesto y Cliente no tienen ninguna relación de herencia</strong>
+        <p>Ninguna es hija de la otra, ni comparten un padre común -- de hecho, en su diagrama
+        completo tampoco tienen ninguna relación entre sí. Y aun así, <code>mostrar()</code>
+        funciona con las dos, porque a Python solo le importa que el objeto que reciba tenga
+        un método <code>resumen()</code>. Eso es duck typing: el polimorfismo no depende de
+        que exista una jerarquía de herencia.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La diferencia con lo que vieron ayer</strong>
+        <p>Ahí el polimorfismo funcionaba porque Auto, Moto y Camion heredaban de Vehiculo
+        y sobrescribían <code>tarifa_hora()</code>. Acá funciona sin ninguna herencia de por
+        medio. Las dos son formas válidas de la misma idea: mismo mensaje, cada objeto
+        responde a su manera.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Por qué existe</span>
+  <div class="concept-label anim">El problema que resuelve, no solo la sintaxis</div>
+  <div class="concept-title anim">¿Por qué existe<br>el <span>duck typing</span>?</div>
+  <div class="concept-body anim">
+    <p>
+      A veces dos clases necesitan comportarse igual frente a un mismo mensaje, pero forzarlas
+      a compartir un padre común no tiene sentido de negocio (Repuesto y Cliente no "son un"
+      tipo de nada en común), o directamente no se puede: si la clase viene de una librería
+      externa, no pueden agregarle un padre. Duck typing resuelve exactamente ese caso: pedir
+      el mismo comportamiento sin exigir el mismo árbol genealógico.
+    </p>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>En el mundo corporativo</strong>
+        <p>Python entero está construido así: cualquier objeto con un método <code>__iter__</code>
+        funciona en un <code>for</code>, sin heredar de nada especial. En testing, un "mock"
+        (un objeto falso que se usa para probar código sin conectarse a servicios reales)
+        funciona porque responde a los mismos métodos que el objeto real, no porque comparta
+        su clase. Librerías como pandas o NumPy dependen de esto: código que procesa "algo
+        que tenga <code>.shape</code> y se pueda indexar" funciona con muchos tipos de datos
+        distintos sin que ninguno herede del otro.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Con su propio prompt, sobre el taller mecánico</div>
+  <div class="concept-title anim">Ahora ustedes:<br><span>constrúyanlo</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; individual, sobre el taller mecánico</div>
+      <div class="act-t">Escríbanle a agy, con su propio prompt, que cree duck_typing.py con dos clases sin relación de herencia entre sí (por ejemplo Repuesto y Cliente, o dos que se les ocurran a ustedes del mismo dominio) que compartan un método con el mismo nombre, más una función que lo llame sobre las dos y las corra.</div>
+      <div class="act-d">No copien el código de la definición de arriba: pídanselo ustedes, con sus propias palabras, y corran el archivo para confirmar que las dos responden.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Encuéntrenlo en su propio modelo</div>
+  <div class="concept-title anim">¿Tienen dos<br>clases sin<br>relación con<br>un método <span>igual</span>?</div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 6 min &middot; en equipo</div>
+      <div class="act-t">Revisen todas las clases de su modelo, no solo las que tienen herencia.</div>
+      <div class="act-d">¿Hay dos clases sin relación de herencia entre sí que podrían compartir el nombre de un método, aunque cada una lo resuelva distinto? No es obligatorio que exista, solo identifíquenlo si lo tienen. Lo van a poder implementar en el taller si aplica.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 02: ABC ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Concepto + prompt &middot; 20 min</div>
+  <div class="sep-title anim">Clases<br>abstractas<br>con <span>abc</span></div>
+  <p class="sep-desc anim">
+    Una forma más estricta de cerrar un hueco que dejaron abierto desde la sesión 1.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">El problema</span>
+  <div class="concept-label anim">Dos formas de dejarlo pendiente, ninguna lo resuelve</div>
+  <div class="concept-title anim">Vehiculo nunca<br>debería <span>existir</span><br>solo</div>
+  <div class="concept-body anim">
+    <p>
+      En la demo de la sesión 1 (<code>taller_v2.py</code>), <code>tarifa_hora()</code>
+      lanzaba <code>raise NotImplementedError</code> en <code>Vehiculo</code>. En el
+      <code>vehiculo.py</code> real que han ido construyendo desde entonces, quedó como un
+      valor genérico (<code>5000</code>) para poder enseñar herencia y sobrescritura antes de
+      llegar a excepciones. Ninguna de las dos formas impide esto:
+    </p>
+    <div class="code-block">
+      <div class="code-title">el problema, con el vehiculo.py real de hoy</div>
+<pre>v = <span class="cls">Vehiculo</span>(<span class="str">"AB1234"</span>, <span class="num">2018</span>)  <span class="cmt"># esto se ejecuta sin ningun error</span>
+<span class="fn">print</span>(v.<span class="fn">tarifa_hora</span>())         <span class="cmt"># imprime 5000: un valor que ningun vehiculo real cobra</span></pre>
+    </div>
+    <p>
+      Un <code>Vehiculo</code> genérico, sin ser <code>Auto</code>, <code>Moto</code> ni
+      <code>Camion</code>, <strong>no debería poder crearse nunca</strong>. En el negocio real
+      no existe "un vehículo cualquiera": siempre es de un tipo específico.
+    </p>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Prohibir la instanciación directamente</div>
+  <div class="concept-title anim">¿Qué es una<br>clase <span>abstracta</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Clase abstracta</div>
+      <div class="def-txt">
+        Una clase que <strong>no se puede instanciar directamente</strong>. Solo sirve
+        como padre para que otras clases hereden de ella. Si alguien intenta crear un
+        objeto de la clase abstracta misma, Python lo rechaza altiro.
+      </div>
+      <div class="def-ej">
+        En Python se construye con el módulo <code>abc</code>: la clase hereda de
+        <code>ABC</code>, y los métodos que las hijas deben completar se marcan con
+        <code>@abstractmethod</code>.
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; ahora abstracta (idea general)</div>
+<pre><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cls">Vehiculo</span>(<span class="cls">ABC</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio):
+        self.patente = patente  <span class="cmt"># ... resto del constructor, sin cambios</span>
+
+    <span class="kw">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">tarifa_hora</span>(self):
+        <span class="kw">pass</span></pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>python3</div>
+      <pre><span class="term-prompt">&gt;&gt;&gt;</span> <span class="term-out">v = Vehiculo("AB1234", 2018)</span>
+<span class="term-err">TypeError: Can't instantiate abstract class Vehiculo
+with abstract method tarifa_hora</span>
+
+<span class="term-prompt">&gt;&gt;&gt;</span> <span class="term-out">a = Auto("AB1234", 2018)</span>
+<span class="cmt"># funciona: Auto ya tiene su propio tarifa_hora() desde ayer</span></pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Comparación</span>
+  <div class="concept-label anim">Cuándo usar cada una</div>
+  <div class="concept-title anim">NotImplementedError<br>contra <span>abc</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th></th><th>raise NotImplementedError</th><th>ABC + @abstractmethod</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Cuándo avisa</strong></td>
+          <td>Recién cuando alguien llama al método</td>
+          <td>Apenas alguien intenta crear el objeto</td>
+        </tr>
+        <tr>
+          <td><strong>¿Se puede instanciar la clase padre?</strong></td>
+          <td>Sí, sin ningún problema</td>
+          <td>No, Python lo impide directamente</td>
+        </tr>
+        <tr>
+          <td><strong>Qué tan estricto es</strong></td>
+          <td>Es una convención, más informal</td>
+          <td>Es una regla del lenguaje, más formal</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Para su clase padre principal, usen ABC</strong>
+        <p>Si su modelo tiene una clase que nunca debería existir por sí sola, siempre de un
+        subtipo, ABC lo garantiza. Es más seguro que confiar en que nadie la instancie por
+        error, sea que su placeholder actual devuelva un valor genérico o lance
+        NotImplementedError.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Por qué existe</span>
+  <div class="concept-label anim">El problema que resuelve, no solo la sintaxis</div>
+  <div class="concept-title anim">¿Por qué existe<br><span>ABC</span>?</div>
+  <div class="concept-body anim">
+    <p>
+      El problema no es solo "alguien podría instanciar Vehiculo por error hoy": es que en un
+      equipo grande, meses después, alguien que nunca vio esta conversación puede hacerlo sin
+      saber que está mal. Confiar en que "todos se van a acordar de no hacerlo" no escala.
+      ABC mueve esa regla del acuerdo verbal del equipo a algo que el propio lenguaje hace
+      cumplir, sin depender de que nadie se acuerde.
+    </p>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>En el mundo corporativo</strong>
+        <p>Los frameworks grandes están llenos de clases abstractas para forzar contratos:
+        en Django, la clase base de un comando de administración (<code>BaseCommand</code>)
+        exige que cada comando implemente <code>handle()</code>, o directamente no arranca.
+        En Django REST Framework, una clase de permisos personalizada debe implementar
+        <code>has_permission()</code> porque la clase base es abstracta. Cuando muchas
+        personas contribuyen al mismo código a lo largo de años, esta clase de contratos
+        explícitos evita errores que un simple acuerdo de equipo ("acordate de implementar
+        este método") no puede garantizar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Aplicado al Vehiculo real</div>
+  <div class="concept-title anim">Hagamos<br>abstracta a <span>Vehiculo</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"En vehiculo.py, hacé que Vehiculo herede de ABC (from abc
+      import ABC, abstractmethod). Marca tarifa_hora() con @abstractmethod y dejale el cuerpo
+      en pass, sin ningún return. No toques ningún otro método ni el constructor."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; generado por Antigravity</div>
+<pre><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cls">Vehiculo</span>(<span class="cls">ABC</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio):
+        self.patente = patente
+        self.__anio = anio
+        self.__en_taller = <span class="kw">False</span>
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">patente</span>(self):
+        <span class="kw">return</span> self.__patente
+
+    <span class="kw">@patente</span>.setter
+    <span class="kw">def</span> <span class="fn">patente</span>(self, valor):
+        <span class="kw">if</span> <span class="fn">len</span>(valor) &lt; <span class="num">6</span> <span class="kw">or</span> <span class="str">" "</span> <span class="kw">in</span> valor:
+            <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="str">f"Patente inválida: {valor!r}"</span>)
+        self.__patente = valor
+
+    <span class="cmt"># ... property en_taller, ingresar(), entregar(): sin cambios</span>
+
+    <span class="kw">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">tarifa_hora</span>(self):
+        <span class="kw">pass</span>  <span class="cmt"># ya no retorna 5000: cada hija esta obligada a completarlo</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Auto, Moto y Camion no necesitan ningún cambio</strong>
+        <p>Las tres ya sobrescriben <code>tarifa_hora()</code> desde ayer. Marcar a Vehiculo
+        como abstracta no les afecta en nada: solo le cierra la puerta a crear un
+        <code>Vehiculo</code> sin ser ninguna de ellas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Con su propio prompt, sobre el taller mecánico</div>
+  <div class="concept-title anim">Ahora ustedes:<br><span>confírmenlo</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 4 min &middot; individual, sobre el taller mecánico</div>
+      <div class="act-t">Escríbanle a agy, con su propio prompt, un archivo de prueba que intente crear un Vehiculo directo (debería fallar con TypeError) y después un Auto (debería funcionar).</div>
+      <div class="act-d">Describan el resultado que esperan ver, no copien el prompt de la definición. Anoten el mensaje de error exacto que les aparece.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">En su propio modelo</div>
+  <div class="concept-title anim">Hagan abstracta<br>su clase <span>padre</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 10 min &middot; en equipo</div>
+      <div class="act-t">Conviertan su clase padre principal en abstracta.</div>
+      <div class="act-list">
+        <div class="act-li">from abc import ABC, abstractmethod</div>
+        <div class="act-li">class Padre(ABC):</div>
+        <div class="act-li">Reemplacen el cuerpo de su método polimórfico (devuelva un valor genérico o lance NotImplementedError) por @abstractmethod y pass</div>
+        <div class="act-li">Prueben instanciar la clase padre sola: confirmen que da TypeError</div>
+        <div class="act-li">Prueben instanciar una subclase: confirmen que sí funciona</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 03: TRACEBACK ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 03</span>
+  <div class="sep-num anim">03 &middot; Concepto &middot; 10 min</div>
+  <div class="sep-title anim">Qué pasa<br>cuando nadie<br><span>atrapa</span> el error</div>
+  <p class="sep-desc anim">
+    Antes de aprender a manejarlo, hay que saber leer lo que Python muestra cuando no se maneja.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">El mensaje que ya han visto varias veces</div>
+  <div class="concept-title anim">¿Qué es un<br><span>traceback</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Traceback</div>
+      <div class="def-txt">
+        El <strong>reporte que Python muestra cuando una excepción no fue manejada</strong>:
+        en qué archivo y en qué línea ocurrió, y la cadena de llamadas que lo llevó hasta ahí.
+      </div>
+      <div class="def-ej">No es un error del traceback en sí: es Python contándote exactamente dónde se rompió todo.</div>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>terminal</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">python3 probar_patente.py</span>
+<span class="term-out">Traceback (most recent call last):</span>
+<span class="term-out">  File </span><span class="term-file">"probar_patente.py"</span><span class="term-out">, line 3, in &lt;module&gt;</span>
+<span class="term-out">    v = Auto("KX12", 2018)</span>
+<span class="term-out">  File </span><span class="term-file">"vehiculo.py"</span><span class="term-out">, line 12, in patente</span>
+<span class="term-out">    raise ValueError(f"Patente inválida: {valor!r}")</span>
+<span class="term-err">ValueError: Patente inválida: 'KX12'</span></pre>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Parte</th><th>Qué dice</th></tr></thead>
+      <tbody>
+        <tr><td><strong>La última línea</strong></td><td>El tipo de excepción y el mensaje. Es lo primero que hay que leer, no lo último.</td></tr>
+        <tr><td><strong>Las líneas de arriba</strong></td><td>El camino que siguió el programa: qué archivo llamó a qué, hasta llegar al error.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Léanlo de abajo hacia arriba</strong>
+        <p>La costumbre es leer de arriba a abajo, pero un traceback se lee al revés:
+        primero la última línea, que dice qué pasó. Después, si hace falta, subes para
+        ver cómo se llegó hasta ahí.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Este ValueError ya lo conocen</strong>
+        <p>Es el mismo que armaron ayer en el setter de <code>patente</code>. La diferencia
+        de hoy es que hasta ahora dejaban que reventara el programa entero: eso es
+        exactamente lo que <code>try/except</code> va a evitar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 04: TRY EXCEPT ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 04</span>
+  <div class="sep-num anim">04 &middot; Concepto &middot; 18 min</div>
+  <div class="sep-title anim"><span>try</span> /<br><span>except</span></div>
+  <p class="sep-desc anim">
+    Decirle al programa: intenta esto, y si sale mal, no te caigas.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Los dos bloques mínimos</div>
+  <div class="concept-title anim">¿Qué son<br><span>try</span> y <span>except</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">try</div>
+      <div class="def-txt">
+        Un bloque que dice <strong>"intenta ejecutar este código"</strong>. Si algo dentro
+        de él lanza una excepción, Python deja de ejecutar esa parte y busca un
+        <code>except</code> que la maneje.
+      </div>
+    </div>
+    <div class="definicion">
+      <div class="def-k">except</div>
+      <div class="def-txt">
+        El bloque que se ejecuta <strong>solo si ocurrió la excepción que indica</strong>.
+        Es donde decides qué hacer en vez de dejar que el programa se caiga.
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">probar_patente.py</div>
+<pre><span class="kw">try</span>:
+    v = <span class="cls">Auto</span>(<span class="str">"KX12"</span>, <span class="num">2018</span>)
+<span class="kw">except</span> <span class="cls">ValueError</span> <span class="kw">as</span> error:
+    <span class="fn">print</span>(<span class="str">"No se pudo crear el vehiculo:"</span>, error)
+    v = <span class="kw">None</span>
+
+<span class="fn">print</span>(<span class="str">"El programa sigue funcionando"</span>)</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>salida</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">python3 probar_patente.py</span>
+<span class="term-out">No se pudo crear el vehiculo: Patente inválida: 'KX12'
+El programa sigue funcionando</span></pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La diferencia con el bloque anterior</strong>
+        <p>El mismo error ocurrió. Pero esta vez el programa no se detuvo: imprimió un
+        mensaje entendible y siguió. <code>as error</code> guarda la excepción en una
+        variable para poder usar su mensaje.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Por qué existe</span>
+  <div class="concept-label anim">El problema que resuelve, no solo la sintaxis</div>
+  <div class="concept-title anim">¿Por qué existe<br><span>try/except</span>?</div>
+  <div class="concept-body anim">
+    <p>
+      Sin manejo de excepciones, un solo dato mal formado en cualquier parte del programa
+      tumba TODO el programa, aunque el resto no tuviera nada que ver con ese error. La
+      alternativa (revisar "a mano" con <code>if</code> cada cosa que podría salir mal, antes
+      de que pase) es imposible de mantener: hay demasiados casos, y muchos ni se les ocurren
+      hasta que pasan de verdad. <code>try/except</code> separa el código que puede fallar del
+      código que decide qué hacer si falla, sin que uno tumbe al otro.
+    </p>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>En el mundo corporativo</strong>
+        <p>Un checkout de e-commerce que procesa el pago de una tarjeta rechazada no puede
+        crashear la página entera: atrapa el error y muestra "tarjeta rechazada, intenta con
+        otra". Las APIs bien diseñadas atrapan errores internos y devuelven una respuesta
+        clara (código 400, 404, 500 con un mensaje) en vez de que el servidor completo se
+        caiga. Las llamadas a servicios externos (una pasarela de pago, un banco, otro
+        servidor) casi siempre van envueltas en <code>try/except</code> con reintentos,
+        porque una caída de red momentánea no debería significar perder la venta.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Sobre el setter validado que armaron ayer</div>
+  <div class="concept-title anim">Atrapen su<br>propio <span>ValueError</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 12 min &middot; individual, sobre el taller mecánico, con su propio prompt</div>
+      <div class="act-t">Escríbanle a agy que envuelva la creación de un Auto en try/except.</div>
+      <div class="act-list">
+        <div class="act-li">Usen el dato validable (property con setter) que armaron ayer, sobre Vehiculo</div>
+        <div class="act-li">Prueben con un valor inválido, dentro de un try</div>
+        <div class="act-li">En el except, impriman un mensaje entendible en vez de dejar que explote</div>
+        <div class="act-li">Confirmen que el resto del programa sigue ejecutándose después</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 05: FINALLY Y MULTIPLES EXCEPT ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 05</span>
+  <div class="sep-num anim">05 &middot; Concepto &middot; 14 min</div>
+  <div class="sep-title anim"><span>finally</span><br>y varios<br><span>except</span></div>
+  <p class="sep-desc anim">
+    No todos los errores se manejan igual, y algunas cosas tienen que pasar siempre.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Lo que se ejecuta pase lo que pase</div>
+  <div class="concept-title anim">¿Qué es<br><span>finally</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">finally</div>
+      <div class="def-txt">
+        Un bloque que se ejecuta <strong>siempre</strong>, haya ocurrido una excepción o no.
+        Sirve para código que tiene que correr de todas maneras: cerrar un archivo,
+        liberar un recurso, avisar que terminó el intento.
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">try completo</div>
+<pre><span class="kw">try</span>:
+    v = <span class="cls">Auto</span>(<span class="str">"KX12"</span>, <span class="num">2018</span>)
+<span class="kw">except</span> <span class="cls">ValueError</span> <span class="kw">as</span> error:
+    <span class="fn">print</span>(<span class="str">"Error de validacion:"</span>, error)
+<span class="kw">except</span> <span class="cls">TypeError</span> <span class="kw">as</span> error:
+    <span class="fn">print</span>(<span class="str">"Tipo de dato incorrecto:"</span>, error)
+<span class="kw">finally</span>:
+    <span class="fn">print</span>(<span class="str">"Intento de registro terminado"</span>)</pre>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Situación</th><th>Qué se ejecuta</th></tr></thead>
+      <tbody>
+        <tr><td>Todo sale bien</td><td>Solo <code>finally</code></td></tr>
+        <tr><td>Ocurre un ValueError</td><td>El primer <code>except</code>, después <code>finally</code></td></tr>
+        <tr><td>Ocurre un TypeError</td><td>El segundo <code>except</code>, después <code>finally</code></td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Varios except, uno por tipo de error</strong>
+        <p>Python revisa los <code>except</code> en orden y ejecuta el primero que coincida
+        con el tipo de excepción que ocurrió. Cada uno puede manejar el error de forma distinta.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Practicando con dos tipos de error</div>
+  <div class="concept-title anim">Dos except,<br>un <span>finally</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 8 min &middot; individual, sobre el taller mecánico, con su propio prompt</div>
+      <div class="act-t">Escríbanle a agy que agregue un segundo except a su código del bloque anterior.</div>
+      <div class="act-d">Puede ser TypeError, capturando el caso de pasar un número donde se esperaba texto, por ejemplo. Agreguen también un finally que imprima un mensaje de cierre.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 06: JERARQUIA ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 06</span>
+  <div class="sep-num anim">06 &middot; Concepto &middot; 12 min</div>
+  <div class="sep-title anim">La <span>jerarquía</span><br>de excepciones</div>
+  <p class="sep-desc anim">
+    ValueError y TypeError no aparecieron de la nada: son parte de un árbol de clases.
+  </p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Todas vienen de la misma raíz</div>
+  <div class="concept-title anim">Un árbol de<br><span>excepciones</span></div>
+  <div class="concept-body anim">
+    <p>
+      Esto les va a sonar conocido: las excepciones de Python forman una <strong>jerarquía
+      de herencia</strong>, igual que <code>Auto</code> y <code>Moto</code> heredan de
+      <code>Vehiculo</code>. Casi todas las que van a usar heredan de <code>Exception</code>.
+    </p>
+    <div class="exc-tree">
+      <div class="exc-row l0"><span class="exc-branch">Exception</span><span class="exc-tag">la clase base de casi todos los errores</span></div>
+      <div class="exc-row l1"><span class="exc-branch">├─</span> ValueError <span class="exc-tag">valor con tipo correcto, contenido inválido -- su patente de ayer</span></div>
+      <div class="exc-row l1"><span class="exc-branch">├─</span> TypeError <span class="exc-tag">operación sobre un tipo de dato que no corresponde -- también el de Vehiculo abstracta, del bloque 2</span></div>
+      <div class="exc-row l1"><span class="exc-branch">├─</span> AttributeError <span class="exc-tag">el que vieron ayer al intentar escribir en_taller sin setter</span></div>
+      <div class="exc-row l1"><span class="exc-branch">├─</span> KeyError <span class="exc-tag">una clave que no existe en un diccionario</span></div>
+      <div class="exc-row l1"><span class="exc-branch">├─</span> IndexError <span class="exc-tag">una posición que no existe en una lista</span></div>
+      <div class="exc-row l1"><span class="exc-branch">└─</span> NotImplementedError <span class="exc-tag">el de la demo de la sesión 1 (taller_v2.py)</span></div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Por qué importa que sea una jerarquía</strong>
+        <p>Un <code>except Exception:</code> atrapa cualquier error de la lista, porque
+        todos son hijos de <code>Exception</code>. Es útil como red de seguridad, pero
+        conviene ser específico primero: si atrapas todo con <code>Exception</code>,
+        puedes esconder errores que en realidad querías ver.</p>
+      </div>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El orden de los except también importa acá</strong>
+        <p>Si pones <code>except Exception:</code> primero y <code>except ValueError:</code>
+        después, el segundo nunca se va a ejecutar: el primero ya atrapó todo. El más
+        específico siempre va primero.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 07: EXCEPCIONES PROPIAS ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 07</span>
+  <div class="sep-num anim">07 &middot; Concepto + prompt &middot; 20 min</div>
+  <div class="sep-title anim">Excepciones<br>propias del<br><span>negocio</span></div>
+  <p class="sep-desc anim">
+    Python no tiene una excepción para "el vehículo nunca ingresó al taller".
+    La tienen que crear ustedes.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">El momento que quedó pendiente desde la sesión 1</div>
+  <div class="concept-title anim">¿Qué es una<br>excepción <span>propia</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Excepción propia</div>
+      <div class="def-txt">
+        Una <strong>clase que ustedes definen</strong>, heredando de <code>Exception</code>,
+        para representar un error específico de su negocio que Python no tiene predefinido.
+      </div>
+      <div class="def-ej">
+        Python sabe qué es un <code>ValueError</code>. No sabe qué es "intentar entregar
+        un vehículo que nunca ingresó al taller". Eso lo definen ustedes.
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">excepciones.py &middot; archivo nuevo</div>
+<pre><span class="kw">class</span> <span class="cls">VehiculoNoIngresadoError</span>(<span class="cls">Exception</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente):
+        <span class="fn">super</span>().<span class="fn">__init__</span>(
+            <span class="str">f"El vehiculo {patente} no ha ingresado al taller"</span>
+        )</pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>super().__init__() otra vez</strong>
+        <p>Igual que ayer con Camion: se llama al constructor del padre, <code>Exception</code>,
+        pasándole el mensaje ya armado con el dato específico de este error. El padre se
+        encarga de guardar ese mensaje para cuando alguien lo imprima.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Por qué existe</span>
+  <div class="concept-label anim">El problema que resuelve, no solo la sintaxis</div>
+  <div class="concept-title anim">¿Por qué existen<br>las excepciones <span>propias</span>?</div>
+  <div class="concept-body anim">
+    <p>
+      Atrapar todo con <code>except Exception</code> funciona, pero no dice nada sobre qué
+      pasó específicamente: un log lleno de "Exception" a secas no ayuda a nadie a entender
+      qué regla de negocio se violó. Una excepción con nombre propio
+      (<code>VehiculoNoIngresadoError</code>) documenta la regla en el nombre mismo del error,
+      y permite que el código que la atrapa reaccione distinto según cuál ocurrió, en vez de
+      tratarlas todas igual.
+    </p>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>En el mundo corporativo</strong>
+        <p>Cualquier backend serio tiene su propio catálogo de excepciones de negocio:
+        <code>SaldoInsuficienteError</code>, <code>UsuarioNoAutorizadoError</code>,
+        <code>StockAgotadoError</code>. Cuando algo falla en producción, un sistema de
+        monitoreo (Sentry, Datadog, o similar) agrupa los errores por su tipo exacto -- si
+        todos fueran <code>Exception</code> genérica, sería imposible distinguir de un
+        vistazo si el problema recurrente es de stock o de permisos. En Buk mismo, los
+        servicios de dominio suelen definir errores propios para cada regla de negocio que
+        pueden bloquear, en vez de usar excepciones genéricas de Ruby.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Completando lo que vieron en la sesión 1</div>
+  <div class="concept-title anim">entregar(), <span>por fin</span><br>completo</div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Creá un archivo excepciones.py con la clase
+      VehiculoNoIngresadoError, heredando de Exception, con un constructor que reciba la
+      patente y arme el mensaje con super().__init__(). Después, en vehiculo.py, importala y
+      modificá entregar(): si el vehículo no está en el taller, en vez de retornar un mensaje,
+      lanzá VehiculoNoIngresadoError(self.patente)."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; entregar() con la regla de negocio</div>
+<pre><span class="kw">from</span> excepciones <span class="kw">import</span> <span class="cls">VehiculoNoIngresadoError</span>
+
+<span class="cmt"># ... dentro de la clase Vehiculo</span>
+<span class="kw">def</span> <span class="fn">entregar</span>(self):
+    <span class="kw">if</span> <span class="kw">not</span> self.__en_taller:
+        <span class="kw">raise</span> <span class="cls">VehiculoNoIngresadoError</span>(self.patente)
+    self.__en_taller = <span class="kw">False</span></pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>salida</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">v = Auto("AB1234", 2018)</span>
+<span class="term-prompt">$</span> <span class="term-out">v.entregar()</span>
+<span class="term-err">VehiculoNoIngresadoError: El vehiculo AB1234 no ha ingresado al taller</span></pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Este es el código que quedó pendiente desde el 10 de agosto</strong>
+        <p>En <code>taller_v2.py</code> (la demo de la sesión 1), el docstring de esta clase
+        decía literalmente "se completa en la sesión 8". Ya saben todo lo que hace falta:
+        por qué existe la excepción, cómo se define heredando de Exception, y cómo atraparla
+        con try/except si en algún punto del programa quieren manejarla en vez de dejarla
+        explotar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Con su propio prompt, sobre el taller mecánico</div>
+  <div class="concept-title anim">Ahora ustedes:<br><span>atrápenla</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; individual, sobre el taller mecánico</div>
+      <div class="act-t">Escríbanle a agy, con su propio prompt, un archivo de prueba que cree un Auto recién nuevo (sin ingresar) y trate de entregarlo directo, envolviendo el intento en try/except para atrapar VehiculoNoIngresadoError e imprimir un mensaje entendible en vez de dejar que reviente.</div>
+      <div class="act-d">No copien el prompt del bloque anterior: descríbanselo ustedes. Confirmen que el programa sigue corriendo después del except.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Requisito 5 de su ficha: dos reglas que impidan una operación</div>
+  <div class="concept-title anim">Creen su<br>propia <span>excepción</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 15 min &middot; en equipo</div>
+      <div class="act-t">Definan una excepción propia para una regla de su negocio.</div>
+      <div class="act-list">
+        <div class="act-li">Piensen en una operación que su negocio no debería permitir en ciertas condiciones</div>
+        <div class="act-li">Agréguenla a su excepciones.py, heredando de Exception, con un mensaje armado con super().__init__()</div>
+        <div class="act-li">Úsenla con raise dentro del método correspondiente</div>
+        <div class="act-li">Prueben que se lanza, y después envuélvanla en try/except para manejarla</div>
+      </div>
+      <div class="act-d">Si tienen tiempo, repitan el proceso con una segunda regla: el requisito 5 pide dos, no una.</div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Ejemplos, por si sirven de referencia</strong>
+        <p><code>RepuestoSinStockError</code> cuando se intenta usar un repuesto que no
+        queda en inventario. O una regla sobre un cliente con deuda que no puede retirar
+        otro vehículo. Busquen el equivalente en su propio negocio.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 08: TALLER FINAL ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-practica">Bloque 08</span>
+  <div class="sep-num anim">08 &middot; Práctica &middot; 35 min</div>
+  <div class="sep-title anim">Taller: aseguren<br>su <span>negocio</span></div>
+  <p class="sep-desc anim">
+    Todo lo de hoy, aplicado a su propio modelo. En equipo, con Antigravity.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Taller</span>
+  <div class="concept-label anim">En equipo &middot; 35 min &middot; con asesoría</div>
+  <div class="concept-title anim">Protejan los<br>datos de su <span>negocio</span></div>
+  <div class="concept-body anim">
+    <div class="chk">
+      <div class="chk-item">
+        <div class="chk-num">1</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Confirmen que su clase padre principal es abstracta</div>
+          <div class="chk-desc">Con ABC y @abstractmethod en el método que cada subclase completa distinto. Sin necesitar cambiar nada en las hijas.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">2</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Si encontraron duck typing en el bloque 1, impleméntenlo</div>
+          <div class="chk-desc">No es obligatorio, pero si dos clases sin relación comparten un método, es una buena oportunidad de mostrarlo.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">3</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Terminen su excepción propia del requisito 5</div>
+          <div class="chk-desc">En su propio excepciones.py, con al menos una regla usando raise y try/except para manejarla.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">4</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Prueben todo con un archivo de prueba</div>
+          <div class="chk-desc">Un dato inválido que lanza ValueError y se atrapa, la clase padre que rechaza instanciarse sola con TypeError, y su regla de negocio que lanza su propia excepción.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">5</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Su excepción no entra al diagrama de clases</div>
+          <div class="chk-desc">Es comportamiento, no estructura: no hace falta agregarla como caja UML. El criterio 2.1.1 sigue siendo sobre las clases del negocio, no sobre las excepciones que las protegen.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Si les sale TypeError al instanciar una subclase</strong>
+        <p>Revisen que esa subclase haya sobrescrito realmente el método marcado con
+        @abstractmethod. Si le falta uno solo, Python sigue tratando a la subclase
+        como abstracta también.</p>
+      </div>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Prompts cortos, un paso a la vez</strong>
+        <p>Igual que siempre: le piden a agy un paso concreto, leen el código antes de
+        seguir, y lo verifican probándolo. No dejen todo para pedirlo de una sola vez.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 09: GUARDAR Y SUBIR SU RAMA ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 09</span>
+  <div class="sep-num anim">09 &middot; Concepto + prompt &middot; 6 min</div>
+  <div class="sep-title anim">Antes de irse:<br>guarden y <span>suban</span></div>
+  <p class="sep-desc anim">
+    Ya lo hicieron ayer. Hoy es la segunda vez, y así va a ser siempre.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Mismo ritual de ayer</div>
+  <div class="concept-title anim">Suban su<br>rama a <span>GitHub</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le piden a agy</div>
+      <div class="prompt-text">"Guardá todos los cambios de esta rama con un commit
+      descriptivo, y subí desarrollo a GitHub."</div>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>lo que agy corrió por ustedes</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">git add -A</span>
+<span class="term-prompt">$</span> <span class="term-out">git commit -m "Duck typing, Vehiculo abstracta y excepciones propias"</span>
+<span class="term-prompt">$</span> <span class="term-out">git push</span>
+<span class="cmt">  (sin -u esta vez: la conexión con la rama de GitHub ya quedó hecha ayer)</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Master sigue sin tocarse</strong>
+        <p>El commit guarda el punto de la historia, el push lo deja en GitHub para que la
+        próxima sesión parta desde ahí, en esta misma rama. <code>master</code> se mezcla
+        más adelante, cuando el trabajo esté maduro -- no todavía.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ CIERRE ============ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen de la sesión</div>
+  <div class="sep-title anim">Lo que te<br><span>llevas</span> hoy</div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">Duck typing</div>
+      <div class="resumen-desc">Polimorfismo entre clases sin ninguna relación de herencia</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">ABC + @abstractmethod</div>
+      <div class="resumen-desc">Vehiculo ya no se puede instanciar solo: TypeError inmediato, no un valor genérico esperando</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Traceback</div>
+      <div class="resumen-desc">Se lee de abajo hacia arriba. La última línea dice qué pasó</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">try / except / finally</div>
+      <div class="resumen-desc">Intenta el código, decide qué hacer si falla, y lo que debe pasar siempre</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">La jerarquía de excepciones</div>
+      <div class="resumen-desc">Casi todas heredan de Exception. El except más específico va primero</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Excepción propia</div>
+      <div class="resumen-desc">VehiculoNoIngresadoError, por fin completo desde la sesión 1 -- y la de su propio negocio</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Requisito 5 cumplido</div>
+      <div class="resumen-desc">Sus reglas de negocio ya impiden operaciones de verdad, con su propia excepción</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Rama y push, ya rutina</div>
+      <div class="resumen-desc">Segunda sesión seguida cerrando con commit + push a la misma rama desarrollo</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Próxima clase (lunes 07/09 &middot; 18:30-20:30 &middot; Laboratorio A408)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,.6); line-height:1.6;">
+      Conexión a base de datos: SQLite y el patrón DAO &middot; empiezan a guardar lo que
+      hasta ahora solo vivía en la memoria del programa.
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const progress = document.getElementById('progress');
+  let current = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.1 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>

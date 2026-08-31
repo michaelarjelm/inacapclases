@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UA2 Sesion 7 - Herencia</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --red:#E31E24; --blue:#C0392B; --green:#4A4A4A; --orange:#8E1A1F;
+    --dark:#1A1A1A; --border:#E0E0E0; --text:#1A1A1A; --muted:#666;
+  }
+
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Barlow', sans-serif; background:#F0F0F0; color:var(--text);
+    scroll-snap-type:y mandatory; overflow-y:scroll; height:100vh;
+  }
+  .slide {
+    min-height:100vh; scroll-snap-align:start; scroll-snap-stop:always;
+    display:flex; flex-direction:column; position:relative;
+  }
+
+  /* PORTADA */
+  .slide-cover {
+    background:linear-gradient(135deg,#1A1A1A 0%,#2C2C2C 100%); color:#fff;
+    justify-content:center; padding:80px; border-bottom:6px solid var(--red);
+  }
+  .cover-eyebrow {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:24px;
+  }
+  .cover-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:76px; font-weight:900;
+    text-transform:uppercase; line-height:.92; letter-spacing:-.01em; margin-bottom:32px;
+  }
+  .cover-title span { color:var(--red); }
+  .cover-desc { font-size:22px; color:rgba(255,255,255,.5); max-width:660px; line-height:1.65; margin-bottom:48px; }
+  .cover-chips { display:flex; flex-wrap:wrap; gap:12px; }
+  .cover-chip {
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    color:rgba(255,255,255,.7); font-size:15px; font-weight:600; padding:8px 16px; border-radius:20px;
+  }
+  .cover-chip span { color:#fff; }
+
+  /* SEPARADOR */
+  .slide-separator {
+    background:var(--dark); color:#fff; justify-content:center; padding:80px; border-bottom:6px solid var(--red);
+  }
+  .slide-separator.sep-green  { border-color:var(--green); }
+  .slide-separator.sep-orange { border-color:var(--orange); }
+  .slide-separator.sep-blue   { border-color:var(--blue); }
+  .sep-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--red); margin-bottom:16px;
+  }
+  .sep-green .sep-num  { color:#AFAFAF; }
+  .sep-orange .sep-num { color:#D98A8E; }
+  .sep-blue .sep-num   { color:#E08B80; }
+  .sep-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:68px; font-weight:900;
+    text-transform:uppercase; line-height:.92; letter-spacing:-.01em; margin-bottom:24px;
+  }
+  .sep-title span { color:var(--red); }
+  .cover-title span, .sep-title span, .concept-title span { color:var(--red)!important; }
+  .sep-desc { font-size:22px; color:rgba(255,255,255,.45); max-width:630px; line-height:1.65; }
+
+  /* CONCEPTO */
+  .slide-concept { background:#fff; padding:56px 80px; border-bottom:3px solid var(--border); justify-content:center; }
+  .slide-concept.blue-accent   { border-top:6px solid var(--blue); }
+  .slide-concept.green-accent  { border-top:6px solid var(--green); }
+  .slide-concept.orange-accent { border-top:6px solid var(--orange); }
+  .slide-concept.red-accent    { border-top:6px solid var(--red); }
+  .concept-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:12px;
+  }
+  .concept-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:48px; font-weight:900;
+    text-transform:uppercase; line-height:.95; letter-spacing:-.01em; color:var(--dark); margin-bottom:24px;
+  }
+  .concept-body { max-width:950px; }
+  .concept-body p { font-size:20px; line-height:1.7; color:#333; margin-bottom:14px; }
+  .concept-body p:last-child { margin-bottom:0; }
+  .concept-body strong { color:var(--dark); }
+
+  /* DEFINICION */
+  .definicion {
+    background:#FFF6F6; border:2px solid #F3C9CB; border-left:6px solid var(--red);
+    border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px;
+  }
+  .def-k {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--red); margin-bottom:8px;
+  }
+  .def-txt { font-size:22px; line-height:1.55; color:var(--dark); font-weight:500; }
+  .def-txt strong { font-weight:800; }
+  .def-ej { font-size:18px; line-height:1.55; color:#666; margin-top:10px; font-style:italic; }
+
+  /* CALLOUTS */
+  .callout { border-radius:6px; padding:16px 20px; margin:14px 0; max-width:950px; display:flex; gap:14px; align-items:flex-start; }
+  .callout-icon { font-size:19px; flex-shrink:0; }
+  .callout-content { flex:1; }
+  .callout-content > strong { display:block; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+  .callout-content p { font-size:17px; line-height:1.55; margin:0; }
+  .callout-important { background:#FFF1F2; border:1px solid #FECDD3; }
+  .callout-important strong { color:var(--red); }
+  .callout-important p { color:#881337; }
+  .callout-tip { background:#F2F2F2; border:1px solid #DADADA; }
+  .callout-tip strong { color:var(--green); }
+  .callout-tip p { color:#333; }
+  .callout-info { background:#FBEEEC; border:1px solid #ECCFCB; }
+  .callout-info strong { color:var(--blue); }
+  .callout-info p { color:#7A1E16; }
+  .callout-warn { background:#F7EFEF; border:1px solid #E2CACA; }
+  .callout-warn strong { color:var(--orange); }
+  .callout-warn p { color:#5A1418; }
+
+  /* INDICE */
+  .index-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:30px; max-width:780px; }
+  .index-item { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:6px; padding:16px 18px; }
+  .index-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:30px; font-weight:900; color:var(--red); line-height:1; margin-bottom:6px;
+  }
+  .index-name { font-size:16px; font-weight:600; color:#fff; line-height:1.4; }
+  .index-type { font-size:12px; color:rgba(255,255,255,.3); margin-top:4px; text-transform:uppercase; letter-spacing:.06em; }
+
+  /* BADGE */
+  .slide-badge {
+    position:absolute; top:24px; right:32px; font-family:'Barlow Condensed',sans-serif;
+    font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; padding:5px 12px; border-radius:20px;
+  }
+  .badge-concepto { background:#FEF2F2; color:var(--red); border:1px solid #FECACA; }
+  .badge-pasos    { background:#F2F2F2; color:var(--green); border:1px solid #DADADA; }
+  .badge-practica { background:#F7E3E3; color:#8E1A1F; border:1px solid #E2CACA; }
+  .badge-cierre   { background:rgba(227,30,36,.10); color:var(--red); border:1px solid rgba(227,30,36,.3); }
+  .badge-prompt   { background:#1A1A1A; color:#FF8A80; border:1px solid #333; }
+
+  /* RESUMEN */
+  .resumen-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:26px; max-width:900px; }
+  .resumen-item { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:6px; padding:15px 18px; }
+  .resumen-cmd { font-size:16px; color:#fff; margin-bottom:5px; font-weight:700; }
+  .resumen-desc { font-size:15px; color:rgba(255,255,255,.4); line-height:1.4; }
+
+  /* TWO COL */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:22px; max-width:950px; margin-top:16px; }
+  .col-card { background:#F8F8F8; border:1px solid #E0E0E0; border-radius:8px; padding:18px 22px; }
+  .col-card.bad  { border-left:4px solid var(--red); }
+  .col-card.good { border-left:4px solid var(--green); }
+  .col-card-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:21px; font-weight:900; text-transform:uppercase;
+    color:var(--dark); margin-bottom:10px;
+  }
+  .col-card ul { margin-left:18px; }
+  .col-card li { font-size:17px; line-height:1.65; color:#444; margin-bottom:4px; }
+  .col-card p { font-size:17px; line-height:1.6; color:#444; }
+
+  /* TABLA */
+  .tbl { width:100%; max-width:950px; border-collapse:collapse; margin-top:14px; font-size:17px; }
+  .tbl th {
+    background:var(--dark); color:#fff; font-family:'Barlow Condensed',sans-serif; font-size:13px;
+    font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:10px 16px; text-align:left;
+  }
+  .tbl td { padding:11px 16px; border-bottom:1px solid #E0E0E0; vertical-align:top; line-height:1.45; }
+  .tbl tr:last-child td { border-bottom:none; }
+  .tbl tr:nth-child(even) td { background:#F8F8F8; }
+  .tbl .mono { font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--blue); font-weight:600; }
+
+  /* CODE BLOCK */
+  .code-block { background:#1A1A1A; border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px; overflow-x:auto; }
+  .code-block pre { font-family:'JetBrains Mono',monospace; font-size:15px; color:#EDEDED; line-height:1.75; }
+  .code-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:rgba(255,255,255,.35); margin-bottom:12px;
+  }
+  .kw{color:#FF8A80;font-weight:700} .cls{color:#FFD2CC;font-weight:700} .str{color:#FFCDD2}
+  .cmt{color:#6E6E6E;font-style:italic} .fn{color:#FFAB91} .num{color:#F5B7B1}
+
+  /* DIAGRAMA (git, ramas) */
+  .diagram-card { background:#F8F8F8; border:1px solid #E0E0E0; border-radius:8px; padding:20px 24px 14px; margin:14px 0; max-width:950px; }
+  .diagram-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:10px;
+  }
+  .diagram-card svg { display:block; width:100%; height:auto; }
+
+  /* TERMINAL */
+  .terminal { background:#0D0D0D; border-radius:8px; padding:18px 24px; margin:14px 0; max-width:950px; overflow-x:auto; border:1px solid #2A2A2A; }
+  .term-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:#6E6E6E; margin-bottom:10px; display:flex; align-items:center; gap:8px;
+  }
+  .term-dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .terminal pre { font-family:'JetBrains Mono',monospace; font-size:14.5px; line-height:1.85; }
+  .term-prompt { color:#4ADE80; }
+  .term-out { color:#D4D4D4; }
+
+  /* PROMPT A ANTIGRAVITY */
+  .prompt-box { background:#1A1A1A; border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px; border-left:4px solid var(--red); }
+  .prompt-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--red); margin-bottom:10px; display:flex; align-items:center; gap:8px;
+  }
+  .prompt-label .dot { width:8px; height:8px; border-radius:50%; background:var(--red); display:inline-block; }
+  .prompt-text { font-family:'JetBrains Mono',monospace; font-size:16px; color:#fff; line-height:1.65; }
+
+  /* ACTIVIDAD */
+  .actividad { background:#1A1A1A; border-radius:8px; padding:22px 26px; margin:16px 0; max-width:950px; }
+  .act-k {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px;
+  }
+  .act-t { font-size:22px; line-height:1.5; color:#fff; font-weight:600; }
+  .act-d { font-size:17px; line-height:1.55; color:rgba(255,255,255,.55); margin-top:8px; }
+  .act-list { margin-top:12px; }
+  .act-li { font-size:18px; color:rgba(255,255,255,.85); line-height:1.7; padding-left:22px; position:relative; }
+  .act-li::before { content:"\2192"; position:absolute; left:0; color:var(--red); font-weight:700; }
+
+  /* CHECKLIST */
+  .chk { max-width:950px; margin-top:14px; }
+  .chk-item {
+    display:flex; gap:18px; align-items:flex-start; background:#F8F8F8; border:1px solid #E0E0E0;
+    border-left:4px solid var(--red); border-radius:8px; padding:15px 20px; margin-bottom:11px;
+  }
+  .chk-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:30px; font-weight:900; color:var(--red);
+    line-height:1; flex-shrink:0; width:36px;
+  }
+  .chk-cont { flex:1; }
+  .chk-tit { font-size:19px; font-weight:700; color:var(--dark); margin-bottom:3px; }
+  .chk-desc { font-size:17px; color:#555; line-height:1.5; }
+
+  code { font-family:'JetBrains Mono',monospace; font-size:14px; background:#EBEBEB; padding:2px 7px; border-radius:3px; color:#C0392B; }
+
+  #progress {
+    position:fixed; top:0; left:0; height:3px; background:var(--red); width:0%; z-index:9999;
+    transition:width .35s cubic-bezier(.16,1,.3,1); pointer-events:none;
+  }
+  .anim { opacity:0; transform:translateY(22px); transition:opacity .55s cubic-bezier(.16,1,.3,1), transform .55s cubic-bezier(.16,1,.3,1); }
+  .slide.visible .anim { opacity:1; transform:none; }
+  .slide.visible .anim:nth-child(1){transition-delay:0ms} .slide.visible .anim:nth-child(2){transition-delay:100ms}
+  .slide.visible .anim:nth-child(3){transition-delay:210ms} .slide.visible .anim:nth-child(4){transition-delay:330ms}
+  .slide.visible .anim:nth-child(5){transition-delay:450ms} .slide.visible .anim:nth-child(6){transition-delay:560ms}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- PORTADA -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Programación Orientada a Objeto Seguro &middot; TI3V21 &middot; Unidad 2 &middot; Sesión 7</div>
+  <div class="cover-title anim">Herencia:<br>el <span>"es un"</span> en código</div>
+  <p class="cover-desc anim">
+    Vehiculo ya funciona. Hoy Auto, Moto y Camion parten de esa misma clase sin copiar
+    una sola línea, y aprenden a distinguirse donde de verdad importa: cómo cobran su
+    tarifa por hora. Menos código nuevo del que creen, y el primer polimorfismo real
+    del bimestre.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-2B-F1</span></span>
+    <span class="cover-chip">Lunes 31 de agosto de 2026</span>
+    <span class="cover-chip">18:30 &ndash; 20:30 &middot; 120 min</span>
+    <span class="cover-chip">Laboratorio <span>A408</span></span>
+  </div>
+</div>
+
+
+<!-- OBJETIVOS -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Objetivos</span>
+  <div class="sep-num anim">&iquest;Qué van a lograr hoy?</div>
+  <div class="sep-title anim">Objetivos<br>de la <span>sesión</span></div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">Reconocer "es un" como la prueba de herencia</div>
+      <div class="resumen-desc">Y distinguirlo de "tiene un", la relación que ya usan (Usuario tiene un Rol)</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Declarar una clase hija en su propio archivo</div>
+      <div class="resumen-desc"><code>class Hija(Padre):</code> en hija.py, importando al padre, sin copiar sus atributos ni métodos</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Usar super().__init__() cuando haga falta</div>
+      <div class="resumen-desc">Y reconocer el error silencioso de olvidarlo</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Sobrescribir un método heredado</div>
+      <div class="resumen-desc">Mismo nombre, cuerpo distinto en cada hija: polimorfismo real, no solo la palabra</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Encapsular con property</div>
+      <div class="resumen-desc">Validar un dato al escribirlo, y bloquear del todo la escritura de otro, sin exponer nada</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Extender su checklist del criterio 2.1.1</div>
+      <div class="resumen-desc">Con los puntos que solo aplican cuando una clase hereda de otra</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Trabajar con ramas, no en master</div>
+      <div class="resumen-desc">Crear una rama, programar ahí, y guardar+subir el avance al final de la sesión</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- AGENDA -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">&iquest;Qué vemos hoy?</div>
+  <div class="sep-title anim">Contenido<br>de la <span>sesión</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">00</div>
+      <div class="index-name">Recap: clonen, entiendan y creen su rama, verifiquen vehiculo.py</div>
+      <div class="index-type">Setup &middot; 9 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">"Es un" vs "tiene un"</div>
+      <div class="index-type">Concepto &middot; 8 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Sintaxis: class Hija(Padre)</div>
+      <div class="index-type">Concepto + prompt &middot; 15 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">super().__init__(): cuándo hace falta</div>
+      <div class="index-type">Concepto + prompt &middot; 12 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Sobrescritura: tarifa_hora() en cada hija</div>
+      <div class="index-type">Concepto + prompt &middot; 15 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Encapsulamiento real: property</div>
+      <div class="index-type">Concepto + prompt &middot; 20 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">06</div>
+      <div class="index-name">Checklist extendida (herencia)</div>
+      <div class="index-type">Concepto &middot; 8 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">07</div>
+      <div class="index-name">Taller: hereden en su propio modelo</div>
+      <div class="index-type">Práctica &middot; 45 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">08</div>
+      <div class="index-name">Antes de irse: commit y push de su rama</div>
+      <div class="index-type">Concepto + prompt &middot; 6 min</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 00: RECAP ============ -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Antes de empezar</span>
+  <div class="concept-label anim">3 min</div>
+  <div class="concept-title anim">Clonen<br>su <span>repo</span></div>
+  <div class="concept-body anim">
+    <p>
+      El martes dejaron <code>vehiculo.py</code> con la clase completa: atributos privados,
+      constructor, y tres métodos públicos. Antes de agregar nada, clonen su repo.
+    </p>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong><code>poo-seguro-equipo-nombre</code> es un placeholder</strong>
+        <p>En todos los comandos de esta lámina, reemplacen ese texto por el nombre real de
+        su repo. No lo escriban literal.</p>
+      </div>
+    </div>
+    <div class="definicion">
+      <div class="def-k">Dos caminos, según si ya tienen su repo</div>
+      <div class="def-txt">
+        No asuman que la carpeta local del martes sigue en este computador: en el laboratorio
+        no siempre es la misma máquina. En ambos casos, <strong>se lo piden a agy primero</strong>,
+        y después leen en la terminal qué comandos corrió por ustedes.
+      </div>
+    </div>
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le piden a agy &middot; Camino A, ya tienen su repo</div>
+      <div class="prompt-text">"Cloná mi repo desde https://github.com/su-usuario/poo-seguro-equipo-nombre.git
+      y entrá a esa carpeta."</div>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>lo que agy corrió por ustedes</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">git clone https://github.com/su-usuario/poo-seguro-equipo-nombre.git</span>
+<span class="term-prompt">$</span> <span class="term-out">cd poo-seguro-equipo-nombre</span></pre>
+    </div>
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le piden a agy &middot; Camino B, todavía no tienen uno propio</div>
+      <div class="prompt-text">"Todavía no tengo repo propio. Hacé un fork de
+      https://github.com/michaelarjelm/Taller-Mecanico a mi cuenta de GitHub, clonalo acá, y
+      renombrá la carpeta a poo-seguro-equipo-nombre."</div>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>lo que agy corrió por ustedes</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">gh repo fork michaelarjelm/Taller-Mecanico --clone=true</span>
+<span class="cmt">  (crea una copia en SU cuenta de GitHub, y la clona acá mismo)</span>
+<span class="term-prompt">$</span> <span class="term-out">mv Taller-Mecanico poo-seguro-equipo-nombre</span>
+<span class="term-prompt">$</span> <span class="term-out">cd poo-seguro-equipo-nombre</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Un prompt, no cuatro comandos memorizados</strong>
+        <p>Se lo piden a agy en una frase, pero igual lean la terminal: <code>git clone</code>
+        trae el repo, <code>gh repo fork</code> lo copia a su cuenta, <code>cd</code> los deja
+        parados en la carpeta. Van a necesitar reconocer estos comandos leyéndolos, aunque hoy
+        no los tipeen a mano. Quien llegue sin repo se destraba con un solo prompt, sin perder
+        tiempo de la sesión.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 00a2: QUE ES UNA RAMA ============ -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Antes de empezar</span>
+  <div class="concept-label anim">2 min</div>
+  <div class="concept-title anim">¿Qué es<br>una <span>rama</span>?</div>
+  <div class="concept-body anim">
+    <p>
+      Todo lo que programaron hasta el martes quedó directo en <code>master</code>. Eso ya no
+      sigue así: <code>master</code> guarda solo el código que ya funciona y quedó probado. Una
+      rama es una <strong>línea paralela de commits</strong> que arranca desde ese mismo punto
+      de master, para que el código a medio construir no se mezcle con lo estable. Esta rama en
+      particular, <code>desarrollo</code>, no es solo de hoy: la van a seguir usando en todas
+      las sesiones que quedan del módulo.
+    </p>
+    <div class="diagram-card">
+      <div class="diagram-title">De un solo camino a dos</div>
+      <svg viewBox="0 0 620 195" xmlns="http://www.w3.org/2000/svg">
+        <line x1="40" y1="55" x2="280" y2="55" stroke="#1A1A1A" stroke-width="3"/>
+        <line x1="280" y1="55" x2="560" y2="55" stroke="#1A1A1A" stroke-width="3" stroke-dasharray="2 8" opacity="0.4"/>
+        <line x1="280" y1="55" x2="340" y2="120" stroke="#E31E24" stroke-width="3"/>
+        <line x1="340" y1="120" x2="520" y2="120" stroke="#E31E24" stroke-width="3"/>
+        <circle cx="80" cy="55" r="9" fill="#1A1A1A"/>
+        <circle cx="180" cy="55" r="9" fill="#1A1A1A"/>
+        <circle cx="280" cy="55" r="9" fill="#1A1A1A"/>
+        <circle cx="340" cy="120" r="9" fill="#E31E24"/>
+        <circle cx="420" cy="120" r="9" fill="#E31E24"/>
+        <circle cx="500" cy="120" r="9" fill="#E31E24"/>
+        <text x="40" y="30" font-family="JetBrains Mono, monospace" font-size="16" font-weight="700" fill="#1A1A1A">master</text>
+        <text x="130" y="42" font-family="JetBrains Mono, monospace" font-size="12" fill="#666">hasta el martes: probado y funcionando</text>
+        <text x="420" y="42" font-family="JetBrains Mono, monospace" font-size="12" fill="#666" opacity="0.6">quieto mientras tanto</text>
+        <text x="340" y="145" font-family="JetBrains Mono, monospace" font-size="16" font-weight="700" fill="#E31E24">desarrollo</text>
+        <text x="340" y="162" font-family="JetBrains Mono, monospace" font-size="12" fill="#666">Auto, Moto, Camion, property:</text>
+        <text x="340" y="178" font-family="JetBrains Mono, monospace" font-size="12" fill="#666">hoy, y lo que sigue del módulo</text>
+      </svg>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Nada de lo que programen le pasa a master mientras tanto</strong>
+        <p>Programan y prueban en <code>desarrollo</code>; si algo sale mal,
+        <code>master</code> sigue exactamente como estaba el martes. Y no es solo por hoy:
+        van a seguir construyendo sobre esta misma rama en las próximas sesiones, sin
+        mezclarla a master todavía. Eso viene mucho más adelante, cuando el trabajo esté
+        maduro -- por ahora, al final de la sesión, solo la guardan y la suben a GitHub.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Por qué existe</span>
+  <div class="concept-label anim">El problema que resuelve, no solo el comando</div>
+  <div class="concept-title anim">¿Por qué existen<br>las <span>ramas</span>?</div>
+  <div class="concept-body anim">
+    <p>
+      Sin ramas, todo el equipo programa en el mismo lugar al mismo tiempo: si alguien deja
+      código a medio terminar, o algo roto, cualquiera que descargue el proyecto lo hereda de
+      inmediato. Las ramas separan "lo que estoy probando" de "lo que ya funciona", para que
+      nadie tenga que pisar el trabajo de otro ni arriesgar lo estable mientras alguien
+      experimenta.
+    </p>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>En el mundo corporativo</strong>
+        <p>Ningún equipo de desarrollo serio programa directo en <code>main</code>/<code>master</code>.
+        El flujo estándar es: rama por funcionalidad, Pull Request para que otra persona
+        revise el código antes de aceptarlo, y recién ahí se mezcla. Los sistemas de
+        integración continua (CI) corren automáticamente los tests de esa rama antes de
+        permitir el merge -- si algo se rompe, se entera ahí, no en producción. Es
+        literalmente como trabajan los equipos de ingeniería de cualquier empresa de
+        software, Buk incluida.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Antes de empezar</span>
+  <div class="concept-label anim">2 min</div>
+  <div class="concept-title anim">Creen<br>su <span>rama</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le piden a agy</div>
+      <div class="prompt-text">"Creá una rama nueva llamada desarrollo y cambiate a ella."</div>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>lo que agy corrió por ustedes</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">git checkout -b desarrollo</span>
+<span class="cmt">  (crea la rama y los cambia a ella en el mismo paso)</span>
+<span class="term-prompt">$</span> <span class="term-out">git branch</span>
+<span class="term-out">  master
+* desarrollo</span>  <span class="cmt"># el asterisco marca en cuál están parados</span></pre>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 2 min &middot; individual</div>
+      <div class="act-t">Corran los dos comandos de arriba, y confirmen con git branch que el asterisco quedó en desarrollo.</div>
+      <div class="act-d">Si el asterisco sigue en master, no corrió el checkout: avísenme antes de seguir.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 00b: VERIFICACION ============ -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Antes de empezar</span>
+  <div class="concept-label anim">2 min</div>
+  <div class="concept-title anim">Verifiquen que<br>sigue <span>funcionando</span></div>
+  <div class="concept-body anim">
+    <p>
+      Con el repo ya clonado (o forkeado), confirmen que <code>vehiculo.py</code> sigue tal
+      como lo dejaron el martes, antes de agregar la primera línea de hoy.
+    </p>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; como debería estar (Camino A) o como llega (Camino B)</div>
+<pre><span class="kw">class</span> <span class="cls">Vehiculo</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio):
+        self.__patente = patente
+        self.__anio = anio
+        self.__en_taller = <span class="kw">False</span>
+
+    <span class="kw">def</span> <span class="fn">ingresar</span>(self):
+        <span class="cmt"># marca el vehículo como dentro del taller</span>
+        ...
+
+    <span class="kw">def</span> <span class="fn">entregar</span>(self):
+        <span class="cmt"># marca el vehículo como fuera del taller</span>
+        ...
+
+    <span class="kw">def</span> <span class="fn">tarifa_hora</span>(self):
+        <span class="kw">return</span> <span class="num">5000</span>  <span class="cmt"># valor genérico, todavía igual para cualquier vehículo</span></pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>terminal</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">git status</span>
+<span class="term-prompt">$</span> <span class="term-out">python3 main.py</span>
+<span class="cmt">  (debería imprimir el ingreso y la tarifa de los 3 vehículos, igual que el martes)</span>
+<span class="term-prompt">$</span> <span class="term-out">agy</span></pre>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; individual</div>
+      <div class="act-t">Clonen su repo (Camino A) o hagan la copia del mío (Camino B), y corran los comandos de verificación.</div>
+      <div class="act-d">Si <code>main.py</code> no imprime lo esperado, avísenme antes de seguir: hoy construimos sobre esa base.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 01: ES UN vs TIENE UN ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 01</span>
+  <div class="sep-num anim">01 &middot; Concepto &middot; 8 min</div>
+  <div class="sep-title anim">"Es un"<br>vs <span>"tiene un"</span></div>
+  <p class="sep-desc anim">
+    Ya usaron una relación entre clases sin llamarla herencia. Hoy aprenden la otra, y
+    la prueba para no confundirlas nunca más.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">La pregunta que decide cuál relación usar</div>
+  <div class="concept-title anim">Dos formas de<br>conectar <span>clases</span></div>
+  <div class="concept-body anim">
+    <p>
+      Desde la sesión 2 conocen "tiene un" (agregación y composición): Usuario <strong>tiene un</strong>
+      Rol, OrdenTrabajo <strong>tiene</strong> LineaDetalle. Hoy aparece la otra: "es un", y se
+      escribe distinto, no con un atributo sino con la propia declaración de la clase.
+    </p>
+    <div class="two-col">
+      <div class="col-card">
+        <div class="col-card-title">Tiene un</div>
+        <p>Un objeto guarda una <em>referencia</em> a otro, como un atributo más.</p>
+        <ul>
+          <li>Usuario tiene un Rol</li>
+          <li>Cliente tiene un Vehiculo</li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title">Es un</div>
+        <p>Un objeto <em>ya viene</em> con todo lo del otro, sin declarar ningún atributo para eso.</p>
+        <ul>
+          <li>Auto es un Vehiculo</li>
+          <li>Moto es un Vehiculo</li>
+        </ul>
+      </div>
+    </div>
+    <div class="definicion">
+      <div class="def-k">La prueba</div>
+      <div class="def-txt">
+        Si la frase "<strong>X es un Y</strong>" suena natural, es herencia. Si suena forzada
+        pero "<strong>X tiene un Y</strong>" sí tiene sentido, es agregación o composición.
+      </div>
+      <div class="def-ej">"Un Auto es un Vehiculo" suena natural. "Un Usuario es un Rol" no tiene sentido: por eso Usuario--Rol siempre fue "tiene un".</div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>En su diagrama, ya está dibujado</strong>
+        <p>La herencia se dibuja con una flecha de triángulo hueco (la vieron en la sesión 2).
+        Busquen esa flecha en su propio modelo: ahí está su jerarquía, la que van a programar hoy.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 02: SINTAXIS DE HERENCIA ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Concepto + prompt &middot; 15 min</div>
+  <div class="sep-title anim">class Hija<span>(Padre)</span>:</div>
+  <p class="sep-desc anim">
+    Tres clases nuevas, y ninguna necesita repetir una sola línea de Vehiculo.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Todo lo del padre, sin copiarlo</div>
+  <div class="concept-title anim">¿Qué hace<br><span>heredar</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Herencia</div>
+      <div class="def-txt">
+        Declarar una clase con <strong>otra clase entre paréntesis</strong>. La hija recibe,
+        automáticamente, todos los atributos y métodos del padre, sin que nadie los vuelva
+        a escribir.
+      </div>
+      <div class="def-ej">En su diagrama es la flecha de triángulo hueco: Auto &rarr; Vehiculo, Moto &rarr; Vehiculo, Camion &rarr; Vehiculo.</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">sintaxis</div>
+<pre><span class="cmt"># padre.py</span>
+<span class="kw">class</span> <span class="cls">Padre</span>:
+    ...
+
+<span class="cmt"># hija.py &middot; cada clase en su propio archivo</span>
+<span class="kw">from</span> padre <span class="kw">import</span> <span class="cls">Padre</span>
+
+<span class="kw">class</span> <span class="cls">Hija</span>(<span class="cls">Padre</span>):  <span class="cmt"># Hija hereda todo lo de Padre</span>
+    ...</pre>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Auto, Moto y Camion no agregan ningún atributo nuevo</strong>
+        <p>Revisen el diagrama: las tres solo tienen patente, anio y en_taller, exactamente
+        los mismos de Vehiculo. Eso significa que hoy no necesitan escribir ni un constructor
+        propio para que funcionen.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Por qué existe</span>
+  <div class="concept-label anim">El problema que resuelve, no solo la sintaxis</div>
+  <div class="concept-title anim">¿Por qué existe<br>la <span>herencia</span>?</div>
+  <div class="concept-body anim">
+    <p>
+      Sin herencia, cada clase nueva parecida a otra obliga a copiar y pegar sus atributos y
+      métodos. El problema no es escribirlo dos veces: es que cuando aparece un bug en
+      <code>ingresar()</code>, hay que acordarse de corregirlo en las tres copias. Con
+      herencia, se corrige una sola vez, en el padre, y las tres hijas quedan arregladas
+      automáticamente.
+    </p>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>En el mundo corporativo</strong>
+        <p>Prácticamente todo framework se organiza así: en Django, cada modelo hereda de
+        <code>models.Model</code>, que ya sabe guardar en la base de datos, validar campos y
+        generar el formulario admin -- ninguna empresa reescribe eso por cada tabla. Los
+        sistemas de pasarelas de pago suelen tener una clase base <code>MetodoPago</code>
+        (o similar) de la que heredan Tarjeta, Transferencia y Billetera digital, cada una
+        con su propia forma de cobrar pero compartiendo todo lo demás: registro, reembolso,
+        historial.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Tres clases, una sola línea cada una</div>
+  <div class="concept-title anim">Creemos<br>las tres <span>hijas</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Creá tres archivos nuevos: auto.py, moto.py y camion.py. En cada
+      uno, importá la clase Vehiculo desde vehiculo.py, y declará la clase correspondiente
+      heredando de Vehiculo con class NombreClase(Vehiculo):. Dejalas vacías por ahora, con
+      pass, sin agregar ningún atributo ni método nuevo. No toques vehiculo.py. Después,
+      actualizá main.py para importar Auto, Moto y Camion desde sus archivos nuevos."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">auto.py &middot; generado por Antigravity</div>
+<pre><span class="kw">from</span> vehiculo <span class="kw">import</span> <span class="cls">Vehiculo</span>  <span class="cmt"># importa la clase padre desde su propio archivo</span>
+
+<span class="kw">class</span> <span class="cls">Auto</span>(<span class="cls">Vehiculo</span>):
+    <span class="kw">pass</span>  <span class="cmt"># todavía nada propio</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-title">moto.py &middot; generado por Antigravity</div>
+<pre><span class="kw">from</span> vehiculo <span class="kw">import</span> <span class="cls">Vehiculo</span>
+
+<span class="kw">class</span> <span class="cls">Moto</span>(<span class="cls">Vehiculo</span>):
+    <span class="kw">pass</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-title">camion.py &middot; generado por Antigravity</div>
+<pre><span class="kw">from</span> vehiculo <span class="kw">import</span> <span class="cls">Vehiculo</span>
+
+<span class="kw">class</span> <span class="cls">Camion</span>(<span class="cls">Vehiculo</span>):
+    <span class="kw">pass</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-title">main.py &middot; imports actualizados</div>
+<pre><span class="kw">from</span> vehiculo <span class="kw">import</span> <span class="cls">Vehiculo</span>
+<span class="kw">from</span> auto <span class="kw">import</span> <span class="cls">Auto</span>
+<span class="kw">from</span> moto <span class="kw">import</span> <span class="cls">Moto</span>
+<span class="kw">from</span> camion <span class="kw">import</span> <span class="cls">Camion</span></pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>python3 main.py</div>
+      <pre><span class="term-out">v1 = Auto("AB1234", 2018)
+v1.ingresar()      </span><span class="cmt"># funciona: Auto no lo escribió, lo heredó de Vehiculo</span>
+<span class="term-out">v1.tarifa_hora()   </span><span class="cmt"># devuelve 5000: todavía usa el de Vehiculo</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>pass no es un contenedor vacío de verdad</strong>
+        <p>Auto ya puede instanciarse, ingresar, entregar y cobrar tarifa: heredó las cuatro
+        cosas de Vehiculo sin que nadie escribiera nada dentro de la clase. <code>pass</code>
+        solo le dice a Python "esta clase no agrega nada todavía", no "esta clase no hace nada".</p>
+      </div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Un archivo por clase, de ahora en adelante</strong>
+        <p>Auto, Moto y Camion no se agregan dentro de <code>vehiculo.py</code>: cada clase
+        tiene su propio archivo, que <strong>importa</strong> a las que necesita. Con todo en
+        un solo archivo, encontrar una clase entre cientos de líneas se vuelve un problema; con
+        un archivo por clase, el nombre del archivo ya les dice qué hay adentro. Van a repetir
+        este patrón con cada clase nueva de su propio modelo, no solo hoy.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Con su propio prompt, sobre el taller mecánico</div>
+  <div class="concept-title anim">Ahora ustedes:<br><span>pruébenlo</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 4 min &middot; individual, sobre el taller mecánico</div>
+      <div class="act-t">Escríbanle a agy, con sus propias palabras, que en main.py cree un Auto, una Moto y un Camion, y llame ingresar() y tarifa_hora() en cada uno.</div>
+      <div class="act-d">No copien un prompt de acá: descríbanselo ustedes, con el resultado que quieren ver. Debería funcionar sin que ninguna de las tres haya escrito código propio todavía -- si algo falla, revisen que de verdad heredaron de Vehiculo.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 03: SUPER().__INIT__() ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 03</span>
+  <div class="sep-num anim">03 &middot; Concepto + prompt &middot; 12 min</div>
+  <div class="sep-title anim">super<span>().__init__()</span></div>
+  <p class="sep-desc anim">
+    El paso que conecta lo heredado con lo nuevo que agrega una hija.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Para cuando la hija agrega algo nuevo</div>
+  <div class="concept-title anim">¿Cuándo hace<br>falta <span>super()</span>?</div>
+  <div class="concept-body anim">
+    <p>
+      Auto y Moto no agregan ningún atributo propio: usan el constructor de Vehiculo tal cual,
+      sin escribir nada. Camion sí agrega uno: <strong>capacidad_carga</strong>. Ahí es donde
+      <code>super().__init__()</code> entra.
+    </p>
+    <div class="definicion">
+      <div class="def-k">super().__init__()</div>
+      <div class="def-txt">
+        Le pide al padre que arme <strong>lo que ya sabe armar</strong>, antes de que la hija
+        agregue lo suyo. Sin eso, el constructor de la hija reemplaza por completo al del
+        padre: los atributos heredados nunca se crean.
+      </div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El error que se comete al olvidarlo</strong>
+        <p>Si escriben su propio <code>__init__</code> en una hija y <strong>no</strong> llaman
+        <code>super().__init__()</code>, los atributos del padre (patente, anio, en_taller)
+        nunca se crean. Python no marca error al definir la clase: revienta después, la
+        primera vez que alguien intenta usar uno de esos atributos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Por qué existe</span>
+  <div class="concept-label anim">El problema que resuelve, no solo la sintaxis</div>
+  <div class="concept-title anim">¿Por qué existe<br><span>super()</span>?</div>
+  <div class="concept-body anim">
+    <p>
+      El problema que resuelve es reutilizar sin reescribir: si Camion tuviera que armar
+      <code>patente</code>, <code>anio</code> y <code>en_taller</code> por su cuenta, estaría
+      copiando exactamente la lógica que Vehiculo ya tiene, con el riesgo de que un día se
+      desincronicen (por ejemplo, si mañana Vehiculo agrega una validación nueva y Camion no
+      la hereda porque nunca pasó por <code>super()</code>).
+    </p>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>En el mundo corporativo</strong>
+        <p><code>super()</code> aparece cada vez que se extiende una clase de un framework
+        sin querer perder lo que ya hace por dentro. En Django, sobrescribir
+        <code>save()</code> de un modelo para, por ejemplo, generar un código único antes de
+        guardar, sin llamar <code>super().save()</code> significa que el registro nunca
+        llega a la base de datos. En Django REST Framework, un serializer propio que valida
+        datos extra necesita llamar <code>super().__init__()</code> para no perder toda la
+        validación estándar que trae de fábrica.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Camion agrega lo que las otras dos no necesitan</div>
+  <div class="concept-title anim">Agreguemos<br><span>capacidad_carga</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"En camion.py, reemplaza el pass de Camion: agregale un
+      atributo propio capacidad_carga (número entero, en kilos). Escribile su propio
+      constructor, que reciba patente, anio y capacidad_carga: primero llama a
+      super().__init__(patente, anio), después guarda capacidad_carga como privado.
+      Comenta cada línea."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">camion.py &middot; generado por Antigravity</div>
+<pre><span class="kw">from</span> vehiculo <span class="kw">import</span> <span class="cls">Vehiculo</span>
+
+<span class="kw">class</span> <span class="cls">Camion</span>(<span class="cls">Vehiculo</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio, capacidad_carga):
+        <span class="fn">super</span>().<span class="fn">__init__</span>(patente, anio)  <span class="cmt"># arma patente, anio y en_taller, igual que cualquier Vehiculo</span>
+        self.__capacidad_carga = capacidad_carga  <span class="cmt"># privado: doble guion bajo, solo de Camion</span></pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>python3</div>
+      <pre><span class="term-prompt">&gt;&gt;&gt;</span> <span class="term-out">c1 = Camion("CM7788", 2015, 8000)
+c1.ingresar()      </span><span class="cmt"># funciona: en_taller lo armó super().__init__(), no Camion</span>
+<span class="term-prompt">&gt;&gt;&gt;</span> <span class="term-out">c1.tarifa_hora()   </span><span class="cmt"># 5000: todavía la hereda de Vehiculo sin cambios</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Auto y Moto se quedan con pass</strong>
+        <p>Solo Camion cambió, porque solo Camion agrega un dato que Vehiculo no tiene. Esa es
+        la diferencia real entre heredar sin tocar nada y escribir un <code>__init__</code>
+        propio: no depende de la clase, depende de si hay algo nuevo que guardar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Con su propio prompt, sobre el taller mecánico</div>
+  <div class="concept-title anim">Ahora ustedes:<br><span>compárenlos</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 4 min &middot; individual, sobre el taller mecánico</div>
+      <div class="act-t">Escríbanle a agy, con su propio prompt, que cree dos Camion con capacidad_carga distinta, y que imprima cuál de los dos puede cargar más.</div>
+      <div class="act-d">Otra vez: describan el resultado que quieren, no copien texto. Este es exactamente el tipo de paso incremental que van a repetir solos en el taller de más adelante.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 04: SOBRESCRITURA ============ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Bloque 04</span>
+  <div class="sep-num anim">04 &middot; Concepto + prompt &middot; 15 min</div>
+  <div class="sep-title anim">Sobrescritura:<br>cada hija con <span>su tarifa</span></div>
+  <p class="sep-desc anim">
+    El único punto donde Auto, Moto y Camion dejan de ser idénticas.
+  </p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Mismo nombre de método, cuerpo distinto</div>
+  <div class="concept-title anim">¿Qué es<br><span>sobrescribir</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Sobrescritura (override)</div>
+      <div class="def-txt">
+        Una hija define un método <strong>con el mismo nombre exacto</strong> que uno del padre.
+        Cuando se llama sobre un objeto de la hija, Python usa la versión de la hija, no la
+        del padre.
+      </div>
+      <div class="def-ej">tarifa_hora() existe en Vehiculo con un valor genérico (5000). Auto, Moto y Camion la sobrescriben, cada una con su propio valor.</div>
+    </div>
+    <div class="tbl">
+      <table style="width:100%; border-collapse:collapse;">
+        <tr><th>Clase</th><th>tarifa_hora()</th></tr>
+        <tr><td class="mono">Vehiculo</td><td>5000 (genérico, ninguna instancia real lo usa)</td></tr>
+        <tr><td class="mono">Auto</td><td>25000</td></tr>
+        <tr><td class="mono">Moto</td><td>15000</td></tr>
+        <tr><td class="mono">Camion</td><td>40000</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Por qué existe</span>
+  <div class="concept-label anim">El problema que resuelve, no solo la sintaxis</div>
+  <div class="concept-title anim">¿Por qué existe<br>la <span>sobrescritura</span>?</div>
+  <div class="concept-body anim">
+    <p>
+      La alternativa a sobrescribir es un <code>if</code> gigante: "si es Auto, cobra así;
+      si es Moto, cobra asá; si es Camion...". Ese <code>if</code> vive afuera de las clases,
+      y cada vez que aparece un tipo nuevo de vehículo hay que acordarse de ir a buscarlo y
+      agregarle una rama más. Con sobrescritura, el código que llama <code>tarifa_hora()</code>
+      no cambia nunca, aunque mañana aparezca un Bus: cada clase sabe responder por sí misma.
+    </p>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>En el mundo corporativo</strong>
+        <p>Es la base de los sistemas de pago: Stripe, PayPal, MercadoPago y una
+        transferencia bancaria pueden implementarse cada una como una clase que sobrescribe
+        un método <code>cobrar()</code> común, y el carrito de compras llama
+        <code>metodo.cobrar()</code> sin ningún <code>if</code> que pregunte cuál pasarela
+        está activa. Lo mismo con las tarifas de envío por transportista (Correos, Chilexpress,
+        Uber Flash): cada una sobrescribe <code>calcular_costo()</code>, y agregar un
+        transportista nuevo nunca obliga a tocar el código que ya funciona.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Un método por clase, tres valores distintos</div>
+  <div class="concept-title anim">Sobrescribamos<br><span>tarifa_hora()</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Sobrescribe el método tarifa_hora() en auto.py, moto.py y
+      camion.py: Auto retorna 25000, Moto retorna 15000 y Camion retorna 40000, cada uno como
+      número entero. No cambies tarifa_hora() en vehiculo.py."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">auto.py &middot; generado por Antigravity</div>
+<pre><span class="kw">from</span> vehiculo <span class="kw">import</span> <span class="cls">Vehiculo</span>
+
+<span class="kw">class</span> <span class="cls">Auto</span>(<span class="cls">Vehiculo</span>):
+    <span class="kw">def</span> <span class="fn">tarifa_hora</span>(self):
+        <span class="kw">return</span> <span class="num">25000</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-title">moto.py &middot; generado por Antigravity</div>
+<pre><span class="kw">from</span> vehiculo <span class="kw">import</span> <span class="cls">Vehiculo</span>
+
+<span class="kw">class</span> <span class="cls">Moto</span>(<span class="cls">Vehiculo</span>):
+    <span class="kw">def</span> <span class="fn">tarifa_hora</span>(self):
+        <span class="kw">return</span> <span class="num">15000</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-title">camion.py &middot; generado por Antigravity</div>
+<pre><span class="kw">from</span> vehiculo <span class="kw">import</span> <span class="cls">Vehiculo</span>
+
+<span class="kw">class</span> <span class="cls">Camion</span>(<span class="cls">Vehiculo</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio, capacidad_carga):
+        <span class="fn">super</span>().<span class="fn">__init__</span>(patente, anio)
+        self.__capacidad_carga = capacidad_carga
+
+    <span class="kw">def</span> <span class="fn">tarifa_hora</span>(self):
+        <span class="kw">return</span> <span class="num">40000</span>  <span class="cmt"># se agrega junto al __init__ del bloque anterior, sin tocarlo</span></pre>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; individual, con su propio prompt, sobre el taller mecánico</div>
+      <div class="act-t">Ahora ustedes: descríbanle a agy, con sus propias palabras, que en main.py cree un Auto, una Moto y un Camion, los meta en una lista, y recorra la lista imprimiendo la tarifa de cada uno -- sin preguntar en ningún lado de qué clase es cada vehículo.</div>
+      <div class="act-d">No copien el prompt de bloques anteriores: este lo arman ustedes. Así debería verse la salida si les quedó bien.</div>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>python3 main.py &middot; resultado esperado</div>
+      <pre><span class="term-out">Tarifa: $25000
+Tarifa: $15000
+Tarifa: $40000</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Esto es polimorfismo, no solo la palabra de la sesión 2</strong>
+        <p>El <code>for</code> llama <code>v.tarifa_hora()</code> sin ningún <code>if</code> que
+        pregunte "¿es un Auto? ¿una Moto?". Cada objeto responde con la versión que le
+        corresponde. Quien programa el <code>for</code> no necesita saberlo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 05: ENCAPSULAMIENTO REAL (PROPERTY) ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 05</span>
+  <div class="sep-num anim">05 &middot; Concepto + prompt &middot; 20 min</div>
+  <div class="sep-title anim">Encapsulamiento<br>real: <span>property</span></div>
+  <p class="sep-desc anim">
+    Ya hicieron privados sus atributos. Hoy los leen, los validan, y protegen los que
+    nadie debería poder cambiar desde afuera.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Ni exponer el atributo, ni obligar a llamar un método</div>
+  <div class="concept-title anim">¿Qué es<br><span>property</span>?</div>
+  <div class="concept-body anim">
+    <p>
+      Con un atributo privado tienen dos caminos incómodos: exponerlo directo (rompe la
+      privacidad) o escribir un método explícito como <code>obtener_patente()</code> (funciona,
+      pero se lee distinto a un atributo normal). <code>@property</code> da un tercer camino.
+    </p>
+    <div class="definicion">
+      <div class="def-k">property</div>
+      <div class="def-txt">
+        Un decorador que convierte un método en algo que <strong>se lee como atributo</strong>.
+        <code>v1.patente</code> ejecuta código por dentro, pero se ve y se escribe exactamente
+        como si <code>patente</code> fuera pública.
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">sintaxis mínima</div>
+<pre><span class="kw">class</span> <span class="cls">Vehiculo</span>:
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">patente</span>(self):
+        <span class="kw">return</span> self.__patente  <span class="cmt"># se llama igual que el atributo</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Con esto, ya no escriben paréntesis para leer</strong>
+        <p><code>v1.patente</code>, no <code>v1.patente()</code>. Por fuera es indistinguible
+        de un atributo público. Por dentro, sigue siendo <code>self.__patente</code>, privado.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Property no es solo para validar</div>
+  <div class="concept-title anim">Datos que se leen,<br>pero nunca se <span>escriben</span></div>
+  <div class="concept-body anim">
+    <p>
+      Desde la sesión 6 saben que <code>en_taller</code> no debería cambiarse directo desde
+      afuera: solo <code>ingresar()</code> y <code>entregar()</code> deberían tocarlo. Hasta
+      ahora eso era una convención (el guion bajo), no una regla que Python hiciera cumplir.
+      Un <code>property</code> sin setter la convierte en regla real.
+    </p>
+    <div class="definicion">
+      <div class="def-k">property de solo lectura</div>
+      <div class="def-txt">
+        Un <code>property</code> al que <strong>no le escriben un setter</strong> se puede
+        leer desde afuera, pero cualquier intento de asignarlo directo falla. No hace falta
+        prohibirlo a mano: si el setter no existe, Python lo bloquea solo.
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; solo getter, sin setter</div>
+<pre><span class="kw">class</span> <span class="cls">Vehiculo</span>:
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">en_taller</span>(self):
+        <span class="kw">return</span> self.__en_taller  <span class="cmt"># se lee, pero no hay @en_taller.setter</span></pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>python3</div>
+      <pre><span class="term-prompt">&gt;&gt;&gt;</span> <span class="term-out">v1.en_taller</span>
+<span class="term-out">False</span>
+<span class="term-prompt">&gt;&gt;&gt;</span> <span class="term-out">v1.en_taller = True</span>
+<span class="term-out">AttributeError: property 'en_taller' of 'Vehiculo' object has no setter</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Dos usos distintos del mismo decorador</strong>
+        <p><code>patente</code> (que viene ahora) tiene getter <strong>y</strong> setter: se
+        puede cambiar, pero validado. <code>en_taller</code> tiene <strong>solo</strong> getter:
+        no se puede cambiar desde afuera bajo ninguna condición, solo por dentro, cuando
+        <code>ingresar()</code> o <code>entregar()</code> lo deciden.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Por qué existe</span>
+  <div class="concept-label anim">El problema que resuelve, no solo la sintaxis</div>
+  <div class="concept-title anim">¿Por qué existe<br><span>property</span>?</div>
+  <div class="concept-body anim">
+    <p>
+      Sin <code>property</code>, proteger un dato exige que todo el código que lo use recuerde
+      llamar a un método (<code>obtener_patente()</code>) en vez de leer el atributo. Si un
+      solo lugar del programa se salta esa costumbre y lee o escribe el atributo directo, la
+      protección desaparece silenciosamente ahí. <code>property</code> hace que sea imposible
+      saltársela: no hay atajo, porque por fuera se ve idéntico a un atributo normal.
+    </p>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>En el mundo corporativo</strong>
+        <p>Es la misma idea detrás de la validación de campos en cualquier ORM (Django,
+        Rails, SQLAlchemy): un modelo <code>Empleado</code> con un campo <code>rut</code>
+        valida el formato en el punto donde se asigna, no confía en que cada pantalla del
+        sistema lo valide por su cuenta. Los saldos de cuentas bancarias o billeteras
+        digitales son el ejemplo clásico de solo lectura: la API expone <code>saldo</code>
+        para consultarlo, pero nunca un <code>setter</code> directo -- la única forma de
+        cambiarlo es a través de una transacción registrada, igual que <code>en_taller</code>
+        solo cambia por <code>ingresar()</code> y <code>entregar()</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">La forma real de validar un dato, no solo declararlo</div>
+  <div class="concept-title anim">Que patente<br>no se pueda <span>romper</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"En vehiculo.py, agregale a Vehiculo un property patente: el
+      getter retorna el valor privado. Agregale también su setter, que valide que el texto
+      tenga al menos 6 caracteres y no tenga espacios; si no cumple, que lance un ValueError
+      con un mensaje claro. En el constructor, asigná con self.patente = patente (no directo
+      al atributo privado), para que la validación corra también al crear el objeto."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; generado por Antigravity</div>
+<pre><span class="kw">class</span> <span class="cls">Vehiculo</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio):
+        self.patente = patente  <span class="cmt"># pasa por el setter: valida antes de guardar</span>
+        self.__anio = anio
+        self.__en_taller = <span class="kw">False</span>
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">patente</span>(self):
+        <span class="kw">return</span> self.__patente
+
+    <span class="kw">@patente</span>.setter
+    <span class="kw">def</span> <span class="fn">patente</span>(self, valor):
+        <span class="kw">if</span> <span class="fn">len</span>(valor) &lt; <span class="num">6</span> <span class="kw">or</span> <span class="str">" "</span> <span class="kw">in</span> valor:
+            <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="str">f"Patente inválida: {valor!r}"</span>)
+        self.__patente = valor</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>python3</div>
+      <pre><span class="term-prompt">&gt;&gt;&gt;</span> <span class="term-out">v1 = Vehiculo("AB1234", 2018)</span>
+<span class="term-prompt">&gt;&gt;&gt;</span> <span class="term-out">v1.patente</span>
+<span class="term-out">'AB1234'</span>
+<span class="term-prompt">&gt;&gt;&gt;</span> <span class="term-out">v1.patente = "X"</span>
+<span class="term-out">ValueError: Patente inválida: 'X'</span></pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El constructor también queda protegido</strong>
+        <p><code>self.patente = patente</code> dentro de <code>__init__</code> no asigna
+        directo: pasa por el setter. Si alguien intenta crear un Vehiculo con una patente
+        inválida, revienta ahí mismo, no más adelante cuando ya es tarde para darse cuenta.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Auto, Moto y Camion quedan protegidas gratis</strong>
+        <p>Las tres llaman al constructor de Vehiculo (directo o vía <code>super()</code>), y
+        ese constructor ya valida. Ninguna de las tres necesita agregar nada propio para
+        heredar también esta protección.</p>
+      </div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Esto es el requisito 3 de los seis mínimos</strong>
+        <p>"Al menos un dato con validación real" no es un capricho de esta lámina: es uno de
+        los seis requisitos que su propio negocio también tiene que cumplir. Este patrón
+        (property + setter que valida + constructor que asigna vía el setter) es exactamente
+        lo que van a replicar hoy en el taller sobre su dato validable.</p>
+      </div>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Dos cosas para más adelante</strong>
+        <p>Esta validación es de forma, no la regla legal completa de patentes chilenas: eso
+        se afina más adelante. Y ese <code>ValueError</code> sin atrapar hoy revienta el
+        programa entero; aprenden a atraparlo con <code>try/except</code> en la sesión 9.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Ahora el otro uso del mismo decorador</div>
+  <div class="concept-title anim">Que en_taller<br>no se pueda <span>forzar</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"En vehiculo.py, agregale a Vehiculo un property en_taller de
+      solo lectura: el getter retorna el valor privado, y no le agregues ningún setter. No
+      cambies ingresar() ni entregar(): ellas siguen modificando el atributo privado
+      directamente, porque están dentro de la clase."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; generado por Antigravity</div>
+<pre><span class="kw">class</span> <span class="cls">Vehiculo</span>:
+    <span class="cmt"># ... __init__, patente con setter, igual que antes</span>
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">en_taller</span>(self):
+        <span class="kw">return</span> self.__en_taller  <span class="cmt"># solo lectura: sin setter</span>
+
+    <span class="kw">def</span> <span class="fn">ingresar</span>(self):
+        self.__en_taller = <span class="kw">True</span>  <span class="cmt"># esto sigue funcionando: es la propia clase escribiendo</span>
+        ...</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>python3</div>
+      <pre><span class="term-prompt">&gt;&gt;&gt;</span> <span class="term-out">v1.ingresar()</span>
+<span class="term-prompt">&gt;&gt;&gt;</span> <span class="term-out">v1.en_taller</span>
+<span class="term-out">True</span>
+<span class="term-prompt">&gt;&gt;&gt;</span> <span class="term-out">v1.en_taller = False</span>
+<span class="cmt">  # AttributeError: property 'en_taller' of 'Vehiculo' object has no setter</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Por qué esto no rompe ingresar() ni entregar()</strong>
+        <p>El bloqueo de <code>property</code> es solo desde <strong>afuera</strong> de la
+        clase. Dentro de <code>ingresar()</code>, <code>self.__en_taller = True</code> sigue
+        siendo una asignación directa al atributo privado, no pasa por ningún property. La
+        regla no es "nadie puede cambiar esto", es "nadie de afuera puede saltarse el
+        procedimiento".</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Con su propio prompt, sobre el taller mecánico</div>
+  <div class="concept-title anim">Ahora ustedes:<br><span>rómpanlo</span> a propósito</div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; individual, sobre el taller mecánico</div>
+      <div class="act-t">Escríbanle a agy, con su propio prompt, un archivo de prueba que intente dos cosas: crear un Auto con una patente inválida (debería fallar con ValueError), y después modificar en_taller desde afuera de la clase (debería fallar con AttributeError).</div>
+      <div class="act-d">Otra vez: no copien el texto de los prompts anteriores. Confirmen que ven los dos errores esperados antes de seguir.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 06: CHECKLIST EXTENDIDA ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 06</span>
+  <div class="sep-num anim">06 &middot; Concepto &middot; 8 min</div>
+  <div class="sep-title anim">Checklist<br>extendida: <span>herencia</span></div>
+  <p class="sep-desc anim">
+    Los cinco puntos del martes siguen valiendo. Estos tres se agregan solo cuando una clase hereda de otra.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Criterio 2.1.1</span>
+  <div class="concept-label anim">Verifica diagrama de clases con solución propuesta</div>
+  <div class="concept-title anim">Tres puntos<br>más, por <span>jerarquía</span></div>
+  <div class="concept-body anim">
+    <p>
+      Estos se suman a los cinco de la sesión pasada (nombre, atributos en el constructor,
+      visibilidad, métodos, dos instancias probadas), y aplican solo a las clases hijas de
+      su modelo.
+    </p>
+    <div class="chk">
+      <div class="chk-item">
+        <div class="chk-num">6</div>
+        <div class="chk-cont">
+          <div class="chk-tit">La hija vive en su propio archivo</div>
+          <div class="chk-desc">hija.py, no dentro del archivo del padre, con class Hija(Padre): y el import correspondiente. Un archivo por clase, sin excepciones.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">7</div>
+        <div class="chk-cont">
+          <div class="chk-tit">No repite lo que el padre ya tiene</div>
+          <div class="chk-desc">Ningún atributo ni método del padre está copiado en la hija: si aparece igual en ambos, se hereda, no se duplica.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">8</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Si sobrescribe, usa el mismo nombre exacto</div>
+          <div class="chk-desc">El método sobrescrito en la hija se llama igual que el del padre. Si el nombre cambia, ya no es sobrescritura: es un método nuevo que no reemplaza nada.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Un cuarto punto, solo si su hija agrega algo nuevo</strong>
+        <p>Si alguna hija de su modelo sí necesita un atributo propio (a diferencia de Auto,
+        Moto y Camion hoy), agreguen a mano un cuarto chequeo: su <code>__init__</code> llama
+        <code>super().__init__()</code> antes de fijar lo nuevo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 07: TALLER ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-practica">Bloque 07</span>
+  <div class="sep-num anim">07 &middot; Práctica &middot; 45 min</div>
+  <div class="sep-title anim">Taller: hereden<br>y <span>encapsulen</span></div>
+  <p class="sep-desc anim">
+    Todo lo de hoy, ahora sobre su propio modelo: la jerarquía que dibujaron, y el dato
+    que necesita validación real. En equipo, con Antigravity.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Taller</span>
+  <div class="concept-label anim">En equipo &middot; 45 min &middot; con asesoría</div>
+  <div class="concept-title anim">Programen<br>su <span>jerarquía</span></div>
+  <div class="concept-body anim">
+    <div class="chk">
+      <div class="chk-item">
+        <div class="chk-num">1</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Ubiquen su jerarquía de herencia en el diagrama</div>
+          <div class="chk-desc">Es el requisito 1 de los seis mínimos: tres subtipos con un método polimórfico. La flecha de triángulo hueco.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">2</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Confirmen que la clase padre ya existe</div>
+          <div class="chk-desc">Debería venir de la sesión pasada, con sus atributos privados y métodos. Si no está completa, termínenla primero.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">3</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Creen las tres clases hijas, cada una en su propio archivo</div>
+          <div class="chk-desc">hija.py con class Hija(Padre): e import de la clase padre, igual que auto.py/moto.py/camion.py hoy. Si no agregan atributos nuevos, con pass alcanza. Si sí agregan uno, usen super().__init__() del bloque 03.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">4</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Sobrescriban su método polimórfico en cada hija</div>
+          <div class="chk-desc">El mismo que identificaron como requisito 1: mismo nombre en las tres, un cuerpo distinto en cada una.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">5</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Prueben con al menos dos hijas distintas</div>
+          <div class="chk-desc">Instancien dos, y llamen el método sobrescrito de cada una para confirmar que cada una responde distinto.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">6</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Pasen cada hija por la checklist extendida</div>
+          <div class="chk-desc">Los tres puntos del bloque 06, uno por uno, antes de dar la clase por terminada.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">7</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Encuentren su dato con validación real (requisito 3)</div>
+          <div class="chk-desc">El que anotaron en la ficha de su negocio. Conviértanlo en property con setter que valide, igual que patente hoy, y asignen desde el constructor con self.dato = valor para que el constructor también quede protegido.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">8</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Si tienen un dato de solo lectura, bloqueen su escritura</div>
+          <div class="chk-desc">Igual que en_taller hoy: property sin setter, para un dato que solo debería cambiar por dentro de la clase, nunca desde afuera.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Prompts cortos, un paso a la vez</strong>
+        <p>Igual que siempre: le piden a agy un paso concreto, leen el código antes de seguir,
+        y lo verifican contra su diagrama. No le pidan las tres clases completas de una sola vez.</p>
+      </div>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>No hace falta programar el resto del modelo hoy</strong>
+        <p>Enfóquense en la jerarquía de herencia y en el dato validable. Las demás clases de
+        su diagrama (las que se conectan con "tiene un") siguen para más adelante.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 08: GUARDAR Y SUBIR SU RAMA ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 08</span>
+  <div class="sep-num anim">08 &middot; Concepto + prompt &middot; 6 min</div>
+  <div class="sep-title anim">Antes de irse:<br>guarden y <span>suban</span></div>
+  <p class="sep-desc anim">
+    Un commit, subido a su rama en GitHub. Master queda intacto -- a propósito.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Guardar, y dejarlo en GitHub</div>
+  <div class="concept-title anim">commit<br>y <span>push</span></div>
+  <div class="concept-body anim">
+    <p>
+      Todo lo que programaron hoy ya está en el disco, pero git todavía no lo tiene guardado
+      como un punto de su historia. Un <strong>commit</strong> es exactamente eso: una foto
+      con un mensaje de qué cambió. Un <strong>push</strong> sube esos commits de su
+      computador a GitHub, a la misma rama <code>desarrollo</code>.
+    </p>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Master no se toca todavía</strong>
+        <p>Nada de esto pasa a <code>master</code> hoy. Van a seguir construyendo sobre
+        <code>desarrollo</code> en las próximas sesiones, y recién más adelante, cuando el
+        trabajo esté maduro, la van a mezclar de vuelta. Por ahora la meta es solo que lo de
+        hoy quede guardado y visible en GitHub, no perdido en este computador.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Dos pasos, un solo prompt</div>
+  <div class="concept-title anim">Suban su<br>rama a <span>GitHub</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le piden a agy</div>
+      <div class="prompt-text">"Guardá todos los cambios de esta rama con un commit
+      descriptivo, y subí la rama desarrollo a GitHub."</div>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>lo que agy corrió por ustedes</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">git add -A</span>
+<span class="term-prompt">$</span> <span class="term-out">git commit -m "Herencia: Auto, Moto y Camion heredan de Vehiculo, super(), sobrescritura y property"</span>
+<span class="term-prompt">$</span> <span class="term-out">git push -u origin desarrollo</span>
+<span class="cmt">  (-u: la primera vez que esta rama sube a GitHub, deja conectada la de acá con la de allá)</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Esto se repite al final de cada sesión, de ahora en adelante</strong>
+        <p>La próxima clase va a empezar trayendo esta misma rama <code>desarrollo</code> desde
+        GitHub (no una rama nueva por tema: es la misma hasta que el trabajo esté listo para
+        mezclarse). Desde la próxima vez, el push ya no necesita <code>-u</code>: alcanza con
+        <code>git push</code> a secas, porque la conexión ya quedó hecha hoy.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ CIERRE ============ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen de la sesión</div>
+  <div class="sep-title anim">Lo que te<br><span>llevas</span> hoy</div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">"Es un" vs "tiene un"</div>
+      <div class="resumen-desc">La prueba para saber cuál relación dibujar y cuál escribir en código</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">class Hija(Padre):</div>
+      <div class="resumen-desc">Hereda todo lo del padre, sin copiar una sola línea</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">super().__init__()</div>
+      <div class="resumen-desc">Solo hace falta si la hija agrega un atributo propio; olvidarlo rompe lo heredado</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Sobrescritura</div>
+      <div class="resumen-desc">tarifa_hora() con el mismo nombre y un valor distinto en cada hija: polimorfismo real</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">property</div>
+      <div class="resumen-desc">Con setter, valida al escribir (patente). Sin setter, bloquea la escritura entera (en_taller)</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Checklist extendida</div>
+      <div class="resumen-desc">Tres puntos nuevos, aplicados hoy a su propia jerarquía</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Rama, commit y push</div>
+      <div class="resumen-desc">Programaron en desarrollo, y la guardaron+subieron a GitHub antes de irse -- master queda intacto por ahora</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Próxima clase (martes 01/09 &middot; 18:30-21:10 &middot; Laboratorio A403)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,.6); line-height:1.6;">
+      Un nivel más allá del encapsulamiento de hoy: duck typing, y por qué a veces conviene
+      prohibir instanciar una clase con ABC y @abstractmethod.
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const progress = document.getElementById('progress');
+  let current = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.1 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
