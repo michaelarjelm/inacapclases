@@ -1,0 +1,34 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Luis Lizana y Seigi Gim
+Negocio: Agencia de Viajes RutaSur
+
+LO QUE RESOLVIERON BIEN
+- Es el unico informe que hace explicito el metodo de las seis senales de la sesion 2
+  para elegir las clases candidatas (roles de personas, eventos o transacciones,
+  productos o servicios, comprobantes, sistemas o datos externos de soporte).
+- Modelo amplio y coherente con el negocio: cuatro tipos de servicio turistico
+  agrupados bajo una superclase comun, mas Proveedor con sus cupos disponibles.
+- Las cuatro primeras justificaciones de relaciones aplican bien el arbol de decision
+  de dos preguntas de la sesion 3.
+- Cubre los seis requisitos minimos de la ficha.
+
+PARA LA PROXIMA
+- Falta la visibilidad en todos los atributos del diagrama: aparecen como
+  "CODIGO: INT" sin el signo menos que indica privado. Solo los metodos llevan el
+  signo mas.
+- El texto invierte la notacion al describir el arbol de decision: escriben
+  "Agregacion (rombo oscuro)" y "Composicion (rombo blanco)", y mas abajo se
+  contradicen escribiendo "Composicion (rombo negro/relleno)". La leyenda que dibujaron
+  en el propio diagrama si esta correcta: vale la pena revisar el texto contra esa
+  leyenda antes de entregar.
+- Las ultimas seis justificaciones de relaciones etiquetan como "composicion" vinculos
+  que en realidad son asociaciones (Cliente-Reserva, Paquete-Reserva,
+  DetalleReserva-ServicioTuristico), y llaman "rombo blanco" a Tipo_Cambio-Paquete, que
+  es una dependencia.
+- Cliente y Empleado repiten los atributos rut y nombre, que ya estan en Persona. Esto
+  contradice el propio argumento que dan para usar herencia (evitar duplicar
+  atributos).
+- La caja PAQUETE_INTERNACIONAL quedo capturada con los controles de seleccion de
+  draw.io visibles alrededor: revisar la exportacion de la imagen antes de insertarla.
+- Nomenclatura mezclada: casi todo el diagrama en mayusculas, salvo "Persona" y
+  "servicio_turistico" en minuscula.

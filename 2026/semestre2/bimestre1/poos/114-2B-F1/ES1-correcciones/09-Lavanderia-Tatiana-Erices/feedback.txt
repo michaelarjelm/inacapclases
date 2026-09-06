@@ -1,0 +1,28 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Autora: Tatiana Erices
+Negocio: Lavanderia ExpressClean
+
+LO QUE RESOLVIO BIEN
+- La descripcion de clases va en una tabla (clase / atributos / metodos / funcion en
+  el sistema): es el formato mas claro de toda la seccion para revisar un modelo de
+  un vistazo.
+- Separa la justificacion de relaciones por tipo (generalizaciones, composicion,
+  asociaciones) y cierra con las reglas de negocio mapeadas directamente al metodo
+  que las implementa.
+- Composicion Orden 1 - 1..* DetalleOrden con rombo relleno y multiplicidad correcta
+  en ambos extremos.
+- Cubre los seis requisitos minimos de la ficha.
+
+PARA LA PROXIMA
+- Las cinco generalizaciones del diagrama estan etiquetadas con la palabra "Extends".
+  Esa es sintaxis de Java, no notacion UML: la generalizacion se representa solo con
+  el triangulo hueco, sin etiqueta de texto.
+- Tipos de dato inconsistentes dentro del mismo diagrama: aparecen str, String y
+  string para lo mismo. Tambien hay una errata en un metodo: "EngtregarOrden()".
+- ProductoQuimico solo se conecta con CotizacionDolar: no queda claro como su costo
+  llega a formar parte del cobro de una Orden. Conviene revisar esa conexion.
+- DetalleOrden-Prenda quedo como 1 a 1, lo que deja a DetalleOrden casi redundante
+  (solo aporta el subtotal). Vale la pena revisar si no deberia permitir varias
+  prendas o llevar una cantidad.
+- Este trabajo se entrego de forma individual; la actividad estaba pensada para
+  equipos de dos integrantes.

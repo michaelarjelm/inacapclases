@@ -1,0 +1,27 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Bastian Flores y Santiago Prufer
+Negocio: Farmacia Vecinal SaludYa
+
+LO QUE RESOLVIERON BIEN
+- Composicion Venta-DetalleVenta correctamente representada, con rombo relleno en
+  Venta.
+- El permiso queda expresado en la propia estructura: solo Quimico_farmaceutico tiene
+  el metodo autorizarControlado(), sin necesidad de un chequeo adicional en tiempo de
+  ejecucion.
+- Justifican cada relacion con su multiplicidad, incluyendo por que
+  Receta-DetalleVenta es 0..1 (no todos los medicamentos requieren receta).
+
+PARA LA PROXIMA
+- Error central del modelo: los tres subtipos de medicamento (MedSinReceta,
+  MedRecetaSimple, MedRecetaControlado) tienen el triangulo de herencia apuntando a
+  Receta, no a Medicamentos. Tal como quedo dibujado, el diagrama dice que "un
+  medicamento sin receta es un tipo de receta". El informe describe lo contrario
+  (que heredan de Medicamentos), asi que texto y diagrama no coinciden. Esto rompe el
+  requisito de que los tres subtipos compartan y sobrescriban el comportamiento de
+  venta: revisar a que clase apunta cada flecha de herencia antes de avanzar.
+- Nomenclatura inconsistente: "Medicamentos" en plural, "personal" en minuscula,
+  "Quimico_farmaceutico" con guion bajo. El informe ademas habla de una clase
+  "Trabajador" que en el diagrama se llama "personal": conviene unificar el nombre en
+  ambos lugares.
+- Revisar la maquetacion del PDF: las paginas 3 y 5 quedan con mas de media hoja en
+  blanco.

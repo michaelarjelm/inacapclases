@@ -1,0 +1,38 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Bastian Perez y Saul Saez
+Negocio: Restaurante Sabores del Sur
+
+LO QUE RESOLVIERON BIEN
+- La explicacion clase por clase es lo mas solido del trabajo: cada una dice
+  claramente que representa y por que existe, con vocabulario propio del negocio.
+- El planteamiento del problema esta bien escrito y redactado con sus propias
+  palabras.
+- Las herencias Trabajador -> Mesero / Cocinero, y la cadena
+  ItemMenu -> Bebida -> BebidaImportada, estan bien trazadas en el diagrama.
+- Cubren, al menos en la intencion, los seis requisitos de la ficha (validacion de
+  RUT en Boleta, control de stock con Ingrediente, precio segun dolar en
+  BebidaImportada).
+
+PARA LA PROXIMA
+- Incumplimiento de formato: no entregaron PDF, sino un archivo comprimido con un
+  documento de texto y el archivo de draw.io por separado. El formato de entrega pedia
+  PDF, con el diagrama insertado como imagen legible.
+- El informe no tiene el diagrama insertado: el documento de texto no contiene ninguna
+  imagen, pese a que el texto anuncia "a continuacion presentaremos el diagrama".
+- Tres relaciones del diagrama quedaron flotando, dibujadas pero sin conectar a
+  ninguna clase: la herencia de PlatoCaliente y las dos que debian unir Pedido con
+  DetallePedido. Justamente la transaccion con lineas de detalle, uno de los seis
+  requisitos, quedo sin conectar en el archivo entregado.
+- Composicion mal usada: el diagrama dibuja Mesero-Pedido y Pedido-Boleta con rombo
+  relleno. Un pedido no es una parte de un mesero, y una boleta no es una parte del
+  pedido: esas dos relaciones deberian ser asociaciones simples, no composiciones.
+- El polimorfismo no llega a funcionar: ItemMenu declara calcularPrecio(), pero los
+  subtipos definen PrecioPlatoCaliente(), PrecioBebida() y PrecioPostre(), es decir
+  tres metodos con nombres distintos en vez de sobrescribir el mismo metodo de la
+  superclase. Para que exista polimorfismo, los tres subtipos deben reescribir el
+  mismo nombre de metodo.
+- La justificacion de relaciones cubre solo la herencia de los trabajadores; no
+  justifica ninguna composicion, agregacion ni multiplicidad, que era parte del punto
+  5 de la actividad 3.
+- Portada incompleta: falta seccion, negocio asignado, docente y fecha; solo aparecen
+  asignatura e integrantes.

@@ -1,0 +1,29 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Autor: Kevin Rivera
+Negocio: Hotel Boutique Los Alerces
+
+LO QUE RESOLVIO BIEN
+- Incluyo leyenda UML, enumeraciones y notas de reglas de negocio dentro del propio
+  diagrama: se entiende sin necesidad de salir a leer el informe.
+- Notacion impecable: visibilidad, tipos de dato, retornos y multiplicidad en ambos
+  extremos de cada relacion.
+- Tabla de relaciones con justificacion punto por punto y tabla final de cobertura de
+  los seis requisitos.
+
+PARA LA PROXIMA
+- Sobre-modelado: Permiso, MedioPago, Factura y Estadia conviven con DetalleReserva y
+  Consumo. Terminan existiendo tres estructuras distintas para lo que la ficha pedia
+  resolver con una sola transaccion con lineas de detalle. Conviene simplificar antes
+  de programar el sistema.
+- La imagen del diagrama mide 1248x812 px para veinte clases: a tamano natural en el
+  PDF no se alcanza a leer.
+- La numeracion de secciones salta de la 3 a la 5; revisar que no falte contenido de
+  la seccion 4.
+- El informe explica las clases TipoHabitacion e IndicadorExterno, que no existen en
+  el diagrama entregado (ahi la clase se llama IndicadorDolar), y en cambio no explica
+  Factura ni Estadia, que si aparecen dibujadas. Conviene revisar que el texto
+  describa exactamente el modelo que se adjunta.
+- Quedo al final del informe una linea de plantilla sin borrar ("Antes de entregar:
+  complete los integrantes en la portada y verifique que la imagen insertada
+  corresponda..."), y en efecto la portada quedo con un solo integrante pese a que la
+  actividad era en pareja.

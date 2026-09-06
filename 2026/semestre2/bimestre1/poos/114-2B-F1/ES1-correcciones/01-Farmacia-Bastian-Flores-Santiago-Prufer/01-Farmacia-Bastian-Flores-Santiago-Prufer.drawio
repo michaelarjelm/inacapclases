@@ -1,0 +1,267 @@
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram name="Farmacia SaludYa - Modelo corregido" id="farmacia-model">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Titulo -->
+        <mxCell id="title" value="Farmacia Vecinal SaludYa - ES1 TI3V21 114-2B-F1 - Modelo de clases (version corregida)&lt;br&gt;&lt;font style=&quot;font-size:12px;font-weight:normal&quot;&gt;Equipo: Bastian Flores y Santiago Prufer&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="-60" width="1000" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="changelog" value="Cambios respecto a la entrega original: (1) herencia de los tres subtipos de medicamento corregida (apuntaba a Receta, ahora apunta a Medicamento); (2) nomenclatura unificada (Medicamento en singular, Trabajador en vez de personal, QuimicoFarmaceutico sin guion bajo); (3) las asociaciones (categoria eliminada del curso) pasaron a agregacion: DetalleVenta-Medicamento, DetalleVenta-Receta, Venta-Cliente, Venta-Trabajador; (4) se agregaron los atributos de referencia que faltaban en Venta y DetalleVenta." style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontColor=#4C5761;fontSize=11;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="-14" width="1830" height="46" as="geometry" />
+        </mxCell>
+
+        <!-- Trabajador -->
+        <mxCell id="trabajador" value="Trabajador" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="220" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="trabajador_attrs" value="- rut: String&lt;br&gt;- nombre: String" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="trabajador">
+          <mxGeometry y="26" width="220" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="trabajador_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="trabajador">
+          <mxGeometry y="78" width="220" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="trabajador_meth" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="trabajador">
+          <mxGeometry y="86" width="220" height="0" as="geometry" />
+        </mxCell>
+
+        <!-- QuimicoFarmaceutico -->
+        <mxCell id="quimicofarmaceutico" value="QuimicoFarmaceutico" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="220" width="260" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="quimicofarmaceutico_attrs" value="- numRegistro: String" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="quimicofarmaceutico">
+          <mxGeometry y="26" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="quimicofarmaceutico_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="quimicofarmaceutico">
+          <mxGeometry y="52" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="quimicofarmaceutico_meth" value="+ autorizarControlado(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="quimicofarmaceutico">
+          <mxGeometry y="60" width="260" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Vendedor -->
+        <mxCell id="vendedor" value="Vendedor" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="340" y="220" width="240" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="vendedor_attrs" value="- cajaAsignada: int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="vendedor">
+          <mxGeometry y="26" width="240" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="vendedor_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="vendedor">
+          <mxGeometry y="52" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="vendedor_meth" value="+ atenderCliente(): void" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="vendedor">
+          <mxGeometry y="60" width="240" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Cliente -->
+        <mxCell id="cliente" value="Cliente" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="400" width="200" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="cliente_attrs" value="- rut: String&lt;br&gt;- nombre: String" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cliente">
+          <mxGeometry y="26" width="200" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="cliente_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="cliente">
+          <mxGeometry y="78" width="200" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cliente_meth" value="+ validarRut(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cliente">
+          <mxGeometry y="86" width="200" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Venta -->
+        <mxCell id="venta" value="Venta" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="340" y="400" width="280" height="216" as="geometry" />
+        </mxCell>
+        <mxCell id="venta_attrs" value="- fecha: Date&lt;br&gt;- total: double&lt;br&gt;- cliente: Cliente&lt;br&gt;- trabajador: Trabajador&lt;br&gt;- detalles: List&amp;lt;DetalleVenta&amp;gt;" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="venta">
+          <mxGeometry y="26" width="280" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="venta_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="venta">
+          <mxGeometry y="156" width="280" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="venta_meth" value="+ calcularTotal(): double&lt;br&gt;+ procesarVenta(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="venta">
+          <mxGeometry y="164" width="280" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- DetalleVenta -->
+        <mxCell id="detalleventa" value="DetalleVenta" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="400" width="260" height="164" as="geometry" />
+        </mxCell>
+        <mxCell id="detalleventa_attrs" value="- cantidad: int&lt;br&gt;- subtotal: double&lt;br&gt;- medicamento: Medicamento&lt;br&gt;- receta: Receta" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="detalleventa">
+          <mxGeometry y="26" width="260" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="detalleventa_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="detalleventa">
+          <mxGeometry y="130" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="detalleventa_meth" value="+ calcularSubtotal(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="detalleventa">
+          <mxGeometry y="138" width="260" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Medicamento -->
+        <mxCell id="medicamento" value="Medicamento" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="40" width="280" height="242" as="geometry" />
+        </mxCell>
+        <mxCell id="medicamento_attrs" value="- nombre: String&lt;br&gt;- precioBase: double&lt;br&gt;- stock: int&lt;br&gt;- fechaVencimiento: Date&lt;br&gt;- esImportado: boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="medicamento">
+          <mxGeometry y="26" width="280" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="medicamento_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="medicamento">
+          <mxGeometry y="156" width="280" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="medicamento_meth" value="+ validarVenta(r: Receta): boolean&lt;br&gt;+ estaVencido(): boolean&lt;br&gt;+ getPrecioFinal(dolar: double): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="medicamento">
+          <mxGeometry y="164" width="280" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- MedSinReceta -->
+        <mxCell id="medsinreceta" value="MedSinReceta" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="350" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="medsinreceta_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="medsinreceta">
+          <mxGeometry y="26" width="220" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="medsinreceta_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="medsinreceta">
+          <mxGeometry y="26" width="220" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="medsinreceta_meth" value="+ validarVenta(r: Receta): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="medsinreceta">
+          <mxGeometry y="34" width="220" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- MedRecetaSimple -->
+        <mxCell id="medrecetasimple" value="MedRecetaSimple" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1270" y="350" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="medrecetasimple_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="medrecetasimple">
+          <mxGeometry y="26" width="240" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="medrecetasimple_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="medrecetasimple">
+          <mxGeometry y="26" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="medrecetasimple_meth" value="+ validarVenta(r: Receta): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="medrecetasimple">
+          <mxGeometry y="34" width="240" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- MedRecetaControlado -->
+        <mxCell id="medrecetacontrolado" value="MedRecetaControlado" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1540" y="350" width="260" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="medrecetacontrolado_attrs" value="- requiereRetencion: boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="medrecetacontrolado">
+          <mxGeometry y="26" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="medrecetacontrolado_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="medrecetacontrolado">
+          <mxGeometry y="52" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="medrecetacontrolado_meth" value="+ validarVenta(r: Receta): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="medrecetacontrolado">
+          <mxGeometry y="60" width="260" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Receta -->
+        <mxCell id="receta" value="Receta" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="620" width="260" height="164" as="geometry" />
+        </mxCell>
+        <mxCell id="receta_attrs" value="- numeroFolio: String&lt;br&gt;- medico: String&lt;br&gt;- retenida: boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="receta">
+          <mxGeometry y="26" width="260" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="receta_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="receta">
+          <mxGeometry y="104" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="receta_meth" value="+ retenerReceta(): void&lt;br&gt;+ esValida(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="receta">
+          <mxGeometry y="112" width="260" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== RELACIONES ===================== -->
+
+        <mxCell id="e1" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.3;exitY=0;entryX=0.3;entryY=1;" edge="1" parent="1" source="quimicofarmaceutico" target="trabajador">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e2" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.8;entryY=1;" edge="1" parent="1" source="vendedor" target="trabajador">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e3" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.15;entryY=1;" edge="1" parent="1" source="medsinreceta" target="medicamento">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e4" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="medrecetasimple" target="medicamento">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e5" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.85;entryY=1;" edge="1" parent="1" source="medrecetacontrolado" target="medicamento">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e6" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=0.8;exitY=0;entryX=0.2;entryY=1;" edge="1" parent="1" source="detalleventa" target="medicamento">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6_sl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e6">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="6" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e6_tl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e6">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-22" y="4" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e7" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="detalleventa" target="receta">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7_sl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e7">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="4" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e7_tl" value="0..1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e7">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-24" y="4" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e8" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=0;exitY=0.2;entryX=1;entryY=0.3;" edge="1" parent="1" source="venta" target="cliente">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8_sl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e8">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="-16" y="6" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e8_tl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e8">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="6" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e9" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=0;exitY=0.05;entryX=0.5;entryY=1;" edge="1" parent="1" source="venta" target="trabajador">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="410.8" />
+              <mxPoint x="320" y="140" />
+              <mxPoint x="150" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e9_sl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e9">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="-16" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e9_tl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e9">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-16" y="6" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e10" style="startArrow=diamondThin;startFill=1;endArrow=none;html=1;rounded=0;exitX=1;exitY=0.3;entryX=0;entryY=0.3;" edge="1" parent="1" source="venta" target="detalleventa">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10_sl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e10">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="4" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e10_tl" value="1..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e10">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-22" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+
+
+        <!-- ===================== NOTAS DE CORRECCION ===================== -->
+
+        <mxCell id="note1" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;La herencia apuntaba a Receta en la entrega original: el&lt;br&gt;diagrama decia &amp;quot;un medicamento sin receta es un tipo&lt;br&gt;de receta&amp;quot;. Los tres subtipos ahora heredan de&lt;br&gt;Medicamento, que es donde vive validarVenta() a&lt;br&gt;sobrescribir." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="460" width="300" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note2" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;Nomenclatura inconsistente en la entrega original:&lt;br&gt;Medicamentos en plural, personal en minuscula,&lt;br&gt;Quimico_farmaceutico con guion bajo. Unificado a&lt;br&gt;Medicamento, Trabajador y QuimicoFarmaceutico." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="750" width="300" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note3" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;El informe llamaba &amp;quot;asociacion&amp;quot; a DetalleVenta-&lt;br&gt;Medicamento, DetalleVenta-Receta, Venta-Cliente y Venta-&lt;br&gt;Trabajador -- categoria que el curso elimino antes de la&lt;br&gt;ES1. Pasaron a agregacion, y se agregaron los atributos&lt;br&gt;de referencia que faltaban (Venta.cliente, Venta.trabajador,&lt;br&gt;Venta.detalles, DetalleVenta.medicamento,&lt;br&gt;DetalleVenta.receta) para que existan como codigo." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="380" y="850" width="360" height="160" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

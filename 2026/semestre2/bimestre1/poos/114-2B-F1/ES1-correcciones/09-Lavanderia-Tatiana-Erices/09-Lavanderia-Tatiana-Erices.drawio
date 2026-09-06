@@ -1,0 +1,316 @@
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram name="Lavanderia ExpressClean - Modelo corregido" id="lavanderia-model">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Titulo -->
+        <mxCell id="title" value="Lavanderia ExpressClean - ES1 TI3V21 114-2B-F1 - Modelo de clases (version corregida)&lt;br&gt;&lt;font style=&quot;font-size:12px;font-weight:normal&quot;&gt;Autora: Tatiana Erices&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="-60" width="1000" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="changelog" value="Cambios respecto a la entrega original: (1) se quitaron las etiquetas de texto &amp;quot;Extends&amp;quot; de las cinco generalizaciones -- en UML el triangulo hueco ya expresa la herencia, sin necesidad de texto; (2) tipos de dato unificados (String, boolean, double, int, Date en vez de la mezcla str/String/string) y corregida la errata EngtregarOrden() -> entregarOrden(), tomando como fuente la tabla de clases del informe, que ya era consistente; (3) ProductoQuimico solo se conectaba con CotizacionDolar sin quedar claro como su costo llega a la Orden: se agrego Prenda.productoQuimico (agregacion), conectando la cadena Prenda -&gt; ProductoQuimico -&gt; CotizacionDolar; (4) CotizacionDolar-ProductoQuimico paso de agregacion a dependencia, porque calcularPrecioPesos() recibe el valor del dolar como parametro, no como referencia guardada; (5) se agrego cantidad a DetalleOrden -- una linea que solo aporta el subtotal sobre una relacion 1 a 1 con Prenda quedaba casi redundante; (6) se agregaron los atributos de referencia que faltaban en Orden, DetalleOrden y Operario." style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontColor=#4C5761;fontSize=11;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="-16" width="1830" height="54" as="geometry" />
+        </mxCell>
+
+        <!-- Cliente -->
+        <mxCell id="cliente" value="Cliente" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="220" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="cliente_attrs" value="- rut: String" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cliente">
+          <mxGeometry y="26" width="220" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="cliente_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="cliente">
+          <mxGeometry y="52" width="220" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cliente_meth" value="+ validarRut(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cliente">
+          <mxGeometry y="60" width="220" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Orden -->
+        <mxCell id="orden" value="Orden" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="340" y="40" width="300" height="294" as="geometry" />
+        </mxCell>
+        <mxCell id="orden_attrs" value="- numOrden: int&lt;br&gt;- numBoleta: String&lt;br&gt;- pagada: boolean&lt;br&gt;- cliente: Cliente&lt;br&gt;- cajero: Cajero&lt;br&gt;- detalles: List&amp;lt;DetalleOrden&amp;gt;" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="orden">
+          <mxGeometry y="26" width="300" height="156" as="geometry" />
+        </mxCell>
+        <mxCell id="orden_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="orden">
+          <mxGeometry y="182" width="300" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="orden_meth" value="+ validarIdentificacion(): boolean&lt;br&gt;+ calcularTotal(): double&lt;br&gt;+ verificarPago(): boolean&lt;br&gt;+ entregarOrden(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="orden">
+          <mxGeometry y="190" width="300" height="104" as="geometry" />
+        </mxCell>
+
+        <!-- DetalleOrden -->
+        <mxCell id="detalleorden" value="DetalleOrden" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="720" y="40" width="260" height="138" as="geometry" />
+        </mxCell>
+        <mxCell id="detalleorden_attrs" value="- subtotal: double&lt;br&gt;- prenda: Prenda&lt;br&gt;- cantidad: int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="detalleorden">
+          <mxGeometry y="26" width="260" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="detalleorden_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="detalleorden">
+          <mxGeometry y="104" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="detalleorden_meth" value="+ calcularSubtotal(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="detalleorden">
+          <mxGeometry y="112" width="260" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Prenda -->
+        <mxCell id="prenda" value="&lt;i&gt;Prenda&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="40" width="280" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="prenda_attrs" value="- estadoInicial: String&lt;br&gt;- lavadoSeco: boolean&lt;br&gt;- productoQuimico: ProductoQuimico" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="prenda">
+          <mxGeometry y="26" width="280" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="prenda_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="prenda">
+          <mxGeometry y="104" width="280" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="prenda_meth" value="+ validarEstado(): boolean&lt;br&gt;+ calcularCosto(): double&lt;br&gt;+ calcularTiempoLavado(): int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="prenda">
+          <mxGeometry y="112" width="280" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- RopaNormal -->
+        <mxCell id="roparnormal" value="RopaNormal" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="310" width="200" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="roparnormal_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="roparnormal">
+          <mxGeometry y="26" width="200" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="roparnormal_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="roparnormal">
+          <mxGeometry y="26" width="200" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="roparnormal_meth" value="+ calcularCosto(): double&lt;br&gt;+ calcularTiempoLavado(): int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="roparnormal">
+          <mxGeometry y="34" width="200" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- Alfombra -->
+        <mxCell id="alfombra" value="Alfombra" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="310" width="200" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="alfombra_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="alfombra">
+          <mxGeometry y="26" width="200" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="alfombra_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="alfombra">
+          <mxGeometry y="26" width="200" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="alfombra_meth" value="+ calcularCosto(): double&lt;br&gt;+ calcularTiempoLavado(): int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="alfombra">
+          <mxGeometry y="34" width="200" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- EdredonCobertor -->
+        <mxCell id="edredoncobertor" value="EdredonCobertor" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="310" width="220" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="edredoncobertor_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="edredoncobertor">
+          <mxGeometry y="26" width="220" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="edredoncobertor_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="edredoncobertor">
+          <mxGeometry y="26" width="220" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="edredoncobertor_meth" value="+ calcularCosto(): double&lt;br&gt;+ calcularTiempoLavado(): int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="edredoncobertor">
+          <mxGeometry y="34" width="220" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- Empleado -->
+        <mxCell id="empleado" value="&lt;i&gt;Empleado&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="260" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="empleado_attrs" value="- idEmpleado: int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="empleado">
+          <mxGeometry y="26" width="220" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="empleado_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="empleado">
+          <mxGeometry y="52" width="220" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="empleado_meth" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="empleado">
+          <mxGeometry y="60" width="220" height="0" as="geometry" />
+        </mxCell>
+
+        <!-- Cajero -->
+        <mxCell id="cajero" value="Cajero" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="420" width="260" height="138" as="geometry" />
+        </mxCell>
+        <mxCell id="cajero_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cajero">
+          <mxGeometry y="26" width="260" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="cajero_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="cajero">
+          <mxGeometry y="26" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cajero_meth" value="+ recibirPrendas(): void&lt;br&gt;+ registrarOrden(): void&lt;br&gt;+ cobrarOrden(): void&lt;br&gt;+ entregarPrendas(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cajero">
+          <mxGeometry y="34" width="260" height="104" as="geometry" />
+        </mxCell>
+
+        <!-- Operario -->
+        <mxCell id="operario" value="Operario" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="340" y="420" width="260" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="operario_attrs" value="- maquinasAsignadas: List&amp;lt;Maquina&amp;gt;" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="operario">
+          <mxGeometry y="26" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="operario_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="operario">
+          <mxGeometry y="52" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="operario_meth" value="+ procesarPrenda(prenda: Prenda): void&lt;br&gt;+ operarMaquina(maquina: Maquina): void" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="operario">
+          <mxGeometry y="60" width="260" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- Maquina -->
+        <mxCell id="maquina" value="Maquina" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="420" width="220" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="maquina_attrs" value="- idMaquina: int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="maquina">
+          <mxGeometry y="26" width="220" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="maquina_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="maquina">
+          <mxGeometry y="52" width="220" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="maquina_meth" value="+ iniciarLavado(): void" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="maquina">
+          <mxGeometry y="60" width="220" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- ProductoQuimico -->
+        <mxCell id="productoquimico" value="ProductoQuimico" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="480" width="260" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="productoquimico_attrs" value="- nombre: String&lt;br&gt;- precioDolar: double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="productoquimico">
+          <mxGeometry y="26" width="260" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="productoquimico_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="productoquimico">
+          <mxGeometry y="78" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="productoquimico_meth" value="+ calcularPrecioPesos(valorDolar: double): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="productoquimico">
+          <mxGeometry y="86" width="260" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- CotizacionDolar -->
+        <mxCell id="cotizaciondolar" value="CotizacionDolar" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="480" width="260" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="cotizaciondolar_attrs" value="- fecha: Date&lt;br&gt;- valorDolar: double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cotizaciondolar">
+          <mxGeometry y="26" width="260" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="cotizaciondolar_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="cotizaciondolar">
+          <mxGeometry y="78" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cotizaciondolar_meth" value="+ obtenerValorDolar(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cotizaciondolar">
+          <mxGeometry y="86" width="260" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== RELACIONES ===================== -->
+
+        <mxCell id="e1" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.3;exitY=0;entryX=0.3;entryY=1;" edge="1" parent="1" source="cajero" target="empleado">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e2" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.3;exitY=0;entryX=0.8;entryY=1;" edge="1" parent="1" source="operario" target="empleado">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e3" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.15;entryY=1;" edge="1" parent="1" source="roparnormal" target="prenda">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e4" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="alfombra" target="prenda">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e5" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.85;entryY=1;" edge="1" parent="1" source="edredoncobertor" target="prenda">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e6" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=0;exitY=0.15;entryX=1;entryY=0.5;" edge="1" parent="1" source="orden" target="cliente">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6_sl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e6">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="-16" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e6_tl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e6">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="6" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e7" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=0.2;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="orden" target="cajero">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7_sl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e7">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="-16" y="6" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e7_tl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e7">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="6" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e8" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=1;exitY=0.3;entryX=0;entryY=0.5;" edge="1" parent="1" source="detalleorden" target="prenda">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8_sl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e8">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="4" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e8_tl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e8">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-22" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e9" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=1;exitY=0.8;entryX=0.7;entryY=0;" edge="1" parent="1" source="prenda" target="productoquimico">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1750" y="214" />
+              <mxPoint x="1750" y="450" />
+              <mxPoint x="1242" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e9_sl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e9">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="4" y="6" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e9_tl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e9">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-22" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e10" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="operario" target="maquina">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10_sl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e10">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="4" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e10_tl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e10">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-22" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e11" style="startArrow=diamondThin;startFill=1;endArrow=none;html=1;rounded=0;exitX=1;exitY=0.15;entryX=0;entryY=0.3;" edge="1" parent="1" source="orden" target="detalleorden">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11_sl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e11">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="4" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e11_tl" value="1..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e11">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-22" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e12" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=1;exitY=0.7;entryX=0;entryY=0.3;" edge="1" parent="1" source="productoquimico" target="cotizaciondolar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12_lbl" value="consulta valor dolar" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e12">
+          <mxGeometry relative="1" x="0.0" as="geometry"><mxPoint x="0" y="-12" as="offset" /></mxGeometry>
+        </mxCell>
+
+
+        <!-- ===================== NOTAS DE CORRECCION ===================== -->
+
+        <mxCell id="note1" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;ProductoQuimico solo se conectaba con CotizacionDolar: no&lt;br&gt;quedaba claro como su costo llegaba a la Orden. Se agrego&lt;br&gt;Prenda.productoQuimico (para prendas con lavado en&lt;br&gt;seco), conectando la cadena completa hasta el subtotal&lt;br&gt;de DetalleOrden." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1420" y="620" width="330" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note2" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;CotizacionDolar-ProductoQuimico estaba dibujada como&lt;br&gt;agregacion. calcularPrecioPesos(valorDolar) recibe el&lt;br&gt;valor como parametro: ProductoQuimico no guarda una&lt;br&gt;referencia permanente a CotizacionDolar, solo la consulta.&lt;br&gt;Paso a dependencia." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="620" width="330" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note3" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;DetalleOrden-Prenda 1 a 1 dejaba a DetalleOrden casi&lt;br&gt;redundante (solo aportaba el subtotal). Se agrego&lt;br&gt;DetalleOrden.cantidad, igual que en toda otra&lt;br&gt;transaccion con lineas de detalle del curso." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="720" y="200" width="300" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note4" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;Se agregaron los atributos de referencia que faltaban:&lt;br&gt;Orden.cliente, Orden.cajero, Orden.detalles y&lt;br&gt;Operario.maquinasAsignadas, para que las relaciones&lt;br&gt;dibujadas existan como codigo." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="620" width="330" height="110" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

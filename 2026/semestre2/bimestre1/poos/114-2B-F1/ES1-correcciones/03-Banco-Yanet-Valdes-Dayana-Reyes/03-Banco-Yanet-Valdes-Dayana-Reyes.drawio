@@ -1,0 +1,417 @@
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram name="Banco Cooperativo Andino - Modelo corregido" id="banco-model">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1850" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Titulo -->
+        <mxCell id="title" value="Banco Cooperativo Andino - ES1 TI3V21 114-2B-F1 - Modelo de clases (version corregida)&lt;br&gt;&lt;font style=&quot;font-size:12px;font-weight:normal&quot;&gt;Equipo: Yanet Valdes y Dayana Reyes&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="-60" width="1000" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="changelog" value="Cambios respecto a la entrega original: (1) se agrego MovimientoCuenta (composicion desde Cuenta) para modelar la cartola -- depositos, giros y cargos como detalle de la cuenta, en vez de confundirla con Credito-CuotaCredito; (2) se agrego MoraVigenteException y el metodo Ejecutivo.abrirCuenta(), que la ficha menciona pero no estaba dibujado, para la regla de no abrir cuenta a cliente con mora vigente; (3) Ejecutivo-Cliente, Ejecutivo-Credito y Cajero-Cuenta pasaron de asociacion (categoria eliminada del curso) a dependencia, porque ninguna clase guarda una referencia permanente a la otra -- interactuan solo como parametro de metodo; (4) tipos de dato y retornos completados en todos los atributos y metodos; (5) se agregaron los atributos de referencia que faltaban (Cliente.cuentas, Cliente.creditos, Cuenta.movimientos, Credito.cuotas)." style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontColor=#4C5761;fontSize=11;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="-12" width="1780" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Cliente -->
+        <mxCell id="cliente" value="Cliente" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="300" height="294" as="geometry" />
+        </mxCell>
+        <mxCell id="cliente_attrs" value="- rut: String&lt;br&gt;- nombre: String&lt;br&gt;- correo: String&lt;br&gt;- activo: boolean&lt;br&gt;- mora: boolean&lt;br&gt;- cuentas: List&amp;lt;Cuenta&amp;gt;&lt;br&gt;- creditos: List&amp;lt;Credito&amp;gt;" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cliente">
+          <mxGeometry y="26" width="300" height="182" as="geometry" />
+        </mxCell>
+        <mxCell id="cliente_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="cliente">
+          <mxGeometry y="208" width="300" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cliente_meth" value="+ validarRut(): boolean&lt;br&gt;+ puedeSolicitarCredito(): boolean&lt;br&gt;+ tieneMoraVigente(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cliente">
+          <mxGeometry y="216" width="300" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- Cuenta -->
+        <mxCell id="cuenta" value="&lt;i&gt;Cuenta&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="400" width="300" height="242" as="geometry" />
+        </mxCell>
+        <mxCell id="cuenta_attrs" value="- numero: String&lt;br&gt;- saldo: double&lt;br&gt;- activa: boolean&lt;br&gt;- movimientos: List&amp;lt;MovimientoCuenta&amp;gt;" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cuenta">
+          <mxGeometry y="26" width="300" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="cuenta_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="cuenta">
+          <mxGeometry y="130" width="300" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cuenta_meth" value="+ depositar(monto: double): void&lt;br&gt;+ retirar(monto: double): void&lt;br&gt;+ validarOperacion(monto: double): boolean&lt;br&gt;+ calcularCostoMensual(valorUF: double): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cuenta">
+          <mxGeometry y="138" width="300" height="104" as="geometry" />
+        </mxCell>
+
+        <!-- CuentaAhorro -->
+        <mxCell id="cuentaahorro" value="CuentaAhorro" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="700" width="200" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="cuentaahorro_attrs" value="- tasaAhorro: double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cuentaahorro">
+          <mxGeometry y="26" width="200" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="cuentaahorro_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="cuentaahorro">
+          <mxGeometry y="52" width="200" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cuentaahorro_meth" value="+ calcularCostoMensual(valorUF: double): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cuentaahorro">
+          <mxGeometry y="60" width="200" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- CuentaCorriente -->
+        <mxCell id="cuentacorriente" value="CuentaCorriente" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="700" width="220" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="cuentacorriente_attrs" value="- lineaCredito: double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cuentacorriente">
+          <mxGeometry y="26" width="220" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="cuentacorriente_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="cuentacorriente">
+          <mxGeometry y="52" width="220" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cuentacorriente_meth" value="+ calcularCostoMensual(valorUF: double): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cuentacorriente">
+          <mxGeometry y="60" width="220" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- CuentaVista -->
+        <mxCell id="cuentavista" value="CuentaVista" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="700" width="220" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="cuentavista_attrs" value="- limiteGiroDiario: double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cuentavista">
+          <mxGeometry y="26" width="220" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="cuentavista_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="cuentavista">
+          <mxGeometry y="52" width="220" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cuentavista_meth" value="+ calcularCostoMensual(valorUF: double): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cuentavista">
+          <mxGeometry y="60" width="220" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- MovimientoCuenta -->
+        <mxCell id="movimientocuenta" value="MovimientoCuenta" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="400" width="240" height="138" as="geometry" />
+        </mxCell>
+        <mxCell id="movimientocuenta_attrs" value="- tipo: String&lt;br&gt;- monto: double&lt;br&gt;- fecha: Date" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="movimientocuenta">
+          <mxGeometry y="26" width="240" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="movimientocuenta_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="movimientocuenta">
+          <mxGeometry y="104" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="movimientocuenta_meth" value="+ describir(): String" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="movimientocuenta">
+          <mxGeometry y="112" width="240" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Credito -->
+        <mxCell id="credito" value="Credito" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="40" width="280" height="242" as="geometry" />
+        </mxCell>
+        <mxCell id="credito_attrs" value="- numero: String&lt;br&gt;- montoUF: double&lt;br&gt;- tasaAnual: double&lt;br&gt;- plazoMeses: int&lt;br&gt;- cuotas: List&amp;lt;CuotaCredito&amp;gt;" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="credito">
+          <mxGeometry y="26" width="280" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="credito_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="credito">
+          <mxGeometry y="156" width="280" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="credito_meth" value="+ validarSolicitud(): boolean&lt;br&gt;+ generarCuotas(): void&lt;br&gt;+ aprobar(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="credito">
+          <mxGeometry y="164" width="280" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- CuotaCredito -->
+        <mxCell id="cuotacredito" value="CuotaCredito" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="340" width="260" height="164" as="geometry" />
+        </mxCell>
+        <mxCell id="cuotacredito_attrs" value="- numero: String&lt;br&gt;- vencimiento: Date&lt;br&gt;- montoUF: double&lt;br&gt;- pagada: boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cuotacredito">
+          <mxGeometry y="26" width="260" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="cuotacredito_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="cuotacredito">
+          <mxGeometry y="130" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cuotacredito_meth" value="+ marcarPagada(): void" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cuotacredito">
+          <mxGeometry y="138" width="260" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Empleado -->
+        <mxCell id="empleado" value="&lt;i&gt;Empleado&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="40" width="260" height="164" as="geometry" />
+        </mxCell>
+        <mxCell id="empleado_attrs" value="- id: String&lt;br&gt;- nombre: String&lt;br&gt;- usuario: String&lt;br&gt;- activo: boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="empleado">
+          <mxGeometry y="26" width="260" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="empleado_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="empleado">
+          <mxGeometry y="130" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="empleado_meth" value="+ iniciarSesion(clave: String): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="empleado">
+          <mxGeometry y="138" width="260" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Ejecutivo -->
+        <mxCell id="ejecutivo" value="Ejecutivo" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="260" width="260" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="ejecutivo_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="ejecutivo">
+          <mxGeometry y="26" width="260" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="ejecutivo_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="ejecutivo">
+          <mxGeometry y="26" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="ejecutivo_meth" value="+ evaluarCredito(cliente: Cliente, montoUF: double): boolean&lt;br&gt;+ aprobarCredito(credito: Credito): boolean&lt;br&gt;+ abrirCuenta(cliente: Cliente, tipo: String): Cuenta" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="ejecutivo">
+          <mxGeometry y="34" width="260" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- Cajero -->
+        <mxCell id="cajero" value="Cajero" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="420" width="260" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="cajero_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cajero">
+          <mxGeometry y="26" width="260" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="cajero_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="cajero">
+          <mxGeometry y="26" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cajero_meth" value="+ registrarDeposito(cuenta: Cuenta, monto: double): void&lt;br&gt;+ registrarRetiro(cuenta: Cuenta, monto: double): void" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cajero">
+          <mxGeometry y="34" width="260" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- ServicioIndicadorUF -->
+        <mxCell id="serviciouf" value="ServicioIndicadorUF" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="560" width="240" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="serviciouf_attrs" value="- fechaConsulta: Date" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="serviciouf">
+          <mxGeometry y="26" width="240" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="serviciouf_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="serviciouf">
+          <mxGeometry y="52" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="serviciouf_meth" value="+ obtenerValorUF(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="serviciouf">
+          <mxGeometry y="60" width="240" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- SaldoInsuficienteException -->
+        <mxCell id="exsaldo" value="SaldoInsuficienteException" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="900" width="300" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="exsaldo_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="exsaldo">
+          <mxGeometry y="26" width="300" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="exsaldo_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="exsaldo">
+          <mxGeometry y="26" width="300" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="exsaldo_meth" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="exsaldo">
+          <mxGeometry y="34" width="300" height="0" as="geometry" />
+        </mxCell>
+
+        <!-- CuentaBloqueadaException -->
+        <mxCell id="exbloqueada" value="CuentaBloqueadaException" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="900" width="300" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="exbloqueada_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="exbloqueada">
+          <mxGeometry y="26" width="300" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="exbloqueada_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="exbloqueada">
+          <mxGeometry y="26" width="300" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="exbloqueada_meth" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="exbloqueada">
+          <mxGeometry y="34" width="300" height="0" as="geometry" />
+        </mxCell>
+
+        <!-- MoraVigenteException -->
+        <mxCell id="exmora" value="MoraVigenteException" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="580" width="300" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="exmora_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="exmora">
+          <mxGeometry y="26" width="300" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="exmora_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="exmora">
+          <mxGeometry y="26" width="300" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="exmora_meth" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="exmora">
+          <mxGeometry y="34" width="300" height="0" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== RELACIONES ===================== -->
+
+        <mxCell id="e1" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.15;entryY=1;" edge="1" parent="1" source="cuentaahorro" target="cuenta">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e2" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="cuentacorriente" target="cuenta">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e3" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.85;entryY=1;" edge="1" parent="1" source="cuentavista" target="cuenta">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e4" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.3;entryY=1;" edge="1" parent="1" source="ejecutivo" target="empleado">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e5" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0;exitY=0.1;entryX=0;entryY=1;" edge="1" parent="1" source="cajero" target="empleado">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1480" y="428.6" />
+              <mxPoint x="1480" y="204" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e6" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=1;exitY=0.15;entryX=0;entryY=0.1;" edge="1" parent="1" source="cliente" target="cuenta">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6_sl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e6">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="4" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e6_tl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e6">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-22" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e7" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.15;" edge="1" parent="1" source="cliente" target="credito">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="165" />
+              <mxPoint x="1120" y="165" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7_sl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e7">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="4" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e7_tl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e7">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-22" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e8" style="startArrow=diamondThin;startFill=1;endArrow=none;html=1;rounded=0;exitX=1;exitY=0.2;entryX=0;entryY=0.5;" edge="1" parent="1" source="cuenta" target="movimientocuenta">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8_sl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e8">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="4" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e8_tl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e8">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-22" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e9" style="startArrow=diamondThin;startFill=1;endArrow=none;html=1;rounded=0;exitX=0.3;exitY=1;entryX=0.3;entryY=0;" edge="1" parent="1" source="credito" target="cuotacredito">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9_sl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e9">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="-24" y="4" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e9_tl" value="1..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e9">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-24" y="-18" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e10" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0.9;exitY=1;entryX=0.3;entryY=0;" edge="1" parent="1" source="cuenta" target="serviciouf">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="670" />
+              <mxPoint x="1192" y="670" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e10_lbl" value="consulta UF" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e10">
+          <mxGeometry relative="1" x="0.0" as="geometry"><mxPoint x="0" y="-10" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e11" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0;exitY=0.8;entryX=0;entryY=0.5;" edge="1" parent="1" source="credito" target="serviciouf">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1100" y="233.6" />
+              <mxPoint x="1100" y="603" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11_lbl" value="consulta UF" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e11">
+          <mxGeometry relative="1" x="0.0" as="geometry"><mxPoint x="-40" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e12" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0.7;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="cuenta" target="exsaldo">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="860" />
+              <mxPoint x="190" y="860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e12_lbl" value="puede lanzar" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e12">
+          <mxGeometry relative="1" x="-0.6" as="geometry"><mxPoint x="-40" y="-10" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e13" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0.72;exitY=1;entryX=0.3;entryY=0;" edge="1" parent="1" source="cuenta" target="exbloqueada">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="256" y="860" />
+              <mxPoint x="370" y="860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e13_lbl" value="puede lanzar" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e13">
+          <mxGeometry relative="1" x="-0.6" as="geometry"><mxPoint x="20" y="-10" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e14" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=1;exitY=1;entryX=1;entryY=0.5;" edge="1" parent="1" source="ejecutivo" target="exmora">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1790" y="372" />
+              <mxPoint x="1790" y="597" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e14_lbl" value="puede lanzar" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e14">
+          <mxGeometry relative="1" x="0.0" as="geometry"><mxPoint x="0" y="-8" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e15" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;entryX=1;entryY=0.9;" edge="1" parent="1" source="ejecutivo" target="cliente">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1500" y="330" />
+              <mxPoint x="340" y="330" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e15_lbl" value="atiende/evalua" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e15">
+          <mxGeometry relative="1" x="0.0" as="geometry"><mxPoint x="0" y="-10" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e16" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="ejecutivo" target="credito">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1420" y="316" />
+              <mxPoint x="1420" y="161" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e16_lbl" value="evalua/aprueba" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e16">
+          <mxGeometry relative="1" x="0.0" as="geometry"><mxPoint x="20" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e17" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;entryX=1;entryY=0.9;" edge="1" parent="1" source="cajero" target="cuenta">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1470" y="463" />
+              <mxPoint x="1470" y="670" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e17_lbl" value="registra operaciones" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e17">
+          <mxGeometry relative="1" x="0.0" as="geometry"><mxPoint x="0" y="-10" as="offset" /></mxGeometry>
+        </mxCell>
+
+
+        <!-- ===================== NOTAS DE CORRECCION ===================== -->
+
+        <mxCell id="note1" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;La ficha pedia que los movimientos del periodo&lt;br&gt;(depositos, giros, cargos) quedaran como detalle de la&lt;br&gt;cuenta. Lo que se modelo (Credito-CuotaCredito) es otra&lt;br&gt;cosa. Se agrego MovimientoCuenta: Cajero.registrarDeposito()&lt;br&gt;y registrarRetiro() ahora tienen donde quedar registrados." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="800" y="560" width="320" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note2" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;CuentaBloqueadaException resolvia un caso distinto (cuenta&lt;br&gt;inactiva). La segunda regla de bloqueo de la ficha era no&lt;br&gt;abrir cuenta a un cliente con mora vigente: se agrego&lt;br&gt;MoraVigenteException y el metodo Ejecutivo.abrirCuenta(),&lt;br&gt;que la ficha menciona pero no estaba en el diagrama." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="700" width="330" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note3" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;Ejecutivo-Cliente, Ejecutivo-Credito y Cajero-Cuenta&lt;br&gt;estaban etiquetadas como asociacion, categoria que el&lt;br&gt;curso elimino antes de la ES1 (solo quedan herencia,&lt;br&gt;agregacion y composicion). Como ninguna clase guarda una&lt;br&gt;referencia permanente a la otra (se usan solo como&lt;br&gt;parametro), pasaron a dependencia -- mismo tipo de flecha&lt;br&gt;punteada que ya usaban para ServicioIndicadorUF." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1000" width="360" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note4" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;En la vista general varios atributos no tenian tipo y&lt;br&gt;varios metodos no tenian retorno declarado. Se completaron&lt;br&gt;todos. Tambien se agregaron los atributos de referencia&lt;br&gt;que faltaban para que cada relacion dibujada exista como&lt;br&gt;codigo: Cliente.cuentas, Cliente.creditos, Cuenta.movimientos&lt;br&gt;y Credito.cuotas." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="420" y="1000" width="360" height="150" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

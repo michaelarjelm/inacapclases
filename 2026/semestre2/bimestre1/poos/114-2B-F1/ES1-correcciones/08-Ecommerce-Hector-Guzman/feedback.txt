@@ -1,0 +1,27 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Autor: Hector Guzman
+Negocio: Tienda de e-commerce ClickAndGo
+
+LO QUE RESOLVIO BIEN
+- La justificacion de relaciones aplica el arbol de decision de forma literal
+  ("Producto no ES UNA LineaPedido, por eso...") y explica donde va cada rombo y que
+  significa cada multiplicidad. Se nota que es razonamiento propio, no copiado.
+- Jerarquia en dos niveles bien pensada: ProductoElectronico hereda de ProductoFisico,
+  no directamente de Producto, porque comparte stock y despacho ademas de la
+  cotizacion en dolares.
+- Los tres tipos de entrega (fisico, digital, servicio) comparten procesar_Entrega() y
+  cada uno lo reescribe segun corresponda.
+- Cubre los seis requisitos minimos de la ficha.
+
+PARA LA PROXIMA
+- EncargadoBodega y Administrador quedaron sueltos en el diagrama: no tienen herencia
+  de un trabajador comun ni ninguna asociacion con Pedido o Producto. Tampoco aparecen
+  mencionados en la justificacion de relaciones. Conviene conectarlos al resto del
+  modelo.
+- Producto deberia estar marcada como clase abstracta, ya que su metodo se sobrescribe
+  en los tres subtipos y nunca deberia instanciarse directamente.
+- En varias cajas los atributos quedaron en una sola linea corrida (por ejemplo
+  "correo : String - rut : String"), lo que dificulta la lectura. Conviene un salto de
+  linea por atributo.
+- Este trabajo se entrego de forma individual; la actividad estaba pensada para
+  equipos de dos integrantes.

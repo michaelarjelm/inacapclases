@@ -1,0 +1,387 @@
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram name="Colegio Nueva Esperanza - Modelo corregido" id="colegio-model">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2750" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Titulo -->
+        <mxCell id="title" value="Colegio Nueva Esperanza - ES1 TI3V21 114-2B-F1 - Modelo de clases (version corregida)&lt;br&gt;&lt;font style=&quot;font-size:12px;font-weight:normal&quot;&gt;Equipo: Debora Toledo y Mariana Puglicivich&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="-60" width="1000" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="changelog" value="Cambios respecto a la entrega original: (1) Matricula-DetalleMatricula pasa de agregacion (rombo hueco) a composicion (rombo relleno), como ya decia el informe; (2) la relacion de matricula se reconecto de Persona a Estudiante -- solo estudiantes se matriculan; (3) Evaluacion.periodoAbierto (booleano suelto) se reemplazo por una referencia real a PeriodoAcademico; (4) Arancel e IndicadorUF pasan de relacion numerada a dependencia (Matricula los consulta, no los posee) -- resuelve las multiplicidades mal ubicadas; (5) se agregaron los atributos de referencia que faltaban en Estudiante, Evaluacion, Matricula y DetalleMatricula; (6) tipos y retornos completados en todos los metodos." style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontColor=#4C5761;fontSize=11;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="-14" width="1690" height="46" as="geometry" />
+        </mxCell>
+
+        <!-- Persona -->
+        <mxCell id="persona" value="&lt;i&gt;Persona&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="260" height="138" as="geometry" />
+        </mxCell>
+        <mxCell id="persona_attrs" value="- rut: String&lt;br&gt;- nombres: String&lt;br&gt;- apellidos: String" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="persona">
+          <mxGeometry y="26" width="260" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="persona_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="persona">
+          <mxGeometry y="104" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="persona_meth" value="+ validarRut(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="persona">
+          <mxGeometry y="112" width="260" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Estudiante -->
+        <mxCell id="estudiante" value="Estudiante" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="260" width="280" height="138" as="geometry" />
+        </mxCell>
+        <mxCell id="estudiante_attrs" value="- deudaMatriculaPendiente: boolean&lt;br&gt;- matriculas: List&amp;lt;Matricula&amp;gt;" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="estudiante">
+          <mxGeometry y="26" width="280" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="estudiante_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="estudiante">
+          <mxGeometry y="78" width="280" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="estudiante_meth" value="+ tieneDeudaPendiente(): boolean&lt;br&gt;+ solicitarMatricula(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="estudiante">
+          <mxGeometry y="86" width="280" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- Empleado -->
+        <mxCell id="empleado" value="&lt;i&gt;Empleado&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="260" width="240" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="empleado_attrs" value="- cargo: String" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="empleado">
+          <mxGeometry y="26" width="240" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="empleado_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="empleado">
+          <mxGeometry y="52" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="empleado_meth" value="+ registrarAccion(): void" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="empleado">
+          <mxGeometry y="60" width="240" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Profesor -->
+        <mxCell id="profesor" value="Profesor" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="460" width="300" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="profesor_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="profesor">
+          <mxGeometry y="26" width="300" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="profesor_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="profesor">
+          <mxGeometry y="26" width="300" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="profesor_meth" value="+ ingresarNota(e: Evaluacion, nota: double): boolean&lt;br&gt;+ ingresarObservacion(e: Evaluacion, texto: String): boolean&lt;br&gt;+ modificarNota(e: Evaluacion, nota: double): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="profesor">
+          <mxGeometry y="34" width="300" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- Administrativo -->
+        <mxCell id="administrativo" value="Administrativo" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="460" width="260" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="administrativo_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="administrativo">
+          <mxGeometry y="26" width="260" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="administrativo_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="administrativo">
+          <mxGeometry y="26" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="administrativo_meth" value="+ matricular(e: Estudiante): boolean&lt;br&gt;+ cobrar(m: Matricula): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="administrativo">
+          <mxGeometry y="34" width="260" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- Asignatura -->
+        <mxCell id="asignatura" value="Asignatura" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="40" width="260" height="164" as="geometry" />
+        </mxCell>
+        <mxCell id="asignatura_attrs" value="- codigo: String&lt;br&gt;- nombre: String&lt;br&gt;- cupo: int&lt;br&gt;- esElectivo: boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="asignatura">
+          <mxGeometry y="26" width="260" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="asignatura_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="asignatura">
+          <mxGeometry y="130" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="asignatura_meth" value="+ tieneCupo(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="asignatura">
+          <mxGeometry y="138" width="260" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- PeriodoAcademico -->
+        <mxCell id="periodoacademico" value="PeriodoAcademico" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="250" width="280" height="164" as="geometry" />
+        </mxCell>
+        <mxCell id="periodoacademico_attrs" value="- anio: int&lt;br&gt;- semestre: int&lt;br&gt;- estado: String&lt;br&gt;- fechaCierre: Date" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="periodoacademico">
+          <mxGeometry y="26" width="280" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="periodoacademico_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="periodoacademico">
+          <mxGeometry y="130" width="280" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="periodoacademico_meth" value="+ estaAbierto(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="periodoacademico">
+          <mxGeometry y="138" width="280" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Evaluacion -->
+        <mxCell id="evaluacion" value="&lt;i&gt;Evaluacion&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="40" width="300" height="268" as="geometry" />
+        </mxCell>
+        <mxCell id="evaluacion_attrs" value="- fecha: Date&lt;br&gt;- nota: double&lt;br&gt;- observacion: String&lt;br&gt;- asignatura: Asignatura&lt;br&gt;- profesor: Profesor&lt;br&gt;- periodoAcademico: PeriodoAcademico" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="evaluacion">
+          <mxGeometry y="26" width="300" height="156" as="geometry" />
+        </mxCell>
+        <mxCell id="evaluacion_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="evaluacion">
+          <mxGeometry y="182" width="300" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="evaluacion_meth" value="+ calcularPromedio(): double&lt;br&gt;+ calcularAporte(): double&lt;br&gt;+ editarNota(nota: double): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="evaluacion">
+          <mxGeometry y="190" width="300" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- Prueba -->
+        <mxCell id="prueba" value="Prueba" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="350" width="200" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="prueba_attrs" value="- PONDERACION: double = 0.40" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="prueba">
+          <mxGeometry y="26" width="200" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="prueba_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="prueba">
+          <mxGeometry y="52" width="200" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="prueba_meth" value="+ calcularAporte(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="prueba">
+          <mxGeometry y="60" width="200" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Trabajo -->
+        <mxCell id="trabajo" value="Trabajo" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="350" width="200" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="trabajo_attrs" value="- PONDERACION: double = 0.35" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="trabajo">
+          <mxGeometry y="26" width="200" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="trabajo_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="trabajo">
+          <mxGeometry y="52" width="200" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="trabajo_meth" value="+ calcularAporte(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="trabajo">
+          <mxGeometry y="60" width="200" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- PresentacionOral -->
+        <mxCell id="presentacionoral" value="PresentacionOral" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1820" y="350" width="220" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="presentacionoral_attrs" value="- PONDERACION: double = 0.25" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="presentacionoral">
+          <mxGeometry y="26" width="220" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="presentacionoral_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="presentacionoral">
+          <mxGeometry y="52" width="220" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="presentacionoral_meth" value="+ calcularAporte(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="presentacionoral">
+          <mxGeometry y="60" width="220" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Matricula -->
+        <mxCell id="matricula" value="Matricula" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2100" y="40" width="260" height="268" as="geometry" />
+        </mxCell>
+        <mxCell id="matricula_attrs" value="- folio: int&lt;br&gt;- fechaMatricula: Date&lt;br&gt;- montoTotal: double&lt;br&gt;- pagoRealizado: boolean&lt;br&gt;- valorUFAplicado: double&lt;br&gt;- detalles: List&amp;lt;DetalleMatricula&amp;gt;" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="matricula">
+          <mxGeometry y="26" width="260" height="156" as="geometry" />
+        </mxCell>
+        <mxCell id="matricula_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="matricula">
+          <mxGeometry y="182" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="matricula_meth" value="+ agregarDetalle(d: DetalleMatricula): void&lt;br&gt;+ validarSinDeuda(e: Estudiante): boolean&lt;br&gt;+ calcularMontoTotal(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="matricula">
+          <mxGeometry y="190" width="260" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- DetalleMatricula -->
+        <mxCell id="detallematricula" value="DetalleMatricula" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2100" y="350" width="260" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="detallematricula_attrs" value="- valor: double&lt;br&gt;- asignatura: Asignatura" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="detallematricula">
+          <mxGeometry y="26" width="260" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="detallematricula_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="detallematricula">
+          <mxGeometry y="78" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="detallematricula_meth" value="+ calcularSubtotal(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="detallematricula">
+          <mxGeometry y="86" width="260" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Arancel -->
+        <mxCell id="arancel" value="Arancel" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2420" y="40" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="arancel_attrs" value="- valorUF: double&lt;br&gt;- valorPesos: double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="arancel">
+          <mxGeometry y="26" width="240" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="arancel_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="arancel">
+          <mxGeometry y="78" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="arancel_meth" value="+ calcularValorPesos(valorUFDia: double): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="arancel">
+          <mxGeometry y="86" width="240" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- IndicadorUF -->
+        <mxCell id="indicadoruf" value="IndicadorUF" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2420" y="200" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="indicadoruf_attrs" value="- fecha: Date&lt;br&gt;- valor: double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="indicadoruf">
+          <mxGeometry y="26" width="240" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="indicadoruf_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="indicadoruf">
+          <mxGeometry y="78" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="indicadoruf_meth" value="+ obtenerValor(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="indicadoruf">
+          <mxGeometry y="86" width="240" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== RELACIONES ===================== -->
+
+        <mxCell id="e1" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.2;entryY=1;" edge="1" parent="1" source="estudiante" target="persona">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e2" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=1;entryY=1;" edge="1" parent="1" source="empleado" target="persona">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e3" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.3;exitY=0;entryX=0.3;entryY=1;" edge="1" parent="1" source="profesor" target="empleado">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e4" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.85;entryY=1;" edge="1" parent="1" source="administrativo" target="empleado">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e5" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.15;entryY=1;" edge="1" parent="1" source="prueba" target="evaluacion">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e6" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.45;entryY=1;" edge="1" parent="1" source="trabajo" target="evaluacion">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e7" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.8;entryY=1;" edge="1" parent="1" source="presentacionoral" target="evaluacion">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e8" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0;entryY=0.9;" edge="1" parent="1" source="estudiante" target="matricula">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="180" y="600" />
+              <mxPoint x="2070" y="600" />
+              <mxPoint x="2070" y="281.2" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8_sl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e8">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="-16" y="6" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e8_tl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e8">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="6" y="-18" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e9" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=0;exitY=0.15;entryX=1;entryY=0.5;" edge="1" parent="1" source="evaluacion" target="asignatura">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9_sl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e9">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="4" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e9_tl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e9">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-22" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e10" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=0.7;exitY=1;entryX=0.75;entryY=1;" edge="1" parent="1" source="evaluacion" target="profesor">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1590" y="615" />
+              <mxPoint x="630" y="615" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e10_sl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e10">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="6" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e10_tl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e10">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-16" y="6" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e11" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=0;exitY=0.6;entryX=1;entryY=0.3;" edge="1" parent="1" source="evaluacion" target="periodoacademico">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11_sl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e11">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="4" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e11_tl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e11">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-22" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e12" style="startArrow=diamondThin;startFill=0;endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;entryX=1;entryY=0.7;" edge="1" parent="1" source="detallematricula" target="asignatura">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2230" y="630" />
+              <mxPoint x="1330" y="630" />
+              <mxPoint x="1330" y="154.8" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e12_sl" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e12">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="-16" y="6" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e12_tl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e12">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="6" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e13" style="startArrow=diamondThin;startFill=1;endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="matricula" target="detallematricula">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13_sl" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e13">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><mxPoint x="4" y="-16" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e13_tl" value="1..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e13">
+          <mxGeometry relative="1" x="0.8" as="geometry"><mxPoint x="-22" y="4" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e14" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=1;exitY=0.3;entryX=0;entryY=0.5;" edge="1" parent="1" source="matricula" target="arancel">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14_lbl" value="consulta arancel" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e14">
+          <mxGeometry relative="1" x="0.0" as="geometry"><mxPoint x="0" y="-12" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e15" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=1;exitY=0.7;entryX=0;entryY=0.3;" edge="1" parent="1" source="matricula" target="indicadoruf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15_lbl" value="consulta UF" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e15">
+          <mxGeometry relative="1" x="0.0" as="geometry"><mxPoint x="0" y="-12" as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e16" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0;entryY=0.95;" edge="1" parent="1" source="administrativo" target="matricula">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="830" y="645" />
+              <mxPoint x="2070" y="645" />
+              <mxPoint x="2070" y="294.6" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e16_lbl" value="gestiona" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e16">
+          <mxGeometry relative="1" x="0.0" as="geometry"><mxPoint x="0" y="-10" as="offset" /></mxGeometry>
+        </mxCell>
+
+
+        <!-- ===================== NOTAS DE CORRECCION ===================== -->
+
+        <mxCell id="note1" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;El informe decia que Matricula-DetalleMatricula era&lt;br&gt;composicion, pero el diagrama dibujaba rombo hueco&lt;br&gt;(agregacion). Una linea de detalle no existe sin su&lt;br&gt;cabecera: corresponde rombo relleno." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="2100" y="700" width="300" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note2" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;La relacion &amp;quot;1/0..*&amp;quot; de matricula salia de Persona,&lt;br&gt;no de Estudiante. Eso permitiria que un Empleado tuviera&lt;br&gt;matriculas. La justificacion escrita ya decia&lt;br&gt;&amp;quot;Estudiante-Matricula&amp;quot;: se reconecto para que calce." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="700" width="330" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note3" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;Evaluacion tenia un atributo periodoAbierto: boolean&lt;br&gt;suelto, que podia quedar desincronizado del estado real&lt;br&gt;del periodo. Se reemplazo por una referencia&lt;br&gt;periodoAcademico: PeriodoAcademico -- editarNota() debe&lt;br&gt;preguntar periodoAcademico.estaAbierto(), no confiar en&lt;br&gt;una copia local." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="400" y="700" width="360" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note4" value="&lt;b&gt;CORREGIDO&lt;/b&gt;&lt;br&gt;Arancel-Matricula e IndicadorUF-Matricula estaban&lt;br&gt;dibujadas con multiplicidad numerica (una sola etiqueta&lt;br&gt;al medio de la linea, sin separar los dos extremos).&lt;br&gt;Matricula no posee un Arancel ni un IndicadorUF: los&lt;br&gt;consulta para calcular el cobro y guarda el resultado en&lt;br&gt;valorUFAplicado. Pasaron a dependencia, sin multiplicidad,&lt;br&gt;igual que las demas consultas del curso." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#F4E0DC;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="800" y="700" width="360" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note5" value="&lt;b&gt;NO CORREGIDO EN EL DIAGRAMA&lt;/b&gt;&lt;br&gt;El informe describe la clase Profesor con los atributos y&lt;br&gt;metodos de Evaluacion (fecha, nota, calcularPromedio(),&lt;br&gt;etc). En el diagrama esto SI esta bien separado -- es un&lt;br&gt;error del texto del informe, no del modelo, asi que no&lt;br&gt;requiere cambio aqui." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#38658C;fontSize=11;strokeColor=#38658C;fillColor=#E2EBF2;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="700" width="270" height="130" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

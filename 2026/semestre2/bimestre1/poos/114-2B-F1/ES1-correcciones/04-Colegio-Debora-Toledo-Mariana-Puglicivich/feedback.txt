@@ -1,0 +1,34 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Debora Toledo y Mariana Puglicivich
+Negocio: Colegio Nueva Esperanza
+
+LO QUE RESOLVIERON BIEN
+- Las ponderaciones viven en el subtipo como constantes con valor (PONDERACION = 0.40
+  / 0.35 / 0.25) y cada tipo de evaluacion reescribe calcularAporte(): el polimorfismo
+  esta bien resuelto.
+- Separaron Arancel, IndicadorUF y PeriodoAcademico como clases propias en vez de
+  mezclar esa informacion en Matricula: el modelo tiene buena granularidad.
+- Notacion completa: visibilidad, tipos de dato, parametros y retornos declarados en
+  todos los metodos.
+- Cubre los seis requisitos minimos de la ficha.
+
+PARA LA PROXIMA
+- Multiplicidades mal ubicadas en varias relaciones (Arancel-Matricula,
+  Persona-Matricula, Asignatura-Evaluacion, PeriodoAcademico-Evaluacion,
+  Profesor-Evaluacion): van como una sola etiqueta al medio de la linea ("1 / 0..*")
+  en vez de una multiplicidad en cada extremo, que es como corresponde en UML.
+- Matricula-DetalleMatricula: el informe dice que es composicion, pero el diagrama
+  dibuja un rombo hueco (agregacion). Para una linea de detalle que no existe sin su
+  cabecera corresponde el rombo relleno.
+- La explicacion de la clase Profesor en realidad describe a Evaluacion: le atribuye
+  los atributos fecha, nota, observacion, periodoAbierto y los metodos
+  calcularPromedio(), calcularAporte(), editarNota(), que en el diagrama pertenecen a
+  Evaluacion. La clase Evaluacion quedo con el titulo puesto pero sin su propia
+  explicacion.
+- La justificacion de relaciones describe el vinculo en lenguaje natural pero casi
+  nunca nombra el tipo de relacion ni la multiplicidad, que era justamente lo que
+  pedia ese punto de la actividad.
+- Revisar el informe antes de entregar: quedaron restos de texto dirigidos a ustedes
+  mismos ("el diagrama realizado por ustedes, tomado del archivo diagrama
+  ultimo.drawio"), encabezados sueltos de plantilla ("I. Objetivos", "II. ...
+  Desarrollo") y los nombres de los integrantes entre corchetes y en minusculas.

@@ -1,0 +1,25 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Yanet Valdes y Dayana Reyes
+Negocio: Banco Cooperativo Andino
+
+LO QUE RESOLVIERON BIEN
+- Partieron el diagrama en tres vistas ampliadas (relaciones y cardinalidades,
+  herencia de cuentas, trabajadores y dependencias), ademas de la vista general con
+  leyenda de notacion. Es la unica entrega del curso que resolvio el problema de
+  legibilidad que afecto a varios trabajos.
+- Las tres cuentas reescriben calcularCostoMensual(valorUF), y las dos excepciones
+  propias (SaldoInsuficienteException y CuentaBloqueadaException) cubren los bloqueos
+  de operaciones.
+- Cierran con una "lectura de cardinalidades" que traduce cada multiplicidad a una
+  frase en lenguaje simple: buen recurso para que cualquiera entienda el diagrama.
+
+PARA LA PROXIMA
+- Falta la cartola: la ficha pedia que los movimientos del periodo (depositos, giros,
+  cargos) quedaran como detalle asociado a la cuenta. Lo que modelaron fue
+  Credito-CuotaCredito, que es otra cosa. El Cajero llama registrarDeposito() y
+  registrarRetiro(), pero nada queda registrado como linea de movimiento.
+- La segunda regla de bloqueo de la ficha era no abrir una cuenta a un cliente con
+  mora vigente. CuentaBloqueadaException resuelve un caso distinto (cuenta inactiva).
+- Tipos de dato incompletos: en la vista general varios atributos van sin tipo
+  ("rut, nombre, correo, activo") y varios metodos sin retorno declarado. Solo la
+  vista de herencia de cuentas trae los tipos completos.

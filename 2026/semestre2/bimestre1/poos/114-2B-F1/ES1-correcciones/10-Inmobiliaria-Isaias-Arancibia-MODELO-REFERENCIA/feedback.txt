@@ -1,0 +1,33 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Autor: Isaias Arancibia
+Negocio: Inmobiliaria Terrenos del Sur
+
+LO QUE HAY EN LA ENTREGA
+- En la primera pagina hay un diagrama de clases minimo con Agente, Propiedad,
+  Cliente y Venta. Las cuatro clases tienen atributos, metodos y multiplicidad en las
+  tres relaciones que las conectan.
+
+LO QUE FALTA
+- No hay informe: no hay portada, no hay problema explicado en palabras propias, no
+  hay explicacion de clases y no hay justificacion de relaciones. Eso es cuatro de los
+  cinco puntos que pedia la actividad 3.
+- Ninguno de los seis requisitos minimos de la ficha esta cubierto: no hay subtipos de
+  propiedad (casa, departamento, oficina), no hay un segundo tipo de trabajador, no
+  hay validacion de RUT, no hay contrato con lineas de detalle, no hay reglas que
+  bloqueen una operacion, y no hay ningun valor calculado segun la UF.
+- El unico diagrama de clases entregado no tiene tipos de dato en los atributos, ni
+  parametros o retornos en los metodos, ni ninguna relacion de herencia o composicion.
+
+IMPORTANTE, CONVERSAR ANTES DE LA NOTA
+Las paginas 3 a 22 del archivo no son diagramas de clases: son diagramas
+entidad-relacion (con ovalos de atributo, rombos de relacion y notacion 1:n) de
+negocios completamente distintos al asignado: un hospital, una tienda, una empresa de
+paqueteria, una automotora, un club de futbol, una agencia de viajes generica y una
+academia. Ademas de no corresponder al negocio de la Inmobiliaria, ni siquiera es la
+misma tecnica que se enseno en el curso: entidad-relacion es un modelo de datos, no un
+diagrama de clases UML.
+
+Todo esto sugiere que el archivo entregado corresponde a material de otra asignatura
+subido por error, o a una entrega hecha apurada a ultima hora. Vale la pena
+conversarlo con el estudiante antes de cerrar la nota, por si existe otra version del
+trabajo que no llego a subirse.

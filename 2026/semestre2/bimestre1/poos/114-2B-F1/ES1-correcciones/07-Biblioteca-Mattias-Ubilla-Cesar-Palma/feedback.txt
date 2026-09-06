@@ -1,0 +1,22 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Mattias Ubilla y Cesar Palma
+Negocio: Biblioteca Municipal Cordillera
+
+LO QUE RESOLVIERON BIEN
+- Los tres tipos de material reescriben getDiasPrestamo() y getMaxRenovaciones() con
+  los valores exactos del enunciado (14/7/3 dias y 1/0/0 renovaciones).
+- Uso correcto de enumeraciones (EstadoMaterial y EstadoMulta) para modelar estados,
+  en vez de dejarlos como String suelto.
+- Cierran con una tabla que cruza cada uno de los seis requisitos de la ficha contra
+  donde se cumple exactamente en el modelo: se autoevaluaron antes de entregar, y esa
+  tabla es un buen habito a repetir.
+- Notacion prolija: visibilidad, tipos de dato, multiplicidades distinguiendo 1..* de *.
+
+PARA LA PROXIMA
+- Faltan los tipos de retorno en Bibliotecaria, Administradora, Multa.pagar() y
+  Prestamo.registrarPrestamo(). El resto del diagrama si los declara, asi que es una
+  omision puntual, no un problema del modelo completo: conviene repasar metodo por
+  metodo antes de entregar.
+- El informe menciona una "fecha global de vencimiento" en Prestamo que no aparece
+  como atributo en el diagrama. Vale la pena revisar que el texto describa exactamente
+  lo que dibujaron.
