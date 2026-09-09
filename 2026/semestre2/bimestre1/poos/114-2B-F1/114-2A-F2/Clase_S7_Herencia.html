@@ -275,10 +275,6 @@
   <div class="sep-title anim">Objetivos<br>de la <span>sesión</span></div>
   <div class="resumen-grid anim">
     <div class="resumen-item">
-      <div class="resumen-cmd">Hacer privados los atributos de Vehiculo</div>
-      <div class="resumen-desc">Doble guion bajo, y agregarles una property para poder seguir leyéndolos desde afuera</div>
-    </div>
-    <div class="resumen-item">
       <div class="resumen-cmd">Reconocer "es un" como la prueba de herencia</div>
       <div class="resumen-desc">Y distinguirlo de "tiene un", la relación que ya usan (Usuario tiene un Rol)</div>
     </div>
@@ -295,15 +291,15 @@
       <div class="resumen-desc">Mismo nombre, cuerpo distinto en cada hija: polimorfismo real, no solo la palabra</div>
     </div>
     <div class="resumen-item">
-      <div class="resumen-cmd">Encapsular con property</div>
-      <div class="resumen-desc">Validar un dato al escribirlo, y bloquear del todo la escritura de otro, sin exponer nada</div>
+      <div class="resumen-cmd">Hacer privados los atributos de Vehiculo, y encapsular con property</div>
+      <div class="resumen-desc">Doble guion bajo, validar un dato al escribirlo, y bloquear del todo la escritura de otro, sin exponer nada</div>
     </div>
     <div class="resumen-item">
       <div class="resumen-cmd">Extender su checklist del criterio 2.1.1</div>
       <div class="resumen-desc">Con los puntos que solo aplican cuando una clase hereda de otra</div>
     </div>
     <div class="resumen-item">
-      <div class="resumen-cmd">Trabajar con ramas, no en master</div>
+      <div class="resumen-cmd">Trabajar con ramas, no en main</div>
       <div class="resumen-desc">Crear una rama, programar ahí, y guardar+subir el avance al final de la sesión</div>
     </div>
   </div>
@@ -318,13 +314,8 @@
   <div class="index-grid anim">
     <div class="index-item">
       <div class="index-num">00</div>
-      <div class="index-name">Recap: clonen, entiendan y creen su rama, verifiquen vehiculo.py</div>
+      <div class="index-name">Recap: clonen, entiendan y creen su rama, verifiquen vehiculo.py, agreguen tarifa_hora()</div>
       <div class="index-type">Setup &middot; 9 min</div>
-    </div>
-    <div class="index-item">
-      <div class="index-num">00c</div>
-      <div class="index-name">Privaticemos Vehiculo: atributos privados + property</div>
-      <div class="index-type">Concepto + prompt &middot; 18 min</div>
     </div>
     <div class="index-item">
       <div class="index-num">01</div>
@@ -411,14 +402,14 @@
     <div class="prompt-box anim">
       <div class="prompt-label"><span class="dot"></span>Le piden a agy &middot; Camino B, todavía no tienen uno propio</div>
       <div class="prompt-text">"Todavía no tengo repo propio. Hacé un fork de
-      https://github.com/michaelarjelm/Taller-Mecanico a mi cuenta de GitHub, clonalo acá, y
-      renombrá la carpeta a poo-seguro-equipo-nombre."</div>
+      https://github.com/michaelarjelm/taller-mecanico-114-2A-f2 a mi cuenta de GitHub,
+      clonalo acá, y renombrá la carpeta a poo-seguro-equipo-nombre."</div>
     </div>
     <div class="terminal">
       <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>lo que agy corrió por ustedes</div>
-      <pre><span class="term-prompt">$</span> <span class="term-out">gh repo fork michaelarjelm/Taller-Mecanico --clone=true</span>
+      <pre><span class="term-prompt">$</span> <span class="term-out">gh repo fork michaelarjelm/taller-mecanico-114-2A-f2 --clone=true</span>
 <span class="cmt">  (crea una copia en SU cuenta de GitHub, y la clona acá mismo)</span>
-<span class="term-prompt">$</span> <span class="term-out">mv Taller-Mecanico poo-seguro-equipo-nombre</span>
+<span class="term-prompt">$</span> <span class="term-out">mv taller-mecanico-114-2A-f2 poo-seguro-equipo-nombre</span>
 <span class="term-prompt">$</span> <span class="term-out">cd poo-seguro-equipo-nombre</span></pre>
     </div>
     <div class="callout callout-tip anim">
@@ -443,11 +434,11 @@
   <div class="concept-title anim">¿Qué es<br>una <span>rama</span>?</div>
   <div class="concept-body anim">
     <p>
-      Todo lo que programaron hasta el lunes quedó directo en <code>master</code>. Eso ya no
-      sigue así: <code>master</code> guarda solo el código que ya funciona y quedó probado. Una
+      Todo lo que programaron hasta el lunes quedó directo en <code>main</code>. Eso ya no
+      sigue así: <code>main</code> guarda solo el código que ya funciona y quedó probado. Una
       rama es una <strong>línea paralela de commits</strong> que arranca desde ese mismo punto
-      de master, para que el código a medio construir no se mezcle con lo estable. Esta rama en
-      particular, <code>desarrollo</code>, no es solo de hoy: la van a seguir usando en todas
+      de main, para que el código a medio construir no se mezcle con lo estable. Esta rama en
+      particular, <code>feature/desarrollo</code>, no es solo de hoy: la van a seguir usando en todas
       las sesiones que quedan del módulo.
     </p>
     <div class="diagram-card">
@@ -463,10 +454,10 @@
         <circle cx="340" cy="120" r="9" fill="#E31E24"/>
         <circle cx="420" cy="120" r="9" fill="#E31E24"/>
         <circle cx="500" cy="120" r="9" fill="#E31E24"/>
-        <text x="40" y="30" font-family="JetBrains Mono, monospace" font-size="16" font-weight="700" fill="#1A1A1A">master</text>
+        <text x="40" y="30" font-family="JetBrains Mono, monospace" font-size="16" font-weight="700" fill="#1A1A1A">main</text>
         <text x="130" y="42" font-family="JetBrains Mono, monospace" font-size="12" fill="#666">hasta el lunes: probado y funcionando</text>
         <text x="420" y="42" font-family="JetBrains Mono, monospace" font-size="12" fill="#666" opacity="0.6">quieto mientras tanto</text>
-        <text x="340" y="145" font-family="JetBrains Mono, monospace" font-size="16" font-weight="700" fill="#E31E24">desarrollo</text>
+        <text x="340" y="145" font-family="JetBrains Mono, monospace" font-size="16" font-weight="700" fill="#E31E24">feature/desarrollo</text>
         <text x="340" y="162" font-family="JetBrains Mono, monospace" font-size="12" fill="#666">Auto, Moto, Camion, property:</text>
         <text x="340" y="178" font-family="JetBrains Mono, monospace" font-size="12" fill="#666">hoy, y lo que sigue del módulo</text>
       </svg>
@@ -474,11 +465,11 @@
     <div class="callout callout-info anim">
       <div class="callout-icon">&#9679;</div>
       <div class="callout-content">
-        <strong>Nada de lo que programen le pasa a master mientras tanto</strong>
-        <p>Programan y prueban en <code>desarrollo</code>; si algo sale mal,
-        <code>master</code> sigue exactamente como estaba el lunes. Y no es solo por hoy:
+        <strong>Nada de lo que programen le pasa a main mientras tanto</strong>
+        <p>Programan y prueban en <code>feature/desarrollo</code>; si algo sale mal,
+        <code>main</code> sigue exactamente como estaba el lunes. Y no es solo por hoy:
         van a seguir construyendo sobre esta misma rama en las próximas sesiones, sin
-        mezclarla a master todavía. Eso viene mucho más adelante, cuando el trabajo esté
+        mezclarla a main todavía. Eso viene mucho más adelante, cuando el trabajo esté
         maduro -- por ahora, al final de la sesión, solo la guardan y la suben a GitHub.</p>
       </div>
     </div>
@@ -501,7 +492,7 @@
       <div class="callout-icon">&#9679;</div>
       <div class="callout-content">
         <strong>En el mundo corporativo</strong>
-        <p>Ningún equipo de desarrollo serio programa directo en <code>main</code>/<code>master</code>.
+        <p>Ningún equipo de desarrollo serio programa directo en <code>main</code> (o <code>master</code>, en repos más viejos).
         El flujo estándar es: rama por funcionalidad, Pull Request para que otra persona
         revise el código antes de aceptarlo, y recién ahí se mezcla. Los sistemas de
         integración continua (CI) corren automáticamente los tests de esa rama antes de
@@ -520,20 +511,20 @@
   <div class="concept-body anim">
     <div class="prompt-box anim">
       <div class="prompt-label"><span class="dot"></span>Le piden a agy</div>
-      <div class="prompt-text">"Creá una rama nueva llamada desarrollo y cambiate a ella."</div>
+      <div class="prompt-text">"Creá una rama nueva llamada feature/desarrollo y cambiate a ella."</div>
     </div>
     <div class="terminal">
       <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>lo que agy corrió por ustedes</div>
-      <pre><span class="term-prompt">$</span> <span class="term-out">git checkout -b desarrollo</span>
+      <pre><span class="term-prompt">$</span> <span class="term-out">git checkout -b feature/desarrollo</span>
 <span class="cmt">  (crea la rama y los cambia a ella en el mismo paso)</span>
 <span class="term-prompt">$</span> <span class="term-out">git branch</span>
-<span class="term-out">  master
-* desarrollo</span>  <span class="cmt"># el asterisco marca en cuál están parados</span></pre>
+<span class="term-out">  main
+* feature/desarrollo</span>  <span class="cmt"># el asterisco marca en cuál están parados</span></pre>
     </div>
     <div class="actividad anim">
       <div class="act-k">Actividad &middot; 2 min &middot; individual</div>
-      <div class="act-t">Corran los dos comandos de arriba, y confirmen con git branch que el asterisco quedó en desarrollo.</div>
-      <div class="act-d">Si el asterisco sigue en master, no corrió el checkout: avísenme antes de seguir.</div>
+      <div class="act-t">Corran los dos comandos de arriba, y confirmen con git branch que el asterisco quedó en feature/desarrollo.</div>
+      <div class="act-d">Si el asterisco sigue en main, no corrió el checkout: avísenme antes de seguir.</div>
     </div>
   </div>
 </div>
@@ -555,7 +546,7 @@
     <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio):
         self.patente = patente
         self.anio = anio
-        self._en_taller = <span class="kw">False</span>  <span class="cmt"># protegido, un solo guion bajo: hoy pasa a privado</span>
+        self._en_taller = <span class="kw">False</span>  <span class="cmt"># protegido, un solo guion bajo: lo privatizamos más adelante hoy</span>
 
     <span class="kw">def</span> <span class="fn">ingresar</span>(self):
         <span class="cmt"># marca el vehículo como dentro del taller</span>
@@ -565,151 +556,77 @@
         <span class="cmt"># marca el vehículo como fuera del taller</span>
         ...</pre>
     </div>
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Agregale a Vehiculo un método tarifa_hora() que retorne
+      5000, como valor genérico. No toques nada más de la clase."</div>
+    </div>
     <div class="callout callout-info anim">
       <div class="callout-icon">&#9679;</div>
       <div class="callout-content">
-        <strong>Todavía no tiene tarifa_hora()</strong>
-        <p>Vehiculo hoy solo sabe ingresar y entregar. El método <code>tarifa_hora()</code>
-        genérico lo agregan en el bloque 00c, junto con la privatización -- es la base sobre
-        la que Auto, Moto y Camion van a sobrescribir más adelante.</p>
+        <strong>Un método no necesita ser privado</strong>
+        <p>La regla de "atributo privado, comportamiento público" es solo para los atributos.
+        <code>tarifa_hora()</code> queda público desde ya, sin ceremonia -- es la base sobre
+        la que Auto, Moto y Camion van a sobrescribir en el bloque 04. Los atributos
+        (patente, anio, en_taller) los privatizamos más adelante hoy, en el bloque 05,
+        junto con herencia ya construida.</p>
       </div>
     </div>
     <div class="terminal">
       <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>terminal</div>
       <pre><span class="term-prompt">$</span> <span class="term-out">git status</span>
 <span class="term-prompt">$</span> <span class="term-out">agy</span>
-<span class="cmt">  (confirmen con agy que vehiculo.py tiene el constructor y los dos métodos, igual que el lunes)</span></pre>
+<span class="cmt">  (confirmen con agy que vehiculo.py tiene el constructor, los dos métodos y ahora tarifa_hora())</span></pre>
     </div>
     <div class="actividad anim">
       <div class="act-k">Actividad &middot; 5 min &middot; individual</div>
-      <div class="act-t">Clonen su repo (Camino A) o hagan la copia del mío (Camino B), y confirmen con agy que vehiculo.py sigue como lo dejaron el lunes.</div>
+      <div class="act-t">Clonen su repo (Camino A) o hagan la copia del mío (Camino B), confirmen que vehiculo.py sigue como lo dejaron el lunes, y agreguen tarifa_hora() con el prompt de arriba.</div>
       <div class="act-d">Si <code>vehiculo.py</code> no tiene el constructor y los dos métodos, avísenme antes de seguir: hoy construimos sobre esa base.</div>
     </div>
   </div>
 </div>
 
-
-<!-- ============ BLOQUE 00c: PRIVATICEMOS VEHICULO ============ -->
-<div class="slide slide-separator sep-orange">
-  <span class="slide-badge badge-concepto">Bloque 00c</span>
-  <div class="sep-num anim">00c &middot; Concepto + prompt &middot; 18 min</div>
-  <div class="sep-title anim">Antes de heredar:<br><span>privaticemos</span> Vehiculo</div>
-  <p class="sep-desc anim">
-    Esto normalmente se ve en su propia sesión, aparte. Ustedes lo ven hoy, junto con
-    herencia, porque con IA el desarrollo avanza más rápido.
-  </p>
-</div>
-
-<div class="slide slide-concept orange-accent">
-  <span class="slide-badge badge-concepto">Definición</span>
-  <div class="concept-label anim">Ese signo que todavía no explicamos</div>
-  <div class="concept-title anim">¿Qué es la<br><span>visibilidad</span>?</div>
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Antes de empezar</span>
+  <div class="concept-label anim">2 min</div>
+  <div class="concept-title anim">Creen<br><span>main.py</span></div>
   <div class="concept-body anim">
-    <div class="definicion">
-      <div class="def-k">Visibilidad &middot; + y -</div>
-      <div class="def-txt">
-        En el diagrama, cada atributo y método lleva un signo antes del nombre: <code>+</code>
-        significa <strong>público</strong> (se puede usar desde afuera de la clase), <code>-</code>
-        significa <strong>privado</strong> (solo la propia clase debería tocarlo).
-      </div>
-    </div>
-    <div class="definicion">
-      <div class="def-k">La regla de este curso: métodos públicos, variables privadas</div>
-      <div class="def-txt">
-        Python ofrece tres niveles (público, protegido con un guion bajo, privado con doble
-        guion bajo), pero para no complicarse decidiendo caso a caso van a aplicar siempre la
-        misma regla: <strong>todo atributo se declara privado</strong> (doble guion bajo), y
-        <strong>todo lo que necesiten exponer se hace a través de una property</strong>. Cerrar
-        el dato, abrir el comportamiento.
-      </div>
-      <div class="def-ej">patente, anio y _en_taller pasan a ser __patente, __anio y __en_taller. La única forma de leerlos desde afuera va a ser una property.</div>
-    </div>
-    <table class="tbl">
-      <thead><tr><th>Nivel</th><th>Sintaxis</th><th>Lo usan en este curso</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Público</strong></td><td class="mono">variable</td><td>No, salvo a través de una property.</td></tr>
-        <tr><td><strong>Protegido</strong></td><td class="mono">_variable</td><td>Es lo que tiene <code>_en_taller</code> hoy: un paso intermedio, no el final.</td></tr>
-        <tr><td><strong>Privado</strong></td><td class="mono">__variable</td><td>Sí, siempre, para los atributos.</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div class="slide slide-concept green-accent">
-  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
-  <div class="concept-label anim">Privado, con property, y con su primer método polimórfico</div>
-  <div class="concept-title anim">Cerremos<br>el <span>encapsulamiento</span></div>
-  <div class="concept-body anim">
+    <p>
+      Todavía no existe un archivo que pruebe Vehiculo. Antes de heredar nada, créenlo: cada
+      objeto nuevo que agreguen hoy se prueba corriéndolo, no solo leyendo el código.
+    </p>
     <div class="prompt-box anim">
       <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
-      <div class="prompt-text">"Modifica vehiculo.py: hacé privados patente, anio y
-      _en_taller, con doble guion bajo. Agregale a Vehiculo una property para cada uno
-      (patente, anio, en_taller) que retorne el valor privado, sin setter todavía. Agregale
-      también un método tarifa_hora() que retorne 5000, como valor genérico. Comenta cada
-      línea."</div>
+      <div class="prompt-text">"Creá main.py: importá Vehiculo desde vehiculo.py, creá un
+      vehículo con patente y año, marcalo como ingresado, e imprimí su patente, año y
+      tarifa_hora()."</div>
     </div>
     <div class="code-block">
-      <div class="code-title">vehiculo.py &middot; generado por Antigravity</div>
-<pre><span class="kw">class</span> <span class="cls">Vehiculo</span>:
-    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio):
-        self.__patente = patente     <span class="cmt"># privado: doble guion bajo</span>
-        self.__anio = anio           <span class="cmt"># privado: doble guion bajo</span>
-        self.__en_taller = <span class="kw">False</span>  <span class="cmt"># privado: doble guion bajo</span>
+      <div class="code-title">main.py &middot; generado por Antigravity</div>
+<pre><span class="kw">from</span> vehiculo <span class="kw">import</span> <span class="cls">Vehiculo</span>
 
-    <span class="kw">def</span> <span class="fn">ingresar</span>(self):
-        self.__en_taller = <span class="kw">True</span>
+v1 = <span class="cls">Vehiculo</span>(<span class="str">"KXPR84"</span>, <span class="num">2019</span>)
+v1.ingresar()
 
-    <span class="kw">def</span> <span class="fn">entregar</span>(self):
-        self.__en_taller = <span class="kw">False</span>
-
-    <span class="kw">def</span> <span class="fn">tarifa_hora</span>(self):
-        <span class="kw">return</span> <span class="num">5000</span>  <span class="cmt"># valor genérico, todavía igual para cualquier vehículo</span>
-
-    <span class="kw">@property</span>
-    <span class="kw">def</span> <span class="fn">patente</span>(self):
-        <span class="kw">return</span> self.__patente
-
-    <span class="kw">@property</span>
-    <span class="kw">def</span> <span class="fn">anio</span>(self):
-        <span class="kw">return</span> self.__anio
-
-    <span class="kw">@property</span>
-    <span class="kw">def</span> <span class="fn">en_taller</span>(self):
-        <span class="kw">return</span> self.__en_taller</pre>
+<span class="fn">print</span>(v1.patente, v1.anio, v1.tarifa_hora())</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>python3 main.py</div>
+      <pre><span class="term-out">KXPR84 2019 5000</span></pre>
     </div>
     <div class="callout callout-tip anim">
       <div class="callout-icon">&#9679;</div>
       <div class="callout-content">
-        <strong>Se llaman sin paréntesis</strong>
-        <p><code>v1.patente</code>, no <code>v1.patente()</code>. Por fuera se ve idéntico a
-        un atributo público; por dentro, sigue siendo <code>self.__patente</code>, privado.</p>
-      </div>
-    </div>
-    <div class="prompt-box anim">
-      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
-      <div class="prompt-text">"Creá main.py: importá Vehiculo, creá tres vehículos con
-      patente y año distintos, marcá uno como ingresado, y recorré los tres imprimiendo su
-      patente, año y tarifa_hora() usando las properties."</div>
-    </div>
-    <div class="terminal">
-      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>python3 main.py</div>
-      <pre><span class="term-out">KXPR84 2019 5000
-JKLM12 2016 5000
-QRST99 2021 5000</span></pre>
-    </div>
-    <div class="callout callout-important anim">
-      <div class="callout-icon">&#9679;</div>
-      <div class="callout-content">
-        <strong>Los tres cobran igual, todavía</strong>
-        <p><code>tarifa_hora()</code> vive en Vehiculo y por ahora devuelve 5000 sin importar
-        quién pregunte. Eso cambia en el bloque 04 de hoy, cuando Auto, Moto y Camion la
-        sobrescriban cada una con su propio valor.</p>
+        <strong>De ahora en adelante, main.py se actualiza, no se reescribe</strong>
+        <p>Cada bloque de hoy le agrega algo nuevo para probar: Auto, Moto y Camion en el
+        bloque 02, la sobrescritura en el 04, las properties en el 05. Es siempre el mismo
+        archivo, nunca uno nuevo por bloque.</p>
       </div>
     </div>
     <div class="actividad anim">
-      <div class="act-k">Actividad &middot; 4 min &middot; individual</div>
-      <div class="act-t">Corran los dos prompts sobre su propio vehiculo.py, y confirmen en main.py que las tres properties se leen sin paréntesis.</div>
-      <div class="act-d">Prueben también <code>v1.patente = "OTRA"</code>: debería fallar, porque todavía no le agregaron un setter. Eso viene en el bloque 05, más adelante hoy.</div>
+      <div class="act-k">Actividad &middot; 3 min &middot; individual</div>
+      <div class="act-t">Corran el prompt de arriba sobre su propio vehiculo.py, y confirmen que main.py imprime los tres valores.</div>
+      <div class="act-d">Si tarifa_hora() no está todavía (bloque anterior), agréguenla primero: main.py la necesita.</div>
     </div>
   </div>
 </div>
@@ -1013,8 +930,7 @@ v1.ingresar()      </span><span class="cmt"># funciona: Auto no lo escribió, lo
       <div class="prompt-text">"En camion.py, reemplaza el pass de Camion: agregale un
       atributo propio capacidad_carga (número entero, en kilos). Escribile su propio
       constructor, que reciba patente, anio y capacidad_carga: primero llama a
-      super().__init__(patente, anio), después guarda capacidad_carga como privado.
-      Comenta cada línea."</div>
+      super().__init__(patente, anio), después guarda capacidad_carga. Comenta cada línea."</div>
     </div>
     <div class="code-block">
       <div class="code-title">camion.py &middot; generado por Antigravity</div>
@@ -1023,7 +939,7 @@ v1.ingresar()      </span><span class="cmt"># funciona: Auto no lo escribió, lo
 <span class="kw">class</span> <span class="cls">Camion</span>(<span class="cls">Vehiculo</span>):
     <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio, capacidad_carga):
         <span class="fn">super</span>().<span class="fn">__init__</span>(patente, anio)  <span class="cmt"># arma patente, anio y en_taller, igual que cualquier Vehiculo</span>
-        self.__capacidad_carga = capacidad_carga  <span class="cmt"># privado: doble guion bajo, solo de Camion</span></pre>
+        self.capacidad_carga = capacidad_carga  <span class="cmt"># por ahora público, como el resto; lo privatizamos en el bloque 05</span></pre>
     </div>
     <div class="terminal">
       <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>python3</div>
@@ -1155,7 +1071,7 @@ c1.ingresar()      </span><span class="cmt"># funciona: en_taller lo armó super
 <span class="kw">class</span> <span class="cls">Camion</span>(<span class="cls">Vehiculo</span>):
     <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio, capacidad_carga):
         <span class="fn">super</span>().<span class="fn">__init__</span>(patente, anio)
-        self.__capacidad_carga = capacidad_carga
+        self.capacidad_carga = capacidad_carga
 
     <span class="kw">def</span> <span class="fn">tarifa_hora</span>(self):
         <span class="kw">return</span> <span class="num">40000</span>  <span class="cmt"># se agrega junto al __init__ del bloque anterior, sin tocarlo</span></pre>
@@ -1187,11 +1103,12 @@ Tarifa: $40000</span></pre>
 <!-- ============ BLOQUE 05: ENCAPSULAMIENTO REAL (PROPERTY) ============ -->
 <div class="slide slide-separator sep-blue">
   <span class="slide-badge badge-concepto">Bloque 05</span>
-  <div class="sep-num anim">05 &middot; Concepto + prompt &middot; 20 min</div>
+  <div class="sep-num anim">05 &middot; Concepto + prompt &middot; 32 min</div>
   <div class="sep-title anim">Encapsulamiento<br>real: <span>property</span></div>
   <p class="sep-desc anim">
-    Ya hicieron privados sus atributos. Hoy los leen, los validan, y protegen los que
-    nadie debería poder cambiar desde afuera.
+    Auto, Moto y Camion ya heredan y sobrescriben. Vehiculo, en cambio, sigue con los
+    atributos expuestos tal cual. Hoy por fin los hacen privados de verdad, los leen con
+    property, los validan, y protegen los que nadie debería poder cambiar desde afuera.
   </p>
 </div>
 
@@ -1227,6 +1144,98 @@ Tarifa: $40000</span></pre>
         <p><code>v1.patente</code>, no <code>v1.patente()</code>. Por fuera es indistinguible
         de un atributo público. Por dentro, sigue siendo <code>self.__patente</code>, privado.</p>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Recién ahora, con la jerarquía ya construida</div>
+  <div class="concept-title anim">Privaticemos<br><span>Vehiculo</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Modifica vehiculo.py: hacé privados patente, anio y
+      _en_taller, con doble guion bajo. Agregale a Vehiculo una property para cada uno
+      (patente, anio, en_taller) que retorne el valor privado, sin setter todavía. Comenta
+      cada línea."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">vehiculo.py &middot; generado por Antigravity</div>
+<pre><span class="kw">class</span> <span class="cls">Vehiculo</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio):
+        self.__patente = patente     <span class="cmt"># privado: doble guion bajo</span>
+        self.__anio = anio           <span class="cmt"># privado: doble guion bajo</span>
+        self.__en_taller = <span class="kw">False</span>  <span class="cmt"># privado: doble guion bajo</span>
+
+    <span class="kw">def</span> <span class="fn">ingresar</span>(self):
+        self.__en_taller = <span class="kw">True</span>
+
+    <span class="kw">def</span> <span class="fn">entregar</span>(self):
+        self.__en_taller = <span class="kw">False</span>
+
+    <span class="kw">def</span> <span class="fn">tarifa_hora</span>(self):
+        <span class="kw">return</span> <span class="num">5000</span>
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">patente</span>(self):
+        <span class="kw">return</span> self.__patente
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">anio</span>(self):
+        <span class="kw">return</span> self.__anio
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">en_taller</span>(self):
+        <span class="kw">return</span> self.__en_taller</pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Auto y Moto quedan protegidas gratis, Camion no del todo</strong>
+        <p>Auto y Moto no agregaron ningún atributo propio: heredan patente, anio y
+        en_taller ya privados, sin tocar una línea. Camion sí agregó uno propio,
+        <code>capacidad_carga</code>, en el bloque 03 -- ese quedó público, porque todavía
+        no existía esta regla. Le toca su propio prompt, aparte.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Lo que Camion agregó por su cuenta no se hereda solo</div>
+  <div class="concept-title anim">Privaticemos<br><span>capacidad_carga</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"En camion.py, hacé privado capacidad_carga con doble guion
+      bajo, y agregale a Camion una property capacidad_carga que retorne el valor privado."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">camion.py &middot; generado por Antigravity</div>
+<pre><span class="kw">class</span> <span class="cls">Camion</span>(<span class="cls">Vehiculo</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, patente, anio, capacidad_carga):
+        <span class="fn">super</span>().<span class="fn">__init__</span>(patente, anio)
+        self.__capacidad_carga = capacidad_carga  <span class="cmt"># privado: doble guion bajo, propio de Camion</span>
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">capacidad_carga</span>(self):
+        <span class="kw">return</span> self.__capacidad_carga</pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La regla vale para cualquier atributo, herede o no</strong>
+        <p>No importa si el atributo vive en el padre o en una hija: si es un atributo,
+        se declara privado, y se expone con property. Van a aplicar exactamente esto en
+        el taller de más adelante, sobre su propio dato validable.</p>
+      </div>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 4 min &middot; individual</div>
+      <div class="act-t">Corran los dos prompts anteriores sobre su propio modelo: primero la clase padre, después cualquier atributo que una hija haya agregado por su cuenta.</div>
+      <div class="act-d">Confirmen en main.py que todas las properties se leen sin paréntesis, y que intentar escribirlas directo (<code>v1.patente = "OTRA"</code>) falla: todavía no hay setters.</div>
     </div>
   </div>
 </div>
@@ -1602,7 +1611,7 @@ Tarifa: $40000</span></pre>
   <div class="sep-num anim">08 &middot; Concepto + prompt &middot; 6 min</div>
   <div class="sep-title anim">Antes de irse:<br>guarden y <span>suban</span></div>
   <p class="sep-desc anim">
-    Un commit, subido a su rama en GitHub. Master queda intacto -- a propósito.
+    Un commit, subido a su rama en GitHub. Main queda intacto -- a propósito.
   </p>
 </div>
 
@@ -1615,14 +1624,14 @@ Tarifa: $40000</span></pre>
       Todo lo que programaron hoy ya está en el disco, pero git todavía no lo tiene guardado
       como un punto de su historia. Un <strong>commit</strong> es exactamente eso: una foto
       con un mensaje de qué cambió. Un <strong>push</strong> sube esos commits de su
-      computador a GitHub, a la misma rama <code>desarrollo</code>.
+      computador a GitHub, a la misma rama <code>feature/desarrollo</code>.
     </p>
     <div class="callout callout-important anim">
       <div class="callout-icon">&#9679;</div>
       <div class="callout-content">
-        <strong>Master no se toca todavía</strong>
-        <p>Nada de esto pasa a <code>master</code> hoy. Van a seguir construyendo sobre
-        <code>desarrollo</code> en las próximas sesiones, y recién más adelante, cuando el
+        <strong>Main no se toca todavía</strong>
+        <p>Nada de esto pasa a <code>main</code> hoy. Van a seguir construyendo sobre
+        <code>feature/desarrollo</code> en las próximas sesiones, y recién más adelante, cuando el
         trabajo esté maduro, la van a mezclar de vuelta. Por ahora la meta es solo que lo de
         hoy quede guardado y visible en GitHub, no perdido en este computador.</p>
       </div>
@@ -1638,20 +1647,20 @@ Tarifa: $40000</span></pre>
     <div class="prompt-box anim">
       <div class="prompt-label"><span class="dot"></span>Le piden a agy</div>
       <div class="prompt-text">"Guardá todos los cambios de esta rama con un commit
-      descriptivo, y subí la rama desarrollo a GitHub."</div>
+      descriptivo, y subí la rama feature/desarrollo a GitHub."</div>
     </div>
     <div class="terminal">
       <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>lo que agy corrió por ustedes</div>
       <pre><span class="term-prompt">$</span> <span class="term-out">git add -A</span>
 <span class="term-prompt">$</span> <span class="term-out">git commit -m "Herencia: Auto, Moto y Camion heredan de Vehiculo, super(), sobrescritura y property"</span>
-<span class="term-prompt">$</span> <span class="term-out">git push -u origin desarrollo</span>
+<span class="term-prompt">$</span> <span class="term-out">git push -u origin feature/desarrollo</span>
 <span class="cmt">  (-u: la primera vez que esta rama sube a GitHub, deja conectada la de acá con la de allá)</span></pre>
     </div>
     <div class="callout callout-tip anim">
       <div class="callout-icon">&#9679;</div>
       <div class="callout-content">
         <strong>Esto se repite al final de cada sesión, de ahora en adelante</strong>
-        <p>La próxima clase va a empezar trayendo esta misma rama <code>desarrollo</code> desde
+        <p>La próxima clase va a empezar trayendo esta misma rama <code>feature/desarrollo</code> desde
         GitHub (no una rama nueva por tema: es la misma hasta que el trabajo esté listo para
         mezclarse). Desde la próxima vez, el push ya no necesita <code>-u</code>: alcanza con
         <code>git push</code> a secas, porque la conexión ya quedó hecha hoy.</p>
@@ -1693,7 +1702,7 @@ Tarifa: $40000</span></pre>
     </div>
     <div class="resumen-item">
       <div class="resumen-cmd">Rama, commit y push</div>
-      <div class="resumen-desc">Programaron en desarrollo, y la guardaron+subieron a GitHub antes de irse -- master queda intacto por ahora</div>
+      <div class="resumen-desc">Programaron en feature/desarrollo, y la guardaron+subieron a GitHub antes de irse -- main queda intacto por ahora</div>
     </div>
   </div>
   <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,.1);">
