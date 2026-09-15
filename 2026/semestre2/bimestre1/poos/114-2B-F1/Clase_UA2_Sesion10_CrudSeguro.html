@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UA2 Sesion 10 - CRUD seguro con DAO</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --red:#E31E24; --blue:#C0392B; --green:#4A4A4A; --orange:#8E1A1F;
+    --dark:#1A1A1A; --border:#E0E0E0; --text:#1A1A1A; --muted:#666;
+  }
+
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Barlow', sans-serif; background:#F0F0F0; color:var(--text);
+    scroll-snap-type:y mandatory; overflow-y:scroll; height:100vh;
+  }
+  .slide {
+    min-height:100vh; scroll-snap-align:start; scroll-snap-stop:always;
+    display:flex; flex-direction:column; position:relative;
+  }
+
+  /* PORTADA */
+  .slide-cover {
+    background:linear-gradient(135deg,#1A1A1A 0%,#2C2C2C 100%); color:#fff;
+    justify-content:center; padding:80px; border-bottom:6px solid var(--red);
+  }
+  .cover-eyebrow {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:24px;
+  }
+  .cover-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:70px; font-weight:900;
+    text-transform:uppercase; line-height:.92; letter-spacing:-.01em; margin-bottom:32px;
+  }
+  .cover-title span { color:var(--red); }
+  .cover-desc { font-size:22px; color:rgba(255,255,255,.5); max-width:660px; line-height:1.65; margin-bottom:48px; }
+  .cover-chips { display:flex; flex-wrap:wrap; gap:12px; }
+  .cover-chip {
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    color:rgba(255,255,255,.7); font-size:15px; font-weight:600; padding:8px 16px; border-radius:20px;
+  }
+  .cover-chip span { color:#fff; }
+
+  /* SEPARADOR */
+  .slide-separator {
+    background:var(--dark); color:#fff; justify-content:center; padding:80px; border-bottom:6px solid var(--red);
+  }
+  .slide-separator.sep-green  { border-color:var(--green); }
+  .slide-separator.sep-orange { border-color:var(--orange); }
+  .slide-separator.sep-blue   { border-color:var(--blue); }
+  .sep-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--red); margin-bottom:16px;
+  }
+  .sep-green .sep-num  { color:#AFAFAF; }
+  .sep-orange .sep-num { color:#D98A8E; }
+  .sep-blue .sep-num   { color:#E08B80; }
+  .sep-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:62px; font-weight:900;
+    text-transform:uppercase; line-height:.92; letter-spacing:-.01em; margin-bottom:24px;
+  }
+  .sep-title span { color:var(--red); }
+  .cover-title span, .sep-title span, .concept-title span { color:var(--red)!important; }
+  .sep-desc { font-size:22px; color:rgba(255,255,255,.45); max-width:630px; line-height:1.65; }
+
+  /* CONCEPTO */
+  .slide-concept { background:#fff; padding:56px 80px; border-bottom:3px solid var(--border); justify-content:center; }
+  .slide-concept.blue-accent   { border-top:6px solid var(--blue); }
+  .slide-concept.green-accent  { border-top:6px solid var(--green); }
+  .slide-concept.orange-accent { border-top:6px solid var(--orange); }
+  .slide-concept.red-accent    { border-top:6px solid var(--red); }
+  .concept-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:12px;
+  }
+  .concept-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:44px; font-weight:900;
+    text-transform:uppercase; line-height:.95; letter-spacing:-.01em; color:var(--dark); margin-bottom:24px;
+  }
+  .concept-body { max-width:950px; }
+  .concept-body p { font-size:20px; line-height:1.7; color:#333; margin-bottom:14px; }
+  .concept-body p:last-child { margin-bottom:0; }
+  .concept-body strong { color:var(--dark); }
+
+  /* DEFINICION */
+  .definicion {
+    background:#FFF6F6; border:2px solid #F3C9CB; border-left:6px solid var(--red);
+    border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px;
+  }
+  .def-k {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--red); margin-bottom:8px;
+  }
+  .def-txt { font-size:22px; line-height:1.55; color:var(--dark); font-weight:500; }
+  .def-txt strong { font-weight:800; }
+  .def-ej { font-size:18px; line-height:1.55; color:#666; margin-top:10px; font-style:italic; }
+
+  /* CALLOUTS */
+  .callout { border-radius:6px; padding:16px 20px; margin:14px 0; max-width:950px; display:flex; gap:14px; align-items:flex-start; }
+  .callout-icon { font-size:19px; flex-shrink:0; }
+  .callout-content { flex:1; }
+  .callout-content > strong { display:block; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+  .callout-content p { font-size:17px; line-height:1.55; margin:0; }
+  .callout-important { background:#FFF1F2; border:1px solid #FECDD3; }
+  .callout-important strong { color:var(--red); }
+  .callout-important p { color:#881337; }
+  .callout-tip { background:#F2F2F2; border:1px solid #DADADA; }
+  .callout-tip strong { color:var(--green); }
+  .callout-tip p { color:#333; }
+  .callout-info { background:#FBEEEC; border:1px solid #ECCFCB; }
+  .callout-info strong { color:var(--blue); }
+  .callout-info p { color:#7A1E16; }
+  .callout-warn { background:#F7EFEF; border:1px solid #E2CACA; }
+  .callout-warn strong { color:var(--orange); }
+  .callout-warn p { color:#5A1418; }
+
+  /* INDICE */
+  .index-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:30px; max-width:780px; }
+  .index-item { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:6px; padding:16px 18px; }
+  .index-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:30px; font-weight:900; color:var(--red); line-height:1; margin-bottom:6px;
+  }
+  .index-name { font-size:16px; font-weight:600; color:#fff; line-height:1.4; }
+  .index-type { font-size:12px; color:rgba(255,255,255,.3); margin-top:4px; text-transform:uppercase; letter-spacing:.06em; }
+
+  /* BADGE */
+  .slide-badge {
+    position:absolute; top:24px; right:32px; font-family:'Barlow Condensed',sans-serif;
+    font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; padding:5px 12px; border-radius:20px;
+  }
+  .badge-concepto { background:#FEF2F2; color:var(--red); border:1px solid #FECACA; }
+  .badge-pasos    { background:#F2F2F2; color:var(--green); border:1px solid #DADADA; }
+  .badge-practica { background:#F7E3E3; color:#8E1A1F; border:1px solid #E2CACA; }
+  .badge-cierre   { background:rgba(227,30,36,.10); color:var(--red); border:1px solid rgba(227,30,36,.3); }
+  .badge-peligro  { background:#1A1A1A; color:#FF8A80; border:1px solid #FF8A80; }
+
+  /* RESUMEN */
+  .resumen-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:26px; max-width:900px; }
+  .resumen-item { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:6px; padding:15px 18px; }
+  .resumen-cmd { font-size:16px; color:#fff; margin-bottom:5px; font-weight:700; }
+  .resumen-desc { font-size:15px; color:rgba(255,255,255,.4); line-height:1.4; }
+
+  /* TWO COL */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:22px; max-width:950px; margin-top:16px; }
+  .col-card { background:#F8F8F8; border:1px solid #E0E0E0; border-radius:8px; padding:18px 22px; }
+  .col-card.bad  { border-left:4px solid var(--red); }
+  .col-card.good { border-left:4px solid var(--green); }
+  .col-card-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:21px; font-weight:900; text-transform:uppercase;
+    color:var(--dark); margin-bottom:10px;
+  }
+  .col-card ul { margin-left:18px; }
+  .col-card li { font-size:17px; line-height:1.65; color:#444; margin-bottom:4px; }
+  .col-card p { font-size:17px; line-height:1.6; color:#444; }
+
+  /* TABLA */
+  .tbl { width:100%; max-width:950px; border-collapse:collapse; margin-top:14px; font-size:17px; }
+  .tbl th {
+    background:var(--dark); color:#fff; font-family:'Barlow Condensed',sans-serif; font-size:13px;
+    font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:10px 16px; text-align:left;
+  }
+  .tbl td { padding:11px 16px; border-bottom:1px solid #E0E0E0; vertical-align:top; line-height:1.45; }
+  .tbl tr:last-child td { border-bottom:none; }
+  .tbl tr:nth-child(even) td { background:#F8F8F8; }
+  .tbl .mono { font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--blue); font-weight:600; }
+
+  /* CODE BLOCK */
+  .code-block { background:#1A1A1A; border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px; overflow-x:auto; }
+  .code-block.peligro { border:2px solid var(--red); }
+  .code-block pre { font-family:'JetBrains Mono',monospace; font-size:15px; color:#EDEDED; line-height:1.75; }
+  .code-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:rgba(255,255,255,.35); margin-bottom:12px;
+  }
+  .code-block.peligro .code-title { color:#FF8A80; }
+  .kw{color:#FF8A80;font-weight:700} .cls{color:#FFD2CC;font-weight:700} .str{color:#FFCDD2}
+  .cmt{color:#6E6E6E;font-style:italic} .fn{color:#FFAB91} .num{color:#F5B7B1} .sql{color:#93C5FD;font-weight:700}
+  .inj{color:#FFEB3B;font-weight:700;background:rgba(255,235,59,.12);}
+
+  /* TERMINAL */
+  .terminal { background:#0D0D0D; border-radius:8px; padding:18px 24px; margin:14px 0; max-width:950px; overflow-x:auto; border:1px solid #2A2A2A; }
+  .terminal.peligro { border-color:var(--red); }
+  .term-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:#6E6E6E; margin-bottom:10px; display:flex; align-items:center; gap:8px;
+  }
+  .term-dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .terminal pre { font-family:'JetBrains Mono',monospace; font-size:14.5px; line-height:1.85; }
+  .term-prompt { color:#4ADE80; }
+  .term-out { color:#D4D4D4; }
+  .term-err { color:#F87171; }
+
+  /* ACTIVIDAD */
+  .actividad { background:#1A1A1A; border-radius:8px; padding:22px 26px; margin:16px 0; max-width:950px; }
+  .act-k {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px;
+  }
+  .act-t { font-size:22px; line-height:1.5; color:#fff; font-weight:600; }
+  .act-d { font-size:17px; line-height:1.55; color:rgba(255,255,255,.55); margin-top:8px; }
+  .act-list { margin-top:12px; }
+  .act-li { font-size:18px; color:rgba(255,255,255,.85); line-height:1.7; padding-left:22px; position:relative; }
+  .act-li::before { content:"\2192"; position:absolute; left:0; color:var(--red); font-weight:700; }
+
+  /* CHECKLIST */
+  .chk { max-width:950px; margin-top:14px; }
+  .chk-item {
+    display:flex; gap:18px; align-items:flex-start; background:#F8F8F8; border:1px solid #E0E0E0;
+    border-left:4px solid var(--red); border-radius:8px; padding:15px 20px; margin-bottom:11px;
+  }
+  .chk-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:30px; font-weight:900; color:var(--red);
+    line-height:1; flex-shrink:0; width:36px;
+  }
+  .chk-cont { flex:1; }
+  .chk-tit { font-size:19px; font-weight:700; color:var(--dark); margin-bottom:3px; }
+  .chk-desc { font-size:17px; color:#555; line-height:1.5; }
+
+  code { font-family:'JetBrains Mono',monospace; font-size:14px; background:#EBEBEB; padding:2px 7px; border-radius:3px; color:#C0392B; }
+
+  #progress {
+    position:fixed; top:0; left:0; height:3px; background:var(--red); width:0%; z-index:9999;
+    transition:width .35s cubic-bezier(.16,1,.3,1); pointer-events:none;
+  }
+  .anim { opacity:0; transform:translateY(22px); transition:opacity .55s cubic-bezier(.16,1,.3,1), transform .55s cubic-bezier(.16,1,.3,1); }
+  .slide.visible .anim { opacity:1; transform:none; }
+  .slide.visible .anim:nth-child(1){transition-delay:0ms} .slide.visible .anim:nth-child(2){transition-delay:100ms}
+  .slide.visible .anim:nth-child(3){transition-delay:210ms} .slide.visible .anim:nth-child(4){transition-delay:330ms}
+  .slide.visible .anim:nth-child(5){transition-delay:450ms} .slide.visible .anim:nth-child(6){transition-delay:560ms}
+  /* ARQUITECTURA / DIAGRAMA DE FLUJO */
+  .flow { display:flex; align-items:center; gap:14px; margin:18px 0; max-width:950px; flex-wrap:wrap; }
+  .flow-box {
+    background:#F8F8F8; border:2px solid var(--dark); border-radius:8px; padding:14px 20px;
+    font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; color:var(--dark); text-align:center;
+  }
+  .flow-box.hi { border-color:var(--red); background:#FFF6F6; color:var(--red); }
+  .flow-arrow { font-size:26px; color:var(--red); font-weight:700; }
+
+  /* PROMPT A ANTIGRAVITY */
+  .badge-prompt   { background:#1A1A1A; color:#FF8A80; border:1px solid #333; }
+  .prompt-box { background:#1A1A1A; border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px; border-left:4px solid var(--red); }
+  .prompt-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--red); margin-bottom:10px; display:flex; align-items:center; gap:8px;
+  }
+  .prompt-label .dot { width:8px; height:8px; border-radius:50%; background:var(--red); display:inline-block; }
+  .prompt-text { font-family:'JetBrains Mono',monospace; font-size:16px; color:#fff; line-height:1.65; }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- PORTADA -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Programación Orientada a Objeto Seguro &middot; TI3V21 &middot; Unidad 2 &middot; Sesión 10</div>
+  <div class="cover-title anim">Los DAO<br>aprenden a<br><span>guardar</span></div>
+  <p class="cover-desc anim">
+    La sesión pasada dejaron las tablas creadas y vacías. Hoy cada DAO aprende a guardar,
+    buscar, modificar y borrar. En el camino van a ver por qué una consulta mal escrita
+    puede borrar una tabla completa con un solo campo de texto.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-2B-F1</span></span>
+    <span class="cover-chip">Martes 15 de septiembre de 2026</span>
+    <span class="cover-chip">160 minutos</span>
+    <span class="cover-chip">Criterio 2.1.4</span>
+  </div>
+</div>
+
+
+<!-- AGENDA -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">¿Qué vemos hoy?</div>
+  <div class="sep-title anim">Contenido<br>de la <span>sesión</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">00</div>
+      <div class="index-name">Repaso: la estructura que ya tienen</div>
+      <div class="index-type">Repaso &middot; 5 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Lo que le falta al modelo</div>
+      <div class="index-type">Concepto + actividad &middot; 10 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">INSERT con consultas parametrizadas</div>
+      <div class="index-type">Concepto + actividad &middot; 15 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">¿Por qué el ?: inyección SQL</div>
+      <div class="index-type">Concepto + actividad &middot; 15 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">SELECT: de filas a objetos</div>
+      <div class="index-type">Concepto + actividad &middot; 20 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Relaciones: guardar y buscar Modelo y Auto</div>
+      <div class="index-type">Concepto + actividad &middot; 25 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">06</div>
+      <div class="index-name">UPDATE y DELETE</div>
+      <div class="index-type">Concepto + actividad &middot; 20 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">07</div>
+      <div class="index-name">Transacciones: todo o nada</div>
+      <div class="index-type">Concepto &middot; 15 min</div>
+    </div>
+  </div>
+  <p style="color:rgba(255,255,255,.4); font-size:15px; margin-top:18px; max-width:780px;">
+    Después: taller final (30 min) con el CRUD completo de su negocio, y cierre (5 min).
+  </p>
+</div>
+
+
+<!-- REPASO -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Repaso</span>
+  <div class="concept-label anim">Lo que dejaron armado la sesión pasada &middot; 5 min</div>
+  <div class="concept-title anim">Tienen las<br>tablas, no los <span>datos</span></div>
+  <div class="concept-body anim">
+    <div class="flow">
+      <div class="flow-box">main.py</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box hi">MarcaDAO &middot; ModeloDAO &middot; AutoDAO</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box">crear_conexion()</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box">taller.db</div>
+    </div>
+    <p>
+      Cada DAO hereda de <code>DAO</code>, recibe la conexión y sabe hacer una sola cosa:
+      <code>crear_tabla()</code>. Hoy le agregan los métodos que le dan nombre al CRUD.
+    </p>
+    <div class="definicion">
+      <div class="def-k">CRUD</div>
+      <div class="def-txt">
+        Las siglas de las <strong>cuatro operaciones básicas</strong> sobre cualquier dato
+        guardado: <strong>C</strong>reate, <strong>R</strong>ead, <strong>U</strong>pdate y
+        <strong>D</strong>elete.
+      </div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Letra</th><th>Comando SQL</th><th>Método en el DAO</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">C</td><td class="mono">INSERT</td><td><code>insertar()</code></td></tr>
+        <tr><td class="mono">R</td><td class="mono">SELECT</td><td><code>buscar()</code> y <code>listar()</code></td></tr>
+        <tr><td class="mono">U</td><td class="mono">UPDATE</td><td><code>actualizar()</code></td></tr>
+        <tr><td class="mono">D</td><td class="mono">DELETE</td><td><code>eliminar()</code></td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Todo el SQL de hoy va dentro de los DAO que ya existen</strong>
+        <p><code>main.py</code> y las clases de <code>model</code> siguen sin escribir una sola
+        línea de SQL.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 01: LO QUE LE FALTA AL MODELO ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 01</span>
+  <div class="sep-num anim">01 &middot; Concepto + actividad &middot; 10 min</div>
+  <div class="sep-title anim">Lo que le falta<br>al <span>modelo</span></div>
+  <p class="sep-desc anim">
+    Antes de guardar, el DAO necesita leer los datos del objeto. Hay dos que hoy no puede.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">Encapsulamiento, sesión 7</div>
+  <div class="concept-title anim">Dos datos que<br>el DAO no <span>alcanza</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Clase</th><th>Problema</th><th>Solución</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">Marca, Modelo</td><td>La base de datos les asigna un <code>id</code>, pero la clase no tiene dónde guardarlo</td><td>Property <code>id</code> con setter</td></tr>
+        <tr><td class="mono">Vehiculo</td><td><code>__anio</code> no tiene property y <code>_en_taller</code> es protegido: nadie de afuera los puede leer</td><td>Properties <code>anio</code> y <code>en_taller</code>, de solo lectura</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>¿Por qué id tiene setter y anio no?</strong>
+        <p>El <code>id</code> no existe cuando se crea el objeto: lo asigna la base de datos
+        al guardarlo, así que alguien de afuera tiene que escribirlo, y ese es el DAO.
+        <code>anio</code> y <code>en_taller</code> solo se leen. <code>en_taller</code> sigue
+        cambiando únicamente con <code>ingresar()</code> y <code>entregar()</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Agregar properties es trabajo mecánico</div>
+  <div class="concept-title anim">El modelo,<br>por <span>Antigravity</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"En model/marca.py y en model/modelo.py agrega un atributo
+      privado __id que parta en None en el constructor, con una property id y su setter,
+      con el mismo estilo de la property patente de Vehiculo. En model/vehiculo.py agrega
+      dos properties de solo lectura, anio y en_taller, que devuelvan __anio y _en_taller.
+      No agregues setters a esas dos y no cambies nada más."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">model/marca.py</div>
+<pre><span class="kw">class</span> <span class="cls">Marca</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, nombre: str):
+        self.__id = <span class="kw">None</span>
+        self.__nombre = nombre
+
+    <span class="fn">@property</span>
+    <span class="kw">def</span> <span class="fn">id</span>(self) -&gt; int:
+        <span class="kw">return</span> self.__id
+
+    <span class="fn">@id.setter</span>
+    <span class="kw">def</span> <span class="fn">id</span>(self, valor: int) -&gt; <span class="kw">None</span>:
+        self.__id = valor
+
+    <span class="fn">@property</span>
+    <span class="kw">def</span> <span class="fn">nombre</span>(self) -&gt; str:
+        <span class="kw">return</span> self.__nombre</pre>
+    </div>
+    <div class="code-block">
+      <div class="code-title">model/vehiculo.py &middot; las dos properties nuevas</div>
+<pre>    <span class="fn">@property</span>
+    <span class="kw">def</span> <span class="fn">anio</span>(self) -&gt; int:
+        <span class="kw">return</span> self.__anio
+
+    <span class="fn">@property</span>
+    <span class="kw">def</span> <span class="fn">en_taller</span>(self) -&gt; bool:
+        <span class="kw">return</span> self._en_taller</pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Revisen lo que devolvió antes de seguir</strong>
+        <p>El <code>id</code> tiene que partir en <code>None</code> y tener setter.
+        <code>anio</code> y <code>en_taller</code> no pueden tener setter: si agy se los
+        agregó, se los sacan. <code>Modelo</code> tiene que quedar con el mismo
+        <code>id</code> que <code>Marca</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Sobre el taller mecánico</div>
+  <div class="concept-title anim">Completen<br>el <span>modelo</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; en equipo</div>
+      <div class="act-t">Pídanle a Antigravity lo que le falta a Marca, Modelo y Vehiculo.</div>
+      <div class="act-list">
+        <div class="act-li">Comparen el resultado con el código de la lámina anterior, línea por línea</div>
+        <div class="act-li">Confirmen que solo id tiene setter</div>
+        <div class="act-li">Ejecuten main.py de la sesión pasada: tiene que funcionar igual que antes</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 02: INSERT ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Concepto + actividad &middot; 15 min</div>
+  <div class="sep-title anim"><span>INSERT</span>:<br>guardar una fila</div>
+  <p class="sep-desc anim">
+    La primera operación del CRUD, escrita desde el principio de la forma segura.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">El valor va aparte, nunca pegado al SQL</div>
+  <div class="concept-title anim">INSERT y consultas<br><span>parametrizadas</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">INSERT INTO</div>
+      <div class="def-txt">El comando SQL que <strong>agrega una fila nueva</strong> a una tabla.</div>
+    </div>
+    <div class="definicion">
+      <div class="def-k">Consulta parametrizada</div>
+      <div class="def-txt">
+        Una consulta que usa <strong>marcadores <code>?</code></strong> en vez de pegar los
+        valores dentro del texto del SQL. Los valores se entregan por separado, y la librería
+        garantiza que <strong>nunca se interpretan como código SQL</strong>.
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">dao/marca_dao.py &middot; nuevo método</div>
+<pre>    <span class="kw">def</span> <span class="fn">insertar</span>(self, marca):
+        self.cursor.<span class="fn">execute</span>(<span class="str">"INSERT INTO marcas (nombre) VALUES (?)"</span>, (marca.nombre,))
+        marca.id = self.cursor.lastrowid</pre>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Parte</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">VALUES (?)</td><td>Un hueco por cada valor. El SQL queda fijo, sin datos adentro</td></tr>
+        <tr><td class="mono">(marca.nombre,)</td><td>Los valores que llenan los huecos, en el mismo orden</td></tr>
+        <tr><td class="mono">cursor.lastrowid</td><td>El <code>id</code> que la base de datos le acaba de asignar a la fila</td></tr>
+        <tr><td class="mono">marca.id = ...</td><td>Lo guarda en el objeto, usando el setter del bloque anterior</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La coma en (marca.nombre,) no es un error de tipeo</strong>
+        <p>Es una tupla de un solo elemento. Sin la coma, Python lo lee como un paréntesis
+        común y <code>execute()</code> falla.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Paso a paso</span>
+  <div class="concept-label anim">Desde main.py</div>
+  <div class="concept-title anim">El objeto vuelve<br>con su <span>id</span></div>
+  <div class="concept-body anim">
+    <div class="code-block">
+      <div class="code-title">main.py</div>
+<pre>toyota = <span class="cls">Marca</span>(<span class="str">"Toyota"</span>)
+<span class="fn">print</span>(toyota.id)
+
+marca_dao.<span class="fn">insertar</span>(toyota)
+<span class="fn">print</span>(toyota.id)
+
+conexion.<span class="fn">commit</span>()</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>salida</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">python main.py</span>
+<span class="term-out">None</span>
+<span class="term-out">1</span></pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Antes de insertar, None. Después, 1</strong>
+        <p>El mismo objeto <code>toyota</code> sale del DAO con su <code>id</code> puesto. Ese
+        número es el que va a necesitar <code>Modelo</code> para apuntar a su marca.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El commit() sigue en main.py</strong>
+        <p>El DAO ejecuta, pero no confirma. Sin <code>commit()</code>, la fila no queda
+        guardada en el archivo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Sobre el taller mecánico</div>
+  <div class="concept-title anim">Su primer<br><span>INSERT</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 6 min &middot; en equipo</div>
+      <div class="act-t">Agreguen insertar() a MarcaDAO y guarden dos marcas.</div>
+      <div class="act-list">
+        <div class="act-li">Con ?, nunca pegando el valor dentro del texto del SQL</div>
+        <div class="act-li">Impriman el id de cada marca antes y después de insertarla</div>
+        <div class="act-li">Hagan commit() desde main.py</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 03: INYECCION SQL ============ -->
+<div class="slide slide-separator" style="background:#1A0505; border-bottom-color:#FF4444;">
+  <span class="slide-badge badge-peligro">Bloque 03</span>
+  <div class="sep-num anim" style="color:#FF8A80;">03 &middot; Concepto + actividad &middot; 15 min</div>
+  <div class="sep-title anim">¿Por qué<br>el <span>?</span></div>
+  <p class="sep-desc anim">
+    Aquí entra la palabra "Seguro" del nombre del módulo.
+  </p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-peligro">Definición</span>
+  <div class="concept-label anim">El ataque más antiguo y más común contra bases de datos</div>
+  <div class="concept-title anim">¿Qué es la<br>inyección <span>SQL</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Inyección SQL</div>
+      <div class="def-txt">
+        Un ataque donde alguien <strong>aprovecha que el SQL se armó pegando texto</strong>,
+        para meter su propio pedazo de SQL disfrazado de dato.
+      </div>
+    </div>
+    <p>Así se vería <code>eliminar()</code> de <code>AutoDAO</code> si se escribiera con f-string:</p>
+    <div class="code-block peligro">
+      <div class="code-title">nunca así</div>
+<pre>self.cursor.<span class="fn">execute</span>(<span class="fn">f</span><span class="str">"DELETE FROM autos WHERE patente = '{patente}'"</span>)</pre>
+    </div>
+    <p>Si en vez de una patente alguien escribe esto:</p>
+    <div class="code-block peligro">
+      <div class="code-title">lo que llega como patente</div>
+<pre><span class="inj">' OR '1'='1</span></pre>
+    </div>
+    <div class="code-block peligro">
+      <div class="code-title">el SQL que arma el f-string</div>
+<pre><span class="sql">DELETE FROM</span> autos <span class="sql">WHERE</span> patente = <span class="inj">''</span> <span class="inj">OR</span> <span class="inj">'1'='1'</span></pre>
+    </div>
+    <div class="terminal peligro">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>resultado</div>
+      <pre><span class="term-out">autos antes: 2</span>
+<span class="term-err">autos después: 0</span></pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>'1'='1' es verdadero para todas las filas</strong>
+        <p>El WHERE deja de filtrar y el DELETE borra la tabla completa. Nadie hackeó nada:
+        solo escribieron texto en el lugar de la patente.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">La solución</span>
+  <div class="concept-label anim">El mismo texto, con el marcador</div>
+  <div class="concept-title anim">Con ?, el ataque<br>es solo <span>texto</span></div>
+  <div class="concept-body anim">
+    <div class="code-block">
+      <div class="code-title">dao/auto_dao.py &middot; como se escribe de verdad</div>
+<pre>self.cursor.<span class="fn">execute</span>(<span class="str">"DELETE FROM autos WHERE patente = ?"</span>, (patente,))</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>mismo texto: ' OR '1'='1</div>
+      <pre><span class="term-out">autos antes: 2</span>
+<span class="term-out">autos después: 2</span></pre>
+    </div>
+    <p>Y no hace falta un atacante para que el f-string falle. Basta una marca con comilla:</p>
+    <table class="tbl">
+      <thead><tr><th>Nombre: D'Andrea</th><th>Resultado</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">f-string</td><td><code>OperationalError: near "Andrea": syntax error</code></td></tr>
+        <tr><td class="mono">?</td><td>Se guarda <code>D'Andrea</code>, sin error</td></tr>
+      </tbody>
+    </table>
+    <div class="two-col">
+      <div class="col-card bad">
+        <div class="col-card-title">Nunca</div>
+        <div class="code-block" style="margin:0;">
+<pre><span class="fn">f</span><span class="str">"...WHERE patente = '{p}'"</span></pre>
+        </div>
+      </div>
+      <div class="col-card good">
+        <div class="col-card-title">Siempre</div>
+        <div class="code-block" style="margin:0;">
+<pre><span class="str">"...WHERE patente = ?"</span>, (p,)</pre>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El ? no filtra caracteres peligrosos</strong>
+        <p>Nunca los interpreta como código. Todo lo que entra por el marcador es un valor,
+        tenga lo que tenga adentro.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Sobre su propio insertar()</div>
+  <div class="concept-title anim">Pruébenlo<br>con una <span>comilla</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; en equipo</div>
+      <div class="act-t">Inserten una marca con comilla simple en el nombre, como D'Andrea.</div>
+      <div class="act-list">
+        <div class="act-li">Con su insertar() parametrizado tiene que guardarse sin error</div>
+        <div class="act-li">Revisen cada execute() de sus DAO: ninguno puede tener f-string ni +</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 04: SELECT ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 04</span>
+  <div class="sep-num anim">04 &middot; Concepto + actividad &middot; 20 min</div>
+  <div class="sep-title anim"><span>SELECT</span>:<br>de filas a objetos</div>
+  <p class="sep-desc anim">
+    La base de datos devuelve tuplas. El resto del programa espera objetos. El DAO traduce.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Leer lo guardado</div>
+  <div class="concept-title anim">buscar()<br>y <span>listar()</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">SELECT</div>
+      <div class="def-txt">El comando SQL que <strong>lee filas</strong> de una tabla, con o sin condición.</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">dao/marca_dao.py &middot; dos métodos nuevos</div>
+<pre><span class="kw">from</span> dao.dao <span class="kw">import</span> <span class="cls">DAO</span>
+<span class="kw">from</span> model.marca <span class="kw">import</span> <span class="cls">Marca</span>
+
+    <span class="kw">def</span> <span class="fn">buscar</span>(self, id):
+        self.cursor.<span class="fn">execute</span>(<span class="str">"SELECT id, nombre FROM marcas WHERE id = ?"</span>, (id,))
+        fila = self.cursor.<span class="fn">fetchone</span>()
+        <span class="kw">if</span> fila <span class="kw">is None</span>:
+            <span class="kw">return None</span>
+        marca = <span class="cls">Marca</span>(fila[<span class="num">1</span>])
+        marca.id = fila[<span class="num">0</span>]
+        <span class="kw">return</span> marca
+
+    <span class="kw">def</span> <span class="fn">listar</span>(self):
+        self.cursor.<span class="fn">execute</span>(<span class="str">"SELECT id, nombre FROM marcas"</span>)
+        marcas = []
+        <span class="kw">for</span> fila <span class="kw">in</span> self.cursor.<span class="fn">fetchall</span>():
+            marca = <span class="cls">Marca</span>(fila[<span class="num">1</span>])
+            marca.id = fila[<span class="num">0</span>]
+            marcas.<span class="fn">append</span>(marca)
+        <span class="kw">return</span> marcas</pre>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Método del cursor</th><th>Devuelve</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">fetchone()</td><td>Una fila como tupla, o <code>None</code> si no encontró nada</td></tr>
+        <tr><td class="mono">fetchall()</td><td>Una lista con todas las filas</td></tr>
+      </tbody>
+    </table>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>lo que devuelve cada llamada</div>
+      <pre><span class="term-out">marca_dao.buscar(1)   -&gt; Marca, nombre Toyota</span>
+<span class="term-out">marca_dao.buscar(99)  -&gt; None</span>
+<span class="term-out">marca_dao.listar()    -&gt; [(1, Toyota), (2, Honda)]</span></pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El DAO devuelve objetos, no tuplas</strong>
+        <p><code>fila[0]</code> y <code>fila[1]</code> se usan solo adentro del DAO.
+        <code>main.py</code> recibe una <code>Marca</code> y usa <code>marca.nombre</code>, sin
+        saber en qué posición venía cada columna.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Sobre las marcas que ya guardaron</div>
+  <div class="concept-title anim">Búsquenlas<br>de <span>vuelta</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 7 min &middot; en equipo</div>
+      <div class="act-t">Agreguen buscar() y listar() a MarcaDAO.</div>
+      <div class="act-list">
+        <div class="act-li">Busquen una marca por su id e impriman su nombre</div>
+        <div class="act-li">Busquen un id que no existe: tiene que devolver None, sin error</div>
+        <div class="act-li">Recorran listar() e impriman el nombre de cada marca</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 05: RELACIONES ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 05</span>
+  <div class="sep-num anim">05 &middot; Concepto + actividad &middot; 25 min</div>
+  <div class="sep-title anim">Guardar y buscar<br>con <span>relaciones</span></div>
+  <p class="sep-desc anim">
+    Un modelo necesita su marca y un auto necesita su modelo. Se guardan en ese orden.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Modelo</span>
+  <div class="concept-label anim">La FOREIGN KEY se llena con el id de la marca</div>
+  <div class="concept-title anim">ModeloDAO<br><span>insertar()</span></div>
+  <div class="concept-body anim">
+    <div class="code-block">
+      <div class="code-title">dao/modelo_dao.py</div>
+<pre>    <span class="kw">def</span> <span class="fn">insertar</span>(self, modelo):
+        self.cursor.<span class="fn">execute</span>(
+            <span class="str">"INSERT INTO modelos (nombre, marca_id) VALUES (?, ?)"</span>,
+            (modelo.nombre, modelo.marca.id)
+        )
+        modelo.id = self.cursor.lastrowid</pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>modelo.marca.id: por eso Marca necesitaba su id</strong>
+        <p>En Python, el modelo guarda el objeto <code>Marca</code> completo. En la tabla, solo
+        su <code>id</code>. Si la marca todavía no se guardó, ese id es <code>None</code>.</p>
+      </div>
+    </div>
+    <div class="terminal peligro">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>modelo con una marca que nunca se guardó</div>
+      <pre><span class="term-err">IntegrityError: NOT NULL constraint failed: modelos.marca_id</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El orden de inserción es el mismo que el de creación de tablas</strong>
+        <p>Primero la marca, después el modelo, después el auto. Cada uno necesita el id del
+        anterior.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Leer de dos tablas a la vez</div>
+  <div class="concept-title anim">ModeloDAO<br><span>buscar()</span> con JOIN</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">JOIN</div>
+      <div class="def-txt">
+        Une las filas de dos tablas <strong>usando la FOREIGN KEY</strong>. Así, en una sola
+        consulta llega el modelo junto con los datos de su marca.
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">dao/modelo_dao.py</div>
+<pre>    <span class="kw">def</span> <span class="fn">buscar</span>(self, id):
+        self.cursor.<span class="fn">execute</span>(<span class="str">"""</span>
+            <span class="sql">SELECT</span> modelos.id, modelos.nombre, marcas.id, marcas.nombre
+            <span class="sql">FROM</span> modelos
+            <span class="sql">JOIN</span> marcas <span class="sql">ON</span> marcas.id = modelos.marca_id
+            <span class="sql">WHERE</span> modelos.id = ?
+        <span class="str">"""</span>, (id,))
+        fila = self.cursor.<span class="fn">fetchone</span>()
+        <span class="kw">if</span> fila <span class="kw">is None</span>:
+            <span class="kw">return None</span>
+        marca = <span class="cls">Marca</span>(fila[<span class="num">3</span>])
+        marca.id = fila[<span class="num">2</span>]
+        modelo = <span class="cls">Modelo</span>(fila[<span class="num">1</span>], marca)
+        modelo.id = fila[<span class="num">0</span>]
+        <span class="kw">return</span> modelo</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>lo que devuelve cada llamada</div>
+      <pre><span class="term-out">modelo.nombre       -&gt; Yaris</span>
+<span class="term-out">modelo.marca.nombre -&gt; Toyota</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Primero se arma la Marca, después el Modelo</strong>
+        <p>Es el mismo orden que usan en <code>main.py</code>: un <code>Modelo</code> no se
+        puede crear sin su <code>Marca</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Auto</span>
+  <div class="concept-label anim">Dos tablas, dos INSERT</div>
+  <div class="concept-title anim">AutoDAO<br><span>insertar()</span></div>
+  <div class="concept-body anim">
+    <div class="code-block">
+      <div class="code-title">dao/vehiculo_dao.py &middot; lo común a todos los vehículos</div>
+<pre>    <span class="kw">def</span> <span class="fn">insertar</span>(self, vehiculo):
+        self.cursor.<span class="fn">execute</span>(
+            <span class="str">"INSERT INTO vehiculos (patente, anio, en_taller, modelo_id) VALUES (?, ?, ?, ?)"</span>,
+            (vehiculo.patente, vehiculo.anio, <span class="fn">int</span>(vehiculo.en_taller), vehiculo.modelo.id)
+        )</pre>
+    </div>
+    <div class="code-block">
+      <div class="code-title">dao/auto_dao.py &middot; lo propio del auto</div>
+<pre>    <span class="kw">def</span> <span class="fn">insertar</span>(self, auto):
+        <span class="fn">super</span>().<span class="fn">insertar</span>(auto)
+        self.cursor.<span class="fn">execute</span>(<span class="str">"INSERT INTO autos (patente) VALUES (?)"</span>, (auto.patente,))</pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Un auto son dos filas</strong>
+        <p><code>super().insertar()</code> guarda la parte de vehículo, igual que el constructor
+        de <code>Auto</code> llama al de <code>Vehiculo</code>. Después <code>AutoDAO</code>
+        agrega la fila en <code>autos</code>.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>int(vehiculo.en_taller)</strong>
+        <p>SQLite no tiene BOOLEAN: <code>True</code> se guarda como 1 y <code>False</code>
+        como 0.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Auto</span>
+  <div class="concept-label anim">Cuatro tablas en una consulta</div>
+  <div class="concept-title anim">AutoDAO<br><span>buscar()</span></div>
+  <div class="concept-body anim">
+    <div class="code-block">
+      <div class="code-title">dao/auto_dao.py</div>
+<pre>    <span class="kw">def</span> <span class="fn">buscar</span>(self, patente):
+        self.cursor.<span class="fn">execute</span>(<span class="str">"""</span>
+            <span class="sql">SELECT</span> vehiculos.patente, vehiculos.anio, vehiculos.en_taller,
+                   modelos.id, modelos.nombre, marcas.id, marcas.nombre
+            <span class="sql">FROM</span> autos
+            <span class="sql">JOIN</span> vehiculos <span class="sql">ON</span> vehiculos.patente = autos.patente
+            <span class="sql">JOIN</span> modelos <span class="sql">ON</span> modelos.id = vehiculos.modelo_id
+            <span class="sql">JOIN</span> marcas <span class="sql">ON</span> marcas.id = modelos.marca_id
+            <span class="sql">WHERE</span> autos.patente = ?
+        <span class="str">"""</span>, (patente,))
+        fila = self.cursor.<span class="fn">fetchone</span>()
+        <span class="kw">if</span> fila <span class="kw">is None</span>:
+            <span class="kw">return None</span>
+        marca = <span class="cls">Marca</span>(fila[<span class="num">6</span>])
+        marca.id = fila[<span class="num">5</span>]
+        modelo = <span class="cls">Modelo</span>(fila[<span class="num">4</span>], marca)
+        modelo.id = fila[<span class="num">3</span>]
+        auto = <span class="cls">Auto</span>(fila[<span class="num">0</span>], fila[<span class="num">1</span>], modelo)
+        <span class="kw">if</span> fila[<span class="num">2</span>]:
+            auto.<span class="fn">ingresar</span>()
+        <span class="kw">return</span> auto</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>lo que devuelve cada llamada</div>
+      <pre><span class="term-out">auto_dao.buscar("AB1234")</span>
+<span class="term-out">-&gt; Auto, AB1234, 2018, Yaris, Toyota, tarifa_hora() = 25000</span></pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Parte desde autos: siempre devuelve un Auto</strong>
+        <p>Si la patente es de otro tipo de vehículo, no hay fila en <code>autos</code> y
+        devuelve <code>None</code>. No hace falta ninguna columna que diga el tipo.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>¿Por qué auto.ingresar() y no un setter?</strong>
+        <p><code>en_taller</code> no tiene setter: el objeto solo cambia de estado con sus
+        propios métodos. El DAO respeta el encapsulamiento y usa el mismo camino que usaría
+        cualquier otra parte del programa.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Sobre el taller mecánico</div>
+  <div class="concept-title anim">La cadena<br><span>completa</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 10 min &middot; en equipo</div>
+      <div class="act-t">Agreguen insertar() y buscar() a ModeloDAO, VehiculoDAO y AutoDAO.</div>
+      <div class="act-list">
+        <div class="act-li">Guarden Toyota, después Yaris, después un auto con ese modelo</div>
+        <div class="act-li">Busquen el auto por patente e impriman su marca con auto.modelo.marca.nombre</div>
+        <div class="act-li">Prueben guardar un modelo con una marca sin guardar y lean el error</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 06: UPDATE Y DELETE ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 06</span>
+  <div class="sep-num anim">06 &middot; Concepto + actividad &middot; 20 min</div>
+  <div class="sep-title anim"><span>UPDATE</span><br>y <span>DELETE</span></div>
+  <p class="sep-desc anim">
+    Modificar y borrar. Las dos operaciones donde olvidar el WHERE afecta a toda la tabla.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Guardar el estado actual del objeto</div>
+  <div class="concept-title anim">actualizar()</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">UPDATE</div>
+      <div class="def-txt">El comando SQL que <strong>modifica</strong> filas que ya existen.</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">dao/vehiculo_dao.py &middot; AutoDAO lo hereda sin cambios</div>
+<pre>    <span class="kw">def</span> <span class="fn">actualizar</span>(self, vehiculo):
+        self.cursor.<span class="fn">execute</span>(
+            <span class="str">"UPDATE vehiculos SET anio = ?, en_taller = ?, modelo_id = ? WHERE patente = ?"</span>,
+            (vehiculo.anio, <span class="fn">int</span>(vehiculo.en_taller), vehiculo.modelo.id, vehiculo.patente)
+        )</pre>
+    </div>
+    <div class="flow">
+      <div class="flow-box">buscar()</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box">ingresar()</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box hi">actualizar()</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box">commit()</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">main.py</div>
+<pre>auto = auto_dao.<span class="fn">buscar</span>(<span class="str">"AB1234"</span>)
+<span class="fn">print</span>(auto.<span class="fn">ingresar</span>())
+auto_dao.<span class="fn">actualizar</span>(auto)
+conexion.<span class="fn">commit</span>()
+
+<span class="fn">print</span>(auto_dao.<span class="fn">buscar</span>(<span class="str">"AB1234"</span>).en_taller)</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>salida</div>
+      <pre><span class="term-out">El vehículo ha ingresado al taller.</span>
+<span class="term-out">True</span></pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El DAO no decide qué cambió</strong>
+        <p>La regla de negocio vive en <code>ingresar()</code>. El DAO solo guarda cómo quedó
+        el objeto después.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>¿Y actualizar() en MarcaDAO?</strong>
+        <p><code>Marca</code> no tiene setter para <code>nombre</code>: el objeto no puede
+        cambiar, así que no hay nada que actualizar. Si su negocio tiene un dato que sí
+        cambia, ahí va su <code>actualizar()</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Borrar en orden inverso</div>
+  <div class="concept-title anim">eliminar()</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">DELETE</div>
+      <div class="def-txt">El comando SQL que <strong>elimina</strong> filas de una tabla.</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">dao/marca_dao.py &middot; ModeloDAO es igual, con modelos</div>
+<pre>    <span class="kw">def</span> <span class="fn">eliminar</span>(self, id):
+        self.cursor.<span class="fn">execute</span>(<span class="str">"DELETE FROM marcas WHERE id = ?"</span>, (id,))</pre>
+    </div>
+    <div class="code-block">
+      <div class="code-title">dao/vehiculo_dao.py y dao/auto_dao.py</div>
+<pre><span class="cmt"># VehiculoDAO</span>
+    <span class="kw">def</span> <span class="fn">eliminar</span>(self, patente):
+        self.cursor.<span class="fn">execute</span>(<span class="str">"DELETE FROM vehiculos WHERE patente = ?"</span>, (patente,))
+
+<span class="cmt"># AutoDAO</span>
+    <span class="kw">def</span> <span class="fn">eliminar</span>(self, patente):
+        self.cursor.<span class="fn">execute</span>(<span class="str">"DELETE FROM autos WHERE patente = ?"</span>, (patente,))
+        <span class="fn">super</span>().<span class="fn">eliminar</span>(patente)</pre>
+    </div>
+    <div class="terminal peligro">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>eliminar Toyota mientras Yaris la usa</div>
+      <pre><span class="term-err">IntegrityError: FOREIGN KEY constraint failed</span></pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La FOREIGN KEY protege los datos</strong>
+        <p>No deja borrar una marca que todavía tiene modelos. Se borra en el orden inverso
+        al de creación: primero el auto, después el modelo, al final la marca. Por eso
+        <code>AutoDAO</code> borra su fila antes de llamar a <code>super()</code>.</p>
+      </div>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Sin WHERE, afecta a toda la tabla</strong>
+        <p><code>DELETE FROM marcas</code> sin <code>WHERE</code> borra todas las marcas, y
+        un <code>UPDATE</code> sin <code>WHERE</code> modifica todas las filas. Revísenlo
+        siempre antes de ejecutar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Completando el CRUD del taller</div>
+  <div class="concept-title anim">Modifiquen<br>y <span>borren</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 8 min &middot; en equipo</div>
+      <div class="act-t">Agreguen actualizar() a VehiculoDAO y eliminar() a los tres DAO.</div>
+      <div class="act-list">
+        <div class="act-li">Ingresen un auto al taller, guarden el cambio y búsquenlo de nuevo</div>
+        <div class="act-li">Intenten borrar la marca primero y lean el error</div>
+        <div class="act-li">Borren en orden inverso: auto, modelo, marca. Cada buscar() tiene que devolver None</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 07: TRANSACCIONES ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 07</span>
+  <div class="sep-num anim">07 &middot; Concepto &middot; 15 min</div>
+  <div class="sep-title anim">Transacciones:<br>todo o <span>nada</span></div>
+  <p class="sep-desc anim">
+    Guardar un auto toca tres DAO. Si uno falla, no puede quedar la mitad guardada.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Por qué los DAO no hacen commit()</div>
+  <div class="concept-title anim">commit(), rollback()<br>y <span>close()</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Transacción</div>
+      <div class="def-txt">
+        Un conjunto de operaciones que se tratan como <strong>una sola unidad</strong>: o se
+        guardan todas, o no se guarda ninguna.
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">main.py</div>
+<pre><span class="kw">from</span> conectar <span class="kw">import</span> crear_conexion
+<span class="kw">from</span> model.marca <span class="kw">import</span> <span class="cls">Marca</span>
+<span class="kw">from</span> model.modelo <span class="kw">import</span> <span class="cls">Modelo</span>
+<span class="kw">from</span> model.auto <span class="kw">import</span> <span class="cls">Auto</span>
+<span class="kw">from</span> dao.marca_dao <span class="kw">import</span> <span class="cls">MarcaDAO</span>
+<span class="kw">from</span> dao.modelo_dao <span class="kw">import</span> <span class="cls">ModeloDAO</span>
+<span class="kw">from</span> dao.auto_dao <span class="kw">import</span> <span class="cls">AutoDAO</span>
+
+conexion = <span class="fn">crear_conexion</span>()
+marca_dao = <span class="cls">MarcaDAO</span>(conexion)
+modelo_dao = <span class="cls">ModeloDAO</span>(conexion)
+auto_dao = <span class="cls">AutoDAO</span>(conexion)
+
+marca_dao.<span class="fn">crear_tabla</span>()
+modelo_dao.<span class="fn">crear_tabla</span>()
+auto_dao.<span class="fn">crear_tabla</span>()
+conexion.<span class="fn">commit</span>()
+
+<span class="kw">try</span>:
+    toyota = <span class="cls">Marca</span>(<span class="str">"Toyota"</span>)
+    marca_dao.<span class="fn">insertar</span>(toyota)
+
+    yaris = <span class="cls">Modelo</span>(<span class="str">"Yaris"</span>, toyota)
+    modelo_dao.<span class="fn">insertar</span>(yaris)
+
+    auto = <span class="cls">Auto</span>(<span class="str">"AB1234"</span>, <span class="num">2018</span>, yaris)
+    auto_dao.<span class="fn">insertar</span>(auto)
+
+    conexion.<span class="fn">commit</span>()
+    <span class="fn">print</span>(<span class="str">"Auto guardado con su modelo y su marca."</span>)
+<span class="kw">except</span> <span class="cls">Exception</span> <span class="kw">as</span> error:
+    conexion.<span class="fn">rollback</span>()
+    <span class="fn">print</span>(<span class="str">"No se guardó nada:"</span>, error)
+<span class="kw">finally</span>:
+    conexion.<span class="fn">close</span>()</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>salida &middot; ejecutado dos veces</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">python main.py</span>
+<span class="term-out">Auto guardado con su modelo y su marca.</span>
+<span class="term-prompt">$</span> <span class="term-out">python main.py</span>
+<span class="term-err">No se guardó nada: UNIQUE constraint failed: vehiculos.patente</span></pre>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Método</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">commit()</td><td>Confirma todo lo ejecutado desde el último commit</td></tr>
+        <tr><td class="mono">rollback()</td><td>Deshace todo lo que no se confirmó</td></tr>
+        <tr><td class="mono">close()</td><td>Cierra la conexión. En <code>finally</code>, se cierra aunque algo haya fallado</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La segunda vez no quedó ni la marca ni el modelo repetidos</strong>
+        <p>La patente AB1234 ya existía, así que el tercer INSERT falló. El
+        <code>rollback()</code> deshizo también la marca y el modelo que se habían insertado
+        en esa misma ejecución.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-peligro">Cuidado</span>
+  <div class="concept-label anim">Un error a mitad de camino</div>
+  <div class="concept-title anim">La base se deshace,<br>la memoria <span>no</span></div>
+  <div class="concept-body anim">
+    <div class="code-block">
+      <div class="code-title">main.py &middot; con una patente inválida</div>
+<pre><span class="kw">try</span>:
+    volvo = <span class="cls">Marca</span>(<span class="str">"Volvo"</span>)
+    marca_dao.<span class="fn">insertar</span>(volvo)
+    fh = <span class="cls">Modelo</span>(<span class="str">"FH16"</span>, volvo)
+    modelo_dao.<span class="fn">insertar</span>(fh)
+    auto_dao.<span class="fn">insertar</span>(<span class="cls">Auto</span>(<span class="str">"AB 12"</span>, <span class="num">2020</span>, fh))
+    conexion.<span class="fn">commit</span>()
+<span class="kw">except</span> <span class="cls">Exception</span> <span class="kw">as</span> error:
+    conexion.<span class="fn">rollback</span>()
+    <span class="fn">print</span>(error)
+
+<span class="fn">print</span>(marca_dao.<span class="fn">listar</span>())
+<span class="fn">print</span>(volvo.id)</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>salida</div>
+      <pre><span class="term-err">La patente debe tener al menos 6 caracteres y no debe contener espacios.</span>
+<span class="term-out">[]</span>
+<span class="term-out">1</span></pre>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El error vino del modelo, no de la base de datos</strong>
+        <p>El setter de <code>patente</code> de la sesión 7 rechazó "AB 12". El
+        <code>rollback()</code> deshizo Volvo y FH16, aunque ya se habían insertado.</p>
+      </div>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>volvo.id quedó en 1, pero esa fila ya no existe</strong>
+        <p><code>rollback()</code> deshace la base de datos, no los objetos que están en la
+        memoria del programa. Después de un rollback, no usen esos objetos como si estuvieran
+        guardados.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ TALLER FINAL ============ -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Taller</span>
+  <div class="concept-label anim">En equipo &middot; 30 min &middot; con asesoría</div>
+  <div class="concept-title anim">El CRUD completo<br>de su <span>negocio</span></div>
+  <div class="concept-body anim">
+    <div class="chk">
+      <div class="chk-item">
+        <div class="chk-num">1</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Completen su modelo</div>
+          <div class="chk-desc">Property id con setter en las entidades que usan AUTOINCREMENT, y properties para todo lo que el DAO necesite leer.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">2</div>
+        <div class="chk-cont">
+          <div class="chk-tit">insertar() y buscar() en cada DAO, en orden de dependencias</div>
+          <div class="chk-desc">Empiecen por la entidad que no depende de nadie. buscar() devuelve un objeto o None, nunca una tupla.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">3</div>
+        <div class="chk-cont">
+          <div class="chk-tit">actualizar() donde el objeto pueda cambiar</div>
+          <div class="chk-desc">Y eliminar() en todos, pensando en qué orden se tiene que borrar.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">4</div>
+        <div class="chk-cont">
+          <div class="chk-tit">main.py con try, commit, rollback y finally</div>
+          <div class="chk-desc">Prueben el flujo completo: insertar, buscar, actualizar, buscar de nuevo, eliminar, y un último buscar que devuelva None.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">5</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Revisen cada consulta antes de entregar</div>
+          <div class="chk-desc">¿Usa ? en vez de f-string? ¿Tiene WHERE si es UPDATE o DELETE? ¿Hay algún commit() dentro de un DAO?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- CIERRE -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen de la sesión</div>
+  <div class="sep-title anim">Lo que te<br><span>llevas</span> hoy</div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">CRUD en el DAO</div>
+      <div class="resumen-desc">insertar, buscar, listar, actualizar y eliminar. Todo el SQL vive ahí</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Consultas parametrizadas</div>
+      <div class="resumen-desc">? en vez de f-string. Los valores nunca se interpretan como código SQL</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Inyección SQL</div>
+      <div class="resumen-desc">Pegar texto en el SQL deja que cualquiera cambie lo que hace la consulta</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">De filas a objetos</div>
+      <div class="resumen-desc">fetchone() y fetchall() devuelven tuplas. El DAO devuelve objetos del modelo</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Relaciones</div>
+      <div class="resumen-desc">Se guarda en orden de dependencias, se busca con JOIN y se borra en orden inverso</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Transacciones</div>
+      <div class="resumen-desc">commit() confirma, rollback() deshace la base de datos pero no la memoria</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Próxima clase (lunes 21/09 &middot; 120 min)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,.6); line-height:1.6;">
+      Empieza la unidad 3: hash, salting y login con permisos por rol
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const progress = document.getElementById('progress');
+  let current = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.15) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.15 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
