@@ -1,0 +1,38 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Genesis Sepulveda y Francisco Lara
+Negocio: Lavanderia ExpressClean
+
+LO QUE RESOLVIERON BIEN
+- El informe describe el levantamiento hecho con el cliente y de donde salio
+  cada decision del modelo.
+- Jerarquia de personas completa, con Cajero y Operario bien separados por lo
+  que cada uno puede hacer.
+- Los estados por los que pasa una orden estan enumerados y modelados aparte,
+  no escondidos en un String.
+- Las cinco herencias usan el triangulo hueco, y las multiplicidades
+  principales estan puestas en los dos extremos.
+
+PARA LA PROXIMA
+- Falta el requisito 6 por completo: los productos quimicos importados y el
+  valor del dolar aparecen en el texto del problema, pero ninguna clase los
+  representa.
+- PRENDA declara Calcular_Total_Tipo_Lavado() y las tres subclases declaran
+  Calcular_valor(). Nombres distintos: no hay sobrescritura y por lo tanto no
+  hay polimorfismo.
+- ROPA_NORMAL, ALFOMBRA y EDREDON declaran exactamente los mismos atributos y
+  el mismo metodo. Si no se diferencian en nada, todavia no justifican ser
+  tres clases: falta el tiempo y el costo propio de cada una.
+- El informe dice que ORDEN_LAVADO y PRENDA son composicion, pero el diagrama
+  dibuja rombo hueco.
+- Nomenclatura en MAYUSCULAS_CON_GUION. La convencion del curso es PascalCase
+  para clases y camelCase para atributos y metodos.
+- USUARIO-EMPLEADO usa una flecha rellena con 1 y 1. Vincula al trabajador con
+  sus credenciales, asi que corresponde agregacion.
+- ESTADO_ORDEN modela los estados como atributos de una clase normal.
+  Corresponde una enumeracion.
+- ORDEN_LAVADO guarda Detalle_ingreso y Detalle_servicio como String, y
+  Cajero_asignado() y Operario_asignado() como metodos. Esas son relaciones
+  con otras clases, no texto dentro de la orden.
+
+El modelo de referencia del negocio esta en el archivo .drawio de esta misma
+carpeta, con estas observaciones anotadas al pie del diagrama.

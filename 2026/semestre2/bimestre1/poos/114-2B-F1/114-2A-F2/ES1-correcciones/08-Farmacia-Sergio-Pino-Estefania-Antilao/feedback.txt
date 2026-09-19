@@ -1,0 +1,28 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Sergio Pino y Estefania Antilao
+Negocio: Farmacia Vecinal SaludYa
+
+LO QUE RESOLVIERON BIEN
+- Los tres tipos de medicamento sobrescriben validarRequisitosVenta() con la
+  regla que corresponde a cada uno, y la firma refleja lo que cada regla
+  necesita (receta, autorizador o nada).
+- Composicion Venta-DetalleVenta correcta, y RecetaMedica opcional con 0..1,
+  que es exactamente el caso "solo si hay controlados".
+- Las notas al margen que explican la regla del farmaceutico y la del dolar
+  ayudan a leer el diagrama.
+
+PARA LA PROXIMA
+- La multiplicidad Venta-RecetaMedica quedo invertida: el 0..1 esta del lado
+  de Venta. Una venta tiene cero o una receta, no al reves.
+- Venta-Cliente, Venta-Usuario y Venta-RecetaMedica usan flecha simple. El
+  informe duda entre "agregacion o asociacion": corresponde agregacion, porque
+  la asociacion simple quedo fuera del curso.
+- Usuario y Cliente repiten rut, nombre y validarRUT(). Si ambos son personas,
+  esa logica va una sola vez en una clase comun.
+- agregarDetalle(detalle: DetalleVenta) no declara tipo de retorno.
+- El archivo "diagrama.jpg" no es una imagen: es el SVG que genera PlantUML
+  con la extension cambiada, asi que no abre como imagen. Exportar a PNG o
+  dejar la extension real.
+
+El modelo de referencia del negocio esta en el archivo .drawio de esta misma
+carpeta, con estas observaciones anotadas al pie del diagrama.

@@ -1,0 +1,32 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Francisca Garin y Fernando Miranda
+Negocio: Clinica Dental Sonrisas
+
+LO QUE RESOLVIERON BIEN
+- Jerarquia correcta y bien declarada: Persona abstracta, Trabajador
+  abstracta, y los tres tratamientos desde TratamientoDental, con el
+  estereotipo escrito en las tres.
+- Composicion AtencionMedica-DetalleAtencion con rombo relleno y 1 a 1..*.
+- IndicadorExterno separado del negocio y consultado con dependencia punteada.
+- El informe cierra revisando los seis requisitos uno por uno. Esa
+  autoevaluacion antes de entregar conviene repetirla.
+
+PARA LA PROXIMA
+- TratamientoDental declara calcularCosto(valorDolar: double) y las tres
+  subclases declaran calcularCosto() sin parametro. Con firmas distintas no
+  hay sobrescritura.
+- Faltan tipos de retorno en diagnosticar(), realizarTratamiento(),
+  agendarHora(), prepararInstrumental(), actualizarHistorial(),
+  verificarEstadoFinanciero(), registrarAtencion() y actualizarDolar().
+- Varios metodos no declaran parametros: diagnosticar() deberia recibir el
+  paciente y agendarHora() el paciente, el tratamiento y la fecha.
+- La ficha pide bloquear la cirugia cuando el paciente tiene una alergia a la
+  anestesia que no esta registrada. El modelo la reemplazo por una regla de
+  pabellon especial, que el cliente nunca pidio. El atributo alergiaAnestesia
+  existe, pero ninguna regla lo usa.
+- Paciente-AtencionMedica, Odontologo-AtencionMedica y DetalleAtencion-
+  TratamientoDental son lineas simples. Corresponde agregacion.
+- AtencionMedica no declara los atributos paciente, odontologo ni detalles.
+
+El modelo de referencia del negocio esta en el archivo .drawio de esta misma
+carpeta, con estas observaciones anotadas al pie del diagrama.

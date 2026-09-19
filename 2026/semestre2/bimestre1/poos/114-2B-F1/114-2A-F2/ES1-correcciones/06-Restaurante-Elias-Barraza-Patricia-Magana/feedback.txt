@@ -1,0 +1,28 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Elias Barraza y Patricia Magana
+Negocio: Restaurante Sabores del Sur
+
+LO QUE RESOLVIERON BIEN
+- TipoCambio esta modelado como clase, y VinoImportado y LicorImportado
+  sobrescriben calcularPrecio() para usarlo.
+- Boleta.validarRut() y Mesa.tienePedidoAbierto() cubren la validacion de dato
+  y una de las dos reglas de bloqueo.
+- Casi todas las lineas llevan multiplicidad, distinguiendo 0..1, 1 y 1..*.
+
+PARA LA PROXIMA
+- La visibilidad se expresa con los iconos de color de la herramienta, no con
+  los signos - y +. La pauta pide los signos, que son los que se leen en
+  cualquier lector de UML.
+- PlatoCaliente, Bebida y Postre no sobrescriben ningun metodo de ItemMenu:
+  los tres agregan preparar(): void, que la clase base no declara. El
+  requisito pide que un mismo metodo se comporte distinto en cada subtipo, y
+  aqui ese metodo seria calcularPrecio() o el tiempo de preparacion.
+- La clase Restaurante concentra el sistema completo (abrir, cerrar,
+  generarReporteVentas). El negocio es el contexto del modelo, no una clase
+  dentro de el.
+- El informe no explica que representa cada clase ni por que existe: solo
+  lista atributos y metodos. Tampoco describe el problema del negocio en sus
+  palabras, que era el punto 2 del informe.
+
+El modelo de referencia del negocio esta en el archivo .drawio de esta misma
+carpeta, con estas observaciones anotadas al pie del diagrama.

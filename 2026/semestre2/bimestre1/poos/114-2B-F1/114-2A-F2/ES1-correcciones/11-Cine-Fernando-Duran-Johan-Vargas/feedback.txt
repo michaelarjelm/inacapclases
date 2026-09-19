@@ -1,0 +1,36 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Fernando Duran y Johan Vargas
+Negocio: Cine Estrella
+
+LO QUE RESOLVIERON BIEN
+- El informe es el mas completo del curso: reglas de proceso, clases
+  candidatas con la prueba "es un", anexos con las preguntas al cliente y sus
+  respuestas, y bibliografia.
+- La identificacion de subtipos y de relaciones en el texto es correcta y esta
+  bien argumentada, incluida la distincion entre composicion y agregacion.
+- La notacion del diagrama esta bien usada: triangulo hueco en las herencias,
+  rombo relleno en las dos composiciones de Venta, y multiplicidad en los dos
+  extremos de esas cuatro relaciones.
+
+PARA LA PROXIMA
+- De los seis requisitos de la ficha, el diagrama sostiene tres: los dos roles
+  de trabajador, las dos reglas que bloquean una venta y el precio que depende
+  del dolar. Los otros tres estan descritos en el informe, pero no llegaron al
+  dibujo.
+- Funcion resuelve el tipo con un atributo "tipo_formato: str". Eso reemplaza
+  los tres subtipos por un String: no hay herencia ni polimorfismo, que es el
+  requisito 1 de la ficha.
+- No hay DetalleVenta: Venta se conecta directo a Entrada y a
+  ProductoDulceria. El requisito 4 pide la transaccion con lineas de detalle.
+- No hay Cliente ni validacion de RUT en el diagrama, asi que el requisito 3
+  tampoco queda cubierto.
+- El diagrama incluye objetos instanciados (Producto_1, Pelicula_2 y otros).
+  Eso es un diagrama de objetos, y lo que se pedia es un diagrama de clases.
+- Entrada-Funcion y Funcion-Pelicula quedaron como dependencia punteada. Una
+  entrada pertenece a una funcion y una funcion exhibe una pelicula: eso es
+  agregacion, y ademas deberia llevar multiplicidad.
+- El archivo incluye una imagen de portada de otro documento de INACAP del ano
+  2014, ajena al trabajo.
+
+El modelo de referencia del negocio esta en el archivo .drawio de esta misma
+carpeta, con estas observaciones anotadas al pie del diagrama.

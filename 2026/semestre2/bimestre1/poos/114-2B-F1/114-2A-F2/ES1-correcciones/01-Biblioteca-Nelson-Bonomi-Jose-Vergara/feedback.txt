@@ -1,0 +1,39 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Nelson Bonomi y Jose Vergara
+Negocio: Biblioteca Municipal Cordillera
+
+LO QUE RESOLVIERON BIEN
+- Los tres tipos de material sobrescriben get_dias_prestamo() y
+  permite_renovacion() con los valores exactos de la ficha: 14, 7 y 3 dias, y
+  una sola renovacion en Libro.
+- La composicion Prestamo-DetallePrestamo y la agregacion DetallePrestamo-
+  Material estan bien distinguidas, con multiplicidad en los dos extremos.
+- La jerarquia de personas esta completa: Socio y Empleado desde Persona, y
+  los dos roles del meson desde Empleado, con los permisos separados donde
+  corresponde.
+
+PARA LA PROXIMA
+- Material declara get_dias_prestados() y las tres subclases declaran
+  get_dias_prestamo(). Con nombres distintos no hay sobrescritura y el
+  polimorfismo no ocurre: el metodo debe llamarse igual en la clase base y en
+  las tres hijas.
+- El informe dice que la revista se presta 3 dias y el DVD 5. La ficha dice 7
+  y 3, y el diagrama tiene los valores correctos. Hay que corregir el texto,
+  no el dibujo.
+- Material nunca se instancia, pero no esta marcada como abstracta (ni en
+  italica ni con el estereotipo).
+- Socio-Prestamo y BibliotecariaAtencion-Prestamo usan una flecha rellena y
+  estan etiquetadas "asociacion", categoria que el curso dejo fuera antes de
+  la ES1. Corresponde agregacion, con rombo hueco. El resto de los simbolos
+  del diagrama estan bien usados.
+- Las etiquetas de texto "Herencia", "composicion" y "agregacion" sobre las
+  lineas sobran: el simbolo UML ya dice de que relacion se trata.
+- calcular_valor_reposicion(valor_dolar) recibe el valor como parametro, pero
+  ninguna clase representa la fuente del dolar. El requisito del indicador
+  externo queda a medias.
+- Prestamo no declara los atributos socio ni bibliotecaria, y DetallePrestamo
+  no declara material: las relaciones dibujadas no existen todavia como
+  codigo.
+
+El modelo de referencia del negocio esta en el archivo .drawio de esta misma
+carpeta, con estas observaciones anotadas al pie del diagrama.

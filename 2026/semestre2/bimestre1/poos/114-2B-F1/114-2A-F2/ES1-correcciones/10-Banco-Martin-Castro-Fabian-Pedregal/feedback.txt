@@ -1,0 +1,29 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Martin Castro y Fabian Pedregal
+Negocio: Banco Cooperativo Andino
+
+LO QUE RESOLVIERON BIEN
+- Los tres tipos de cuenta sobrescriben calcularInteres(), y CuentaCorriente
+  ademas girar(), que es donde realmente se nota el sobregiro.
+- Uso de enumeraciones para EstadoCredito y TipoMovimiento en vez de dejar los
+  estados como String suelto.
+- Composicion Cuenta-Transaccion-DetalleTransaccion y agregacion Banco-Cliente
+  y Banco-Empleado bien distinguidas, con el rombo del lado correcto.
+- La tabla que cruza los seis requisitos y la leyenda de notacion dentro del
+  diagrama.
+
+PARA LA PROXIMA
+- Hay una linea entre Cajero y Ejecutivo sin tipo, sin etiqueta y sin
+  multiplicidad. Los dos son hermanos en la jerarquia y esa relacion no
+  significa nada: hay que borrarla.
+- Banco-Cuenta, Cliente-Cuenta, Cliente-Credito, Ejecutivo-Credito, Ejecutivo-
+  Cuenta y Transaccion-Movimiento son lineas sin simbolo. Corresponde
+  agregacion.
+- Movimiento y DetalleTransaccion declaran los mismos campos (tipo, monto,
+  descripcion) para la misma idea. El modelo resuelve dos veces "linea de la
+  cartola": una de las dos sobra.
+- Faltan multiplicidades en varias de esas mismas lineas.
+- El estereotipo en UML es «abstract», no «abstracta».
+
+El modelo de referencia del negocio esta en el archivo .drawio de esta misma
+carpeta, con estas observaciones anotadas al pie del diagrama.

@@ -1,0 +1,229 @@
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram name="Clinica Dental Sonrisas - Modelo de referencia" id="dental-modelo">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1910" pageHeight="1910" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value='Clinica Dental Sonrisas - ES1 TI3V21 114-2A-F2 - Modelo de referencia&lt;br&gt;&lt;font style="font-size:12px;font-weight:normal"&gt;Equipo: Francisca Garin y Fernando Miranda&lt;/font&gt;' style="text;html=1;align=left;verticalAlign=middle;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="-60" width="1100" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="persona" value="&lt;i&gt;Persona&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="200" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="persona_attrs" value="- rut: String&lt;br&gt;- nombre: String" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="persona">
+          <mxGeometry y="26" width="200" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="persona_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="persona">
+          <mxGeometry y="78" width="200" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="persona_meth" value="+ validarRut(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="persona">
+          <mxGeometry y="86" width="200" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="paciente" value="Paciente" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="280" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="paciente_attrs" value="- deudaDias: int&lt;br&gt;- alergiaAnestesiaDeclarada: boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="paciente">
+          <mxGeometry y="26" width="280" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="paciente_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="paciente">
+          <mxGeometry y="78" width="280" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="paciente_meth" value="+ puedeAtenderse(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="paciente">
+          <mxGeometry y="86" width="280" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="trabajador" value="&lt;i&gt;Trabajador&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="300" width="300" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="trabajador_attrs" value="- idTrabajador: String" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="trabajador">
+          <mxGeometry y="26" width="300" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="trabajador_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="trabajador">
+          <mxGeometry y="52" width="300" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="trabajador_meth" value="+ tienePermiso(accion: String): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="trabajador">
+          <mxGeometry y="60" width="300" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="odontologo" value="Odontologo" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="560" width="580" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="odontologo_attrs" value="- especialidad: String" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="odontologo">
+          <mxGeometry y="26" width="580" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="odontologo_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="odontologo">
+          <mxGeometry y="52" width="580" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="odontologo_meth" value="+ diagnosticar(paciente: Paciente): String&lt;br&gt;+ realizarTratamiento(paciente: Paciente, tratamiento: TratamientoDental): void" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="odontologo">
+          <mxGeometry y="60" width="580" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="asistente" value="AsistenteDental" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="560" width="630" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="asistente_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="asistente">
+          <mxGeometry y="26" width="630" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="asistente_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="asistente">
+          <mxGeometry y="26" width="630" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="asistente_meth" value="+ agendarHora(paciente: Paciente, tratamiento: TratamientoDental, fecha: Date): boolean&lt;br&gt;+ prepararInstrumental(tratamiento: TratamientoDental): void" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="asistente">
+          <mxGeometry y="34" width="630" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="ficha" value="FichaAtencion" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="700" width="360" height="216" as="geometry" />
+        </mxCell>
+        <mxCell id="ficha_attrs" value="- fecha: DateTime&lt;br&gt;- paciente: Paciente&lt;br&gt;- odontologo: Odontologo&lt;br&gt;- detalles: List&lt;DetalleAtencion&gt;" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="ficha">
+          <mxGeometry y="26" width="360" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="ficha_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="ficha">
+          <mxGeometry y="130" width="360" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="ficha_meth" value="+ agregarDetalle(detalle: DetalleAtencion): void&lt;br&gt;+ calcularTotal(): double&lt;br&gt;+ validarAtencion(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="ficha">
+          <mxGeometry y="138" width="360" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="detalle" value="DetalleAtencion" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1020" width="250" height="138" as="geometry" />
+        </mxCell>
+        <mxCell id="detalle_attrs" value="- tratamiento: TratamientoDental&lt;br&gt;- cantidad: int&lt;br&gt;- subtotal: double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="detalle">
+          <mxGeometry y="26" width="250" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="detalle_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="detalle">
+          <mxGeometry y="104" width="250" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="detalle_meth" value="+ calcularSubtotal(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="detalle">
+          <mxGeometry y="112" width="250" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="tratamiento" value="&lt;i&gt;TratamientoDental&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="1000" width="340" height="164" as="geometry" />
+        </mxCell>
+        <mxCell id="tratamiento_attrs" value="- codigo: String&lt;br&gt;- nombre: String" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="tratamiento">
+          <mxGeometry y="26" width="340" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="tratamiento_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="tratamiento">
+          <mxGeometry y="78" width="340" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="tratamiento_meth" value="+ calcularDuracion(): int&lt;br&gt;+ calcularCosto(): double&lt;br&gt;+ puedeAgendarse(paciente: Paciente): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="tratamiento">
+          <mxGeometry y="86" width="340" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="limpieza" value="Limpieza" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1340" width="200" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="limpieza_attrs" value="- conFluor: boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="limpieza">
+          <mxGeometry y="26" width="200" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="limpieza_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="limpieza">
+          <mxGeometry y="52" width="200" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="limpieza_meth" value="+ calcularDuracion(): int&lt;br&gt;+ calcularCosto(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="limpieza">
+          <mxGeometry y="60" width="200" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="cirugia" value="Cirugia" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="1340" width="340" height="164" as="geometry" />
+        </mxCell>
+        <mxCell id="cirugia_attrs" value="- horasEstimadas: int&lt;br&gt;- tarifaHora: double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cirugia">
+          <mxGeometry y="26" width="340" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="cirugia_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="cirugia">
+          <mxGeometry y="78" width="340" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cirugia_meth" value="+ calcularDuracion(): int&lt;br&gt;+ calcularCosto(): double&lt;br&gt;+ puedeAgendarse(paciente: Paciente): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="cirugia">
+          <mxGeometry y="86" width="340" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="ortodoncia" value="Ortodoncia" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="900" y="1340" width="210" height="164" as="geometry" />
+        </mxCell>
+        <mxCell id="ortodoncia_attrs" value="- meses: int&lt;br&gt;- cantidadBrackets: int&lt;br&gt;- precioBracketUSD: double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="ortodoncia">
+          <mxGeometry y="26" width="210" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="ortodoncia_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="ortodoncia">
+          <mxGeometry y="104" width="210" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="ortodoncia_meth" value="+ calcularDuracion(): int&lt;br&gt;+ calcularCosto(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="ortodoncia">
+          <mxGeometry y="112" width="210" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="indicador" value="IndicadorDolar" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="1340" width="230" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="indicador_attrs" value="- fecha: Date&lt;br&gt;- valorDolar: double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="indicador">
+          <mxGeometry y="26" width="230" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="indicador_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="indicador">
+          <mxGeometry y="78" width="230" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="indicador_meth" value="+ obtenerValorDolar(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="indicador">
+          <mxGeometry y="86" width="230" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.4692;exitY=0.0;entryX=0.5431;entryY=1.0;" edge="1" parent="1" source="paciente" target="persona">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.03;exitY=0.0;entryX=1.0;entryY=0.7723;" edge="1" parent="1" source="trabajador" target="persona">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5495;exitY=0.0;entryX=0.4265;entryY=1.0;" edge="1" parent="1" source="odontologo" target="trabajador">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.3622;exitY=0.0;entryX=0.7894;entryY=1.0;" edge="1" parent="1" source="asistente" target="trabajador">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=1.0;exitY=0.055;entryX=0.0161;entryY=1.0;" edge="1" parent="1" source="limpieza" target="tratamiento">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.6135;exitY=0.0;entryX=0.3865;entryY=1.0;" edge="1" parent="1" source="cirugia" target="tratamiento">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.2301;exitY=0.0;entryX=0.6667;entryY=1.0;" edge="1" parent="1" source="ortodoncia" target="tratamiento">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" style="startArrow=diamondThin;startFill=1;startSize=14;endArrow=none;html=1;rounded=0;exitX=0.4413;exitY=1.0;entryX=0.554;entryY=0.0;" edge="1" parent="1" source="ficha" target="detalle">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0.4735;exitY=0.0;entryX=0.5177;entryY=1.0;" edge="1" parent="1" source="ficha" target="paciente">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=1.0;exitY=0.2288;entryX=0.2033;entryY=1.0;" edge="1" parent="1" source="ficha" target="odontologo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=1.0;exitY=0.4895;entryX=0.0;entryY=0.512;" edge="1" parent="1" source="detalle" target="tratamiento">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=1.0;exitY=0.4638;entryX=0.0;entryY=0.558;" edge="1" parent="1" source="ortodoncia" target="indicador">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m8a" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="159.4" y="933.8" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="m8b" value="1..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="149.0" y="986.7" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="m9a" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="201.7" y="659.9" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="m9b" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="180.8" y="423.7" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="m10a" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="412.9" y="744.5" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="m10b" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="601.3" y="683.1" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="m11a" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="300.2" y="1092.2" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="m11b" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="558.2" y="1089.2" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="l12" value="consulta dolar del dia" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1156.0" y="1379.5" width="148.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="note1" value="&lt;b&gt;SEIS REQUISITOS MINIMOS CUBIERTOS&lt;/b&gt;&lt;br&gt;1. Tres subtipos con comportamiento distinto: Limpieza,&lt;br&gt;Cirugia y Ortodoncia sobrescriben calcularCosto() y&lt;br&gt;calcularDuracion().&lt;br&gt;2. Dos trabajadores con permisos distintos: Odontologo&lt;br&gt;(diagnostica y trata) y AsistenteDental (agenda y prepara&lt;br&gt;instrumental, no diagnostica ni cobra tratamientos).&lt;br&gt;3. Dato validado: Persona.validarRut().&lt;br&gt;4. Transaccion con detalle: FichaAtencion compone&lt;br&gt;DetalleAtencion (varios procedimientos por sesion).&lt;br&gt;5. Dos reglas de bloqueo: Cirugia.puedeAgendarse() (alergia a&lt;br&gt;la anestesia no declarada) y Paciente.puedeAtenderse()&lt;br&gt;(deuda de mas de 60 dias).&lt;br&gt;6. Precio por indicador externo: Ortodoncia.calcularCosto()&lt;br&gt;usa el valor de IndicadorDolar del dia (brackets importados)." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="780" width="470" height="264" as="geometry" />
+        </mxCell>
+        <mxCell id="revision-bien" value="&lt;b&gt;LO QUE RESOLVIERON BIEN - Francisca Garin y Fernando Miranda&lt;/b&gt;&lt;br&gt;- Jerarquia correcta y bien declarada: Persona abstracta, Trabajador abstracta, y&lt;br&gt;  los tres tratamientos desde TratamientoDental, con el estereotipo escrito en las&lt;br&gt;  tres.&lt;br&gt;- Composicion AtencionMedica-DetalleAtencion con rombo relleno y 1 a 1..*.&lt;br&gt;- IndicadorExterno separado del negocio y consultado con dependencia punteada.&lt;br&gt;- El informe cierra revisando los seis requisitos uno por uno. Esa autoevaluacion&lt;br&gt;  antes de entregar conviene repetirla." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40.0" y="1574.0" width="560" height="148" as="geometry" />
+        </mxCell>
+        <mxCell id="revision-corregir" value="&lt;b&gt;QUE CORREGIR DE LA ENTREGA&lt;/b&gt;&lt;br&gt;- TratamientoDental declara calcularCosto(valorDolar: double) y las tres subclases&lt;br&gt;  declaran calcularCosto() sin parametro. Con firmas distintas no hay&lt;br&gt;  sobrescritura.&lt;br&gt;- Faltan tipos de retorno en diagnosticar(), realizarTratamiento(), agendarHora(),&lt;br&gt;  prepararInstrumental(), actualizarHistorial(), verificarEstadoFinanciero(),&lt;br&gt;  registrarAtencion() y actualizarDolar().&lt;br&gt;- Varios metodos no declaran parametros: diagnosticar() deberia recibir el&lt;br&gt;  paciente y agendarHora() el paciente, el tratamiento y la fecha.&lt;br&gt;- La ficha pide bloquear la cirugia cuando el paciente tiene una alergia a la&lt;br&gt;  anestesia que no esta registrada. El modelo la reemplazo por una regla de&lt;br&gt;  pabellon especial, que el cliente nunca pidio. El atributo alergiaAnestesia&lt;br&gt;  existe, pero ninguna regla lo usa.&lt;br&gt;- Paciente-AtencionMedica, Odontologo-AtencionMedica y DetalleAtencion-&lt;br&gt;  TratamientoDental son lineas simples. Corresponde agregacion.&lt;br&gt;- AtencionMedica no declara los atributos paciente, odontologo ni detalles." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#FBEBE8;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="640.0" y="1574.0" width="560" height="276" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

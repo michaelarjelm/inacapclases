@@ -1,0 +1,29 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Miguel Troncoso y Alexandy Remicinthe
+Negocio: Tienda online ClickAndGo
+
+LO QUE RESOLVIERON BIEN
+- La notacion es la mas prolija del curso: visibilidad, tipo de dato,
+  parametros y retorno en todos los miembros, y el estereotipo abstracto
+  declarado tanto en la clase como en los metodos.
+- Los tres subtipos de Producto resuelven procesarEntrega() de forma realmente
+  distinta (flete, enlace de descarga y agenda), y ProductoElectronica
+  extiende ProductoFisico solo para la logica del dolar.
+- Composicion Pedido-DetallePedido y agregacion DetallePedido-Producto
+  correctamente distinguidas, con el argumento del ciclo de vida bien
+  explicado.
+- La dependencia «usa» de Pedido hacia Trabajador para verificar el permiso al
+  despachar es una buena decision: el permiso se comprueba en el momento, no
+  se guarda.
+- La tabla que cruza los seis requisitos contra las clases responsables es un
+  habito que conviene repetir.
+
+PARA LA PROXIMA
+- Ninguna clase representa el indicador externo. calcularPrecioFinal(dolar:
+  float) recibe el valor como parametro, pero de donde sale ese dolar no esta
+  en el modelo.
+- La portada y el encabezado dicen "Programacion Orientada a Objetos". La
+  asignatura es "Programacion Orientada a Objeto Seguro".
+
+El modelo de referencia del negocio esta en el archivo .drawio de esta misma
+carpeta, con estas observaciones anotadas al pie del diagrama.

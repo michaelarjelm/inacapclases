@@ -1,0 +1,32 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Jose Arriagada y Cesar Guerrero
+Negocio: Gimnasio PowerFit
+
+LO QUE RESOLVIERON BIEN
+- Las tres clases dirigidas sobrescriben calcularCuposDisponibles() y cada una
+  declara el recurso fisico que la limita: colchonetas, bicicletas y
+  estaciones.
+- La composicion InscripcionMensual-DetalleInscripcion es correcta y lleva 1 y
+  1..*.
+- La agregacion Inventario-Suplemento esta bien elegida y bien argumentada: el
+  suplemento sigue existiendo en el catalogo aunque su stock sea cero.
+- El informe aplica explicitamente las seis senales de clase candidata de la
+  sesion 2 y el arbol de decision de la sesion 3. Ese orden de trabajo se nota
+  en el resultado.
+
+PARA LA PROXIMA
+- Faltan tipos de retorno en varios metodos: autenticar(), cambiarPassword() y
+  tienePermiso() en Trabajador; dictarClase() y marcarAsistencia() en
+  Instructor; calcularCuposDisponibles() en Yoga, Spinning y Crossfit; y
+  calcularPrecioCLP() en Suplemento. La clase base si declara ": Integer".
+- Direccion, Comuna y ContactoEmergencia no los pide la ficha del gimnasio.
+  Son tres clases que no resuelven ningun requisito y que hay que sostener
+  despues.
+- Suplemento-IndicadorDolar quedo como linea simple. Es una consulta a un
+  valor externo: corresponde dependencia punteada, igual que en el resto de
+  los modelos del curso.
+- Yoga, Spinning y Crossfit agregan realizarClase(): void, que ClaseDirigida
+  no declara. Un metodo solo sobrescribe si existe en la clase base.
+
+El modelo de referencia del negocio esta en el archivo .drawio de esta misma
+carpeta, con estas observaciones anotadas al pie del diagrama.

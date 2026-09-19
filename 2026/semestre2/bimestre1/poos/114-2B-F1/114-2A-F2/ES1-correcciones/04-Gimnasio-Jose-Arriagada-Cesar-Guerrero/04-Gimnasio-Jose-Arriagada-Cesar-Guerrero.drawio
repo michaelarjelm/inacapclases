@@ -1,0 +1,241 @@
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram name="Gimnasio PowerFit - Modelo de referencia" id="gimnasio-modelo">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1750" pageHeight="1668" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value='Gimnasio PowerFit - ES1 TI3V21 114-2A-F2 - Modelo de referencia&lt;br&gt;&lt;font style="font-size:12px;font-weight:normal"&gt;Equipo: Jose Arriagada y Cesar Guerrero&lt;/font&gt;' style="text;html=1;align=left;verticalAlign=middle;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="-60" width="1100" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="persona" value="&lt;i&gt;Persona&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="200" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="persona_attrs" value="- rut: String&lt;br&gt;- nombre: String" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="persona">
+          <mxGeometry y="26" width="200" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="persona_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="persona">
+          <mxGeometry y="78" width="200" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="persona_meth" value="+ validarRut(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="persona">
+          <mxGeometry y="86" width="200" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="socio" value="Socio" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="260" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="socio_attrs" value="- fechaVencimientoMembresia: Date" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="socio">
+          <mxGeometry y="26" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="socio_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="socio">
+          <mxGeometry y="52" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="socio_meth" value="+ permitirIngreso(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="socio">
+          <mxGeometry y="60" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="trabajador" value="&lt;i&gt;Trabajador&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="300" width="300" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="trabajador_attrs" value="- idTrabajador: String" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="trabajador">
+          <mxGeometry y="26" width="300" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="trabajador_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="trabajador">
+          <mxGeometry y="52" width="300" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="trabajador_meth" value="+ tienePermiso(accion: String): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="trabajador">
+          <mxGeometry y="60" width="300" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="instructor" value="Instructor" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="560" width="440" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="instructor_attrs" value="- especialidad: String" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="instructor">
+          <mxGeometry y="26" width="440" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="instructor_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="instructor">
+          <mxGeometry y="52" width="440" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="instructor_meth" value="+ dictarClase(clase: ClaseDirigida): void&lt;br&gt;+ marcarAsistencia(socio: Socio, clase: ClaseDirigida): void" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="instructor">
+          <mxGeometry y="60" width="440" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="recepcionista" value="Recepcionista" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="560" width="530" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="recepcionista_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="recepcionista">
+          <mxGeometry y="26" width="530" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="recepcionista_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="recepcionista">
+          <mxGeometry y="26" width="530" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="recepcionista_meth" value="+ registrarSocio(socio: Socio): void&lt;br&gt;+ cobrarMensualidad(socio: Socio, monto: double): void&lt;br&gt;+ crearInscripcion(socio: Socio, mes: int, anio: int): InscripcionMensual" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="recepcionista">
+          <mxGeometry y="34" width="530" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="inscripcion" value="InscripcionMensual" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="620" width="470" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="inscripcion_attrs" value="- mes: int&lt;br&gt;- anio: int&lt;br&gt;- socio: Socio&lt;br&gt;- detalles: List&lt;DetalleInscripcion&gt;" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="inscripcion">
+          <mxGeometry y="26" width="470" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="inscripcion_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="inscripcion">
+          <mxGeometry y="130" width="470" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="inscripcion_meth" value="+ agregarClase(clase: ClaseDirigida, diaSemana: String): boolean&lt;br&gt;+ cantidadReservas(): int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="inscripcion">
+          <mxGeometry y="138" width="470" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="detalle" value="DetalleInscripcion" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="940" width="230" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="detalle_attrs" value="- diaSemana: String&lt;br&gt;- clase: ClaseDirigida" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="detalle">
+          <mxGeometry y="26" width="230" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="detalle_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="detalle">
+          <mxGeometry y="78" width="230" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="detalle_meth" value="+ confirmarReserva(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="detalle">
+          <mxGeometry y="86" width="230" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="clase" value="&lt;i&gt;ClaseDirigida&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="900" width="260" height="268" as="geometry" />
+        </mxCell>
+        <mxCell id="clase_attrs" value="- codigo: String&lt;br&gt;- nombre: String&lt;br&gt;- duracionMin: int&lt;br&gt;- cupoMaximo: int&lt;br&gt;- inscritos: int&lt;br&gt;- instructor: Instructor" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="clase">
+          <mxGeometry y="26" width="260" height="156" as="geometry" />
+        </mxCell>
+        <mxCell id="clase_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="clase">
+          <mxGeometry y="182" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="clase_meth" value="+ calcularCuposDisponibles(): int&lt;br&gt;+ hayCupo(): boolean&lt;br&gt;+ reservarCupo(): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="clase">
+          <mxGeometry y="190" width="260" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="yoga" value="Yoga" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="1240" width="260" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="yoga_attrs" value="- colchonetas: int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="yoga">
+          <mxGeometry y="26" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="yoga_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="yoga">
+          <mxGeometry y="52" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="yoga_meth" value="+ calcularCuposDisponibles(): int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="yoga">
+          <mxGeometry y="60" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="spinning" value="Spinning" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="1240" width="260" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="spinning_attrs" value="- bicicletas: int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="spinning">
+          <mxGeometry y="26" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="spinning_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="spinning">
+          <mxGeometry y="52" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="spinning_meth" value="+ calcularCuposDisponibles(): int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="spinning">
+          <mxGeometry y="60" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="crossfit" value="Crossfit" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="920" y="1240" width="260" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="crossfit_attrs" value="- estacionesTrabajo: int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="crossfit">
+          <mxGeometry y="26" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="crossfit_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="crossfit">
+          <mxGeometry y="52" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="crossfit_meth" value="+ calcularCuposDisponibles(): int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="crossfit">
+          <mxGeometry y="60" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="suplemento" value="Suplemento" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="860" width="360" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="suplemento_attrs" value="- codigo: String&lt;br&gt;- nombre: String&lt;br&gt;- precioUSD: double&lt;br&gt;- stock: int" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="suplemento">
+          <mxGeometry y="26" width="360" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="suplemento_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="suplemento">
+          <mxGeometry y="130" width="360" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="suplemento_meth" value="+ calcularPrecioCLP(valorDolar: double): double&lt;br&gt;+ hayStock(cantidad: int): boolean" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="suplemento">
+          <mxGeometry y="138" width="360" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="indicador" value="IndicadorDolar" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="1140" width="230" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="indicador_attrs" value="- fecha: Date&lt;br&gt;- valorDolar: double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="indicador">
+          <mxGeometry y="26" width="230" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="indicador_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="indicador">
+          <mxGeometry y="78" width="230" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="indicador_meth" value="+ obtenerValorDolar(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="indicador">
+          <mxGeometry y="86" width="230" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.4799;exitY=0.0;entryX=0.534;entryY=1.0;" edge="1" parent="1" source="socio" target="persona">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.088;exitY=0.0;entryX=1.0;entryY=0.8106;" edge="1" parent="1" source="trabajador" target="persona">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5047;exitY=0.0;entryX=0.4947;entryY=1.0;" edge="1" parent="1" source="instructor" target="trabajador">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.3007;exitY=0.0;entryX=0.7704;entryY=1.0;" edge="1" parent="1" source="recepcionista" target="trabajador">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.6993;exitY=0.0;entryX=0.0;entryY=0.9026;" edge="1" parent="1" source="yoga" target="clase">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.4601;exitY=0.0;entryX=0.6242;entryY=1.0;" edge="1" parent="1" source="spinning" target="clase">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.221;exitY=0.0;entryX=1.0;entryY=0.7876;" edge="1" parent="1" source="crossfit" target="clase">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" style="startArrow=diamondThin;startFill=1;startSize=14;endArrow=none;html=1;rounded=0;exitX=0.4137;exitY=1.0;entryX=0.604;entryY=0.0;" edge="1" parent="1" source="inscripcion" target="detalle">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0.4429;exitY=0.0;entryX=0.5467;entryY=1.0;" edge="1" parent="1" source="inscripcion" target="socio">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=1.0;exitY=0.5821;entryX=0.0;entryY=0.4612;" edge="1" parent="1" source="detalle" target="clase">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0.7589;exitY=0.0;entryX=0.4361;entryY=1.0;" edge="1" parent="1" source="clase" target="instructor">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0.4288;exitY=1.0;entryX=0.5657;entryY=0.0;" edge="1" parent="1" source="suplemento" target="indicador">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m8a" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="189.8" y="823.1" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="m8b" value="1..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="154.7" y="905.3" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="m9a" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="233.5" y="578.3" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="m9b" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="181.6" y="394.4" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="m10a" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="278.8" y="1012.5" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="m10b" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="457.0" y="1026.8" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="m11a" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="703.3" y="870.5" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="m11b" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="794.5" y="688.9" width="40.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="l12" value="consulta dolar del dia" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1414.4" y="1086.0" width="148.0" height="18.0" as="geometry" />
+        </mxCell>
+        <mxCell id="note1" value="&lt;b&gt;SEIS REQUISITOS MINIMOS CUBIERTOS&lt;/b&gt;&lt;br&gt;1. Tres subtipos con comportamiento distinto: Yoga, Spinning&lt;br&gt;y Crossfit sobrescriben calcularCuposDisponibles().&lt;br&gt;2. Dos trabajadores con permisos distintos: Instructor (dicta&lt;br&gt;clases y marca asistencia) y Recepcionista (inscribe y cobra,&lt;br&gt;no crea ni modifica clases).&lt;br&gt;3. Dato validado: Persona.validarRut().&lt;br&gt;4. Transaccion con detalle: InscripcionMensual compone&lt;br&gt;DetalleInscripcion (una reserva por clase y dia).&lt;br&gt;5. Dos reglas de bloqueo: ClaseDirigida.hayCupo() (cupo lleno)&lt;br&gt;y Socio.permitirIngreso() (membresia vencida).&lt;br&gt;6. Precio por indicador externo: Suplemento.calcularPrecioCLP()&lt;br&gt;usa el valor de IndicadorDolar del dia." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="40" width="470" height="232" as="geometry" />
+        </mxCell>
+        <mxCell id="revision-bien" value="&lt;b&gt;LO QUE RESOLVIERON BIEN - Jose Arriagada y Cesar Guerrero&lt;/b&gt;&lt;br&gt;- Las tres clases dirigidas sobrescriben calcularCuposDisponibles() y cada una&lt;br&gt;  declara el recurso fisico que la limita: colchonetas, bicicletas y estaciones.&lt;br&gt;- La composicion InscripcionMensual-DetalleInscripcion es correcta y lleva 1 y&lt;br&gt;  1..*.&lt;br&gt;- La agregacion Inventario-Suplemento esta bien elegida y bien argumentada: el&lt;br&gt;  suplemento sigue existiendo en el catalogo aunque su stock sea cero.&lt;br&gt;- El informe aplica explicitamente las seis senales de clase candidata de la&lt;br&gt;  sesion 2 y el arbol de decision de la sesion 3. Ese orden de trabajo se nota en&lt;br&gt;  el resultado." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40.0" y="1396.0" width="560" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="revision-corregir" value='&lt;b&gt;QUE CORREGIR DE LA ENTREGA&lt;/b&gt;&lt;br&gt;- Faltan tipos de retorno en varios metodos: autenticar(), cambiarPassword() y&lt;br&gt;  tienePermiso() en Trabajador; dictarClase() y marcarAsistencia() en Instructor;&lt;br&gt;  calcularCuposDisponibles() en Yoga, Spinning y Crossfit; y calcularPrecioCLP()&lt;br&gt;  en Suplemento. La clase base si declara ": Integer".&lt;br&gt;- Direccion, Comuna y ContactoEmergencia no los pide la ficha del gimnasio. Son&lt;br&gt;  tres clases que no resuelven ningun requisito y que hay que sostener despues.&lt;br&gt;- Suplemento-IndicadorDolar quedo como linea simple. Es una consulta a un valor&lt;br&gt;  externo: corresponde dependencia punteada, igual que en el resto de los modelos&lt;br&gt;  del curso.&lt;br&gt;- Yoga, Spinning y Crossfit agregan realizarClase(): void, que ClaseDirigida no&lt;br&gt;  declara. Un metodo solo sobrescribe si existe en la clase base.' style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#FBEBE8;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="640.0" y="1396.0" width="560" height="212" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

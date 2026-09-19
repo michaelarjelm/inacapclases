@@ -1,0 +1,36 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Viviana Nunez y Johana Larrondo
+Negocio: Colegio Nueva Esperanza
+
+LO QUE RESOLVIERON BIEN
+- Prueba, Trabajo y PresentacionOral sobrescriben calcular_nota() y cada una
+  declara el dato propio de su forma de evaluar: puntaje, rubrica y tiempo de
+  presentacion.
+- Composicion Matricula-DetalleMatricula y agregacion DetalleMatricula-
+  Asignatura bien resueltas.
+- Electivo como subtipo de Asignatura para el control de cupos es una buena
+  decision: el cupo solo aplica a los electivos.
+
+PARA LA PROXIMA
+- Persona declara "validar_rut : bool" sin parentesis, asi que se lee como
+  atributo y no como metodo. Lo mismo pasa con Matricula.arancelPesosUf, que
+  lleva dos veces los dos puntos.
+- El informe llama "Asociacion" a Estudiante-Matricula, Matricula-Arancel,
+  Asignatura-Evaluacion y Evaluacion-Calificacion, pero el diagrama dibuja
+  rombo hueco en las dos primeras y rombo relleno en las otras dos. El texto y
+  el dibujo tienen que decir lo mismo.
+- Evaluacion-Calificacion quedo dibujada 1 a 1. El informe dice 1..*, que es
+  lo correcto: una evaluacion genera una nota por cada alumno del curso.
+- Arancel.calcularmontoPesos(valorUF) recibe el valor como parametro, pero
+  ninguna clase representa el indicador de la UF.
+- Estudiante repite validarRut(), que Persona ya declara. Eso contradice el
+  argumento del propio informe para usar herencia.
+- Profesor guarda "asignatura: str" ademas de tener la relacion con
+  Asignatura. El String sobra y ademas se puede desincronizar de la relacion
+  real.
+- DetalleMatricula declara calcularNotaFinal(). El calculo de la nota es
+  responsabilidad de Evaluacion o Asignatura, no de la linea de detalle de una
+  matricula.
+
+El modelo de referencia del negocio esta en el archivo .drawio de esta misma
+carpeta, con estas observaciones anotadas al pie del diagrama.

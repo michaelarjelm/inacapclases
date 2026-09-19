@@ -1,0 +1,31 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Cindy Carrasco y Leonardo Mora
+Negocio: Hotel Boutique Los Alerces
+
+LO QUE RESOLVIERON BIEN
+- Los tres tipos de habitacion existen y cada uno resuelve su propia tarifa.
+- IndicadorFinanciero esta modelado aparte y se consulta con dependencia
+  punteada, que es exactamente lo que corresponde para un valor externo que
+  solo se lee.
+- Las dos reglas que bloquean una operacion estan declaradas como metodos:
+  Habitacion.estaDisponible() y Reserva.validarAnticipo().
+
+PARA LA PROXIMA
+- Habitacion declara calcularTarifaDia(dias) y los tres subtipos declaran
+  calcularTarifa(dias). Al no coincidir el nombre no hay sobrescritura, que es
+  justo lo que el requisito pide demostrar.
+- Reserva, LineaConsumo y Consumo aparecen en italica. En UML la italica
+  significa clase abstracta, y las tres se instancian. La unica abstracta aqui
+  es Habitacion.
+- El informe dice que Reserva-LineaConsumo es composicion, pero el diagrama
+  dibuja rombo hueco. Una linea de consumo no existe sin su reserva:
+  corresponde rombo relleno.
+- LineaConsumo-Consumo quedo 1 a 1..*, al reves: cada linea referencia un
+  Consumo del catalogo (1) y un mismo Consumo aparece en muchas lineas (0..*).
+- El informe titula "Asociaciones (Rombo Hueco)" lo que en realidad es
+  agregacion.
+- El documento entregado conserva decenas de parrafos "Introduccion" de la
+  plantilla sin borrar. Conviene leer el archivo completo antes de subirlo.
+
+El modelo de referencia del negocio esta en el archivo .drawio de esta misma
+carpeta, con estas observaciones anotadas al pie del diagrama.

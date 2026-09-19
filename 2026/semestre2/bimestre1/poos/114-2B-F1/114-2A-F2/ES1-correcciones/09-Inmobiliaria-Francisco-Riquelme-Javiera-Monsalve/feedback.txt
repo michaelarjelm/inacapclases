@@ -1,0 +1,27 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Francisco Riquelme y Javiera Monsalve
+Negocio: Inmobiliaria Terrenos del Sur
+
+LO QUE RESOLVIERON BIEN
+- Los tres tipos de propiedad sobrescriben calcularArriendoUF() y cada uno
+  declara las caracteristicas que entran en su calculo.
+- IndicadorUF y SistemaFinanciero modelados como fuentes externas, consultados
+  con dependencia punteada y con el estereotipo externo declarado en las dos.
+- La notacion es correcta de principio a fin: triangulo hueco en las dos
+  jerarquias, rombo relleno en la composicion con DetalleCobro, y visibilidad
+  y tipo de dato en todos los miembros.
+- El informe justifica cada relacion y cada multiplicidad una por una, e
+  incluso explica por que no hay ninguna agregacion. Ese nivel de
+  argumentacion es el que pedia la actividad 3.
+
+PARA LA PROXIMA
+- El diagrama no muestra ninguna multiplicidad. El informe las describe todas
+  correctamente, una por una, pero ninguna quedo escrita sobre las lineas, y
+  ese criterio se evalua sobre el diagrama. Es lo unico que separa este
+  trabajo de la nota maxima.
+- ContratoArriendo no declara los atributos cliente, propiedad, corredor,
+  detalles ni pagos: las relaciones estan dibujadas pero no existen todavia
+  como codigo.
+
+El modelo de referencia del negocio esta en el archivo .drawio de esta misma
+carpeta, con estas observaciones anotadas al pie del diagrama.

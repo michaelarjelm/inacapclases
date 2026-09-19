@@ -1,0 +1,30 @@
+FEEDBACK - EVALUACION SUMATIVA N1
+Equipo: Cristopher Figueroa y Elias Reyes
+Negocio: Agencia de Viajes RutaSur
+
+LO QUE RESOLVIERON BIEN
+- Reserva compone detalleReserva y TipoItem funciona como catalogo compartido,
+  con las multiplicidades correctas en los dos extremos.
+- Separar Cliente de Viajero esta bien pensado y bien justificado: quien
+  compra no siempre es quien viaja.
+- Disponibilidad y Proveedor resuelven el control de cupos por fecha, que era
+  la parte mas dificil de la ficha.
+
+PARA LA PROXIMA
+- Los tres tipos de paquete estan unidos a Paquete con rombo hueco y 0..*, es
+  decir agregacion. Son herencia: un paquete nacional es un Paquete, no una
+  parte de un Paquete. El informe repite el error al justificarlo.
+- Administrador y AgenteViajes estan unidos a trabajador con rombo relleno
+  (composicion) y ademas guardan un atributo "Trabajador: trabajador". Tambien
+  es herencia, y el atributo sobra.
+- Cliente conserva numeroPasaporte, que el propio informe dice haber movido a
+  Viajero.
+- Varios atributos quedaron subrayados (numeroPasaporte, precioBaseUSD,
+  monedaCotizacion). En UML el subrayado significa miembro estatico, de la
+  clase y no de cada objeto.
+- Nomenclatura mezclada: trabajador, pago y detalleReserva en minuscula, el
+  resto en PascalCase.
+- Disponibilidad-Proveedor usa "0..n". La notacion del curso es 0..*.
+
+El modelo de referencia del negocio esta en el archivo .drawio de esta misma
+carpeta, con estas observaciones anotadas al pie del diagrama.
