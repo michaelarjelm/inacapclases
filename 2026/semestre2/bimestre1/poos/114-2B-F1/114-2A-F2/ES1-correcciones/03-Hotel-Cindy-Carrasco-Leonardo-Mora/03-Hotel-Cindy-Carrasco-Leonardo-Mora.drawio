@@ -410,15 +410,10 @@
             <mxPoint x="4" y="-16" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="e17" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="tarifa" target="indicadordolar">
+        <mxCell id="e17" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="tarifa" target="indicadordolar">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e17_lbl" value="consulta valor dolar" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e17">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="0" y="-12" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e18" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=1;" edge="1" parent="1" source="factura" target="indicadordolar">
+        <mxCell id="e18" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=1;" edge="1" parent="1" source="factura" target="indicadordolar">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="2960" y="760" />
@@ -426,16 +421,23 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e18_lbl" value="convierte a CLP" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e18">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="0" y="-10" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="revision-bien" value="&lt;b&gt;LO QUE RESOLVIERON BIEN - Cindy Carrasco y Leonardo Mora&lt;/b&gt;&lt;br&gt;- Los tres tipos de habitacion existen y cada uno resuelve su propia tarifa.&lt;br&gt;- IndicadorFinanciero esta modelado aparte y se consulta con dependencia punteada,&lt;br&gt;  que es exactamente lo que corresponde para un valor externo que solo se lee.&lt;br&gt;- Las dos reglas que bloquean una operacion estan declaradas como metodos:&lt;br&gt;  Habitacion.estaDisponible() y Reserva.validarAnticipo()." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
+        <mxCell id="revision-bien" value="&lt;b&gt;LO QUE RESOLVIERON BIEN - Cindy Carrasco y Leonardo Mora&lt;/b&gt;&lt;br&gt;- Los tres tipos de habitacion existen y cada uno resuelve su propia tarifa.&lt;br&gt;- IndicadorFinanciero esta modelado como una clase aparte, que es exactamente lo&lt;br&gt;  que corresponde para un valor externo que solo se lee. La linea que lo consulta&lt;br&gt;  va con rombo hueco, como el resto de las relaciones del curso.&lt;br&gt;- Las dos reglas que bloquean una operacion estan declaradas como metodos:&lt;br&gt;  Habitacion.estaDisponible() y Reserva.validarAnticipo()." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="40.0" y="814.0" width="560" height="116" as="geometry" />
         </mxCell>
         <mxCell id="revision-corregir" value='&lt;b&gt;QUE CORREGIR DE LA ENTREGA&lt;/b&gt;&lt;br&gt;- Habitacion declara calcularTarifaDia(dias) y los tres subtipos declaran&lt;br&gt;  calcularTarifa(dias). Al no coincidir el nombre no hay sobrescritura, que es&lt;br&gt;  justo lo que el requisito pide demostrar.&lt;br&gt;- Reserva, LineaConsumo y Consumo aparecen en italica. En UML la italica significa&lt;br&gt;  clase abstracta, y las tres se instancian. La unica abstracta aqui es&lt;br&gt;  Habitacion.&lt;br&gt;- El informe dice que Reserva-LineaConsumo es composicion, pero el diagrama dibuja&lt;br&gt;  rombo hueco. Una linea de consumo no existe sin su reserva: corresponde rombo&lt;br&gt;  relleno.&lt;br&gt;- LineaConsumo-Consumo quedo 1 a 1..*, al reves: cada linea referencia un Consumo&lt;br&gt;  del catalogo (1) y un mismo Consumo aparece en muchas lineas (0..*).&lt;br&gt;- El informe titula "Asociaciones (Rombo Hueco)" lo que en realidad es agregacion.&lt;br&gt;- El documento entregado conserva decenas de parrafos "Introduccion" de la&lt;br&gt;  plantilla sin borrar. Conviene leer el archivo completo antes de subirlo.' style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#FBEBE8;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="640.0" y="814.0" width="560" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="e17_ma" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1734.0" y="160.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e17_mb" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1726.0" y="126.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e18_ma" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="2940.0" y="504.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e18_mb" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1890.0" y="244.0" width="40" height="18" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

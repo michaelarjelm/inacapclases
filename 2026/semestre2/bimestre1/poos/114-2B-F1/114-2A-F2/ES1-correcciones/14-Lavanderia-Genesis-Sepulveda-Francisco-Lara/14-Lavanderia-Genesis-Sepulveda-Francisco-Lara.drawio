@@ -262,19 +262,20 @@
             <mxPoint x="-22" y="-16" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="e12" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=1;exitY=0.7;entryX=0;entryY=0.3;" edge="1" parent="1" source="productoquimico" target="cotizaciondolar">
+        <mxCell id="e12" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=1;exitY=0.7;entryX=0;entryY=0.3;" edge="1" parent="1" source="productoquimico" target="cotizaciondolar">
           <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e12_lbl" value="consulta valor dolar" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e12">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="0" y="-12" as="offset" />
-          </mxGeometry>
         </mxCell>
         <mxCell id="revision-bien" value="&lt;b&gt;LO QUE RESOLVIERON BIEN - Genesis Sepulveda y Francisco Lara&lt;/b&gt;&lt;br&gt;- El informe describe el levantamiento hecho con el cliente y de donde salio cada&lt;br&gt;  decision del modelo.&lt;br&gt;- Jerarquia de personas completa, con Cajero y Operario bien separados por lo que&lt;br&gt;  cada uno puede hacer.&lt;br&gt;- Los estados por los que pasa una orden estan enumerados y modelados aparte, no&lt;br&gt;  escondidos en un String.&lt;br&gt;- Las cinco herencias usan el triangulo hueco, y las multiplicidades principales&lt;br&gt;  estan puestas en los dos extremos." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="40.0" y="662.0" width="560" height="164" as="geometry" />
         </mxCell>
         <mxCell id="revision-corregir" value="&lt;b&gt;QUE CORREGIR DE LA ENTREGA&lt;/b&gt;&lt;br&gt;- Falta el requisito 6 por completo: los productos quimicos importados y el valor&lt;br&gt;  del dolar aparecen en el texto del problema, pero ninguna clase los representa.&lt;br&gt;- PRENDA declara Calcular_Total_Tipo_Lavado() y las tres subclases declaran&lt;br&gt;  Calcular_valor(). Nombres distintos: no hay sobrescritura y por lo tanto no hay&lt;br&gt;  polimorfismo.&lt;br&gt;- ROPA_NORMAL, ALFOMBRA y EDREDON declaran exactamente los mismos atributos y el&lt;br&gt;  mismo metodo. Si no se diferencian en nada, todavia no justifican ser tres&lt;br&gt;  clases: falta el tiempo y el costo propio de cada una.&lt;br&gt;- El informe dice que ORDEN_LAVADO y PRENDA son composicion, pero el diagrama&lt;br&gt;  dibuja rombo hueco.&lt;br&gt;- Nomenclatura en MAYUSCULAS_CON_GUION. La convencion del curso es PascalCase para&lt;br&gt;  clases y camelCase para atributos y metodos.&lt;br&gt;- USUARIO-EMPLEADO usa una flecha rellena con 1 y 1. Vincula al trabajador con sus&lt;br&gt;  credenciales, asi que corresponde agregacion.&lt;br&gt;- ESTADO_ORDEN modela los estados como atributos de una clase normal. Corresponde&lt;br&gt;  una enumeracion.&lt;br&gt;- ORDEN_LAVADO guarda Detalle_ingreso y Detalle_servicio como String, y&lt;br&gt;  Cajero_asignado() y Operario_asignado() como metodos. Esas son relaciones con&lt;br&gt;  otras clases, no texto dentro de la orden." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#FBEBE8;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="640.0" y="662.0" width="560" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="e12_ma" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1334.0" y="601.4" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e12_mb" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1306.0" y="452.6" width="40" height="18" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

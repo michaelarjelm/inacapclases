@@ -184,7 +184,7 @@
         <mxCell id="e11" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=1.0;exitY=0.4895;entryX=0.0;entryY=0.512;" edge="1" parent="1" source="detalle" target="tratamiento">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e12" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=1.0;exitY=0.4638;entryX=0.0;entryY=0.558;" edge="1" parent="1" source="ortodoncia" target="indicador">
+        <mxCell id="e12" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=1.0;exitY=0.4638;entryX=0.0;entryY=0.558;" edge="1" parent="1" source="ortodoncia" target="indicador">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="m8a" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
@@ -211,17 +211,20 @@
         <mxCell id="m11b" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="558.2" y="1089.2" width="40.0" height="18.0" as="geometry" />
         </mxCell>
-        <mxCell id="l12" value="consulta dolar del dia" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="1156.0" y="1379.5" width="148.0" height="18.0" as="geometry" />
-        </mxCell>
         <mxCell id="note1" value="&lt;b&gt;SEIS REQUISITOS MINIMOS CUBIERTOS&lt;/b&gt;&lt;br&gt;1. Tres subtipos con comportamiento distinto: Limpieza,&lt;br&gt;Cirugia y Ortodoncia sobrescriben calcularCosto() y&lt;br&gt;calcularDuracion().&lt;br&gt;2. Dos trabajadores con permisos distintos: Odontologo&lt;br&gt;(diagnostica y trata) y AsistenteDental (agenda y prepara&lt;br&gt;instrumental, no diagnostica ni cobra tratamientos).&lt;br&gt;3. Dato validado: Persona.validarRut().&lt;br&gt;4. Transaccion con detalle: FichaAtencion compone&lt;br&gt;DetalleAtencion (varios procedimientos por sesion).&lt;br&gt;5. Dos reglas de bloqueo: Cirugia.puedeAgendarse() (alergia a&lt;br&gt;la anestesia no declarada) y Paciente.puedeAtenderse()&lt;br&gt;(deuda de mas de 60 dias).&lt;br&gt;6. Precio por indicador externo: Ortodoncia.calcularCosto()&lt;br&gt;usa el valor de IndicadorDolar del dia (brackets importados)." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="1000" y="780" width="470" height="264" as="geometry" />
         </mxCell>
-        <mxCell id="revision-bien" value="&lt;b&gt;LO QUE RESOLVIERON BIEN - Francisca Garin y Fernando Miranda&lt;/b&gt;&lt;br&gt;- Jerarquia correcta y bien declarada: Persona abstracta, Trabajador abstracta, y&lt;br&gt;  los tres tratamientos desde TratamientoDental, con el estereotipo escrito en las&lt;br&gt;  tres.&lt;br&gt;- Composicion AtencionMedica-DetalleAtencion con rombo relleno y 1 a 1..*.&lt;br&gt;- IndicadorExterno separado del negocio y consultado con dependencia punteada.&lt;br&gt;- El informe cierra revisando los seis requisitos uno por uno. Esa autoevaluacion&lt;br&gt;  antes de entregar conviene repetirla." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
+        <mxCell id="revision-bien" value="&lt;b&gt;LO QUE RESOLVIERON BIEN - Francisca Garin y Fernando Miranda&lt;/b&gt;&lt;br&gt;- Jerarquia correcta y bien declarada: Persona abstracta, Trabajador abstracta, y&lt;br&gt;  los tres tratamientos desde TratamientoDental, con el estereotipo escrito en las&lt;br&gt;  tres.&lt;br&gt;- Composicion AtencionMedica-DetalleAtencion con rombo relleno y 1 a 1..*.&lt;br&gt;- IndicadorExterno separado del negocio, que es lo que corresponde. La linea&lt;br&gt;  que lo consulta va con rombo hueco, como el resto.&lt;br&gt;- El informe cierra revisando los seis requisitos uno por uno. Esa autoevaluacion&lt;br&gt;  antes de entregar conviene repetirla." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="40.0" y="1574.0" width="560" height="148" as="geometry" />
         </mxCell>
         <mxCell id="revision-corregir" value="&lt;b&gt;QUE CORREGIR DE LA ENTREGA&lt;/b&gt;&lt;br&gt;- TratamientoDental declara calcularCosto(valorDolar: double) y las tres subclases&lt;br&gt;  declaran calcularCosto() sin parametro. Con firmas distintas no hay&lt;br&gt;  sobrescritura.&lt;br&gt;- Faltan tipos de retorno en diagnosticar(), realizarTratamiento(), agendarHora(),&lt;br&gt;  prepararInstrumental(), actualizarHistorial(), verificarEstadoFinanciero(),&lt;br&gt;  registrarAtencion() y actualizarDolar().&lt;br&gt;- Varios metodos no declaran parametros: diagnosticar() deberia recibir el&lt;br&gt;  paciente y agendarHora() el paciente, el tratamiento y la fecha.&lt;br&gt;- La ficha pide bloquear la cirugia cuando el paciente tiene una alergia a la&lt;br&gt;  anestesia que no esta registrada. El modelo la reemplazo por una regla de&lt;br&gt;  pabellon especial, que el cliente nunca pidio. El atributo alergiaAnestesia&lt;br&gt;  existe, pero ninguna regla lo usa.&lt;br&gt;- Paciente-AtencionMedica, Odontologo-AtencionMedica y DetalleAtencion-&lt;br&gt;  TratamientoDental son lineas simples. Corresponde agregacion.&lt;br&gt;- AtencionMedica no declara los atributos paciente, odontologo ni detalles." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#FBEBE8;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="640.0" y="1574.0" width="560" height="276" as="geometry" />
+        </mxCell>
+        <mxCell id="e12_ma" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1124.0" y="1407.1" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e12_mb" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1296.0" y="1411.5" width="40" height="18" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

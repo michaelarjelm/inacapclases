@@ -12,9 +12,9 @@ LO QUE RESOLVIERON BIEN
 - Composicion Pedido-DetallePedido y agregacion DetallePedido-Producto
   correctamente distinguidas, con el argumento del ciclo de vida bien
   explicado.
-- La dependencia «usa» de Pedido hacia Trabajador para verificar el permiso al
-  despachar es una buena decision: el permiso se comprueba en el momento, no
-  se guarda.
+- Que Pedido consulte a Trabajador para verificar el permiso al despachar, en
+  vez de guardarlo, es una buena decision: el permiso se comprueba en el
+  momento. Esa linea va con rombo hueco, como las demas.
 - La tabla que cruza los seis requisitos contra las clases responsables es un
   habito que conviene repetir.
 

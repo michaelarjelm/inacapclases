@@ -151,42 +151,6 @@
         <mxCell id="serviciouf_meth" value="+ obtenerValorUF(): double" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="serviciouf">
           <mxGeometry y="60" width="240" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="exsaldo" value="SaldoInsuficienteException" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="40" y="900" width="300" height="34" as="geometry" />
-        </mxCell>
-        <mxCell id="exsaldo_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="exsaldo">
-          <mxGeometry y="26" width="300" height="0" as="geometry" />
-        </mxCell>
-        <mxCell id="exsaldo_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="exsaldo">
-          <mxGeometry y="26" width="300" height="8" as="geometry" />
-        </mxCell>
-        <mxCell id="exsaldo_meth" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="exsaldo">
-          <mxGeometry y="34" width="300" height="0" as="geometry" />
-        </mxCell>
-        <mxCell id="exbloqueada" value="CuentaBloqueadaException" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="400" y="900" width="300" height="34" as="geometry" />
-        </mxCell>
-        <mxCell id="exbloqueada_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="exbloqueada">
-          <mxGeometry y="26" width="300" height="0" as="geometry" />
-        </mxCell>
-        <mxCell id="exbloqueada_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="exbloqueada">
-          <mxGeometry y="26" width="300" height="8" as="geometry" />
-        </mxCell>
-        <mxCell id="exbloqueada_meth" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="exbloqueada">
-          <mxGeometry y="34" width="300" height="0" as="geometry" />
-        </mxCell>
-        <mxCell id="exmora" value="MoraVigenteException" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="1500" y="580" width="300" height="34" as="geometry" />
-        </mxCell>
-        <mxCell id="exmora_attrs" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="exmora">
-          <mxGeometry y="26" width="300" height="0" as="geometry" />
-        </mxCell>
-        <mxCell id="exmora_div" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;" vertex="1" parent="exmora">
-          <mxGeometry y="26" width="300" height="8" as="geometry" />
-        </mxCell>
-        <mxCell id="exmora_meth" value="" style="text;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;spacingBottom=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="exmora">
-          <mxGeometry y="34" width="300" height="0" as="geometry" />
-        </mxCell>
         <mxCell id="e1" style="endArrow=block;endFill=0;endSize=16;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.15;entryY=1;" edge="1" parent="1" source="cuentaahorro" target="cuenta">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
@@ -264,7 +228,7 @@
             <mxPoint x="-24" y="-18" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="e10" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0.9;exitY=1;entryX=0.3;entryY=0;" edge="1" parent="1" source="cuenta" target="serviciouf">
+        <mxCell id="e10" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0.9;exitY=1;entryX=0.3;entryY=0;" edge="1" parent="1" source="cuenta" target="serviciouf">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="310" y="670" />
@@ -272,12 +236,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e10_lbl" value="consulta UF" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e10">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="0" y="-10" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e11" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0;exitY=0.8;entryX=0;entryY=0.5;" edge="1" parent="1" source="credito" target="serviciouf">
+        <mxCell id="e11" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0;exitY=0.8;entryX=0;entryY=0.5;" edge="1" parent="1" source="credito" target="serviciouf">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1100" y="233.6" />
@@ -285,51 +244,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e11_lbl" value="consulta UF" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e11">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="-40" y="0" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e12" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0.7;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="cuenta" target="exsaldo">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="250" y="860" />
-              <mxPoint x="190" y="860" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e12_lbl" value="puede lanzar" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e12">
-          <mxGeometry relative="1" x="-0.6" as="geometry">
-            <mxPoint x="-40" y="-10" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e13" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0.72;exitY=1;entryX=0.3;entryY=0;" edge="1" parent="1" source="cuenta" target="exbloqueada">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="256" y="860" />
-              <mxPoint x="370" y="860" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e13_lbl" value="puede lanzar" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e13">
-          <mxGeometry relative="1" x="-0.6" as="geometry">
-            <mxPoint x="20" y="-10" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e14" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=1;exitY=1;entryX=1;entryY=0.5;" edge="1" parent="1" source="ejecutivo" target="exmora">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1790" y="372" />
-              <mxPoint x="1790" y="597" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e14_lbl" value="puede lanzar" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e14">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="0" y="-8" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e15" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;entryX=1;entryY=0.9;" edge="1" parent="1" source="ejecutivo" target="cliente">
+        <mxCell id="e15" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0;exitY=0.5;entryX=1;entryY=0.9;" edge="1" parent="1" source="ejecutivo" target="cliente">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1500" y="330" />
@@ -337,12 +252,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e15_lbl" value="atiende/evalua" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e15">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="0" y="-10" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e16" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="ejecutivo" target="credito">
+        <mxCell id="e16" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="ejecutivo" target="credito">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1420" y="316" />
@@ -350,12 +260,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e16_lbl" value="evalua/aprueba" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e16">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="20" y="0" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e17" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0;exitY=0.5;entryX=1;entryY=0.9;" edge="1" parent="1" source="cajero" target="cuenta">
+        <mxCell id="e17" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0;exitY=0.5;entryX=1;entryY=0.9;" edge="1" parent="1" source="cajero" target="cuenta">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1470" y="463" />
@@ -363,16 +268,41 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e17_lbl" value="registra operaciones" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e17">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="0" y="-10" as="offset" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="revision-bien" value="&lt;b&gt;LO QUE RESOLVIERON BIEN - Martin Castro y Fabian Pedregal&lt;/b&gt;&lt;br&gt;- Los tres tipos de cuenta sobrescriben calcularInteres(), y CuentaCorriente&lt;br&gt;  ademas girar(), que es donde realmente se nota el sobregiro.&lt;br&gt;- Uso de enumeraciones para EstadoCredito y TipoMovimiento en vez de dejar los&lt;br&gt;  estados como String suelto.&lt;br&gt;- Composicion Cuenta-Transaccion-DetalleTransaccion y agregacion Banco-Cliente y&lt;br&gt;  Banco-Empleado bien distinguidas, con el rombo del lado correcto.&lt;br&gt;- La tabla que cruza los seis requisitos y la leyenda de notacion dentro del&lt;br&gt;  diagrama." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="40.0" y="1004.0" width="560" height="164" as="geometry" />
         </mxCell>
         <mxCell id="revision-corregir" value='&lt;b&gt;QUE CORREGIR DE LA ENTREGA&lt;/b&gt;&lt;br&gt;- Hay una linea entre Cajero y Ejecutivo sin tipo, sin etiqueta y sin&lt;br&gt;  multiplicidad. Los dos son hermanos en la jerarquia y esa relacion no significa&lt;br&gt;  nada: hay que borrarla.&lt;br&gt;- Banco-Cuenta, Cliente-Cuenta, Cliente-Credito, Ejecutivo-Credito, Ejecutivo-&lt;br&gt;  Cuenta y Transaccion-Movimiento son lineas sin simbolo. Corresponde agregacion.&lt;br&gt;- Movimiento y DetalleTransaccion declaran los mismos campos (tipo, monto,&lt;br&gt;  descripcion) para la misma idea. El modelo resuelve dos veces "linea de la&lt;br&gt;  cartola": una de las dos sobra.&lt;br&gt;- Faltan multiplicidades en varias de esas mismas lineas.&lt;br&gt;- El estereotipo en UML es «abstract», no «abstracta».' style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#FBEBE8;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="640.0" y="1004.0" width="560" height="196" as="geometry" />
+        </mxCell>
+        <mxCell id="e10_ma" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="290.0" y="656.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e10_mb" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1172.0" y="528.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e11_ma" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1066.0" y="224.6" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e11_mb" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1066.0" y="594.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e15_ma" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1446.0" y="341.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e15_mb" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="354.0" y="295.6" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e16_ma" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1446.0" y="307.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e16_mb" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1414.0" y="152.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e17_ma" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1446.0" y="454.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e17_mb" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="354.0" y="608.8" width="40" height="18" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

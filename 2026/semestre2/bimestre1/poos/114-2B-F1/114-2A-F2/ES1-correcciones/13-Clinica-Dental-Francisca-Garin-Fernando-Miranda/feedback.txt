@@ -7,7 +7,8 @@ LO QUE RESOLVIERON BIEN
   abstracta, y los tres tratamientos desde TratamientoDental, con el
   estereotipo escrito en las tres.
 - Composicion AtencionMedica-DetalleAtencion con rombo relleno y 1 a 1..*.
-- IndicadorExterno separado del negocio y consultado con dependencia punteada.
+- IndicadorExterno separado del negocio, que es lo que corresponde. La linea
+  que lo consulta va con rombo hueco, como el resto.
 - El informe cierra revisando los seis requisitos uno por uno. Esa
   autoevaluacion antes de entregar conviene repetirla.
 

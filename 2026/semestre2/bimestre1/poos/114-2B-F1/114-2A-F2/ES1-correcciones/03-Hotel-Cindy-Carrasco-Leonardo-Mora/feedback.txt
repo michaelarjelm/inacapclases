@@ -4,9 +4,9 @@ Negocio: Hotel Boutique Los Alerces
 
 LO QUE RESOLVIERON BIEN
 - Los tres tipos de habitacion existen y cada uno resuelve su propia tarifa.
-- IndicadorFinanciero esta modelado aparte y se consulta con dependencia
-  punteada, que es exactamente lo que corresponde para un valor externo que
-  solo se lee.
+- IndicadorFinanciero esta modelado como una clase aparte, que es exactamente
+  lo que corresponde para un valor externo que solo se lee. La linea que lo
+  consulta va con rombo hueco, como el resto de las relaciones del curso.
 - Las dos reglas que bloquean una operacion estan declaradas como metodos:
   Habitacion.estaDisponible() y Reserva.validarAnticipo().
 

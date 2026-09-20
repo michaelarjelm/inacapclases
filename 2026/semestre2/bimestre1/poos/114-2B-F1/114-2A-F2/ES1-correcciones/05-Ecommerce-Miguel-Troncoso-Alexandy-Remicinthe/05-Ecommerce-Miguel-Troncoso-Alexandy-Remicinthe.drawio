@@ -202,7 +202,7 @@
             <mxPoint x="-22" y="4" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="e10" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0;entryY=0.248;" edge="1" parent="1" source="encargadobodega" target="pedido">
+        <mxCell id="e10" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0;entryY=0.248;" edge="1" parent="1" source="encargadobodega" target="pedido">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1110" y="320" />
@@ -210,12 +210,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e10_lbl" value="prepara / despacha" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e10">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="0" y="-10" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e11" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0.5;exitY=0;entryX=1;entryY=0.8;" edge="1" parent="1" source="administrador" target="producto">
+        <mxCell id="e11" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0;entryX=1;entryY=0.8;" edge="1" parent="1" source="administrador" target="producto">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1410" y="150" />
@@ -223,16 +218,23 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e11_lbl" value="gestiona catalogo" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e11">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="0" y="-10" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="revision-bien" value="&lt;b&gt;LO QUE RESOLVIERON BIEN - Miguel Troncoso y Alexandy Remicinthe&lt;/b&gt;&lt;br&gt;- La notacion es la mas prolija del curso: visibilidad, tipo de dato, parametros y&lt;br&gt;  retorno en todos los miembros, y el estereotipo abstracto declarado tanto en la&lt;br&gt;  clase como en los metodos.&lt;br&gt;- Los tres subtipos de Producto resuelven procesarEntrega() de forma realmente&lt;br&gt;  distinta (flete, enlace de descarga y agenda), y ProductoElectronica extiende&lt;br&gt;  ProductoFisico solo para la logica del dolar.&lt;br&gt;- Composicion Pedido-DetallePedido y agregacion DetallePedido-Producto&lt;br&gt;  correctamente distinguidas, con el argumento del ciclo de vida bien explicado.&lt;br&gt;- La dependencia «usa» de Pedido hacia Trabajador para verificar el permiso al&lt;br&gt;  despachar es una buena decision: el permiso se comprueba en el momento, no se&lt;br&gt;  guarda.&lt;br&gt;- La tabla que cruza los seis requisitos contra las clases responsables es un&lt;br&gt;  habito que conviene repetir." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
+        <mxCell id="revision-bien" value="&lt;b&gt;LO QUE RESOLVIERON BIEN - Miguel Troncoso y Alexandy Remicinthe&lt;/b&gt;&lt;br&gt;- La notacion es la mas prolija del curso: visibilidad, tipo de dato, parametros y&lt;br&gt;  retorno en todos los miembros, y el estereotipo abstracto declarado tanto en la&lt;br&gt;  clase como en los metodos.&lt;br&gt;- Los tres subtipos de Producto resuelven procesarEntrega() de forma realmente&lt;br&gt;  distinta (flete, enlace de descarga y agenda), y ProductoElectronica extiende&lt;br&gt;  ProductoFisico solo para la logica del dolar.&lt;br&gt;- Composicion Pedido-DetallePedido y agregacion DetallePedido-Producto&lt;br&gt;  correctamente distinguidas, con el argumento del ciclo de vida bien explicado.&lt;br&gt;- Que Pedido consulte a Trabajador para verificar el permiso al despachar, en vez&lt;br&gt;  de guardarlo, es una buena decision: el permiso se comprueba en el momento.&lt;br&gt;  Esa linea va con rombo hueco, como las demas.&lt;br&gt;- La tabla que cruza los seis requisitos contra las clases responsables es un&lt;br&gt;  habito que conviene repetir." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="40.0" y="768.0" width="560" height="244" as="geometry" />
         </mxCell>
         <mxCell id="revision-corregir" value='&lt;b&gt;QUE CORREGIR DE LA ENTREGA&lt;/b&gt;&lt;br&gt;- Ninguna clase representa el indicador externo. calcularPrecioFinal(dolar: float)&lt;br&gt;  recibe el valor como parametro, pero de donde sale ese dolar no esta en el&lt;br&gt;  modelo.&lt;br&gt;- La portada y el encabezado dicen "Programacion Orientada a Objetos". La&lt;br&gt;  asignatura es "Programacion Orientada a Objeto Seguro".' style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#FBEBE8;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="640.0" y="768.0" width="560" height="116" as="geometry" />
+        </mxCell>
+        <mxCell id="e10_ma" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1090.0" y="300.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e10_mb" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1566.0" y="311.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e11_ma" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1390.0" y="168.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e11_mb" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="314.0" y="99.8" width="40" height="18" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

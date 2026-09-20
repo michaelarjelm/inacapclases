@@ -403,7 +403,7 @@
             <mxPoint x="-22" y="-16" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="e20" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0;exitY=0.8;entryX=0;entryY=0.3;" edge="1" parent="1" source="paqueteturistico" target="tipocambio">
+        <mxCell id="e20" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0;exitY=0.8;entryX=0;entryY=0.3;" edge="1" parent="1" source="paqueteturistico" target="tipocambio">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="980" y="192" />
@@ -411,12 +411,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e20_lbl" value="consulta tipo de cambio" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e20">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="-30" y="0" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e21" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="administrador" target="proveedor">
+        <mxCell id="e21" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="administrador" target="proveedor">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="810" y="480" />
@@ -424,16 +419,23 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e21_lbl" value="gestiona" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e21">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="0" y="-10" as="offset" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="revision-bien" value="&lt;b&gt;LO QUE RESOLVIERON BIEN - Cristopher Figueroa y Elias Reyes&lt;/b&gt;&lt;br&gt;- Reserva compone detalleReserva y TipoItem funciona como catalogo compartido, con&lt;br&gt;  las multiplicidades correctas en los dos extremos.&lt;br&gt;- Separar Cliente de Viajero esta bien pensado y bien justificado: quien compra no&lt;br&gt;  siempre es quien viaja.&lt;br&gt;- Disponibilidad y Proveedor resuelven el control de cupos por fecha, que era la&lt;br&gt;  parte mas dificil de la ficha." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="40.0" y="702.0" width="560" height="132" as="geometry" />
         </mxCell>
         <mxCell id="revision-corregir" value='&lt;b&gt;QUE CORREGIR DE LA ENTREGA&lt;/b&gt;&lt;br&gt;- Los tres tipos de paquete estan unidos a Paquete con rombo hueco y 0..*, es&lt;br&gt;  decir agregacion. Son herencia: un paquete nacional es un Paquete, no una parte&lt;br&gt;  de un Paquete. El informe repite el error al justificarlo.&lt;br&gt;- Administrador y AgenteViajes estan unidos a trabajador con rombo relleno&lt;br&gt;  (composicion) y ademas guardan un atributo "Trabajador: trabajador". Tambien es&lt;br&gt;  herencia, y el atributo sobra.&lt;br&gt;- Cliente conserva numeroPasaporte, que el propio informe dice haber movido a&lt;br&gt;  Viajero.&lt;br&gt;- Varios atributos quedaron subrayados (numeroPasaporte, precioBaseUSD,&lt;br&gt;  monedaCotizacion). En UML el subrayado significa miembro estatico, de la clase y&lt;br&gt;  no de cada objeto.&lt;br&gt;- Nomenclatura mezclada: trabajador, pago y detalleReserva en minuscula, el resto&lt;br&gt;  en PascalCase.&lt;br&gt;- Disponibilidad-Proveedor usa "0..n". La notacion del curso es 0..*.' style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#FBEBE8;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="640.0" y="702.0" width="560" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="e20_ma" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="946.0" y="183.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e20_mb" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="946.0" y="544.6" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e21_ma" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="790.0" y="320.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e21_mb" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="2770.0" y="228.0" width="40" height="18" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

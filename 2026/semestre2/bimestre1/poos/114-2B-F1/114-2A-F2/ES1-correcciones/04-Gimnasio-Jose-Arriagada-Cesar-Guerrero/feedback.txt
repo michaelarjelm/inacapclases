@@ -22,9 +22,10 @@ PARA LA PROXIMA
 - Direccion, Comuna y ContactoEmergencia no los pide la ficha del gimnasio.
   Son tres clases que no resuelven ningun requisito y que hay que sostener
   despues.
-- Suplemento-IndicadorDolar quedo como linea simple. Es una consulta a un
-  valor externo: corresponde dependencia punteada, igual que en el resto de
-  los modelos del curso.
+- Suplemento-IndicadorDolar quedo como linea simple, igual que casi todas las
+  demas relaciones del modelo. Con el arbol de la sesion 3: no es herencia, y
+  el lado "muchos" acepta cero, asi que es agregacion con rombo hueco, el mismo
+  simbolo que ya usaron bien en Inventario-Suplemento.
 - Yoga, Spinning y Crossfit agregan realizarClase(): void, que ClaseDirigida
   no declara. Un metodo solo sobrescribe si existe en la clase base.
 

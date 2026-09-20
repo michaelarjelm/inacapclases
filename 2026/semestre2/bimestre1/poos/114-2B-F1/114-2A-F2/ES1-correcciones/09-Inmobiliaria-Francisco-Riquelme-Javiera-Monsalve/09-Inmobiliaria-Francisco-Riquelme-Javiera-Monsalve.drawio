@@ -233,7 +233,7 @@
             <mxPoint x="-22" y="-16" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="e12" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0.7;exitY=1;entryX=1;entryY=0.3;" edge="1" parent="1" source="propiedad" target="indicadoruf">
+        <mxCell id="e12" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0.7;exitY=1;entryX=1;entryY=0.3;" edge="1" parent="1" source="propiedad" target="indicadoruf">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1196" y="270" />
@@ -242,12 +242,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e12_lbl" value="consulta valor UF" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e12">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="0" y="-10" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e13" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.3;entryY=1;" edge="1" parent="1" source="administrador" target="contrato">
+        <mxCell id="e13" style="startArrow=diamondThin;startFill=0;startSize=14;endArrow=none;html=1;rounded=0;exitX=0.5;exitY=0;entryX=0.3;entryY=1;" edge="1" parent="1" source="administrador" target="contrato">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="770" y="423" />
@@ -255,19 +250,26 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e13_lbl" value="gestiona pago" style="text;html=1;fontSize=11;fontStyle=2;fontColor=#4C5761;align=center;verticalAlign=middle;connectable=0;" vertex="1" connectable="0" parent="e13">
-          <mxGeometry relative="1" x="0.0" as="geometry">
-            <mxPoint x="0" y="-10" as="offset" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="note1" value="&lt;b&gt;SEIS REQUISITOS MINIMOS CUBIERTOS&lt;/b&gt;&lt;br&gt;1. Tres subtipos con comportamiento distinto: Casa,&lt;br&gt;Departamento y Oficina sobrescriben calcularArriendo().&lt;br&gt;2. Dos trabajadores con permisos distintos: Corredor&lt;br&gt;(negocia con clientes) y Administrador (publica y gestiona&lt;br&gt;pagos, no negocia).&lt;br&gt;3. Dato validado: Persona.validarRut(), antes de firmar.&lt;br&gt;4. Transaccion con detalle: Contrato compone&lt;br&gt;DetalleContrato (arriendo, gastos comunes, garantia).&lt;br&gt;5. Dos reglas de bloqueo: Contrato.validarDisponibilidad()&lt;br&gt;y Contrato.validarMoraCliente().&lt;br&gt;6. Precio por indicador externo: Propiedad.valorUF&lt;br&gt;convertido a pesos via IndicadorUF, actualizado a diario." style="text;html=1;align=left;verticalAlign=top;fontStyle=2;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=6;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="40" y="620" width="360" height="280" as="geometry" />
         </mxCell>
-        <mxCell id="revision-bien" value="&lt;b&gt;LO QUE RESOLVIERON BIEN - Francisco Riquelme y Javiera Monsalve&lt;/b&gt;&lt;br&gt;- Los tres tipos de propiedad sobrescriben calcularArriendoUF() y cada uno declara&lt;br&gt;  las caracteristicas que entran en su calculo.&lt;br&gt;- IndicadorUF y SistemaFinanciero modelados como fuentes externas, consultados con&lt;br&gt;  dependencia punteada y con el estereotipo externo declarado en las dos.&lt;br&gt;- La notacion es correcta de principio a fin: triangulo hueco en las dos&lt;br&gt;  jerarquias, rombo relleno en la composicion con DetalleCobro, y visibilidad y&lt;br&gt;  tipo de dato en todos los miembros.&lt;br&gt;- El informe justifica cada relacion y cada multiplicidad una por una, e incluso&lt;br&gt;  explica por que no hay ninguna agregacion. Ese nivel de argumentacion es el que&lt;br&gt;  pedia la actividad 3." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
+        <mxCell id="revision-bien" value="&lt;b&gt;LO QUE RESOLVIERON BIEN - Francisco Riquelme y Javiera Monsalve&lt;/b&gt;&lt;br&gt;- Los tres tipos de propiedad sobrescriben calcularArriendoUF() y cada uno declara&lt;br&gt;  las caracteristicas que entran en su calculo.&lt;br&gt;- IndicadorUF y SistemaFinanciero modelados como fuentes externas, con el&lt;br&gt;  estereotipo externo declarado en las dos. Las lineas que los consultan van con&lt;br&gt;  rombo hueco, como el resto.&lt;br&gt;- La notacion es correcta de principio a fin: triangulo hueco en las dos&lt;br&gt;  jerarquias, rombo relleno en la composicion con DetalleCobro, y visibilidad y&lt;br&gt;  tipo de dato en todos los miembros.&lt;br&gt;- El informe justifica cada relacion y cada multiplicidad una por una, e incluso&lt;br&gt;  explica por que no hay ninguna agregacion. Ese nivel de argumentacion es el que&lt;br&gt;  pedia la actividad 3." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#2F6B4F;fontSize=11;strokeColor=#2F6B4F;fillColor=#E3EFE7;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="40.0" y="970.0" width="560" height="196" as="geometry" />
         </mxCell>
         <mxCell id="revision-corregir" value="&lt;b&gt;QUE CORREGIR DE LA ENTREGA&lt;/b&gt;&lt;br&gt;- El diagrama no muestra ninguna multiplicidad. El informe las describe todas&lt;br&gt;  correctamente, una por una, pero ninguna quedo escrita sobre las lineas, y ese&lt;br&gt;  criterio se evalua sobre el diagrama. Es lo unico que separa este trabajo de la&lt;br&gt;  nota maxima.&lt;br&gt;- ContratoArriendo no declara los atributos cliente, propiedad, corredor, detalles&lt;br&gt;  ni pagos: las relaciones estan dibujadas pero no existen todavia como codigo." style="text;html=1;align=left;verticalAlign=top;fontStyle=0;fontColor=#98392C;fontSize=11;strokeColor=#98392C;fillColor=#FBEBE8;rounded=1;arcSize=4;spacingLeft=10;spacingTop=8;spacingRight=10;spacingBottom=8;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="640.0" y="970.0" width="560" height="132" as="geometry" />
+        </mxCell>
+        <mxCell id="e12_ma" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1176.0" y="244.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e12_mb" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1674.0" y="524.6" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e13_ma" value="1" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="750.0" y="408.0" width="40" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="e13_mb" value="0..*" style="text;html=1;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="1850.0" y="400.0" width="40" height="18" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
