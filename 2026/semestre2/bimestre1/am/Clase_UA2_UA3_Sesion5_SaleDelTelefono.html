@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA2/UA3 Sesion 5 - Sale del telefono</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0; color: var(--text);
+      scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white; justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 640px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 52px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 44px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.98; letter-spacing: -0.01em; color: var(--dark); margin-bottom: 22px;
+    }
+    .concept-title span { color: var(--red); }
+    .concept-body { max-width: 940px; }
+    .concept-body p { font-size: 18px; line-height: 1.6; color: #333; margin-bottom: 13px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 16px 20px; margin: 16px 0;
+      max-width: 940px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 13px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px;
+    }
+    .callout-content p { font-size: 16px; line-height: 1.55; margin: 0; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+
+    /* INDICE */
+    .index-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 28px; max-width: 780px; }
+    .index-item {
+      background: #F8F8F8; border: 1px solid #E0E0E0;
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .index-item.activo { border-color: var(--red); background: #FFF1F1; }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 28px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 6px;
+    }
+    .index-name { font-size: 15px; font-weight: 600; color: var(--dark); line-height: 1.4; }
+    .index-type { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-pasos    { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-opcional { background: #F4F4F4; color: #888; border: 1px solid #DADADA; }
+    .badge-cierre   { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* TABLA */
+    .tbl { width: 100%; max-width: 940px; border-collapse: collapse; margin-top: 14px; font-size: 15px; }
+    .tbl th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 9px 14px; text-align: left;
+    }
+    .tbl td { padding: 10px 14px; border-bottom: 1px solid #E0E0E0; vertical-align: middle; line-height: 1.4; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:nth-child(even) td { background: #F8F8F8; }
+
+    /* DEFINICION */
+    .definicion {
+      background: #FFF6F6; border: 2px solid #F3C9CB; border-left: 6px solid var(--red);
+      border-radius: 8px; padding: 18px 22px; margin: 14px 0; max-width: 940px;
+    }
+    .def-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 6px;
+    }
+    .def-txt { font-size: 19px; line-height: 1.5; color: var(--dark); font-weight: 500; }
+    .def-txt strong { font-weight: 800; }
+
+    /* PASO */
+    .paso {
+      display: flex; gap: 18px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 5px solid var(--red);
+      border-radius: 8px; padding: 16px 20px; margin: 10px 0; max-width: 940px;
+    }
+    .paso-num {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 900;
+      color: var(--red); line-height: 1; flex-shrink: 0; width: 34px; padding-top: 2px;
+    }
+    .paso-cont { flex: 1; }
+    .paso-tit { font-size: 17px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .paso-desc { font-size: 15px; color: #444; line-height: 1.5; }
+    .paso-desc code { margin: 0 2px; }
+
+    /* MAPA DE NAVEGACION: que pantalla ven y que clickean, en orden */
+    .flow { max-width: 640px; margin: 8px auto 0; }
+    .flow-step {
+      background: #FAFAFA; border: 2px solid #E0E0E0; border-radius: 10px;
+      padding: 14px 20px;
+    }
+    .flow-screen {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+    }
+    .flow-action { font-size: 16px; color: var(--dark); line-height: 1.5; }
+    .flow-btn {
+      display: inline-block; background: #1A73E8; color: #FFF; font-family: 'Barlow', sans-serif;
+      font-size: 14px; font-weight: 600; padding: 3px 12px; border-radius: 4px; margin: 0 2px;
+    }
+    .flow-field {
+      display: inline-block; border: 1px solid #B0B0B0; background: #FFF; color: #555;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 2px 8px;
+      border-radius: 3px; margin: 0 2px;
+    }
+    .flow-arrow { display: flex; justify-content: center; color: var(--red); font-size: 22px; line-height: 1; padding: 2px 0; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+      background: #EBEBEB; padding: 2px 6px; border-radius: 3px; color: #C0392B;
+    }
+
+    /* CODIGO (terminal / PowerShell) */
+    .code-block { background: #1A1A1A; border-radius: 8px; padding: 18px 22px; margin: 14px 0; max-width: 940px; overflow-x: auto; }
+    .code-block pre { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; color: #EDEDED; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+    .code-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 10px;
+    }
+    .code-block .cmt { color: #6E6E6E; font-style: italic; }
+
+    /* SINTAXIS COLOREADA (aplicada por script al cargar) */
+    .tok-kw   { color: #C678DD; }
+    .tok-type { color: #61AFEF; }
+    .tok-str  { color: #98C379; }
+    .tok-cmt  { color: #7A7A7A; font-style: italic; }
+    .tok-num  { color: #D19A66; }
+    .tok-tag  { color: #61AFEF; }
+    .tok-attr { color: #D19A66; }
+
+    /* PROMPT sugerido para Antigravity CLI */
+    .prompt-block {
+      background: #FFF6F6; border: 2px solid #F3C9CB; border-left: 6px solid var(--red);
+      border-radius: 8px; padding: 16px 22px; margin: 14px 0; max-width: 940px;
+    }
+    .prompt-k {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .prompt-txt { font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.6; color: var(--dark); }
+
+    /* MOCKUP DE PANTALLA (login / lista / crud) */
+    .fono-wrap { display: flex; justify-content: center; margin: 14px 0; }
+    .fono {
+      width: 260px; flex-shrink: 0; background: #FFF;
+      border: 9px solid #1A1A1A; border-radius: 26px; overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+    }
+    .fono-status {
+      background: #1A1A1A; color: rgba(255,255,255,0.4);
+      font-family: 'Barlow', sans-serif; font-size: 10px;
+      padding: 5px 14px; display: flex; justify-content: space-between;
+    }
+    .fono-screen {
+      background: #FFF; padding: 22px 18px; min-height: 400px; position: relative;
+      display: flex; flex-direction: column; align-items: center; gap: 9px;
+    }
+    .fono-logo {
+      width: 60px; height: 60px; border-radius: 8px; background: #F4F4F4;
+      border: 1px dashed #C6C6C6; display: flex; align-items: center; justify-content: center;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 9px; color: #999;
+      text-align: center; line-height: 1.2; padding: 4px;
+    }
+    .fono-titulo {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 17px;
+      color: var(--dark); text-transform: uppercase; margin-bottom: 2px;
+    }
+    .fono-campo {
+      width: 100%; border: 1px solid #C6C6C6; border-radius: 6px;
+      padding: 9px 12px; font-family: 'Barlow', sans-serif; font-size: 12px; color: #999; background: #FAFAFA;
+    }
+    .fono-row { display: flex; align-items: center; gap: 6px; width: 100%; }
+    .fono-row .fono-campo { flex: 1; }
+    .fono-icon-btn {
+      width: 34px; height: 34px; border: 1px solid #C6C6C6; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center; font-size: 15px;
+      flex-shrink: 0; background: #FAFAFA;
+    }
+    .fono-btn {
+      width: 100%; background: var(--red); color: #FFF; text-align: center;
+      padding: 10px; border-radius: 6px; font-weight: 700; font-size: 12px; text-transform: uppercase;
+      font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.04em;
+    }
+    .fono-texto { font-size: 13px; color: #444; text-align: center; line-height: 1.4; }
+    .fono-cap {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+      text-align: center; margin-top: 10px;
+    }
+    .fono-list { width: 100%; display: flex; flex-direction: column; gap: 6px; }
+    .fono-item {
+      width: 100%; border: 1px solid #C6C6C6; border-radius: 6px;
+      padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;
+      font-size: 12px; color: #333; background: #FAFAFA;
+    }
+    .fono-item-del { color: var(--red); font-size: 14px; flex-shrink: 0; margin-left: 8px; }
+    .fono-fab {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--red); color: #FFF;
+      display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700;
+      position: absolute; bottom: 14px; right: 14px; box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    }
+
+    #progress {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--red);
+      width: 0%; z-index: 9999; transition: width 0.35s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+    }
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+  </style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Aplicaciones Móviles para IoT · TI3V42 · Unidad 2 y 3 · Sesión 5</div>
+  <div class="cover-title anim">Sale del<br><span>teléfono</span></div>
+  <p class="cover-desc anim">
+    Hasta hoy la app vivía sola en la memoria del teléfono: todo se perdía al cerrarla. Hoy creamos
+    un proyecto real de Firebase, el login pasa a ser de verdad, y armamos una lista que se puede
+    crear, ver y borrar desde la nube. Sigue sin Arduino — el sensor real llega más adelante.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>103-4B-F1</span></span>
+    <span class="cover-chip">Jueves 10 de septiembre 2026</span>
+    <span class="cover-chip">18:30 a 21:50 · Laboratorio A404</span>
+    <span class="cover-chip">INACAP Puente Alto</span>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Panorama</span>
+  <div class="concept-label anim">Antes de empezar</div>
+  <div class="concept-title anim">Así se ve <span>hoy</span></div>
+  <div class="concept-body">
+    <div class="index-grid anim">
+      <div class="index-item activo"><div class="index-num">1</div><div class="index-name">Proyecto Firebase real</div><div class="index-type">Ahora</div></div>
+      <div class="index-item"><div class="index-num">2</div><div class="index-name">Login real con Firebase Auth</div><div class="index-type">Después</div></div>
+      <div class="index-item"><div class="index-num">3</div><div class="index-name">RecyclerView + Firestore (ver la lista)</div><div class="index-type">Después</div></div>
+      <div class="index-item"><div class="index-num">4</div><div class="index-name">Crear un ítem nuevo</div><div class="index-type">Después</div></div>
+      <div class="index-item"><div class="index-num">5</div><div class="index-name">Borrar un ítem</div><div class="index-type">Después</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Repaso relámpago</span>
+  <div class="concept-label anim">Lo que ya tienen armado</div>
+  <div class="concept-title anim">Tres pantallas, <span>datos que se pierden</span></div>
+  <div class="concept-body">
+    <p class="anim">Login → Bienvenida → Preferencias, con <code>findViewById</code> y
+    <code>android:onClick</code>, todo construido en incrementos chicos con Antigravity. Pero hasta
+    ahora, cada dato (el usuario, los intentos fallidos, las preferencias) vive solo en la memoria
+    de la Activity: se borra si cierran la app.</p>
+    <p class="anim">Hoy eso cambia. El login va a validar contra una cuenta real, y vamos a armar
+    una lista que persiste de verdad, afuera del teléfono. Misma técnica de siempre: un incremento,
+    lo corren, lo explican, seguimos con el próximo.</p>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">Por qué Firebase</div>
+  <div class="concept-title anim">Un backend <span>sin backend</span></div>
+  <div class="concept-body">
+    <div class="definicion anim">
+      <div class="def-k">Firebase</div>
+      <div class="def-txt">Una plataforma de Google que da autenticación, base de datos y otros
+      servicios <strong>listos para usar desde un SDK</strong>, sin tener que programar ni hospedar
+      un servidor propio.</div>
+    </div>
+    <p class="anim">La idea original de este proyecto era conectarse al Atlas (MongoDB) de otro
+    ramo tuyo. Se descartó: Realm/Atlas Device Sync (el puente que hacía posible conectar Android
+    directo a Mongo) llegó a su fin de vida, y la única alternativa era programar y mantener una
+    API propia entre medio.</p>
+    <p class="anim">Firebase resuelve exactamente ese problema: Android se conecta <strong>directo</strong>
+    con Firestore (su base de datos) y con Firebase Authentication (su login), sin ningún servidor
+    intermedio que ustedes tengan que construir.</p>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Sin código · 1 de 5</span>
+  <div class="concept-label anim">Antes de tocar Android Studio</div>
+  <div class="concept-title anim">Crea el <span>proyecto real</span></div>
+  <div class="concept-body">
+    <div class="flow anim">
+      <div class="flow-step">
+        <div class="flow-screen">Pantalla: console.firebase.google.com</div>
+        <div class="flow-action">Inicia sesión con tu cuenta de Google → clic en el botón azul
+        <span class="flow-btn">Crear proyecto</span></div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="flow-screen">Pantalla: nombra tu proyecto</div>
+        <div class="flow-action">Escribe el nombre en el campo de texto (el mismo de tu proyecto
+        de la lista de 14) → clic <span class="flow-btn">Continuar</span></div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="flow-screen">Si aparece: Gemini in Firebase</div>
+        <div class="flow-action">Ciérrala o sáltala con la X — no la necesitamos hoy.</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="flow-screen">Pantalla: Google Analytics para este proyecto</div>
+        <div class="flow-action">Apaga el interruptor → clic
+        <span class="flow-btn">Crear proyecto</span> → espera la barra de progreso →
+        <span class="flow-btn">Continuar</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Sin código · 2 de 5</span>
+  <div class="concept-label anim">Ya tienes el proyecto</div>
+  <div class="concept-title anim">Registra tu <span>app Android</span></div>
+  <div class="concept-body">
+    <div class="flow anim">
+      <div class="flow-step">
+        <div class="flow-screen">Pantalla: resumen del proyecto</div>
+        <div class="flow-action">Clic en el ícono <strong>Android</strong> (uno de los 3 íconos de
+        plataforma, el del medio) para <span class="flow-btn">Agregar app</span></div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="flow-screen">Pantalla: registra la app</div>
+        <div class="flow-action">Escribe tu <code>applicationId</code> <strong>exacto</strong>
+        (cópialo de <code>build.gradle.kts</code> del módulo <code>app</code>, arriba de todo) en
+        el campo <span class="flow-field">Nombre del paquete de Android</span> → "Apodo de la app"
+        es opcional → clic <span class="flow-btn">Registrar app</span></div>
+      </div>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">⚠</div>
+      <div class="callout-content">
+        <strong>El applicationId tiene que calzar exacto</strong>
+        <p>Si registran la app con un nombre de paquete distinto al real, Firebase nunca va a
+        reconocer las llamadas que hace su código — y el error no dice "paquete incorrecto", dice
+        cosas raras de configuración.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Sin código · 3 de 5</span>
+  <div class="concept-label anim">Sigue sin tocar Android Studio</div>
+  <div class="concept-title anim">Baja el <span>archivo de configuración</span></div>
+  <div class="concept-body">
+    <div class="flow anim">
+      <div class="flow-step">
+        <div class="flow-screen">Pantalla: descarga el archivo de configuración</div>
+        <div class="flow-action">Clic en el botón azul
+        <span class="flow-btn">Descargar google-services.json</span> — se guarda en tu carpeta de
+        Descargas.</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="flow-screen">Ahora sí, en Android Studio</div>
+        <div class="flow-action">Cambia la vista del panel de proyecto de "Android" a
+        <strong>"Project"</strong> (arriba a la izquierda) para ver las carpetas reales. Arrastra
+        el archivo descargado a la carpeta <code>app/</code>, al mismo nivel que
+        <code>build.gradle.kts</code> del módulo — <strong>no</strong> dentro de <code>src/</code>.</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="flow-screen">Pantalla: agrega el SDK de Firebase</div>
+        <div class="flow-action">Firebase muestra código para pegar a mano en Gradle — no lo
+        hagan, eso lo genera Antigravity en el próximo incremento. Clic
+        <span class="flow-btn">Siguiente</span> dos veces → <span class="flow-btn">Continuar en la consola</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Sin código · 4 de 5</span>
+  <div class="concept-label anim">Última parada antes del código</div>
+  <div class="concept-title anim">Activa el <span>login real</span></div>
+  <div class="concept-body">
+    <div class="flow anim">
+      <div class="flow-step">
+        <div class="flow-screen">Menú de la izquierda, en la consola</div>
+        <div class="flow-action">Sección <strong>Seguridad</strong> → clic en
+        <strong>Authentication</strong> → clic <span class="flow-btn">Comenzar</span></div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="flow-screen">Pestaña: Sign-in method</div>
+        <div class="flow-action">Clic en la fila <strong>Correo electrónico/contraseña</strong> →
+        activa el interruptor de arriba (el de "Habilitar", no el de "Vínculo de correo
+        electrónico") → clic <span class="flow-btn">Guardar</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Sin código · 5 de 5</span>
+  <div class="concept-label anim">Lo último antes de programar</div>
+  <div class="concept-title anim">Crea tu <span>cuenta de prueba</span></div>
+  <div class="concept-body">
+    <div class="flow anim">
+      <div class="flow-step">
+        <div class="flow-screen">Pestaña: Users (al lado de Sign-in method)</div>
+        <div class="flow-action">Clic <span class="flow-btn">Add user</span></div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="flow-screen">Ventana: Add user</div>
+        <div class="flow-action">Escribe un email cualquiera (ej. <code>dupla3@inacap.cl</code>) y
+        una contraseña de al menos 6 caracteres → clic <span class="flow-btn">Add user</span></div>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">💡</div>
+      <div class="callout-content">
+        <strong>Anota ese email y esa contraseña</strong>
+        <p>No hay pantalla de registro hoy — van a usar exactamente esa cuenta para probar el login
+        real en el incremento 22.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Incremento 21</span>
+  <div class="concept-label anim">Que el proyecto sepa que existe Firebase</div>
+  <div class="concept-title anim">Dependencias por <span>Gradle</span></div>
+  <div class="concept-body">
+    <div class="prompt-block anim">
+      <div class="prompt-k">🤖 Prompt para Antigravity</div>
+      <div class="prompt-txt">"Agrega el plugin de Google Services al build.gradle.kts del proyecto y al del módulo app. En el build.gradle.kts del módulo app, agrega el BoM de Firebase versión 33.5.1 y las dependencias de firebase-auth-ktx y firebase-firestore-ktx. Comenta cada línea que agregues."</div>
+    </div>
+    <div class="code-block anim">
+      <div class="code-title">build.gradle.kts (módulo app)</div>
+      <pre>plugins {
+    // Procesa el google-services.json que ya arrastraron a la carpeta app/
+    id("com.google.gms.google-services")
+}
+
+dependencies {
+    // BoM: fija versiones de Firebase que son compatibles entre si
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    // Login real (Firebase Authentication)
+    implementation("com.google.firebase:firebase-auth-ktx")
+    // Base de datos en la nube (Firestore)
+    implementation("com.google.firebase:firebase-firestore-ktx")
+}</pre>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">ℹ</div>
+      <div class="callout-content">
+        <strong>Por qué un BoM y no versiones sueltas</strong>
+        <p>Firebase tiene muchas librerías (Auth, Firestore, Storage...) que deben usar versiones
+        compatibles entre sí. El BoM ("Bill of Materials") fija todas esas versiones de una vez —
+        así no arriesgan mezclar una versión de Auth con una de Firestore que no se llevan bien.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">El login deja de ser una simulación</div>
+  <div class="concept-title anim">Firebase <span>Authentication</span></div>
+  <div class="concept-body">
+    <div class="definicion anim">
+      <div class="def-k">Firebase Authentication</div>
+      <div class="def-txt">El servicio de Firebase que guarda usuarios reales (email + contraseña,
+      entre otras opciones) y valida el login <strong>sin que ustedes tengan que guardar
+      contraseñas</strong> en ningún lado.</div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">💡</div>
+      <div class="callout-content">
+        <strong>Hoy no construimos la pantalla de registro</strong>
+        <p>Ya crearon su cuenta de prueba directo en la consola, un rato atrás — no
+        gastamos un incremento completo en una pantalla de registro. Usen esa cuenta para probar su
+        login hoy.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Incremento 22</span>
+  <div class="concept-label anim">De vuelta en el login</div>
+  <div class="concept-title anim">onIngresarClick <span>habla con Firebase</span></div>
+  <div class="concept-body">
+    <div class="prompt-block anim">
+      <div class="prompt-k">🤖 Prompt para Antigravity</div>
+      <div class="prompt-txt">"Reemplaza la lógica de onIngresarClick en MainActivity.kt: en vez de validar localmente, usa FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password) con un addOnCompleteListener. Si tarea.isSuccessful, navega a BienvenidaActivity pasando el email como extra. Si falla, muestra un Toast 'Usuario o contraseña incorrectos'. Comenta cada línea."</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Incremento 22</span>
+  <div class="concept-label anim">El código generado</div>
+  <div class="concept-title anim">El login, <span>en Kotlin</span></div>
+  <div class="concept-body">
+    <div class="code-block anim">
+      <div class="code-title">MainActivity.kt</div>
+      <pre>fun onIngresarClick(view: View) {
+    // Busca el campo de usuario (ahora es el email real)
+    val edtUsuario = findViewById&lt;EditText&gt;(R.id.edtUsuario)
+    // Busca el campo de contrasena
+    val edtPassword = findViewById&lt;EditText&gt;(R.id.edtPassword)
+
+    val email = edtUsuario.text.toString()
+    val password = edtPassword.text.toString()
+
+    // Le pide a Firebase que valide el email y la contrasena
+    FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+        .addOnCompleteListener { tarea ->
+            if (tarea.isSuccessful) {
+                // Credenciales correctas: avanza a Bienvenida
+                val intent = Intent(this, BienvenidaActivity::class.java)
+                intent.putExtra("usuario", email)
+                startActivity(intent)
+            } else {
+                // Firebase rechazo el login: el email no existe o la clave esta mala
+                Toast.makeText(this, "Usuario o contrasena incorrectos", Toast.LENGTH_SHORT).show()
+            }
+        }
+}</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Por qué</span>
+  <div class="concept-label anim">Incremento 22, una aclaración</div>
+  <div class="concept-title anim">Una espera <span>que es real</span></div>
+  <div class="concept-body">
+    <div class="callout callout-info anim">
+      <div class="callout-icon">ℹ</div>
+      <div class="callout-content">
+        <strong>Por qué un addOnCompleteListener y no un if directo</strong>
+        <p>Validar contra Firebase implica ir a internet y volver — no pasa al instante. El
+        <code>addOnCompleteListener</code> le dice a Kotlin "sigue con lo tuyo, y cuando la respuesta
+        llegue, ejecuta este bloque". Es el mismo tipo de espera sin congelar la pantalla que ya
+        vieron con <code>postDelayed</code> en la sesión pasada, pero esta vez la espera es real:
+        depende de la red.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Checkpoint</span>
+  <div class="concept-label anim">Así se ve</div>
+  <div class="concept-title anim">Login <span>rechazado de verdad</span></div>
+  <div class="concept-body">
+    <div class="fono-wrap anim">
+      <div class="fono">
+        <div class="fono-status"><span>18:30</span><span>🔋 📶</span></div>
+        <div class="fono-screen">
+          <div class="fono-logo">LOGO<br>INACAP</div>
+          <div class="fono-titulo">Iniciar sesión</div>
+          <div class="fono-campo">duplaN@inacap.cl</div>
+          <div class="fono-campo">••••••••</div>
+          <div class="fono-btn">Ingresar</div>
+          <div class="fono-texto">"Usuario o contraseña incorrectos"<br>(Toast real, viene de Firebase)</div>
+        </div>
+      </div>
+    </div>
+    <div class="fono-cap anim">Ya no es una validación local: el mensaje depende de lo que Firebase responda</div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">Lo prometido la sesión pasada</div>
+  <div class="concept-title anim">RecyclerView: <span>una lista de verdad</span></div>
+  <div class="concept-body">
+    <div class="definicion anim">
+      <div class="def-k">RecyclerView + Adapter + ViewHolder</div>
+      <div class="def-txt">Un <strong>RecyclerView</strong> muestra una lista larga sin crear una
+      vista por cada fila de una vez — reutiliza (recicla) las filas que salen de pantalla. El
+      <strong>Adapter</strong> es el puente entre los datos y las filas; el <strong>ViewHolder</strong>
+      guarda las referencias a las vistas de una fila, para no buscarlas de nuevo cada vez.</div>
+    </div>
+    <p class="anim">A diferencia del <code>Switch</code> o el <code>Spinner</code> de la sesión
+    pasada, esto son tres piezas nuevas que trabajan juntas — por eso hoy la construimos completa,
+    ya conectada a datos reales, en vez de con una lista simulada como se había pensado en un
+    principio.</p>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Incremento 23</span>
+  <div class="concept-label anim">Primero, el molde del dato</div>
+  <div class="concept-title anim">La clase <span>Lectura</span></div>
+  <div class="concept-body">
+    <div class="prompt-block anim">
+      <div class="prompt-k">🤖 Prompt para Antigravity</div>
+      <div class="prompt-txt">"Crea Lectura.kt con una data class Lectura que tenga un campo id anotado con @DocumentId (String, vacío por defecto), descripcion (String, vacío por defecto) y valor (Double, 0.0 por defecto). Comenta cada línea explicando para qué sirve."</div>
+    </div>
+    <div class="code-block anim">
+      <div class="code-title">Lectura.kt</div>
+      <pre>// Representa un documento guardado en la coleccion "lecturas" de Firestore
+data class Lectura(
+    // Firestore llena este campo solo con el id real del documento
+    @DocumentId val id: String = "",
+    // El dato que escribe la dupla
+    val descripcion: String = "",
+    // Reservado para cuando el sensor real mande un numero (sesion 7 en adelante)
+    val valor: Double = 0.0
+)</pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">💡</div>
+      <div class="callout-content">
+        <strong>Por qué todos los campos tienen valor por defecto</strong>
+        <p>Firestore necesita poder crear un objeto Lectura "vacío" primero y llenarlo después con
+        los datos del documento. Sin valores por defecto, esa conversión automática falla.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Incremento 24</span>
+  <div class="concept-label anim">Conectando con la nube</div>
+  <div class="concept-title anim">Escuchar la colección <span>en tiempo real</span></div>
+  <div class="concept-body">
+    <div class="prompt-block anim">
+      <div class="prompt-k">🤖 Prompt para Antigravity</div>
+      <div class="prompt-txt">"En la Activity de la lista, crea escucharLecturas(): configura el RecyclerView con un LinearLayoutManager, y agrega un addSnapshotListener a la colección 'lecturas' de Firestore que convierta cada documento en un objeto Lectura y actualice el adapter con la lista más reciente. Comenta cada línea."</div>
+    </div>
+    <div class="code-block anim">
+      <div class="code-title">ListaActivity.kt</div>
+      <pre>fun escucharLecturas() {
+    // Busca la lista por su id
+    val recycler = findViewById&lt;RecyclerView&gt;(R.id.recyclerLecturas)
+    // Acomoda los items en una columna, uno debajo del otro
+    recycler.layoutManager = LinearLayoutManager(this)
+
+    // Se conecta a la coleccion "lecturas" de Firestore, en tiempo real
+    Firebase.firestore.collection("lecturas")
+        .addSnapshotListener { snapshot, error ->
+            // Si algo salio mal, no sigue
+            if (error != null || snapshot == null) return@addSnapshotListener
+
+            // Convierte cada documento en un objeto Lectura
+            val lista = snapshot.documents.mapNotNull { it.toObject(Lectura::class.java) }
+            // Actualiza el adapter con la lista mas reciente
+            recycler.adapter = LecturaAdapter(lista)
+        }
+}</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Por qué</span>
+  <div class="concept-label anim">Incremento 24, una aclaración</div>
+  <div class="concept-title anim">Una lista que <span>se actualiza sola</span></div>
+  <div class="concept-body">
+    <div class="callout callout-info anim">
+      <div class="callout-icon">ℹ</div>
+      <div class="callout-content">
+        <strong>Por qué addSnapshotListener y no leer una sola vez</strong>
+        <p>Un <code>get()</code> trae los datos una vez. <code>addSnapshotListener</code> se queda
+        escuchando: si otra dupla (o ustedes mismos desde otro teléfono) agrega o borra un
+        documento, la lista se actualiza sola, sin recargar la pantalla.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Incremento 24</span>
+  <div class="concept-label anim">La pieza que faltaba</div>
+  <div class="concept-title anim">El <span>Adapter</span></div>
+  <div class="concept-body">
+    <div class="prompt-block anim">
+      <div class="prompt-k">🤖 Prompt para Antigravity</div>
+      <div class="prompt-txt">"Crea item_lectura.xml (un TextView txtItem y un ImageButton btnBorrar en una fila) y LecturaAdapter.kt: un RecyclerView.Adapter para List&lt;Lectura&gt; con su LecturaViewHolder. En onBindViewHolder, muestra la descripcion y deja btnBorrar listo para conectar después. Comenta cada línea."</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Incremento 24</span>
+  <div class="concept-label anim">El código generado</div>
+  <div class="concept-title anim">El Adapter, <span>en Kotlin</span></div>
+  <div class="concept-body">
+    <div class="code-block anim">
+      <div class="code-title">LecturaAdapter.kt</div>
+      <pre>class LecturaAdapter(private val items: List&lt;Lectura&gt;) :
+    RecyclerView.Adapter&lt;LecturaAdapter.LecturaViewHolder&gt;() {
+
+    // Guarda las referencias a las vistas de una fila, para no buscarlas de nuevo
+    class LecturaViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val texto: TextView = view.findViewById(R.id.txtItem)
+        val botonBorrar: ImageButton = view.findViewById(R.id.btnBorrar)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LecturaViewHolder {
+        // Infla el layout de una fila (item_lectura.xml)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_lectura, parent, false)
+        return LecturaViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: LecturaViewHolder, position: Int) {
+        // Muestra el dato de esta fila
+        holder.texto.text = items[position].descripcion
+    }
+
+    override fun getItemCount() = items.size
+}</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Checkpoint</span>
+  <div class="concept-label anim">Así se ve</div>
+  <div class="concept-title anim">La lista <span>ya vive en la nube</span></div>
+  <div class="concept-body">
+    <div class="fono-wrap anim">
+      <div class="fono">
+        <div class="fono-status"><span>18:30</span><span>🔋 📶</span></div>
+        <div class="fono-screen">
+          <div class="fono-titulo">Lecturas</div>
+          <div class="fono-list">
+            <div class="fono-item"><span>Temperatura sala A404</span><span class="fono-item-del">🗑</span></div>
+            <div class="fono-item"><span>Prueba dupla 3</span><span class="fono-item-del">🗑</span></div>
+            <div class="fono-item"><span>Humedad invernadero</span><span class="fono-item-del">🗑</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fono-cap anim">RecyclerView + Adapter, alimentado por addSnapshotListener</div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Incremento 25</span>
+  <div class="concept-label anim">La C de CRUD</div>
+  <div class="concept-title anim">Crear un <span>ítem nuevo</span></div>
+  <div class="concept-body">
+    <div class="prompt-block anim">
+      <div class="prompt-k">🤖 Prompt para Antigravity</div>
+      <div class="prompt-txt">"Agrega un EditText edtNuevaLectura y un botón flotante btnAgregar (FloatingActionButton) en activity_lista.xml. En ListaActivity.kt, crea onAgregarClick: arma un objeto Lectura con la descripcion escrita y lo agrega a la coleccion 'lecturas' de Firestore con .add(). Al terminar, limpia el campo de texto. Comenta cada línea."</div>
+    </div>
+    <div class="code-block anim">
+      <div class="code-title">ListaActivity.kt</div>
+      <pre>fun onAgregarClick(view: View) {
+    // Busca el campo de texto donde escribieron el nuevo dato
+    val edtNuevaLectura = findViewById&lt;EditText&gt;(R.id.edtNuevaLectura)
+    val descripcion = edtNuevaLectura.text.toString()
+
+    // No hace nada si el campo esta vacio
+    if (descripcion.isEmpty()) return
+
+    // Arma el objeto a guardar (el id lo asigna Firestore solo)
+    val lectura = Lectura(descripcion = descripcion)
+
+    // Lo agrega como un documento nuevo de la coleccion "lecturas"
+    Firebase.firestore.collection("lecturas").add(lectura)
+        .addOnSuccessListener {
+            // Limpia el campo para el siguiente ingreso
+            edtNuevaLectura.setText("")
+        }
+}</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Por qué</span>
+  <div class="concept-label anim">Incremento 25, una aclaración</div>
+  <div class="concept-title anim">Nadie tiene que <span>refrescar nada</span></div>
+  <div class="concept-body">
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">💡</div>
+      <div class="callout-content">
+        <strong>No hace falta refrescar la lista a mano</strong>
+        <p>El <code>addSnapshotListener</code> del incremento anterior ya está escuchando la
+        colección — apenas Firestore confirma el nuevo documento, la lista se actualiza sola.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Checkpoint</span>
+  <div class="concept-label anim">Así se ve</div>
+  <div class="concept-title anim">Un dato <span>que sube solo</span></div>
+  <div class="concept-body">
+    <div class="fono-wrap anim">
+      <div class="fono">
+        <div class="fono-status"><span>18:30</span><span>🔋 📶</span></div>
+        <div class="fono-screen">
+          <div class="fono-titulo">Lecturas</div>
+          <div class="fono-list">
+            <div class="fono-item"><span>Temperatura sala A404</span><span class="fono-item-del">🗑</span></div>
+            <div class="fono-item"><span>Prueba dupla 3</span><span class="fono-item-del">🗑</span></div>
+            <div class="fono-item"><span>Humedad invernadero</span><span class="fono-item-del">🗑</span></div>
+          </div>
+          <div class="fono-campo">Escribe un dato...</div>
+          <div class="fono-fab">+</div>
+        </div>
+      </div>
+    </div>
+    <div class="fono-cap anim">btnAgregar (FloatingActionButton) + campo de texto</div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Incremento 26</span>
+  <div class="concept-label anim">El último incremento de hoy</div>
+  <div class="concept-title anim">Borrar un <span>ítem</span></div>
+  <div class="concept-body">
+    <div class="prompt-block anim">
+      <div class="prompt-k">🤖 Prompt para Antigravity</div>
+      <div class="prompt-txt">"En LecturaAdapter.kt, dentro de onBindViewHolder, agrega un setOnClickListener a holder.botonBorrar que borre ese documento de la coleccion 'lecturas' de Firestore usando su id. Comenta cada línea."</div>
+    </div>
+    <div class="code-block anim">
+      <div class="code-title">LecturaAdapter.kt</div>
+      <pre>override fun onBindViewHolder(holder: LecturaViewHolder, position: Int) {
+    // La lectura que le toca mostrar a esta fila
+    val lectura = items[position]
+
+    // Muestra el dato de esta fila
+    holder.texto.text = lectura.descripcion
+
+    // Borra el documento al tocar el icono de basurero de esa fila
+    holder.botonBorrar.setOnClickListener {
+        Firebase.firestore.collection("lecturas").document(lectura.id).delete()
+    }
+}</pre>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">ℹ</div>
+      <div class="callout-content">
+        <strong>Por qué lectura.id y no la posición de la fila</strong>
+        <p>La posición en la lista puede cambiar (si se agrega o borra algo antes que esta fila). El
+        <code>id</code> real del documento en Firestore nunca cambia — es la única forma confiable de
+        saber cuál borrar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-opcional">Transparencia</span>
+  <div class="concept-label anim">Qué se queda fuera hoy</div>
+  <div class="concept-title anim">La U de CRUD <span>queda pendiente</span></div>
+  <div class="concept-body">
+    <p class="anim">Create, Read y Delete quedan completos hoy. <strong>Update</strong> (editar un
+    ítem que ya existe) es el más caro de armar — hay que reabrir un formulario con los datos
+    precargados — y es el que menos aporta si el tiempo se acaba.</p>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">💡</div>
+      <div class="callout-content">
+        <strong>Update queda para más adelante</strong>
+        <p>Si les sobra tiempo hoy, es el próximo paso natural (mismo patrón: un formulario, un
+        <code>.update()</code> sobre el documento por su id). Si no alcanza, no es un vacío grave —
+        el CRUD ya demuestra Create, Read y Delete funcionando contra datos reales.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="concept-label anim">Con eso, hoy queda listo</div>
+  <div class="concept-title anim">CRUD real, <span>de punta a punta</span></div>
+  <div class="concept-body">
+    <p class="anim">Login (Firebase Authentication) → Lista (RecyclerView + Adapter + ViewHolder) →
+    Firestore (Create, Read y Delete en tiempo real). Mismo patrón de siempre: un incremento chico,
+    lo corren, lo explican, seguimos con el próximo.</p>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">✅</div>
+      <div class="callout-content">
+        <strong>Cierre conceptual de la Unidad 2 / apertura de la Unidad 3</strong>
+        <p>La interconexión completa app-microcontrolador (criterio 2.1.4) se valida con hardware
+        real recién en la sesión 7, cuando vuelve el Arduino. Por ahora, el circuito completo
+        app-nube ya funciona con datos reales — falta conectar el sensor físico en el otro extremo.</p>
+      </div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">💡</div>
+      <div class="callout-content">
+        <strong>Próxima sesión (S6, 24 de septiembre)</strong>
+        <p>Sin clase el 17 de septiembre (receso Fiestas Patrias). Arranca la Unidad 3: comunicación
+        serial por Bluetooth.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Resalta la sintaxis de los bloques de codigo, distinguiendo Kotlin de XML por el titulo del bloque
+  function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function highlightKotlin(code) {
+    const pattern = /(\/\/[^\n]*)|("(?:[^"\\]|\\.)*")|(\b(?:fun|val|var|if|else|return|class|true|false|null|this|private|public|import|when|for|while|is|as|in|override)\b)|(\b[A-Z][A-Za-z0-9_]*\b)|(\b\d+\b)/g;
+    let out = '', last = 0, m;
+    while ((m = pattern.exec(code))) {
+      out += escapeHtml(code.slice(last, m.index));
+      if (m[1]) out += '<span class="tok-cmt">' + escapeHtml(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="tok-str">' + escapeHtml(m[2]) + '</span>';
+      else if (m[3]) out += '<span class="tok-kw">' + escapeHtml(m[3]) + '</span>';
+      else if (m[4]) out += '<span class="tok-type">' + escapeHtml(m[4]) + '</span>';
+      else if (m[5]) out += '<span class="tok-num">' + escapeHtml(m[5]) + '</span>';
+      last = pattern.lastIndex;
+    }
+    out += escapeHtml(code.slice(last));
+    return out;
+  }
+
+  function highlightXml(code) {
+    const pattern = /(<!--[\s\S]*?-->)|(<\/?[A-Za-z][\w.]*)|([\w:.-]+)(=)("[^"]*")/g;
+    let out = '', last = 0, m;
+    while ((m = pattern.exec(code))) {
+      out += escapeHtml(code.slice(last, m.index));
+      if (m[1]) out += '<span class="tok-cmt">' + escapeHtml(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="tok-tag">' + escapeHtml(m[2]) + '</span>';
+      else if (m[3]) out += '<span class="tok-attr">' + escapeHtml(m[3]) + '</span>=<span class="tok-str">' + escapeHtml(m[5]) + '</span>';
+      last = pattern.lastIndex;
+    }
+    out += escapeHtml(code.slice(last));
+    return out;
+  }
+
+  document.querySelectorAll('.code-block').forEach(block => {
+    const titleEl = block.querySelector('.code-title');
+    const pre = block.querySelector('pre');
+    if (!pre) return;
+    const title = titleEl ? titleEl.textContent : '';
+    const code = pre.textContent;
+    pre.innerHTML = title.indexOf('.xml') !== -1 ? highlightXml(code) : highlightKotlin(code);
+  });
+
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
