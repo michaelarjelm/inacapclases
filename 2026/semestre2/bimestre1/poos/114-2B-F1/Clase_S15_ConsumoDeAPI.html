@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UA3 Sesion 15 - Consumo de API externa</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --red:#E31E24; --blue:#C0392B; --green:#4A4A4A; --orange:#8E1A1F;
+    --dark:#1A1A1A; --border:#E0E0E0; --text:#1A1A1A; --muted:#666;
+  }
+
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Barlow', sans-serif; background:#F0F0F0; color:var(--text);
+    scroll-snap-type:y mandatory; overflow-y:scroll; height:100vh;
+  }
+  .slide {
+    min-height:100vh; scroll-snap-align:start; scroll-snap-stop:always;
+    display:flex; flex-direction:column; position:relative;
+  }
+
+  /* PORTADA */
+  .slide-cover {
+    background:linear-gradient(135deg,#1A1A1A 0%,#2C2C2C 100%); color:#fff;
+    justify-content:center; padding:80px; border-bottom:6px solid var(--red);
+  }
+  .cover-eyebrow {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:24px;
+  }
+  .cover-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:70px; font-weight:900;
+    text-transform:uppercase; line-height:.92; letter-spacing:-.01em; margin-bottom:32px;
+  }
+  .cover-title span { color:var(--red); }
+  .cover-desc { font-size:22px; color:rgba(255,255,255,.5); max-width:660px; line-height:1.65; margin-bottom:48px; }
+  .cover-chips { display:flex; flex-wrap:wrap; gap:12px; }
+  .cover-chip {
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    color:rgba(255,255,255,.7); font-size:15px; font-weight:600; padding:8px 16px; border-radius:20px;
+  }
+  .cover-chip span { color:#fff; }
+
+  /* SEPARADOR */
+  .slide-separator {
+    background:var(--dark); color:#fff; justify-content:center; padding:80px; border-bottom:6px solid var(--red);
+  }
+  .slide-separator.sep-green  { border-color:var(--green); }
+  .slide-separator.sep-orange { border-color:var(--orange); }
+  .slide-separator.sep-blue   { border-color:var(--blue); }
+  .sep-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--red); margin-bottom:16px;
+  }
+  .sep-green .sep-num  { color:#AFAFAF; }
+  .sep-orange .sep-num { color:#D98A8E; }
+  .sep-blue .sep-num   { color:#E08B80; }
+  .sep-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:62px; font-weight:900;
+    text-transform:uppercase; line-height:.92; letter-spacing:-.01em; margin-bottom:24px;
+  }
+  .sep-title span { color:var(--red); }
+  .cover-title span, .sep-title span, .concept-title span { color:var(--red)!important; }
+  .sep-desc { font-size:22px; color:rgba(255,255,255,.45); max-width:630px; line-height:1.65; }
+
+  /* CONCEPTO */
+  .slide-concept { background:#fff; padding:56px 80px; border-bottom:3px solid var(--border); justify-content:center; }
+  .slide-concept.blue-accent   { border-top:6px solid var(--blue); }
+  .slide-concept.green-accent  { border-top:6px solid var(--green); }
+  .slide-concept.orange-accent { border-top:6px solid var(--orange); }
+  .slide-concept.red-accent    { border-top:6px solid var(--red); }
+  .concept-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:12px;
+  }
+  .concept-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:44px; font-weight:900;
+    text-transform:uppercase; line-height:.95; letter-spacing:-.01em; color:var(--dark); margin-bottom:24px;
+  }
+  .concept-body { max-width:950px; }
+  .concept-body p { font-size:20px; line-height:1.7; color:#333; margin-bottom:14px; }
+  .concept-body p:last-child { margin-bottom:0; }
+  .concept-body strong { color:var(--dark); }
+
+  /* DEFINICION */
+  .definicion {
+    background:#FFF6F6; border:2px solid #F3C9CB; border-left:6px solid var(--red);
+    border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px;
+  }
+  .def-k {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--red); margin-bottom:8px;
+  }
+  .def-txt { font-size:22px; line-height:1.55; color:var(--dark); font-weight:500; }
+  .def-txt strong { font-weight:800; }
+  .def-ej { font-size:18px; line-height:1.55; color:#666; margin-top:10px; font-style:italic; }
+
+  /* CALLOUTS */
+  .callout { border-radius:6px; padding:16px 20px; margin:14px 0; max-width:950px; display:flex; gap:14px; align-items:flex-start; }
+  .callout-icon { font-size:19px; flex-shrink:0; }
+  .callout-content { flex:1; }
+  .callout-content > strong { display:block; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+  .callout-content p { font-size:17px; line-height:1.55; margin:0; }
+  .callout-important { background:#FFF1F2; border:1px solid #FECDD3; }
+  .callout-important strong { color:var(--red); }
+  .callout-important p { color:#881337; }
+  .callout-tip { background:#F2F2F2; border:1px solid #DADADA; }
+  .callout-tip strong { color:var(--green); }
+  .callout-tip p { color:#333; }
+  .callout-info { background:#FBEEEC; border:1px solid #ECCFCB; }
+  .callout-info strong { color:var(--blue); }
+  .callout-info p { color:#7A1E16; }
+  .callout-warn { background:#F7EFEF; border:1px solid #E2CACA; }
+  .callout-warn strong { color:var(--orange); }
+  .callout-warn p { color:#5A1418; }
+
+  /* INDICE */
+  .index-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:30px; max-width:780px; }
+  .index-item { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:6px; padding:16px 18px; }
+  .index-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:30px; font-weight:900; color:var(--red); line-height:1; margin-bottom:6px;
+  }
+  .index-name { font-size:16px; font-weight:600; color:#fff; line-height:1.4; }
+  .index-type { font-size:12px; color:rgba(255,255,255,.3); margin-top:4px; text-transform:uppercase; letter-spacing:.06em; }
+
+  /* BADGE */
+  .slide-badge {
+    position:absolute; top:24px; right:32px; font-family:'Barlow Condensed',sans-serif;
+    font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; padding:5px 12px; border-radius:20px;
+  }
+  .badge-concepto { background:#FEF2F2; color:var(--red); border:1px solid #FECACA; }
+  .badge-pasos    { background:#F2F2F2; color:var(--green); border:1px solid #DADADA; }
+  .badge-practica { background:#F7E3E3; color:#8E1A1F; border:1px solid #E2CACA; }
+  .badge-cierre   { background:rgba(227,30,36,.10); color:var(--red); border:1px solid rgba(227,30,36,.3); }
+  .badge-peligro  { background:#1A1A1A; color:#FF8A80; border:1px solid #FF8A80; }
+
+  /* RESUMEN */
+  .resumen-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:26px; max-width:900px; }
+  .resumen-item { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:6px; padding:15px 18px; }
+  .resumen-cmd { font-size:16px; color:#fff; margin-bottom:5px; font-weight:700; }
+  .resumen-desc { font-size:15px; color:rgba(255,255,255,.4); line-height:1.4; }
+
+  /* TWO COL */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:22px; max-width:950px; margin-top:16px; }
+  .col-card { background:#F8F8F8; border:1px solid #E0E0E0; border-radius:8px; padding:18px 22px; }
+  .col-card.bad  { border-left:4px solid var(--red); }
+  .col-card.good { border-left:4px solid var(--green); }
+  .col-card-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:21px; font-weight:900; text-transform:uppercase;
+    color:var(--dark); margin-bottom:10px;
+  }
+  .col-card ul { margin-left:18px; }
+  .col-card li { font-size:17px; line-height:1.65; color:#444; margin-bottom:4px; }
+  .col-card p { font-size:17px; line-height:1.6; color:#444; }
+
+  /* TABLA */
+  .tbl { width:100%; max-width:950px; border-collapse:collapse; margin-top:14px; font-size:17px; }
+  .tbl th {
+    background:var(--dark); color:#fff; font-family:'Barlow Condensed',sans-serif; font-size:13px;
+    font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:10px 16px; text-align:left;
+  }
+  .tbl td { padding:11px 16px; border-bottom:1px solid #E0E0E0; vertical-align:top; line-height:1.45; }
+  .tbl tr:last-child td { border-bottom:none; }
+  .tbl tr:nth-child(even) td { background:#F8F8F8; }
+  .tbl .mono { font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--blue); font-weight:600; }
+
+  /* CODE BLOCK */
+  .code-block { background:#1A1A1A; border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px; overflow-x:auto; }
+  .code-block.peligro { border:2px solid var(--red); }
+  .code-block pre { font-family:'JetBrains Mono',monospace; font-size:15px; color:#EDEDED; line-height:1.75; }
+  .code-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:rgba(255,255,255,.35); margin-bottom:12px;
+  }
+  .code-block.peligro .code-title { color:#FF8A80; }
+  .kw{color:#FF8A80;font-weight:700} .cls{color:#FFD2CC;font-weight:700} .str{color:#FFCDD2}
+  .cmt{color:#6E6E6E;font-style:italic} .fn{color:#FFAB91} .num{color:#F5B7B1} .sql{color:#93C5FD;font-weight:700}
+  .inj{color:#FFEB3B;font-weight:700;background:rgba(255,235,59,.12);}
+
+  /* TERMINAL */
+  .terminal { background:#0D0D0D; border-radius:8px; padding:18px 24px; margin:14px 0; max-width:950px; overflow-x:auto; border:1px solid #2A2A2A; }
+  .terminal.peligro { border-color:var(--red); }
+  .term-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:#6E6E6E; margin-bottom:10px; display:flex; align-items:center; gap:8px;
+  }
+  .term-dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .terminal pre { font-family:'JetBrains Mono',monospace; font-size:14.5px; line-height:1.85; }
+  .term-prompt { color:#4ADE80; }
+  .term-out { color:#D4D4D4; }
+  .term-err { color:#F87171; }
+
+  /* ACTIVIDAD */
+  .actividad { background:#1A1A1A; border-radius:8px; padding:22px 26px; margin:16px 0; max-width:950px; }
+  .act-k {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--red); margin-bottom:8px;
+  }
+  .act-t { font-size:22px; line-height:1.5; color:#fff; font-weight:600; }
+  .act-d { font-size:17px; line-height:1.55; color:rgba(255,255,255,.55); margin-top:8px; }
+  .act-list { margin-top:12px; }
+  .act-li { font-size:18px; color:rgba(255,255,255,.85); line-height:1.7; padding-left:22px; position:relative; }
+  .act-li::before { content:"\2192"; position:absolute; left:0; color:var(--red); font-weight:700; }
+
+  /* CHECKLIST */
+  .chk { max-width:950px; margin-top:14px; }
+  .chk-item {
+    display:flex; gap:18px; align-items:flex-start; background:#F8F8F8; border:1px solid #E0E0E0;
+    border-left:4px solid var(--red); border-radius:8px; padding:15px 20px; margin-bottom:11px;
+  }
+  .chk-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:30px; font-weight:900; color:var(--red);
+    line-height:1; flex-shrink:0; width:36px;
+  }
+  .chk-cont { flex:1; }
+  .chk-tit { font-size:19px; font-weight:700; color:var(--dark); margin-bottom:3px; }
+  .chk-desc { font-size:17px; color:#555; line-height:1.5; }
+
+  code { font-family:'JetBrains Mono',monospace; font-size:14px; background:#EBEBEB; padding:2px 7px; border-radius:3px; color:#C0392B; }
+
+  #progress {
+    position:fixed; top:0; left:0; height:3px; background:var(--red); width:0%; z-index:9999;
+    transition:width .35s cubic-bezier(.16,1,.3,1); pointer-events:none;
+  }
+  .anim { opacity:0; transform:translateY(22px); transition:opacity .55s cubic-bezier(.16,1,.3,1), transform .55s cubic-bezier(.16,1,.3,1); }
+  .slide.visible .anim { opacity:1; transform:none; }
+  .slide.visible .anim:nth-child(1){transition-delay:0ms} .slide.visible .anim:nth-child(2){transition-delay:100ms}
+  .slide.visible .anim:nth-child(3){transition-delay:210ms} .slide.visible .anim:nth-child(4){transition-delay:330ms}
+  .slide.visible .anim:nth-child(5){transition-delay:450ms} .slide.visible .anim:nth-child(6){transition-delay:560ms}
+  /* ARQUITECTURA / DIAGRAMA DE FLUJO */
+  .flow { display:flex; align-items:center; gap:14px; margin:18px 0; max-width:950px; flex-wrap:wrap; }
+  .flow-box {
+    background:#F8F8F8; border:2px solid var(--dark); border-radius:8px; padding:14px 20px;
+    font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; color:var(--dark); text-align:center;
+  }
+  .flow-box.hi { border-color:var(--red); background:#FFF6F6; color:var(--red); }
+  .flow-arrow { font-size:26px; color:var(--red); font-weight:700; }
+
+  /* PROMPT A ANTIGRAVITY */
+  .badge-prompt   { background:#1A1A1A; color:#FF8A80; border:1px solid #333; }
+  .prompt-box { background:#1A1A1A; border-radius:8px; padding:20px 24px; margin:14px 0; max-width:950px; border-left:4px solid var(--red); }
+  .prompt-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--red); margin-bottom:10px; display:flex; align-items:center; gap:8px;
+  }
+  .prompt-label .dot { width:8px; height:8px; border-radius:50%; background:var(--red); display:inline-block; }
+  .prompt-text { font-family:'JetBrains Mono',monospace; font-size:16px; color:#fff; line-height:1.65; }
+</style>
+<style>
+  .diagram { max-width:950px; margin:14px 0; background:#FAFAFA; border:1px solid #E0E0E0; border-radius:8px; padding:12px; }
+  .diagram svg { width:100%; height:auto; display:block; }
+  .diagram text { font-family:'Barlow', sans-serif; }
+  .diagram .mono { font-family:'JetBrains Mono', monospace; }
+  .frame-k {
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--red); margin-bottom:6px;
+  }
+  .frame-txt { font-size:21px; line-height:1.5; color:var(--dark); max-width:950px; }
+  .frame-txt strong { font-weight:800; }
+  .panel-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:950px; margin-top:12px; }
+  .panel-grid.tres { grid-template-columns:1fr 1fr 1fr; }
+  .panel { background:#FAFAFA; border:1px solid #E0E0E0; border-radius:8px; padding:10px 12px; }
+  .panel svg { width:100%; height:auto; display:block; }
+  .panel text { font-family:'Barlow', sans-serif; }
+  .panel .mono { font-family:'JetBrains Mono', monospace; }
+  .panel-cap { font-size:16px; color:#333; margin-top:6px; line-height:1.4; }
+  .panel-cap code { font-size:13px; }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- PORTADA -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Programación Orientada a Objeto Seguro &middot; TI3V21 &middot; Unidad 3 &middot; Sesión 15</div>
+  <div class="cover-title anim">Su programa<br>le pregunta a<br><span>internet</span></div>
+  <p class="cover-desc anim">
+    El valor del dólar cambia todos los días. Hoy el programa lo va a buscar solo, y va a
+    seguir funcionando aunque internet falle.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-2B-F1</span></span>
+    <span class="cover-chip">Lunes 28 de septiembre de 2026</span>
+    <span class="cover-chip">120 minutos</span>
+  </div>
+</div>
+
+
+<!-- AGENDA -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">¿Qué vemos hoy?</div>
+  <div class="sep-title anim">Contenido<br>de la <span>sesión</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">00</div>
+      <div class="index-name">Repaso: el dato que nadie puede escribir</div>
+      <div class="index-type">Repaso &middot; 5 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Qué es una API y qué es JSON</div>
+      <div class="index-type">Concepto + actividad &middot; 15 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">requests: la primera petición</div>
+      <div class="index-type">Concepto + actividad &middot; 15 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Navegar la respuesta hasta el valor</div>
+      <div class="index-type">Paso a paso + actividad &middot; 15 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">La API entra al taller</div>
+      <div class="index-type">Concepto + actividad &middot; 25 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Cuando la API falla</div>
+      <div class="index-type">Concepto + actividad &middot; 25 min</div>
+    </div>
+  </div>
+  <p style="color:rgba(255,255,255,.4); font-size:15px; margin-top:18px; max-width:780px;">
+    Después: taller final (15 min) con el indicador de su negocio, y cierre (5 min).
+  </p>
+</div>
+
+
+<!-- REPASO -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Repaso</span>
+  <div class="concept-label anim">5 min</div>
+  <div class="concept-title anim">El dato que<br>nadie puede <span>escribir</span></div>
+  <div class="concept-body anim">
+    <p>Un repuesto importado se compra en dólares. Para cobrarlo en pesos hace falta el
+    dólar <strong>de hoy</strong>.</p>
+    <table class="tbl">
+      <thead><tr><th>Dato</th><th>Lo escribe</th><th>Cambia</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">patente</td><td>La recepcionista</td><td>Nunca</td></tr>
+        <tr><td class="mono">stock</td><td>El sistema</td><td>Con cada orden</td></tr>
+        <tr><td class="mono">valor del dólar</td><td>Nadie del taller</td><td>Todos los días hábiles</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Escrito a mano en el código, mañana ya está malo</strong>
+        <p>El programa tiene que ir a buscarlo afuera cada vez que lo necesita.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 01: API Y JSON ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 01</span>
+  <div class="sep-num anim">01 &middot; Concepto + actividad &middot; 15 min</div>
+  <div class="sep-title anim">Qué es<br>una <span>API</span></div>
+  <p class="sep-desc anim">Cómo dos programas, en dos computadores distintos, se piden datos.</p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Programas que hablan con programas</div>
+  <div class="concept-title anim">¿Qué es<br>una <span>API</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">API &middot; Application Programming Interface</div>
+      <div class="def-txt">
+        Una puerta que un sistema deja abierta para que <strong>otros programas le pidan
+        datos</strong>, con reglas fijas para pedir y para responder.
+      </div>
+      <div class="def-ej">mindicador.cl tiene una API que entrega el valor del dólar de hoy.</div>
+    </div>
+    <p>Toda consulta a una API tiene cuatro pasos. Los armamos uno por uno.</p>
+  </div>
+</div>
+
+<!-- API frame 1 -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Paso 1 de 4</span>
+  <div class="concept-label anim">Cómo funciona una API</div>
+  <div class="concept-title anim">La <span>URL</span></div>
+  <div class="concept-body anim">
+    <div class="diagram">
+      <svg viewBox="0 0 900 300">
+        <rect x="40" y="80" width="230" height="110" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="155" y="128" text-anchor="middle" font-size="22" font-weight="700" class="mono">main.py</text>
+        <text x="155" y="156" text-anchor="middle" font-size="16" fill="#666">su programa</text>
+        <rect x="630" y="80" width="230" height="110" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="745" y="128" text-anchor="middle" font-size="22" font-weight="700" class="mono">mindicador.cl</text>
+        <text x="745" y="156" text-anchor="middle" font-size="16" fill="#666">servidor</text>
+        <rect x="150" y="225" width="600" height="46" rx="23" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+        <text x="450" y="255" text-anchor="middle" font-size="19" fill="#E31E24" font-weight="600" class="mono">https://mindicador.cl/api/dolar</text>
+      </svg>
+    </div>
+    <div class="frame-txt">Su programa arma la dirección: <strong>a quién</strong> le pregunta
+    (<code>mindicador.cl</code>) y <strong>qué</strong> le pregunta (<code>/dolar</code>).</div>
+  </div>
+</div>
+
+<!-- API frame 2 -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Paso 2 de 4</span>
+  <div class="concept-label anim">Cómo funciona una API</div>
+  <div class="concept-title anim">La petición <span>GET</span></div>
+  <div class="concept-body anim">
+    <div class="diagram">
+      <svg viewBox="0 0 900 300">
+        <defs><marker id="ar-api2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E31E24"/></marker></defs>
+        <rect x="40" y="80" width="230" height="110" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="155" y="128" text-anchor="middle" font-size="22" font-weight="700" class="mono">main.py</text>
+        <text x="155" y="156" text-anchor="middle" font-size="16" fill="#666">su programa</text>
+        <rect x="630" y="80" width="230" height="110" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="745" y="128" text-anchor="middle" font-size="22" font-weight="700" class="mono">mindicador.cl</text>
+        <text x="745" y="156" text-anchor="middle" font-size="16" fill="#666">servidor</text>
+        <line x1="270" y1="110" x2="628" y2="110" stroke="#E31E24" stroke-width="3" marker-end="url(#ar-api2)"/>
+        <text x="450" y="98" text-anchor="middle" font-size="19" font-weight="700" fill="#E31E24" class="mono">GET /api/dolar</text>
+        <rect x="150" y="225" width="600" height="46" rx="23" fill="#fff" stroke="#BDBDBD" stroke-width="2"/>
+        <text x="450" y="255" text-anchor="middle" font-size="19" fill="#999" class="mono">https://mindicador.cl/api/dolar</text>
+      </svg>
+    </div>
+    <div class="frame-txt"><strong>GET</strong> es la petición que solo lee: no cambia nada del
+    otro lado. Es lo mismo que hace el navegador al abrir una página.</div>
+  </div>
+</div>
+
+<!-- API frame 3 -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Paso 3 de 4</span>
+  <div class="concept-label anim">Cómo funciona una API</div>
+  <div class="concept-title anim">La <span>respuesta</span></div>
+  <div class="concept-body anim">
+    <div class="diagram">
+      <svg viewBox="0 0 900 300">
+        <defs>
+          <marker id="ar-api3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#999"/></marker>
+          <marker id="ar-api3b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E31E24"/></marker>
+        </defs>
+        <rect x="40" y="80" width="230" height="110" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="155" y="128" text-anchor="middle" font-size="22" font-weight="700" class="mono">main.py</text>
+        <text x="155" y="156" text-anchor="middle" font-size="16" fill="#666">su programa</text>
+        <rect x="630" y="80" width="230" height="110" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="745" y="128" text-anchor="middle" font-size="22" font-weight="700" class="mono">mindicador.cl</text>
+        <text x="745" y="156" text-anchor="middle" font-size="16" fill="#666">servidor</text>
+        <line x1="270" y1="110" x2="628" y2="110" stroke="#999" stroke-width="2" marker-end="url(#ar-api3a)"/>
+        <text x="450" y="98" text-anchor="middle" font-size="17" fill="#999" class="mono">GET /api/dolar</text>
+        <line x1="630" y1="160" x2="272" y2="160" stroke="#E31E24" stroke-width="3" marker-end="url(#ar-api3b)"/>
+        <text x="450" y="188" text-anchor="middle" font-size="19" font-weight="700" fill="#E31E24" class="mono">200 + JSON</text>
+        <rect x="150" y="225" width="600" height="46" rx="23" fill="#fff" stroke="#BDBDBD" stroke-width="2"/>
+        <text x="450" y="255" text-anchor="middle" font-size="19" fill="#999" class="mono">https://mindicador.cl/api/dolar</text>
+      </svg>
+    </div>
+    <div class="frame-txt">El servidor contesta con un <strong>código de estado</strong> (¿salió
+    bien?) y con los <strong>datos</strong>, en un formato de texto llamado JSON.</div>
+  </div>
+</div>
+
+<!-- API frame 4 -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Paso 4 de 4</span>
+  <div class="concept-label anim">Cómo funciona una API</div>
+  <div class="concept-title anim">Sacar el <span>valor</span></div>
+  <div class="concept-body anim">
+    <div class="diagram">
+      <svg viewBox="0 0 900 300">
+        <defs>
+          <marker id="ar-api4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#999"/></marker>
+          <marker id="ar-api4b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E31E24"/></marker>
+        </defs>
+        <rect x="40" y="30" width="230" height="110" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="155" y="78" text-anchor="middle" font-size="22" font-weight="700" class="mono">main.py</text>
+        <text x="155" y="106" text-anchor="middle" font-size="16" fill="#666">su programa</text>
+        <rect x="630" y="30" width="230" height="110" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="745" y="78" text-anchor="middle" font-size="22" font-weight="700" class="mono">mindicador.cl</text>
+        <text x="745" y="106" text-anchor="middle" font-size="16" fill="#666">servidor</text>
+        <line x1="270" y1="60" x2="628" y2="60" stroke="#999" stroke-width="2" marker-end="url(#ar-api4a)"/>
+        <text x="450" y="48" text-anchor="middle" font-size="17" fill="#999" class="mono">GET /api/dolar</text>
+        <line x1="630" y1="110" x2="272" y2="110" stroke="#999" stroke-width="2" marker-end="url(#ar-api4a)"/>
+        <text x="450" y="135" text-anchor="middle" font-size="17" fill="#999" class="mono">200 + JSON</text>
+        <line x1="155" y1="140" x2="155" y2="203" stroke="#E31E24" stroke-width="3" marker-end="url(#ar-api4b)"/>
+        <rect x="75" y="205" width="160" height="60" rx="8" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+        <text x="155" y="243" text-anchor="middle" font-size="24" font-weight="700" fill="#E31E24" class="mono">964.1</text>
+        <text x="255" y="243" font-size="18" fill="#333">de todo el JSON, el taller solo necesita este número</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">El código de estado del paso 3</div>
+  <div class="concept-title anim">¿Salió <span>bien</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Código de estado HTTP</div>
+      <div class="def-txt">Un número de tres dígitos que viene en toda respuesta y dice <strong>si la petición salió bien</strong>.</div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Código</th><th>Significa</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">200</td><td>Salió bien</td></tr>
+        <tr><td class="mono">404</td><td>Lo que pidieron no existe</td></tr>
+        <tr><td class="mono">500</td><td>Falló el servidor</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Los datos del paso 3</div>
+  <div class="concept-title anim">¿Qué es<br><span>JSON</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">JSON</div>
+      <div class="def-txt">Un formato de texto para mandar datos entre programas, con <strong>pares de clave y valor</strong>.</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">https://mindicador.cl/api/dolar &middot; 28-sep-2026, recortado</div>
+<pre>{
+  <span class="str">"codigo"</span>: <span class="str">"dolar"</span>,
+  <span class="str">"nombre"</span>: <span class="str">"Dólar observado"</span>,
+  <span class="str">"serie"</span>: [
+    { <span class="str">"fecha"</span>: <span class="str">"2026-09-28T03:00:00.000Z"</span>, <span class="str">"valor"</span>: <span class="num">964.1</span> },
+    { <span class="str">"fecha"</span>: <span class="str">"2026-09-25T03:00:00.000Z"</span>, <span class="str">"valor"</span>: <span class="num">965.71</span> }
+  ]
+}</pre>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>JSON</th><th>Python</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">{ }</td><td><code>dict</code></td></tr>
+        <tr><td class="mono">[ ]</td><td><code>list</code></td></tr>
+        <tr><td class="mono">"texto" &middot; 964.1</td><td><code>str</code> &middot; <code>float</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Todavía sin código</div>
+  <div class="concept-title anim">Pregúntenle<br>desde el <span>navegador</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; en parejas</div>
+      <div class="act-t">Abran https://mindicador.cl/api/dolar en el navegador.</div>
+      <div class="act-list">
+        <div class="act-li">¿Cuánto vale el dólar hoy?</div>
+        <div class="act-li">¿"serie" es diccionario o lista?</div>
+        <div class="act-li">Cambien /dolar por /uf. ¿Qué cambió?</div>
+        <div class="act-li">En https://mindicador.cl/api busquen el indicador de su negocio</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 02: REQUESTS ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Concepto + actividad &middot; 15 min</div>
+  <div class="sep-title anim"><span>requests</span>:<br>la primera petición</div>
+  <p class="sep-desc anim">Lo mismo que hizo el navegador, ahora desde Python.</p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">A diferencia de sqlite3, esta hay que instalarla</div>
+  <div class="concept-title anim">¿Qué es<br><span>requests</span>?</div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">requests</div>
+      <div class="def-txt">La librería de Python para <strong>hacer peticiones a una API</strong>. Se instala con <code>pip</code>.</div>
+    </div>
+    <div class="definicion">
+      <div class="def-k">requirements.txt</div>
+      <div class="def-txt">La <strong>lista de librerías</strong> que necesita el proyecto. Quien lo clone las instala con <code>pip install -r requirements.txt</code>.</div>
+    </div>
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Instala la librería requests con pip y crea un archivo
+      requirements.txt en la raíz del proyecto que la incluya. No modifiques ningún otro
+      archivo."</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Paso a paso</span>
+  <div class="concept-label anim">Los pasos 1 a 3, en Python</div>
+  <div class="concept-title anim">La primera<br><span>petición</span></div>
+  <div class="concept-body anim">
+    <div class="code-block">
+      <div class="code-title">prueba_api.py</div>
+<pre><span class="kw">import</span> requests
+
+respuesta = requests.<span class="fn">get</span>(<span class="str">"https://mindicador.cl/api/dolar"</span>, timeout=<span class="num">5</span>)   <span class="cmt"># paso 2</span>
+<span class="fn">print</span>(respuesta.status_code)                                          <span class="cmt"># paso 3: código</span>
+datos = respuesta.<span class="fn">json</span>()                                               <span class="cmt"># paso 3: JSON a dict</span>
+<span class="fn">print</span>(<span class="fn">type</span>(datos))</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>salida</div>
+      <pre><span class="term-prompt">$</span> <span class="term-out">python prueba_api.py</span>
+<span class="term-out">200</span>
+<span class="term-out">&lt;class 'dict'&gt;</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>timeout=5</strong>
+        <p>Por ahora: "espera como máximo 5 segundos". Se ve completo en el bloque 05.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Sobre el taller mecánico</div>
+  <div class="concept-title anim">Su primera<br>petición <span>real</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 6 min &middot; en equipo</div>
+      <div class="act-t">Pídanle a agy requests, requirements.txt y prueba_api.py. Descríbanselo, no copien.</div>
+      <div class="act-list">
+        <div class="act-li">Tiene que imprimir 200 y &lt;class 'dict'&gt;</div>
+        <div class="act-li">Agreguen print(datos) y compárenlo con el navegador</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 03: NAVEGAR LA RESPUESTA ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 03</span>
+  <div class="sep-num anim">03 &middot; Paso a paso + actividad &middot; 15 min</div>
+  <div class="sep-title anim">Navegar<br>hasta el <span>valor</span></div>
+  <p class="sep-desc anim">Paso 4: de toda la respuesta, sacar un solo número.</p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Paso a paso</span>
+  <div class="concept-label anim">Un corchete por nivel</div>
+  <div class="concept-title anim">Del diccionario<br>al <span>número</span></div>
+  <div class="concept-body anim">
+    <div class="panel-grid">
+      <!-- nivel 1 -->
+      <div class="panel">
+        <svg viewBox="0 0 440 210">
+          <rect x="8" y="8" width="424" height="194" rx="8" fill="#FFF6F6" stroke="#E31E24" stroke-width="3"/>
+          <text x="20" y="30" font-size="15" font-weight="700" fill="#E31E24" class="mono">datos  { }</text>
+          <rect x="28" y="44" width="384" height="146" rx="6" fill="#fff" stroke="#BDBDBD" stroke-width="1.5"/>
+          <text x="40" y="64" font-size="14" fill="#999" class="mono">"serie"  [ ]</text>
+          <rect x="46" y="76" width="200" height="104" rx="6" fill="#fff" stroke="#BDBDBD" stroke-width="1.5"/>
+          <text x="58" y="96" font-size="14" fill="#999" class="mono">[0]  { }</text>
+          <rect x="64" y="120" width="164" height="42" rx="5" fill="#fff" stroke="#BDBDBD" stroke-width="1.5"/>
+          <text x="146" y="147" text-anchor="middle" font-size="14" fill="#999" class="mono">"valor": 964.1</text>
+          <rect x="262" y="76" width="132" height="104" rx="6" fill="#fff" stroke="#DDD" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <text x="328" y="134" text-anchor="middle" font-size="14" fill="#BBB" class="mono">[1] ...</text>
+        </svg>
+        <div class="panel-cap"><strong>1.</strong> <code>datos</code> &rarr; <code>dict</code></div>
+      </div>
+      <!-- nivel 2 -->
+      <div class="panel">
+        <svg viewBox="0 0 440 210">
+          <rect x="8" y="8" width="424" height="194" rx="8" fill="#fff" stroke="#BDBDBD" stroke-width="1.5"/>
+          <text x="20" y="30" font-size="15" fill="#999" class="mono">datos  { }</text>
+          <rect x="28" y="44" width="384" height="146" rx="6" fill="#FFF6F6" stroke="#E31E24" stroke-width="3"/>
+          <text x="40" y="64" font-size="14" font-weight="700" fill="#E31E24" class="mono">"serie"  [ ]</text>
+          <rect x="46" y="76" width="200" height="104" rx="6" fill="#fff" stroke="#BDBDBD" stroke-width="1.5"/>
+          <text x="58" y="96" font-size="14" fill="#999" class="mono">[0]  { }</text>
+          <rect x="64" y="120" width="164" height="42" rx="5" fill="#fff" stroke="#BDBDBD" stroke-width="1.5"/>
+          <text x="146" y="147" text-anchor="middle" font-size="14" fill="#999" class="mono">"valor": 964.1</text>
+          <rect x="262" y="76" width="132" height="104" rx="6" fill="#fff" stroke="#DDD" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <text x="328" y="134" text-anchor="middle" font-size="14" fill="#BBB" class="mono">[1] ...</text>
+        </svg>
+        <div class="panel-cap"><strong>2.</strong> <code>datos["serie"]</code> &rarr; <code>list</code>, un elemento por día</div>
+      </div>
+      <!-- nivel 3 -->
+      <div class="panel">
+        <svg viewBox="0 0 440 210">
+          <rect x="8" y="8" width="424" height="194" rx="8" fill="#fff" stroke="#BDBDBD" stroke-width="1.5"/>
+          <text x="20" y="30" font-size="15" fill="#999" class="mono">datos  { }</text>
+          <rect x="28" y="44" width="384" height="146" rx="6" fill="#fff" stroke="#BDBDBD" stroke-width="1.5"/>
+          <text x="40" y="64" font-size="14" fill="#999" class="mono">"serie"  [ ]</text>
+          <rect x="46" y="76" width="200" height="104" rx="6" fill="#FFF6F6" stroke="#E31E24" stroke-width="3"/>
+          <text x="58" y="96" font-size="14" font-weight="700" fill="#E31E24" class="mono">[0]  { }</text>
+          <rect x="64" y="120" width="164" height="42" rx="5" fill="#fff" stroke="#BDBDBD" stroke-width="1.5"/>
+          <text x="146" y="147" text-anchor="middle" font-size="14" fill="#999" class="mono">"valor": 964.1</text>
+          <rect x="262" y="76" width="132" height="104" rx="6" fill="#fff" stroke="#DDD" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <text x="328" y="134" text-anchor="middle" font-size="14" fill="#BBB" class="mono">[1] ...</text>
+        </svg>
+        <div class="panel-cap"><strong>3.</strong> <code>datos["serie"][0]</code> &rarr; <code>dict</code>, el día más reciente</div>
+      </div>
+      <!-- nivel 4 -->
+      <div class="panel">
+        <svg viewBox="0 0 440 210">
+          <rect x="8" y="8" width="424" height="194" rx="8" fill="#fff" stroke="#BDBDBD" stroke-width="1.5"/>
+          <text x="20" y="30" font-size="15" fill="#999" class="mono">datos  { }</text>
+          <rect x="28" y="44" width="384" height="146" rx="6" fill="#fff" stroke="#BDBDBD" stroke-width="1.5"/>
+          <text x="40" y="64" font-size="14" fill="#999" class="mono">"serie"  [ ]</text>
+          <rect x="46" y="76" width="200" height="104" rx="6" fill="#fff" stroke="#BDBDBD" stroke-width="1.5"/>
+          <text x="58" y="96" font-size="14" fill="#999" class="mono">[0]  { }</text>
+          <rect x="64" y="120" width="164" height="42" rx="5" fill="#FFF6F6" stroke="#E31E24" stroke-width="3"/>
+          <text x="146" y="147" text-anchor="middle" font-size="14" font-weight="700" fill="#E31E24" class="mono">"valor": 964.1</text>
+          <rect x="262" y="76" width="132" height="104" rx="6" fill="#fff" stroke="#DDD" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <text x="328" y="134" text-anchor="middle" font-size="14" fill="#BBB" class="mono">[1] ...</text>
+        </svg>
+        <div class="panel-cap"><strong>4.</strong> <code>datos["serie"][0]["valor"]</code> &rarr; <code>964.1</code></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Predecir antes de ejecutar</div>
+  <div class="concept-title anim">¿Qué va a<br><span>imprimir</span>?</div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 8 min &middot; en parejas</div>
+      <div class="act-t">Anoten lo que creen que imprime. Después ejecuten y comparen.</div>
+      <div class="act-list">
+        <div class="act-li">datos["serie"][1]["valor"]</div>
+        <div class="act-li">datos["serie"][0]["fecha"]</div>
+        <div class="act-li">datos["Serie"]</div>
+        <div class="act-li">El valor de la UF de hoy</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Respuesta</span>
+  <div class="concept-label anim">28-sep-2026</div>
+  <div class="concept-title anim">Lo que<br><span>imprimió</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Línea</th><th>Resultado</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">["serie"][1]["valor"]</td><td><code>965.71</code>, el viernes 25</td></tr>
+        <tr><td class="mono">["serie"][0]["fecha"]</td><td><code>'2026-09-28T03:00:00.000Z'</code>, un texto</td></tr>
+        <tr><td class="mono">datos["Serie"]</td><td><code>KeyError: 'Serie'</code></td></tr>
+        <tr><td class="mono">/uf</td><td><code>41040.82</code></td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Guarden ese KeyError</strong>
+        <p>La petición salió bien. El programa se cayó por buscar una clave que no venía. Vuelve en el bloque 05.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 04: LA API ENTRA AL TALLER ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 04</span>
+  <div class="sep-num anim">04 &middot; Concepto + actividad &middot; 25 min</div>
+  <div class="sep-title anim">La API<br>entra al <span>taller</span></div>
+  <p class="sep-desc anim">prueba_api.py era para mirar. Ahora el código va donde corresponde.</p>
+</div>
+
+<!-- Arquitectura frame 1 -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">1 de 2</span>
+  <div class="concept-label anim">Lo que ya tienen</div>
+  <div class="concept-title anim">Cada carpeta,<br>una <span>tarea</span></div>
+  <div class="concept-body anim">
+    <div class="diagram">
+      <svg viewBox="0 0 900 300">
+        <defs><marker id="ar-arq1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker></defs>
+        <rect x="40" y="120" width="160" height="60" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="120" y="157" text-anchor="middle" font-size="20" font-weight="700" class="mono">main.py</text>
+        <rect x="320" y="30" width="190" height="60" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="415" y="67" text-anchor="middle" font-size="20" font-weight="700" class="mono">model/</text>
+        <rect x="320" y="120" width="190" height="60" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="415" y="157" text-anchor="middle" font-size="20" font-weight="700" class="mono">dao/</text>
+        <rect x="640" y="120" width="190" height="60" rx="8" fill="#F2F2F2" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="735" y="157" text-anchor="middle" font-size="20" font-weight="700" class="mono">taller.db</text>
+        <path d="M200 150 H260 V60 H318" fill="none" stroke="#1A1A1A" stroke-width="2" marker-end="url(#ar-arq1)"/>
+        <path d="M260 150 H318" fill="none" stroke="#1A1A1A" stroke-width="2" marker-end="url(#ar-arq1)"/>
+        <line x1="510" y1="150" x2="638" y2="150" stroke="#1A1A1A" stroke-width="2" marker-end="url(#ar-arq1)"/>
+        <text x="574" y="140" text-anchor="middle" font-size="15" fill="#666" class="mono">sqlite3</text>
+        <text x="530" y="66" font-size="16" fill="#666">reglas del negocio, no habla con nadie</text>
+      </svg>
+    </div>
+    <div class="frame-txt">El DAO es la única parte que habla con la base de datos.</div>
+  </div>
+</div>
+
+<!-- Arquitectura frame 2 -->
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">2 de 2</span>
+  <div class="concept-label anim">Lo que se agrega hoy</div>
+  <div class="concept-title anim">La carpeta<br><span>servicios</span></div>
+  <div class="concept-body anim">
+    <div class="diagram">
+      <svg viewBox="0 0 900 300">
+        <defs>
+          <marker id="ar-arq2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker>
+          <marker id="ar-arq2r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E31E24"/></marker>
+        </defs>
+        <rect x="40" y="120" width="160" height="60" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="120" y="157" text-anchor="middle" font-size="20" font-weight="700" class="mono">main.py</text>
+        <rect x="320" y="30" width="190" height="60" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="415" y="67" text-anchor="middle" font-size="20" font-weight="700" class="mono">model/</text>
+        <rect x="320" y="120" width="190" height="60" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="415" y="157" text-anchor="middle" font-size="20" font-weight="700" class="mono">dao/</text>
+        <rect x="640" y="120" width="190" height="60" rx="8" fill="#F2F2F2" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="735" y="157" text-anchor="middle" font-size="20" font-weight="700" class="mono">taller.db</text>
+        <path d="M200 150 H260 V60 H318" fill="none" stroke="#1A1A1A" stroke-width="2" marker-end="url(#ar-arq2)"/>
+        <path d="M260 150 H318" fill="none" stroke="#1A1A1A" stroke-width="2" marker-end="url(#ar-arq2)"/>
+        <line x1="510" y1="150" x2="638" y2="150" stroke="#1A1A1A" stroke-width="2" marker-end="url(#ar-arq2)"/>
+        <text x="574" y="140" text-anchor="middle" font-size="15" fill="#666" class="mono">sqlite3</text>
+        <text x="530" y="66" font-size="16" fill="#666">reglas del negocio, no habla con nadie</text>
+        <rect x="320" y="210" width="190" height="60" rx="8" fill="#FFF6F6" stroke="#E31E24" stroke-width="3"/>
+        <text x="415" y="247" text-anchor="middle" font-size="20" font-weight="700" fill="#E31E24" class="mono">servicios/</text>
+        <rect x="640" y="210" width="190" height="60" rx="8" fill="#FFF6F6" stroke="#E31E24" stroke-width="3"/>
+        <text x="735" y="247" text-anchor="middle" font-size="20" font-weight="700" fill="#E31E24" class="mono">mindicador.cl</text>
+        <path d="M260 150 V240 H318" fill="none" stroke="#E31E24" stroke-width="3" marker-end="url(#ar-arq2r)"/>
+        <line x1="510" y1="240" x2="638" y2="240" stroke="#E31E24" stroke-width="3" marker-end="url(#ar-arq2r)"/>
+        <text x="574" y="230" text-anchor="middle" font-size="15" fill="#E31E24" class="mono">requests</text>
+      </svg>
+    </div>
+    <div class="frame-txt"><code>servicios/</code> es la única parte que habla con internet.
+    <code>Repuesto</code> recibe el dólar como parámetro: no sabe de dónde vino.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">La clase que habla con la API</div>
+  <div class="concept-title anim">servicios/<br><span>mindicador.py</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"Crea una carpeta servicios con un __init__.py vacío y un
+      archivo mindicador.py. Adentro, una clase Mindicador con una constante URL igual a
+      https://mindicador.cl/api/, un constructor que reciba timeout con valor por defecto 5 y
+      lo guarde en un atributo privado, y un método valor(codigo) que haga un GET a URL +
+      codigo con ese timeout y devuelva datos["serie"][0]["valor"]. Todavía sin try ni
+      except. No modifiques ningún otro archivo."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">servicios/mindicador.py</div>
+<pre><span class="kw">import</span> requests
+
+
+<span class="kw">class</span> <span class="cls">Mindicador</span>:
+    URL = <span class="str">"https://mindicador.cl/api/"</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, timeout: float = <span class="num">5</span>):
+        self.__timeout = timeout
+
+    <span class="kw">def</span> <span class="fn">valor</span>(self, codigo: str) -&gt; float:
+        respuesta = requests.<span class="fn">get</span>(self.URL + codigo, timeout=self.__timeout)
+        datos = respuesta.<span class="fn">json</span>()
+        <span class="kw">return</span> datos[<span class="str">"serie"</span>][<span class="num">0</span>][<span class="str">"valor"</span>]</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">El modelo recibe el valor, no lo busca</div>
+  <div class="concept-title anim">Repuesto aprende<br>a <span>cotizar</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"En model/repuesto.py agrega al constructor un parámetro
+      precio: float, guardado en un atributo privado. Si el repuesto es importado, ese precio
+      está en dólares. Agrega una property nombre y un método precio_en_pesos(dolar) que
+      devuelva el precio multiplicado por dolar si es importado, o el precio tal cual si no lo
+      es, redondeado a entero en los dos casos. No importes requests ni nada de la carpeta
+      servicios."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">model/repuesto.py &middot; lo que cambia</div>
+<pre>    <span class="kw">def</span> <span class="fn">precio_en_pesos</span>(self, dolar: float) -&gt; int:
+        <span class="kw">if</span> self.__es_importado:
+            <span class="kw">return</span> <span class="fn">round</span>(self.__precio * dolar)
+        <span class="kw">return</span> <span class="fn">round</span>(self.__precio)</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">main.py es la vitrina</div>
+  <div class="concept-title anim">¿Quién junta<br>las <span>piezas</span>?</div>
+  <div class="concept-body anim">
+    <div class="diagram">
+      <svg viewBox="0 0 900 300">
+        <defs>
+          <marker id="ar-cot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker>
+          <marker id="ar-cotr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E31E24"/></marker>
+        </defs>
+        <rect x="20" y="115" width="150" height="70" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="95" y="146" text-anchor="middle" font-size="19" font-weight="700" class="mono">main.py</text>
+        <text x="95" y="169" text-anchor="middle" font-size="14" fill="#666">pide y muestra</text>
+        <line x1="170" y1="150" x2="268" y2="150" stroke="#E31E24" stroke-width="3" marker-end="url(#ar-cotr)"/>
+        <text x="219" y="100" text-anchor="middle" font-size="14" fill="#E31E24" class="mono">precio_hoy()</text>
+        <rect x="270" y="115" width="190" height="70" rx="8" fill="#FFF6F6" stroke="#E31E24" stroke-width="3"/>
+        <text x="365" y="146" text-anchor="middle" font-size="19" font-weight="700" fill="#E31E24" class="mono">Cotizador</text>
+        <text x="365" y="169" text-anchor="middle" font-size="14" fill="#E31E24">junta las piezas</text>
+        <path d="M460 150 H495 V60 H528" fill="none" stroke="#1A1A1A" stroke-width="2" marker-end="url(#ar-cot)"/>
+        <path d="M495 150 V240 H528" fill="none" stroke="#1A1A1A" stroke-width="2" marker-end="url(#ar-cot)"/>
+        <rect x="530" y="25" width="190" height="70" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="625" y="56" text-anchor="middle" font-size="19" font-weight="700" class="mono">Repuesto</text>
+        <text x="625" y="79" text-anchor="middle" font-size="14" fill="#666">calcula el precio</text>
+        <rect x="530" y="205" width="190" height="70" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="625" y="236" text-anchor="middle" font-size="19" font-weight="700" class="mono">Mindicador</text>
+        <text x="625" y="259" text-anchor="middle" font-size="14" fill="#666">trae el dólar</text>
+        <line x1="720" y1="240" x2="748" y2="240" stroke="#1A1A1A" stroke-width="2" marker-end="url(#ar-cot)"/>
+        <rect x="750" y="215" width="140" height="50" rx="8" fill="#F2F2F2" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="820" y="245" text-anchor="middle" font-size="15" font-weight="700" class="mono">mindicador.cl</text>
+      </svg>
+    </div>
+    <div class="definicion">
+      <div class="def-k">main.py como vitrina</div>
+      <div class="def-txt">main.py <strong>pide datos y los muestra</strong>. No decide nada del negocio: ni qué indicador usar, ni cómo se calcula un precio.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Recibe el Mindicador, como el DAO recibe la conexión</div>
+  <div class="concept-title anim">servicios/<br><span>cotizador.py</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"En la carpeta servicios crea cotizador.py con una clase
+      Cotizador. Su constructor recibe un objeto Mindicador y lo guarda en un atributo
+      privado. Agrega un método precio_hoy(repuesto) que pida el valor del dólar al Mindicador
+      y devuelva repuesto.precio_en_pesos(dolar). No uses try ni except en esta clase. No
+      modifiques ningún otro archivo."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">servicios/cotizador.py</div>
+<pre><span class="kw">from</span> model.repuesto <span class="kw">import</span> <span class="cls">Repuesto</span>
+<span class="kw">from</span> servicios.mindicador <span class="kw">import</span> <span class="cls">Mindicador</span>
+
+
+<span class="kw">class</span> <span class="cls">Cotizador</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, indicador: <span class="cls">Mindicador</span>):
+        self.__indicador = indicador
+
+    <span class="kw">def</span> <span class="fn">precio_hoy</span>(self, repuesto: <span class="cls">Repuesto</span>) -&gt; int:
+        dolar = self.__indicador.<span class="fn">valor</span>(<span class="str">"dolar"</span>)
+        <span class="kw">return</span> repuesto.<span class="fn">precio_en_pesos</span>(dolar)</pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>"dolar" queda escrito en un solo lugar</strong>
+        <p>Si mañana el taller cotiza en euros, se cambia aquí y main.py no se entera.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Paso a paso</span>
+  <div class="concept-label anim">main.py solo pide y muestra</div>
+  <div class="concept-title anim">El precio de<br><span>hoy</span></div>
+  <div class="concept-body anim">
+    <div class="code-block">
+      <div class="code-title">main.py</div>
+<pre>filtro = <span class="cls">Repuesto</span>(<span class="str">"R-001"</span>, <span class="str">"Filtro de aceite Bosch"</span>, <span class="num">12</span>, <span class="kw">True</span>, <span class="num">18.50</span>)
+pastillas = <span class="cls">Repuesto</span>(<span class="str">"R-002"</span>, <span class="str">"Pastillas de freno"</span>, <span class="num">8</span>, <span class="kw">False</span>, <span class="num">24990</span>)
+
+cotizador = <span class="cls">Cotizador</span>(<span class="cls">Mindicador</span>())
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"{filtro.nombre}: ${cotizador.precio_hoy(filtro):,}"</span>)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"{pastillas.nombre}: ${cotizador.precio_hoy(pastillas):,}"</span>)</pre>
+    </div>
+    <div class="terminal">
+      <div class="term-title"><span class="term-dot" style="background:#FF5F57;"></span><span class="term-dot" style="background:#FEBC2E;"></span><span class="term-dot" style="background:#28C840;"></span>salida &middot; 28-sep-2026, dólar 964.1</div>
+      <pre><span class="term-out">Filtro de aceite Bosch: $17,836</span>
+<span class="term-out">Pastillas de freno: $24,990</span></pre>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El filtro cambia de precio cada día. Las pastillas, no</strong>
+        <p>18.50 &times; 964.1 = 17.835,85 &rarr; 17.836. Las pastillas son nacionales.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Sobre el taller mecánico</div>
+  <div class="concept-title anim">Coticen<br>con el dólar de <span>hoy</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 8 min &middot; en equipo</div>
+      <div class="act-t">Pídanle a agy Mindicador, los cambios de Repuesto y Cotizador. Después armen el main.py.</div>
+      <div class="act-list">
+        <div class="act-li">Agreguen un tercer repuesto importado</div>
+        <div class="act-li">Comprueben el precio con la calculadora</div>
+        <div class="act-li">main.py no puede tener la palabra "dolar" ni llamar a precio_en_pesos()</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 05: CUANDO LA API FALLA ============ -->
+<div class="slide slide-separator" style="background:#1A0505; border-bottom-color:#FF4444;">
+  <span class="slide-badge badge-peligro">Bloque 05</span>
+  <div class="sep-num anim" style="color:#FF8A80;">05 &middot; Concepto + actividad &middot; 25 min</div>
+  <div class="sep-title anim">Cuando<br>la API <span>falla</span></div>
+  <p class="sep-desc anim">El programa tiene que avisar y seguir funcionando.</p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-peligro">El problema</span>
+  <div class="concept-label anim">Lo que el main.py de recién no resiste</div>
+  <div class="concept-title anim">Tres formas<br>de <span>fallar</span></div>
+  <div class="concept-body anim">
+    <div class="panel-grid tres">
+      <div class="panel">
+        <svg viewBox="0 0 280 150">
+          <rect x="6" y="50" width="80" height="50" rx="6" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="46" y="80" text-anchor="middle" font-size="13" font-weight="700" class="mono">main.py</text>
+          <rect x="194" y="50" width="80" height="50" rx="6" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="234" y="80" text-anchor="middle" font-size="13" font-weight="700" class="mono">servidor</text>
+          <line x1="86" y1="75" x2="125" y2="75" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="155" y1="75" x2="194" y2="75" stroke="#1A1A1A" stroke-width="2"/>
+          <line x1="130" y1="62" x2="150" y2="88" stroke="#E31E24" stroke-width="4"/>
+          <line x1="150" y1="62" x2="130" y2="88" stroke="#E31E24" stroke-width="4"/>
+        </svg>
+        <div class="panel-cap"><strong>Sin conexión</strong><br><code>ConnectionError</code></div>
+      </div>
+      <div class="panel">
+        <svg viewBox="0 0 280 150">
+          <rect x="6" y="50" width="80" height="50" rx="6" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="46" y="80" text-anchor="middle" font-size="13" font-weight="700" class="mono">main.py</text>
+          <rect x="194" y="50" width="80" height="50" rx="6" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="234" y="80" text-anchor="middle" font-size="13" font-weight="700" class="mono">servidor</text>
+          <line x1="86" y1="75" x2="194" y2="75" stroke="#1A1A1A" stroke-width="2" stroke-dasharray="5 6"/>
+          <circle cx="140" cy="35" r="18" fill="#fff" stroke="#E31E24" stroke-width="3"/>
+          <line x1="140" y1="35" x2="140" y2="23" stroke="#E31E24" stroke-width="3"/>
+          <line x1="140" y1="35" x2="150" y2="35" stroke="#E31E24" stroke-width="3"/>
+          <text x="140" y="125" text-anchor="middle" font-size="14" fill="#E31E24" class="mono">5 s... 6 s...</text>
+        </svg>
+        <div class="panel-cap"><strong>Demora</strong><br><code>Timeout</code></div>
+      </div>
+      <div class="panel">
+        <svg viewBox="0 0 280 150">
+          <defs><marker id="ar-falla3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E31E24"/></marker></defs>
+          <rect x="6" y="50" width="80" height="50" rx="6" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="46" y="80" text-anchor="middle" font-size="13" font-weight="700" class="mono">main.py</text>
+          <rect x="194" y="50" width="80" height="50" rx="6" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+          <text x="234" y="80" text-anchor="middle" font-size="13" font-weight="700" class="mono">servidor</text>
+          <line x1="194" y1="75" x2="88" y2="75" stroke="#E31E24" stroke-width="2" marker-end="url(#ar-falla3)"/>
+          <rect x="100" y="22" width="80" height="34" rx="5" fill="#FFF6F6" stroke="#E31E24" stroke-width="2"/>
+          <text x="140" y="44" text-anchor="middle" font-size="13" fill="#E31E24" class="mono">{error}</text>
+        </svg>
+        <div class="panel-cap"><strong>Respuesta inesperada</strong><br><code>HTTPError</code> o <code>KeyError</code></div>
+      </div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Hoy, en los tres casos, el programa se cae</strong>
+        <p>Que la API falle no es culpa del programa. Que el programa se caiga, sí.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Dos herramientas de requests</div>
+  <div class="concept-title anim">timeout y<br><span>raise_for_status</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Timeout</div>
+      <div class="def-txt">El <strong>tiempo máximo de espera</strong>. Si se cumple, requests lanza <code>Timeout</code>. Sin timeout, el programa puede quedar congelado.</div>
+    </div>
+    <div class="definicion">
+      <div class="def-k">raise_for_status()</div>
+      <div class="def-txt">Lanza <code>HTTPError</code> si el código de estado es de error. Si es 200, no hace nada.</div>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Con /api/dolarr, a veces llega 200 con un error adentro</strong>
+        <p>Ahí no hay HTTPError: el error aparece al buscar <code>["serie"]</code>. Hay que atrapar las dos cosas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Traduccion de errores frame 1 -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">1 de 2</span>
+  <div class="concept-label anim">Excepciones propias, sesión 8</div>
+  <div class="concept-title anim">Mindicador<br>atrapa los <span>errores</span></div>
+  <div class="concept-body anim">
+    <div class="diagram">
+      <svg viewBox="0 0 900 300">
+        <defs><marker id="ar-err1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker></defs>
+        <rect x="20" y="20" width="240" height="44" rx="6" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="140" y="48" text-anchor="middle" font-size="16" font-weight="700" class="mono">Timeout</text>
+        <rect x="20" y="88" width="240" height="44" rx="6" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="140" y="116" text-anchor="middle" font-size="16" font-weight="700" class="mono">ConnectionError</text>
+        <rect x="20" y="156" width="240" height="44" rx="6" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="140" y="184" text-anchor="middle" font-size="16" font-weight="700" class="mono">HTTPError</text>
+        <rect x="20" y="224" width="240" height="44" rx="6" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="140" y="252" text-anchor="middle" font-size="16" font-weight="700" class="mono">KeyError, ValueError...</text>
+        <line x1="260" y1="42" x2="348" y2="144" stroke="#1A1A1A" stroke-width="2" marker-end="url(#ar-err1)"/>
+        <line x1="260" y1="110" x2="348" y2="144" stroke="#1A1A1A" stroke-width="2" marker-end="url(#ar-err1)"/>
+        <line x1="260" y1="178" x2="348" y2="144" stroke="#1A1A1A" stroke-width="2" marker-end="url(#ar-err1)"/>
+        <line x1="260" y1="246" x2="348" y2="144" stroke="#1A1A1A" stroke-width="2" marker-end="url(#ar-err1)"/>
+        <rect x="350" y="104" width="220" height="80" rx="8" fill="#F2F2F2" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="460" y="140" text-anchor="middle" font-size="18" font-weight="700" class="mono">Mindicador</text>
+        <text x="460" y="164" text-anchor="middle" font-size="15" fill="#666" class="mono">.valor()</text>
+      </svg>
+    </div>
+    <div class="frame-txt">Cuatro errores técnicos. Si <code>main.py</code> los atrapara uno por uno, tendría que saber cómo funciona <code>requests</code>.</div>
+  </div>
+</div>
+
+<!-- Traduccion de errores frame 2 -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">2 de 2</span>
+  <div class="concept-label anim">Excepciones propias, sesión 8</div>
+  <div class="concept-title anim">Un solo error<br>para <span>main.py</span></div>
+  <div class="concept-body anim">
+    <div class="diagram">
+      <svg viewBox="0 0 900 300">
+        <defs>
+          <marker id="ar-err2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker>
+          <marker id="ar-err2r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E31E24"/></marker>
+        </defs>
+        <rect x="20" y="20" width="240" height="44" rx="6" fill="#fff" stroke="#BDBDBD" stroke-width="2"/>
+        <text x="140" y="48" text-anchor="middle" font-size="16" fill="#999" class="mono">Timeout</text>
+        <rect x="20" y="88" width="240" height="44" rx="6" fill="#fff" stroke="#BDBDBD" stroke-width="2"/>
+        <text x="140" y="116" text-anchor="middle" font-size="16" fill="#999" class="mono">ConnectionError</text>
+        <rect x="20" y="156" width="240" height="44" rx="6" fill="#fff" stroke="#BDBDBD" stroke-width="2"/>
+        <text x="140" y="184" text-anchor="middle" font-size="16" fill="#999" class="mono">HTTPError</text>
+        <rect x="20" y="224" width="240" height="44" rx="6" fill="#fff" stroke="#BDBDBD" stroke-width="2"/>
+        <text x="140" y="252" text-anchor="middle" font-size="16" fill="#999" class="mono">KeyError, ValueError...</text>
+        <line x1="260" y1="42" x2="348" y2="144" stroke="#BDBDBD" stroke-width="2" marker-end="url(#ar-err2)"/>
+        <line x1="260" y1="110" x2="348" y2="144" stroke="#BDBDBD" stroke-width="2" marker-end="url(#ar-err2)"/>
+        <line x1="260" y1="178" x2="348" y2="144" stroke="#BDBDBD" stroke-width="2" marker-end="url(#ar-err2)"/>
+        <line x1="260" y1="246" x2="348" y2="144" stroke="#BDBDBD" stroke-width="2" marker-end="url(#ar-err2)"/>
+        <rect x="350" y="104" width="220" height="80" rx="8" fill="#F2F2F2" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="460" y="140" text-anchor="middle" font-size="18" font-weight="700" class="mono">Mindicador</text>
+        <text x="460" y="164" text-anchor="middle" font-size="15" fill="#666" class="mono">.valor()</text>
+        <line x1="570" y1="144" x2="608" y2="144" stroke="#E31E24" stroke-width="3" marker-end="url(#ar-err2r)"/>
+        <rect x="610" y="114" width="270" height="60" rx="8" fill="#FFF6F6" stroke="#E31E24" stroke-width="3"/>
+        <text x="745" y="150" text-anchor="middle" font-size="14" font-weight="700" fill="#E31E24" class="mono">IndicadorNoDisponibleError</text>
+        <line x1="745" y1="174" x2="745" y2="226" stroke="#E31E24" stroke-width="3" marker-end="url(#ar-err2r)"/>
+        <rect x="665" y="228" width="160" height="50" rx="8" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="745" y="259" text-anchor="middle" font-size="18" font-weight="700" class="mono">main.py</text>
+      </svg>
+    </div>
+    <div class="frame-txt"><strong>Mindicador traduce</strong> los errores técnicos a uno del negocio. Cotizador no lo atrapa: lo deja pasar. <strong>main.py decide</strong>: avisa y sigue.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-prompt">Prompt a Antigravity</span>
+  <div class="concept-label anim">Lo del diagrama, en código</div>
+  <div class="concept-title anim">Mindicador<br>se <span>protege</span></div>
+  <div class="concept-body anim">
+    <div class="prompt-box anim">
+      <div class="prompt-label"><span class="dot"></span>Le escriben a agy</div>
+      <div class="prompt-text">"En excepciones.py agrega IndicadorNoDisponibleError, que
+      hereda de Exception. En servicios/mindicador.py, dentro de valor(), llama a
+      raise_for_status() después del get y envuelve todo en un try. Atrapa en este orden
+      Timeout, ConnectionError, HTTPError y, juntos, ValueError, KeyError e IndexError. En cada
+      except lanza IndicadorNoDisponibleError con un mensaje distinto que explique qué falló.
+      No uses except Exception."</div>
+    </div>
+    <div class="code-block">
+      <div class="code-title">servicios/mindicador.py &middot; método valor()</div>
+<pre style="font-size:12.5px;">    <span class="kw">def</span> <span class="fn">valor</span>(self, codigo: str) -&gt; float:
+        <span class="kw">try</span>:
+            respuesta = requests.<span class="fn">get</span>(self.URL + codigo, timeout=self.__timeout)
+            respuesta.<span class="fn">raise_for_status</span>()
+            datos = respuesta.<span class="fn">json</span>()
+            <span class="kw">return</span> datos[<span class="str">"serie"</span>][<span class="num">0</span>][<span class="str">"valor"</span>]
+        <span class="kw">except</span> requests.exceptions.<span class="cls">Timeout</span>:
+            <span class="kw">raise</span> <span class="cls">IndicadorNoDisponibleError</span>(<span class="fn">f</span><span class="str">"mindicador.cl no respondió en {self.__timeout} segundos"</span>)
+        <span class="kw">except</span> requests.exceptions.<span class="cls">ConnectionError</span>:
+            <span class="kw">raise</span> <span class="cls">IndicadorNoDisponibleError</span>(<span class="str">"No hay conexión con mindicador.cl"</span>)
+        <span class="kw">except</span> requests.exceptions.<span class="cls">HTTPError</span>:
+            <span class="kw">raise</span> <span class="cls">IndicadorNoDisponibleError</span>(<span class="fn">f</span><span class="str">"mindicador.cl respondió con error {respuesta.status_code}"</span>)
+        <span class="kw">except</span> (<span class="cls">ValueError</span>, <span class="cls">KeyError</span>, <span class="cls">IndexError</span>):
+            <span class="kw">raise</span> <span class="cls">IndicadorNoDisponibleError</span>(<span class="str">"La respuesta de mindicador.cl no trae el valor esperado"</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Herencia de excepciones frame 1 -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-peligro">1 de 2</span>
+  <div class="concept-label anim">Herencia, sesión 7</div>
+  <div class="concept-title anim">¿Por qué Timeout<br>va <span>primero</span>?</div>
+  <div class="concept-body anim">
+    <div class="diagram">
+      <svg viewBox="0 0 900 320">
+        <rect x="325" y="20" width="250" height="50" rx="4" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="450" y="51" text-anchor="middle" font-size="17" font-weight="700" class="mono">RequestException</text>
+        <rect x="100" y="140" width="250" height="50" rx="4" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="225" y="171" text-anchor="middle" font-size="17" font-weight="700" class="mono">ConnectionError</text>
+        <rect x="550" y="140" width="250" height="50" rx="4" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="675" y="171" text-anchor="middle" font-size="17" font-weight="700" class="mono">Timeout</text>
+        <path d="M225 140 V115 H675 V140" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="450" y1="115" x2="450" y2="90" stroke="#1A1A1A" stroke-width="2"/>
+        <polygon points="450,70 440,90 460,90" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="frame-txt">Las excepciones de requests son clases con herencia, como <code>Auto</code> y <code>Vehiculo</code>.</div>
+  </div>
+</div>
+
+<!-- Herencia de excepciones frame 2 -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-peligro">2 de 2</span>
+  <div class="concept-label anim">Herencia, sesión 7</div>
+  <div class="concept-title anim">Una hija de<br><span>dos</span> padres</div>
+  <div class="concept-body anim">
+    <div class="diagram">
+      <svg viewBox="0 0 900 320">
+        <rect x="325" y="20" width="250" height="50" rx="4" fill="#fff" stroke="#BDBDBD" stroke-width="2"/>
+        <text x="450" y="51" text-anchor="middle" font-size="17" fill="#999" class="mono">RequestException</text>
+        <rect x="100" y="140" width="250" height="50" rx="4" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="225" y="171" text-anchor="middle" font-size="17" font-weight="700" class="mono">ConnectionError</text>
+        <rect x="550" y="140" width="250" height="50" rx="4" fill="#fff" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="675" y="171" text-anchor="middle" font-size="17" font-weight="700" class="mono">Timeout</text>
+        <path d="M225 140 V115 H675 V140" fill="none" stroke="#BDBDBD" stroke-width="2"/>
+        <line x1="450" y1="115" x2="450" y2="90" stroke="#BDBDBD" stroke-width="2"/>
+        <polygon points="450,70 440,90 460,90" fill="#fff" stroke="#BDBDBD" stroke-width="2"/>
+        <rect x="325" y="255" width="250" height="50" rx="4" fill="#FFF6F6" stroke="#E31E24" stroke-width="3"/>
+        <text x="450" y="286" text-anchor="middle" font-size="17" font-weight="700" fill="#E31E24" class="mono">ConnectTimeout</text>
+        <line x1="450" y1="255" x2="450" y2="228" stroke="#E31E24" stroke-width="2.5"/>
+        <path d="M225 210 V228 H675 V210" fill="none" stroke="#E31E24" stroke-width="2.5"/>
+        <polygon points="225,190 215,210 235,210" fill="#fff" stroke="#E31E24" stroke-width="2.5"/>
+        <polygon points="675,190 665,210 685,210" fill="#fff" stroke="#E31E24" stroke-width="2.5"/>
+      </svg>
+    </div>
+    <div class="frame-txt">Si el servidor no acepta la conexión a tiempo, llega <code>ConnectTimeout</code>: calza con los dos except. Python usa el <strong>primero</strong>. Con <code>ConnectionError</code> arriba, el mensaje diría "no hay conexión" cuando el problema fue la demora.</div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Paso a paso</span>
+  <div class="concept-label anim">main.py avisa y sigue</div>
+  <div class="concept-title anim">Ninguna prueba<br>se <span>cae</span></div>
+  <div class="concept-body anim">
+    <div class="code-block">
+      <div class="code-title">main.py</div>
+<pre>cotizador = <span class="cls">Cotizador</span>(<span class="cls">Mindicador</span>())
+<span class="kw">try</span>:
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"{filtro.nombre}: ${cotizador.precio_hoy(filtro):,}"</span>)
+<span class="kw">except</span> <span class="cls">IndicadorNoDisponibleError</span> <span class="kw">as</span> error:
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"No se pudo cotizar: {error}"</span>)
+
+<span class="fn">print</span>(<span class="str">"El programa sigue funcionando."</span>)</pre>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Se provoca con</th><th>Imprime</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">Cotizador(Mindicador(0.001))</td><td><code>mindicador.cl no respondió en 0.001 segundos</code></td></tr>
+        <tr><td class="mono">mindicador.clx</td><td><code>No hay conexión con mindicador.cl</code></td></tr>
+        <tr><td class="mono">valor("dolarr")</td><td><code>La respuesta de mindicador.cl no trae el valor esperado</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Seguridad</span>
+  <div class="concept-label anim">Lo que no se hace, aunque funcione</div>
+  <div class="concept-title anim">Nunca y<br><span>siempre</span></div>
+  <div class="concept-body anim">
+    <div class="two-col">
+      <div class="col-card bad">
+        <div class="col-card-title">Nunca</div>
+        <div class="code-block" style="margin:0;">
+<pre><span class="kw">except</span>:
+    <span class="kw">pass</span></pre>
+        </div>
+        <p style="margin-top:10px;">El error desaparece sin avisar.</p>
+      </div>
+      <div class="col-card good">
+        <div class="col-card-title">Siempre</div>
+        <div class="code-block" style="margin:0;">
+<pre><span class="kw">except</span> <span class="cls">IndicadorNoDisponibleError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(e)</pre>
+        </div>
+        <p style="margin-top:10px;">Un error concreto, y se informa.</p>
+      </div>
+    </div>
+    <table class="tbl">
+      <tbody>
+        <tr><td class="mono">timeout</td><td>En todo <code>requests.get()</code></td></tr>
+        <tr><td class="mono">respuesta</td><td>Lo que llega de afuera se revisa, igual que un <code>input()</code></td></tr>
+        <tr><td class="mono">API key</td><td>Si una API pide clave, nunca va escrita en el repositorio</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Sobre el taller mecánico</div>
+  <div class="concept-title anim">Rómpanlo<br>a <span>propósito</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 10 min &middot; en equipo</div>
+      <div class="act-t">Protejan Mindicador y main.py, y provoquen cada falla.</div>
+      <div class="act-list">
+        <div class="act-li">Demora: Cotizador(Mindicador(0.001))</div>
+        <div class="act-li">Sin conexión: URL mindicador.clx, o sin wifi</div>
+        <div class="act-li">Respuesta inesperada: valor("dolarr")</div>
+        <div class="act-li">Las tres tienen que llegar a "El programa sigue funcionando."</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ TALLER FINAL ============ -->
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Taller</span>
+  <div class="concept-label anim">En equipo &middot; 15 min &middot; con asesoría</div>
+  <div class="concept-title anim">El indicador<br>de su <span>negocio</span></div>
+  <div class="concept-body anim">
+    <div class="chk">
+      <div class="chk-item">
+        <div class="chk-num">1</div>
+        <div class="chk-cont">
+          <div class="chk-tit">requirements.txt y servicios/mindicador.py</div>
+          <div class="chk-desc">Con el código de su indicador: <code>dolar</code>, <code>euro</code>, <code>uf</code> o <code>utm</code>.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">2</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Un método de precio en su modelo</div>
+          <div class="chk-desc">Recibe el valor como parámetro. Sin requests.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">3</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Un Cotizador que junte las piezas</div>
+          <div class="chk-desc">main.py solo le pide el precio y lo muestra, con try y IndicadorNoDisponibleError. Prueben las tres fallas.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">4</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Commit, merge a master y push</div>
+          <div class="chk-desc">Revisen en GitHub que esté la carpeta servicios.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- CIERRE -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen de la sesión</div>
+  <div class="sep-title anim">Lo que te<br><span>llevas</span> hoy</div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">API</div>
+      <div class="resumen-desc">URL, GET, código de estado y JSON</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">requests</div>
+      <div class="resumen-desc">get() pide, .json() convierte a diccionario</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">datos["serie"][0]["valor"]</div>
+      <div class="resumen-desc">Un corchete por nivel</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Mindicador y Cotizador</div>
+      <div class="resumen-desc">Uno trae el dato, el otro junta las piezas. main.py solo pide y muestra</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">timeout y except en orden</div>
+      <div class="resumen-desc">Timeout antes que ConnectionError</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">IndicadorNoDisponibleError</div>
+      <div class="resumen-desc">main.py avisa y sigue funcionando</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Próxima clase (martes 29/09 &middot; 160 min)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,.6); line-height:1.6;">Hash, salt y login con permisos por rol</div>
+  </div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const progress = document.getElementById('progress');
+  let current = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.15) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.15 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
