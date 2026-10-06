@@ -65,6 +65,38 @@
                 <div class="footer-note" id="footer-note"></div>
             </div>
         </div>
+
+        <!-- Detalle de una evaluacion -->
+        <div id="detail-section" class="hidden">
+            <div class="card fade-in">
+                <div class="header">
+                    <div>
+                        <h2 id="detail-title">---</h2>
+                        <p id="detail-module" class="detail-subtitle">---</p>
+                    </div>
+                    <div class="header-actions">
+                        <button id="detail-back-btn" class="btn-secondary">Volver</button>
+                    </div>
+                </div>
+
+                <div class="detail-grade">
+                    <span id="detail-grade-value" class="detail-grade-value">-</span>
+                    <span id="detail-grade-tags" class="detail-grade-tags"></span>
+                </div>
+                <p id="detail-status" class="detail-status"></p>
+
+                <div id="detail-score" class="hidden">
+                    <div class="detail-score-head">
+                        <span>Puntaje por pregunta</span>
+                        <span id="detail-score-total"></span>
+                    </div>
+                    <ul id="detail-questions" class="question-list"></ul>
+                    <p class="detail-legend">La marca gris es el promedio del curso en cada pregunta.</p>
+                </div>
+
+                <dl id="detail-facts" class="detail-facts"></dl>
+            </div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>

@@ -41,11 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const sections = {
         login: document.getElementById('login-section'),
         selector: document.getElementById('selector-section'),
-        dashboard: document.getElementById('dashboard-section')
+        dashboard: document.getElementById('dashboard-section'),
+        detail: document.getElementById('detail-section')
     };
     const backBtn = document.getElementById('back-btn');
 
     let alumno = null;
+    let cursoActual = null;
 
     function show(name) {
         Object.entries(sections).forEach(([key, el]) => {
@@ -60,6 +62,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function formatNota(n) {
         return n === null ? '-' : n.toFixed(1);
+    }
+
+    // 8 -> "8", 1.5 -> "1,5"
+    function formatPuntaje(n) {
+        return String(Math.round(n * 100) / 100).replace('.', ',');
+    }
+
+    function colorNota(n) {
+        return n !== null && n < 4.0 ? '#d63031' : '#2d3436';
+    }
+
+    function estaPendiente(ev) {
+        return Boolean(ev.cierre) && new Date() < new Date(ev.cierre);
+    }
+
+    function etiquetasEstado(ev) {
+        const tags = [];
+        if (estaPendiente(ev)) tags.push('Pendiente');
+        else if (!ev.rendida) tags.push('No rendida');
+        if (ev.descartada) tags.push('Descartada');
+        return tags;
     }
 
     loginForm.addEventListener('submit', async (e) => {
@@ -112,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showDashboard(curso) {
+        cursoActual = curso;
         document.getElementById('student-name').textContent = alumno.nombre;
         document.getElementById('student-module').textContent = `Módulo: ${curso.modulo}`;
         document.getElementById('student-section').textContent = `Sección: ${curso.seccion}`;
@@ -121,8 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const container = document.getElementById('grades-container');
         container.innerHTML = '';
-        const ahora = new Date();
-        const pendiente = (ev) => Boolean(ev.cierre) && ahora < new Date(ev.cierre);
 
         if (curso.cantidad === 0) {
             const vacio = document.createElement('p');
@@ -132,43 +154,126 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         curso.evaluaciones.forEach((ev) => {
-            const box = document.createElement('div');
+            const box = document.createElement('button');
+            box.type = 'button';
             box.className = 'grade-box' + (ev.descartada ? ' descartada' : '');
+            box.setAttribute('aria-label', `Ver detalle de ${ev.etiqueta}`);
             box.innerHTML = '<span class="grade-label"></span><span class="grade-value"></span>';
             box.querySelector('.grade-label').textContent = ev.etiqueta;
             const value = box.querySelector('.grade-value');
             value.textContent = formatNota(ev.nota);
-            value.style.color = ev.nota !== null && ev.nota < 4.0 ? '#d63031' : '#2d3436';
-            const tags = [];
-            if (pendiente(ev)) tags.push('Pendiente');
-            else if (!ev.rendida) tags.push('No rendida');
-            if (ev.descartada) tags.push('Descartada');
+            value.style.color = colorNota(ev.nota);
+            const tags = etiquetasEstado(ev);
             if (tags.length) {
                 const tag = document.createElement('span');
                 tag.className = 'grade-tag';
                 tag.textContent = tags.join(' - ');
                 box.appendChild(tag);
             }
+            box.addEventListener('click', () => showDetail(ev));
             container.appendChild(box);
         });
 
         let nota = curso.aplicaDescarte
             ? `* El promedio final considera las mejores ${curso.cantidad - 2} de tus ${curso.cantidad} calificaciones (se descartan las 2 más bajas). Las evaluaciones no rendidas cuentan como 1.0.`
             : '* Con menos de 3 evaluaciones aún no se descarta ninguna; el promedio final es el promedio simple.';
-        if (curso.evaluaciones.some(pendiente)) {
+        if (curso.evaluaciones.some(estaPendiente)) {
             nota += ' Las evaluaciones pendientes aún están abiertas: cuentan como 1.0 hasta que las rindas.';
         }
+        nota += ' Toca una evaluación para ver su detalle.';
         document.getElementById('footer-note').textContent = nota;
 
         show('dashboard');
     }
 
+    function showDetail(ev) {
+        const curso = cursoActual;
+        document.getElementById('detail-title').textContent = `Evaluación ${ev.etiqueta}`;
+        document.getElementById('detail-module').textContent = `${curso.modulo} - Sección ${curso.seccion}`;
+
+        const value = document.getElementById('detail-grade-value');
+        value.textContent = formatNota(ev.nota);
+        value.style.color = colorNota(ev.nota);
+        document.getElementById('detail-grade-tags').textContent = etiquetasEstado(ev).join(' - ');
+
+        let estado;
+        if (estaPendiente(ev)) {
+            estado = 'Esta evaluación sigue abierta. Mientras no la rindas cuenta como 1.0.';
+        } else if (!ev.rendida) {
+            estado = 'No rendiste esta evaluación, así que cuenta como 1.0.';
+        } else {
+            estado = 'Esta nota cuenta para tu promedio final.';
+        }
+        if (ev.descartada) {
+            estado = (ev.rendida ? '' : 'No rendiste esta evaluación. ') +
+                'Es una de tus 2 notas más bajas, así que se descarta y no cuenta para tu promedio final.';
+        }
+        document.getElementById('detail-status').textContent = estado;
+
+        const score = document.getElementById('detail-score');
+        const list = document.getElementById('detail-questions');
+        list.innerHTML = '';
+        const det = ev.detalle;
+        score.classList.toggle('hidden', !det);
+        if (det) {
+            document.getElementById('detail-score-total').textContent =
+                `${formatPuntaje(det.puntaje)} de ${formatPuntaje(det.puntajeMax)} puntos`;
+            det.preguntas.forEach((p) => {
+                const li = document.createElement('li');
+                li.className = 'question';
+                li.innerHTML =
+                    '<span class="question-name"></span>' +
+                    '<span class="question-bar"><span class="question-fill"></span><span class="question-mark"></span></span>' +
+                    '<span class="question-score"></span>';
+                li.querySelector('.question-name').textContent = `Pregunta ${p.numero}`;
+                const fill = li.querySelector('.question-fill');
+                fill.style.width = `${(p.puntaje / p.max) * 100}%`;
+                fill.classList.toggle('parcial', p.puntaje < p.max);
+                const mark = li.querySelector('.question-mark');
+                if (p.promedioCurso === null) mark.remove();
+                else mark.style.left = `${(p.promedioCurso / p.max) * 100}%`;
+                li.querySelector('.question-score').textContent = `${formatPuntaje(p.puntaje)} / ${formatPuntaje(p.max)}`;
+                li.title = p.promedioCurso === null ? '' : `Promedio del curso: ${formatPuntaje(p.promedioCurso)}`;
+                list.appendChild(li);
+            });
+        }
+
+        const facts = document.getElementById('detail-facts');
+        facts.innerHTML = '';
+        const agregar = (label, texto) => {
+            const dt = document.createElement('dt');
+            dt.textContent = label;
+            const dd = document.createElement('dd');
+            dd.textContent = texto;
+            facts.append(dt, dd);
+        };
+        if (det) {
+            agregar('Rendida el', det.finalizado);
+            agregar('Duración', det.duracion);
+        } else if (ev.rendida) {
+            agregar('Detalle', 'No hay detalle por pregunta para esta evaluación.');
+        }
+        if (ev.promedioCurso !== undefined) {
+            agregar('Promedio del curso', `${formatNota(ev.promedioCurso)} (de quienes la rindieron)`);
+        }
+        if (estaPendiente(ev)) {
+            agregar('Cierra el', new Date(ev.cierre).toLocaleString('es-CL', {
+                timeZone: 'America/Santiago', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit'
+            }));
+        }
+
+        show('detail');
+        window.scrollTo(0, 0);
+    }
+
+    document.getElementById('detail-back-btn').addEventListener('click', () => showDashboard(cursoActual));
     backBtn.addEventListener('click', showSelector);
     document.getElementById('selector-back-btn').addEventListener('click', logout);
     document.getElementById('logout-btn').addEventListener('click', logout);
 
     function logout() {
         alumno = null;
+        cursoActual = null;
         rutInput.value = '';
         errorMsg.classList.add('hidden');
         show('login');

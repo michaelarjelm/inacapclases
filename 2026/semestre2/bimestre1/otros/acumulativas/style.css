@@ -312,3 +312,147 @@ input:focus {
     opacity: 0.6;
     cursor: wait;
 }
+
+/* Notas como botones hacia el detalle */
+button.grade-box {
+    width: 100%;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.3s, background 0.3s;
+}
+
+button.grade-box:hover,
+button.grade-box:focus-visible {
+    border-color: var(--primary-color);
+    background: #fff5f5;
+    outline: none;
+}
+
+/* Detalle de una evaluacion */
+#detail-section .card {
+    text-align: left;
+}
+
+.detail-subtitle {
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.detail-grade {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.detail-grade-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.detail-grade-tags {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.detail-status {
+    margin-bottom: 25px;
+}
+
+.detail-score-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.question-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.question {
+    display: grid;
+    grid-template-columns: 90px 1fr 56px;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+}
+
+.question-bar {
+    position: relative;
+    height: 10px;
+    background: #edf2f7;
+    border-radius: 5px;
+}
+
+.question-fill {
+    display: block;
+    height: 100%;
+    background: #00b894;
+    border-radius: 5px;
+}
+
+.question-fill.parcial {
+    background: var(--primary-color);
+}
+
+.question-mark {
+    position: absolute;
+    top: -3px;
+    width: 3px;
+    height: 16px;
+    margin-left: -1.5px;
+    background: #636e72;
+    border-radius: 2px;
+}
+
+.question-score {
+    text-align: right;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.detail-legend {
+    margin: 10px 0 0;
+    font-size: 0.75rem;
+}
+
+.detail-facts {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 16px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    font-size: 0.9rem;
+}
+
+.detail-facts:empty {
+    display: none;
+}
+
+.detail-facts dt {
+    color: var(--text-muted);
+}
+
+.detail-facts dd {
+    font-weight: 600;
+}
+
+@media (max-width: 480px) {
+    .card {
+        padding: 24px;
+    }
+    .question {
+        grid-template-columns: 80px 1fr 48px;
+        gap: 8px;
+    }
+}
