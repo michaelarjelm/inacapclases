@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="generator" content="archify 3.0.1">
   <meta name="archify-reader-contract" content="declared-wide-v1">
-  <title>Un solo negocio, de la ES1 a la ES3 · Diagrama</title>
+  <title>Etapas del desarrollo de software · Diagrama</title>
   <script>
     // Resolve the theme before first paint so light-preference users don't
     // see a dark flash. The toolbar script below re-applies with UI state.
@@ -4978,7 +4978,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
            data-preset-badge-blueprint="PLANO / REV 01"
            data-preset-badge-editorial="EDITORIAL / NOTA DE CAMPO">
         <div class="pulse-dot"></div>
-        <h1>Un solo negocio, de la ES1 a la ES3</h1>
+        <h1>Etapas del desarrollo de software</h1>
       </div>
     </div>
 
@@ -4987,8 +4987,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     <!-- Main Diagram -->
     <div class="diagram-container" data-detail-level="read"
          data-preset-badge-editorial-plate="ARCHIFY / LÁMINA 04">
-      <svg viewBox="0 0 1240 534" data-layout-contract="readable-v2" role="img" lang="es" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="classic" data-quality-profile="showcase">
-        <title id="archify-diagram-title">Un solo negocio, de la ES1 a la ES3</title>
+      <svg viewBox="0 0 1177 282" data-layout-contract="readable-v2" role="img" lang="es" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="classic" data-quality-profile="showcase">
+        <title id="archify-diagram-title">Etapas del desarrollo de software</title>
         <desc id="archify-diagram-description">Un diagrama de flujo de trabajo generado por Archify.</desc>
         <!-- Definitions -->
         <defs>
@@ -5013,226 +5013,118 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <rect width="100%" height="100%" fill="url(#grid)" />
 
         <!-- Swimlanes -->
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="lane" data-composition-frame-id="lane-0" x="40" y="52" width="1184" height="106" rx="10" class="c-lane" stroke-width="1"/>
-        <text x="54" y="74" class="t-dim" font-size="10" font-weight="600">01 / UA1 · UML</text>
-
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="lane" data-composition-frame-id="lane-1" x="40" y="178" width="1184" height="106" rx="10" class="c-lane" stroke-width="1"/>
-        <text x="54" y="200" class="t-dim" font-size="10" font-weight="600">02 / UA2 · parte 1</text>
-
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="lane" data-composition-frame-id="lane-2" x="40" y="304" width="1184" height="106" rx="10" class="c-lane" stroke-width="1"/>
-        <text x="54" y="326" class="t-dim" font-size="10" font-weight="600">03 / UA2 · parte 2</text>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="lane" data-composition-frame-id="lane-0" x="40" y="52" width="1121" height="106" rx="10" class="c-lane" stroke-width="1"/>
+        <text x="54" y="74" class="t-dim" font-size="10" font-weight="600">01 / Ciclo de vida del software</text>
 
         <!-- Phase headers -->
-
+        <line x1="77" y1="35" x2="394.6" y2="35" class="a-emphasis" stroke-width="1.1"/>
+        <rect x="77" y="27" width="317.6" height="16" rx="4" class="c-mask"/>
+        <text x="235.8" y="39" class="t-backend" font-size="8" font-weight="600" text-anchor="middle">Este módulo</text>
+        <line x1="547.4000000000001" y1="35" x2="1028.6000000000001" y2="35" class="a-dashed" stroke-width="1.1"/>
+        <rect x="547.4000000000001" y="27" width="481.20000000000005" height="16" rx="4" class="c-mask"/>
+        <text x="788.0000000000001" y="39" class="t-messagebus" font-size="8" font-weight="600" text-anchor="middle">Fuera de este módulo</text>
 
         <!-- Workflow groups -->
 
 
         <!-- Edge paths -->
-        <path data-edge-from="negocio" data-edge-to="correo" data-edge-key="0" data-edge-id="h1" data-composition-routing="workflow-v2-auto" data-edge-role="" data-composition-points="188,120;216,120" d="M 188 120 L 216 120" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <path data-edge-from="escenario" data-edge-to="es3" data-edge-label="informe" data-edge-key="1" data-edge-id="h10" data-composition-routing="workflow-v2-auto" data-edge-role="" data-composition-points="1023.6,372;1075.2,372" d="M 1023.6 372 L 1075.2 372" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="correo" data-edge-to="req" data-edge-label="clasificar" data-edge-key="2" data-edge-id="h2" data-composition-routing="workflow-v2-auto" data-edge-role="" data-composition-points="366,120;432,120" d="M 366 120 L 432 120" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="req" data-edge-to="uml" data-edge-label="dibujar" data-edge-key="3" data-edge-id="h3" data-composition-routing="workflow-v2-auto" data-edge-role="" data-composition-points="572,120;652,120" d="M 572 120 L 652 120" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="uml" data-edge-to="es1" data-edge-label="informe" data-edge-key="4" data-edge-id="h4" data-composition-routing="workflow-v2-auto" data-edge-role="" data-composition-points="792,120;883.6,120" d="M 792 120 L 883.6 120" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="req" data-edge-to="hist" data-edge-label="se reutilizan" data-edge-key="5" data-edge-id="h5" data-composition-routing="workflow-v2-auto" data-edge-role="branch" data-composition-points="502,146;502,220" d="M 502 146 L 502 220" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-        <path data-edge-from="hist" data-edge-to="logica" data-edge-key="6" data-edge-id="h6" data-composition-routing="workflow-v2-auto" data-edge-role="" data-composition-points="584,246;612,246" d="M 584 246 L 612 246" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="logica" data-edge-to="es2" data-edge-label="informe" data-edge-key="7" data-edge-id="h7" data-composition-routing="workflow-v2-auto" data-edge-role="" data-composition-points="832,246;883.6,246" d="M 832 246 L 883.6 246" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="logica" data-edge-to="procesos" data-edge-label="mismo sistema" data-edge-key="8" data-edge-id="h8" data-composition-routing="workflow-v2-auto" data-edge-role="branch" data-composition-points="722,272;722,346" d="M 722 272 L 722 346" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-        <path data-edge-from="procesos" data-edge-to="escenario" data-edge-key="9" data-edge-id="h9" data-composition-routing="workflow-v2-auto" data-edge-role="" data-composition-points="825,372;883.6,372" d="M 825 372 L 883.6 372" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="analisis" data-edge-to="diseno" data-edge-label="qué necesita" data-edge-key="0" data-edge-id="e1" data-composition-routing="workflow-v2-auto" data-edge-role="" data-composition-points="198,120;273.6,120" d="M 198 120 L 273.6 120" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="diseno" data-edge-to="implementacion" data-edge-label="cómo se organiza" data-edge-key="1" data-edge-id="e2" data-composition-routing="workflow-v2-auto" data-edge-role="" data-composition-points="423.6,120;518.4000000000001,120" d="M 423.6 120 L 518.4000000000001 120" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="implementacion" data-edge-to="pruebas" data-edge-key="2" data-edge-id="e3" data-composition-routing="workflow-v2-auto" data-edge-role="" data-composition-points="668.4000000000001,120;696.4000000000001,120" d="M 668.4000000000001 120 L 696.4000000000001 120" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="pruebas" data-edge-to="mantenimiento" data-edge-label="entregado" data-edge-key="3" data-edge-id="e4" data-composition-routing="workflow-v2-auto" data-edge-role="" data-composition-points="846.4000000000001,120;907.6000000000001,120" d="M 846.4000000000001 120 L 907.6000000000001 120" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="mantenimiento" data-edge-to="analisis" data-edge-label="nuevos requerimientos" data-edge-key="4" data-edge-id="e5" data-edge-role="return" data-composition-points="982.6000000000001,146;982.6000000000001,186;123,186;123,154" d="M 982.6000000000001 146 L 982.6000000000001 186 L 123 186 L 123 154" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
 
         <!-- Nodes -->
-        <g id="node-negocio" data-node-id="negocio" data-node-label="Tu negocio" tabindex="0" role="button" aria-label="Enfocar Tu negocio, solo o en dupla, UA1 · UML" aria-pressed="false" data-node-kind="external" data-node-sublabel="solo o en dupla" data-node-tag="S1 · 13-oct" data-node-context="UA1 · UML">
-          <title>Tu negocio · solo o en dupla · UA1 · UML · S1 · 13-oct</title>
-          <rect x="48" y="86" width="140" height="68" rx="6" class="c-mask"/>
-          <rect x="48" y="86" width="140" height="68" rx="6" class="c-external" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="person" class="semantic-sigil s-external" transform="translate(54 92) scale(0.6875)">
-            <circle cx="8" cy="4.5" r="2.5"/><path d="M3 14v-2a5 5 0 0 1 10 0v2"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="118" y="107" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Tu negocio</text>
-          <text data-detail="context" x="118" y="124" class="t-muted" font-size="8" text-anchor="middle">solo o en dupla</text>
-        <text data-detail="fine" x="118" y="142" class="t-external" font-size="7" text-anchor="middle">S1 · 13-oct</text>
-        </g>
-
-        <g id="node-correo" data-node-id="correo" data-node-label="Correo del cliente" tabindex="0" role="button" aria-label="Enfocar Correo del cliente, clasificado en S1, UA1 · UML" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="clasificado en S1" data-node-context="UA1 · UML">
-          <title>Correo del cliente · clasificado en S1 · UA1 · UML</title>
-          <rect x="216" y="94" width="150" height="52" rx="6" class="c-mask"/>
-          <rect x="216" y="94" width="150" height="52" rx="6" class="c-frontend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(222 100) scale(0.6875)">
-            <rect x="2" y="3" width="12" height="10" rx="2"/>
-            <path d="M2 6.5h12"/>
-            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
-            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="294.4" y="115" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Correo del cliente</text>
-          <text data-detail="context" x="291" y="132" class="t-muted" font-size="8" text-anchor="middle">clasificado en S1</text>
-        </g>
-
-        <g id="node-req" data-node-id="req" data-node-label="Requerimientos" tabindex="0" role="button" aria-label="Enfocar Requerimientos, y factibilidad, UA1 · UML" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="y factibilidad" data-node-context="UA1 · UML">
-          <title>Requerimientos · y factibilidad · UA1 · UML</title>
-          <rect x="432" y="94" width="140" height="52" rx="6" class="c-mask"/>
-          <rect x="432" y="94" width="140" height="52" rx="6" class="c-frontend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(438 100) scale(0.6875)">
-            <rect x="2" y="3" width="12" height="10" rx="2"/>
-            <path d="M2 6.5h12"/>
-            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
-            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="502" y="115" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Requerimientos</text>
-          <text data-detail="context" x="502" y="132" class="t-muted" font-size="8" text-anchor="middle">y factibilidad</text>
-        </g>
-
-        <g id="node-uml" data-node-id="uml" data-node-label="Diagramas UML" tabindex="0" role="button" aria-label="Enfocar Diagramas UML, casos de uso, BD, flujo, UA1 · UML" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="casos de uso, BD, flujo" data-node-context="UA1 · UML">
-          <title>Diagramas UML · casos de uso, BD, flujo · UA1 · UML</title>
-          <rect x="652" y="94" width="140" height="52" rx="6" class="c-mask"/>
-          <rect x="652" y="94" width="140" height="52" rx="6" class="c-frontend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(658 100) scale(0.6875)">
-            <rect x="2" y="3" width="12" height="10" rx="2"/>
-            <path d="M2 6.5h12"/>
-            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
-            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="722" y="115" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Diagramas UML</text>
-          <text data-detail="context" x="722" y="132" class="t-muted" font-size="8" text-anchor="middle">casos de uso, BD, flujo</text>
-        </g>
-
-        <g id="node-es1" data-node-id="es1" data-node-label="ES1 · 20 %" tabindex="0" role="button" aria-label="Enfocar ES1 · 20 %, entrega mar 10-nov, UA1 · UML" aria-pressed="false" data-node-kind="security" data-node-sublabel="entrega mar 10-nov" data-node-context="UA1 · UML">
-          <title>ES1 · 20 % · entrega mar 10-nov · UA1 · UML</title>
-          <rect x="883.6" y="94" width="140" height="52" rx="6" class="c-mask"/>
-          <rect x="883.6" y="94" width="140" height="52" rx="6" class="c-security" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="flag" class="semantic-sigil s-security" transform="translate(889.6 100) scale(0.6875)">
+        <g id="node-analisis" data-node-id="analisis" data-node-label="Análisis" tabindex="0" role="button" aria-label="Enfocar Análisis, requerimientos y factibilidad, Ciclo de vida del software › Este módulo" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="requerimientos y factibilidad" data-node-tag="UA1 · ES1" data-node-context="Ciclo de vida del software › Este módulo">
+          <title>Análisis · requerimientos y factibilidad · Ciclo de vida del software › Este módulo · UA1 · ES1</title>
+          <rect x="48" y="86" width="150" height="68" rx="6" class="c-mask"/>
+          <rect x="48" y="86" width="150" height="68" rx="6" class="c-frontend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="flag" class="semantic-sigil s-frontend" transform="translate(54 92) scale(0.6875)">
             <path d="M3 14V2h10l-2 3 2 3H3"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="953.6" y="115" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">ES1 · 20 %</text>
-          <text data-detail="context" x="953.6" y="132" class="t-muted" font-size="8" text-anchor="middle">entrega mar 10-nov</text>
+          <text data-node-label="" data-detail-anchor="" x="123" y="107" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Análisis</text>
+          <text data-detail="context" x="123" y="124" class="t-muted" font-size="8" text-anchor="middle">requerimientos y factibilidad</text>
+        <text data-detail="fine" x="123" y="142" class="t-frontend" font-size="7" text-anchor="middle">UA1 · ES1</text>
         </g>
 
-        <g id="node-hist" data-node-id="hist" data-node-label="Historias de usuario" tabindex="0" role="button" aria-label="Enfocar Historias de usuario, desde los requerimientos, UA2 · parte 1" aria-pressed="false" data-node-kind="backend" data-node-sublabel="desde los requerimientos" data-node-context="UA2 · parte 1">
-          <title>Historias de usuario · desde los requerimientos · UA2 · parte 1</title>
-          <rect x="420" y="220" width="164" height="52" rx="6" class="c-mask"/>
-          <rect x="420" y="220" width="164" height="52" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(426 226) scale(0.6875)">
+        <g id="node-diseno" data-node-id="diseno" data-node-label="Diseño" tabindex="0" role="button" aria-label="Enfocar Diseño, paradigma 4+1, Ciclo de vida del software › Este módulo" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="paradigma 4+1" data-node-tag="UA2 · ES2 y ES3" data-node-context="Ciclo de vida del software › Este módulo">
+          <title>Diseño · paradigma 4+1 · Ciclo de vida del software › Este módulo · UA2 · ES2 y ES3</title>
+          <rect x="273.6" y="86" width="150" height="68" rx="6" class="c-mask"/>
+          <rect x="273.6" y="86" width="150" height="68" rx="6" class="c-frontend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(279.6 92) scale(0.6875)">
+            <rect x="2" y="3" width="12" height="10" rx="2"/>
+            <path d="M2 6.5h12"/>
+            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
+            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+          </g>
+          <text data-node-label="" data-detail-anchor="" x="348.6" y="107" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Diseño</text>
+          <text data-detail="context" x="348.6" y="124" class="t-muted" font-size="8" text-anchor="middle">paradigma 4+1</text>
+        <text data-detail="fine" x="348.6" y="142" class="t-frontend" font-size="7" text-anchor="middle">UA2 · ES2 y ES3</text>
+        </g>
+
+        <g id="node-implementacion" data-node-id="implementacion" data-node-label="Implementación" tabindex="0" role="button" aria-label="Enfocar Implementación, escribir el código, Ciclo de vida del software › Fuera de este módulo" aria-pressed="false" data-node-kind="backend" data-node-sublabel="escribir el código" data-node-tag="POO Seguro" data-node-context="Ciclo de vida del software › Fuera de este módulo">
+          <title>Implementación · escribir el código · Ciclo de vida del software › Fuera de este módulo · POO Seguro</title>
+          <rect x="518.4000000000001" y="86" width="150" height="68" rx="6" class="c-mask"/>
+          <rect x="518.4000000000001" y="86" width="150" height="68" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(524.4000000000001 92) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="505" y="241" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Historias de usuario</text>
-          <text data-detail="context" x="502" y="258" class="t-muted" font-size="8" text-anchor="middle">desde los requerimientos</text>
+          <text data-node-label="" data-detail-anchor="" x="593.4000000000001" y="107" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Implementación</text>
+          <text data-detail="context" x="593.4000000000001" y="124" class="t-muted" font-size="8" text-anchor="middle">escribir el código</text>
+        <text data-detail="fine" x="593.4000000000001" y="142" class="t-backend" font-size="7" text-anchor="middle">POO Seguro</text>
         </g>
 
-        <g id="node-logica" data-node-id="logica" data-node-label="Vista Lógica y de Desarrollo" tabindex="0" role="button" aria-label="Enfocar Vista Lógica y de Desarrollo, comunicación, clases, componentes, UA2 · parte 1" aria-pressed="false" data-node-kind="backend" data-node-sublabel="comunicación, clases, componentes" data-node-context="UA2 · parte 1">
-          <title>Vista Lógica y de Desarrollo · comunicación, clases, componentes · UA2 · parte 1</title>
-          <rect x="612" y="220" width="220" height="52" rx="6" class="c-mask"/>
-          <rect x="612" y="220" width="220" height="52" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(618 226) scale(0.6875)">
+        <g id="node-pruebas" data-node-id="pruebas" data-node-label="Pruebas" tabindex="0" role="button" aria-label="Enfocar Pruebas, ¿hace lo que se pidió?, Ciclo de vida del software › Fuera de este módulo" aria-pressed="false" data-node-kind="backend" data-node-sublabel="¿hace lo que se pidió?" data-node-context="Ciclo de vida del software › Fuera de este módulo">
+          <title>Pruebas · ¿hace lo que se pidió? · Ciclo de vida del software › Fuera de este módulo</title>
+          <rect x="696.4000000000001" y="94" width="150" height="52" rx="6" class="c-mask"/>
+          <rect x="696.4000000000001" y="94" width="150" height="52" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(702.4000000000001 100) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="723.4" y="241" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Vista Lógica y de Desarrollo</text>
-          <text data-detail="context" x="722" y="258" class="t-muted" font-size="8" text-anchor="middle">comunicación, clases, componentes</text>
+          <text data-node-label="" data-detail-anchor="" x="771.4000000000001" y="115" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Pruebas</text>
+          <text data-detail="context" x="771.4000000000001" y="132" class="t-muted" font-size="8" text-anchor="middle">¿hace lo que se pidió?</text>
         </g>
 
-        <g id="node-es2" data-node-id="es2" data-node-label="ES2 · 35 %" tabindex="0" role="button" aria-label="Enfocar ES2 · 35 %, entrega mar 01-dic, UA2 · parte 1" aria-pressed="false" data-node-kind="security" data-node-sublabel="entrega mar 01-dic" data-node-context="UA2 · parte 1">
-          <title>ES2 · 35 % · entrega mar 01-dic · UA2 · parte 1</title>
-          <rect x="883.6" y="220" width="140" height="52" rx="6" class="c-mask"/>
-          <rect x="883.6" y="220" width="140" height="52" rx="6" class="c-security" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="flag" class="semantic-sigil s-security" transform="translate(889.6 226) scale(0.6875)">
-            <path d="M3 14V2h10l-2 3 2 3H3"/>
+        <g id="node-mantenimiento" data-node-id="mantenimiento" data-node-label="Mantenimiento" tabindex="0" role="button" aria-label="Enfocar Mantenimiento, corregir y agregar, Ciclo de vida del software › Fuera de este módulo" aria-pressed="false" data-node-kind="backend" data-node-sublabel="corregir y agregar" data-node-context="Ciclo de vida del software › Fuera de este módulo">
+          <title>Mantenimiento · corregir y agregar · Ciclo de vida del software › Fuera de este módulo</title>
+          <rect x="907.6000000000001" y="94" width="150" height="52" rx="6" class="c-mask"/>
+          <rect x="907.6000000000001" y="94" width="150" height="52" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(913.6000000000001 100) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="953.6" y="241" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">ES2 · 35 %</text>
-          <text data-detail="context" x="953.6" y="258" class="t-muted" font-size="8" text-anchor="middle">entrega mar 01-dic</text>
-        </g>
-
-        <g id="node-procesos" data-node-id="procesos" data-node-label="Vista de Procesos y Física" tabindex="0" role="button" aria-label="Enfocar Vista de Procesos y Física, secuencia, despliegue, UA2 · parte 2" aria-pressed="false" data-node-kind="messagebus" data-node-sublabel="secuencia, despliegue" data-node-context="UA2 · parte 2">
-          <title>Vista de Procesos y Física · secuencia, despliegue · UA2 · parte 2</title>
-          <rect x="619" y="346" width="206" height="52" rx="6" class="c-mask"/>
-          <rect x="619" y="346" width="206" height="52" rx="6" class="c-messagebus" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="messagebus" class="semantic-sigil s-messagebus" transform="translate(625 352) scale(0.6875)">
-            <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11"/>
-            <circle cx="5" cy="4.5" r="1" class="sigil-fill"/>
-            <circle cx="10.5" cy="8" r="1" class="sigil-fill"/>
-            <circle cx="7" cy="11.5" r="1" class="sigil-fill"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="723.8" y="367" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Vista de Procesos y Física</text>
-          <text data-detail="context" x="722" y="384" class="t-muted" font-size="8" text-anchor="middle">secuencia, despliegue</text>
-        </g>
-
-        <g id="node-escenario" data-node-id="escenario" data-node-label="Escenario" tabindex="0" role="button" aria-label="Enfocar Escenario, recorre las cuatro vistas, UA2 · parte 2" aria-pressed="false" data-node-kind="messagebus" data-node-sublabel="recorre las cuatro vistas" data-node-context="UA2 · parte 2">
-          <title>Escenario · recorre las cuatro vistas · UA2 · parte 2</title>
-          <rect x="883.6" y="346" width="140" height="52" rx="6" class="c-mask"/>
-          <rect x="883.6" y="346" width="140" height="52" rx="6" class="c-messagebus" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="messagebus" class="semantic-sigil s-messagebus" transform="translate(889.6 352) scale(0.6875)">
-            <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11"/>
-            <circle cx="5" cy="4.5" r="1" class="sigil-fill"/>
-            <circle cx="10.5" cy="8" r="1" class="sigil-fill"/>
-            <circle cx="7" cy="11.5" r="1" class="sigil-fill"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="953.6" y="367" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Escenario</text>
-          <text data-detail="context" x="953.6" y="384" class="t-muted" font-size="8" text-anchor="middle">recorre las cuatro vistas</text>
-        </g>
-
-        <g id="node-es3" data-node-id="es3" data-node-label="ES3 · 35 %" tabindex="0" role="button" aria-label="Enfocar ES3 · 35 %, entrega lun 21-dic, UA2 · parte 2" aria-pressed="false" data-node-kind="security" data-node-sublabel="entrega lun 21-dic" data-node-context="UA2 · parte 2">
-          <title>ES3 · 35 % · entrega lun 21-dic · UA2 · parte 2</title>
-          <rect x="1075.2" y="346" width="140" height="52" rx="6" class="c-mask"/>
-          <rect x="1075.2" y="346" width="140" height="52" rx="6" class="c-security" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="flag" class="semantic-sigil s-security" transform="translate(1081.2 352) scale(0.6875)">
-            <path d="M3 14V2h10l-2 3 2 3H3"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="1145.2" y="367" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">ES3 · 35 %</text>
-          <text data-detail="context" x="1145.2" y="384" class="t-muted" font-size="8" text-anchor="middle">entrega lun 21-dic</text>
+          <text data-node-label="" data-detail-anchor="" x="982.6000000000001" y="115" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Mantenimiento</text>
+          <text data-detail="context" x="982.6000000000001" y="132" class="t-muted" font-size="8" text-anchor="middle">corregir y agregar</text>
         </g>
 
         <!-- Edge labels -->
-
-        <g data-detail="context" data-edge-from="escenario" data-edge-to="es3" data-edge-label="informe" data-edge-key="1" data-edge-id="h10">
-          <rect x="1027.6000000000001" y="352" width="43.6" height="14" rx="3" class="c-mask"/>
-          <text x="1049.4" y="362" class="t-edge-default" font-size="8" text-anchor="middle">informe</text>
+        <g data-detail="context" data-edge-from="analisis" data-edge-to="diseno" data-edge-label="qué necesita" data-edge-key="0" data-edge-id="e1">
+          <rect x="202" y="100" width="67.6" height="14" rx="3" class="c-mask"/>
+          <text x="235.8" y="110" class="t-edge-emphasis" font-size="8" text-anchor="middle">qué necesita</text>
         </g>
-        <g data-detail="context" data-edge-from="correo" data-edge-to="req" data-edge-label="clasificar" data-edge-key="2" data-edge-id="h2">
-          <rect x="370" y="100" width="58" height="14" rx="3" class="c-mask"/>
-          <text x="399" y="110" class="t-edge-default" font-size="8" text-anchor="middle">clasificar</text>
-        </g>
-        <g data-detail="context" data-edge-from="req" data-edge-to="uml" data-edge-label="dibujar" data-edge-key="3" data-edge-id="h3">
-          <rect x="590.2" y="100" width="43.6" height="14" rx="3" class="c-mask"/>
-          <text x="612" y="110" class="t-edge-default" font-size="8" text-anchor="middle">dibujar</text>
-        </g>
-        <g data-detail="context" data-edge-from="uml" data-edge-to="es1" data-edge-label="informe" data-edge-key="4" data-edge-id="h4">
-          <rect x="816" y="100" width="43.6" height="14" rx="3" class="c-mask"/>
-          <text x="837.8" y="110" class="t-edge-default" font-size="8" text-anchor="middle">informe</text>
-        </g>
-        <g data-detail="context" data-edge-from="req" data-edge-to="hist" data-edge-label="se reutilizan" data-edge-key="5" data-edge-id="h5">
-          <rect x="465.8" y="173" width="72.4" height="14" rx="3" class="c-mask"/>
-          <text x="502" y="183" class="t-edge-dashed" font-size="8" text-anchor="middle">se reutilizan</text>
+        <g data-detail="context" data-edge-from="diseno" data-edge-to="implementacion" data-edge-label="cómo se organiza" data-edge-key="1" data-edge-id="e2">
+          <rect x="427.6000000000001" y="100" width="86.8" height="14" rx="3" class="c-mask"/>
+          <text x="471.00000000000006" y="110" class="t-edge-default" font-size="8" text-anchor="middle">cómo se organiza</text>
         </g>
 
-        <g data-detail="context" data-edge-from="logica" data-edge-to="es2" data-edge-label="informe" data-edge-key="7" data-edge-id="h7">
-          <rect x="836" y="226" width="43.6" height="14" rx="3" class="c-mask"/>
-          <text x="857.8" y="236" class="t-edge-default" font-size="8" text-anchor="middle">informe</text>
+        <g data-detail="context" data-edge-from="pruebas" data-edge-to="mantenimiento" data-edge-label="entregado" data-edge-key="3" data-edge-id="e4">
+          <rect x="850.4000000000001" y="100" width="53.199999999999996" height="14" rx="3" class="c-mask"/>
+          <text x="877.0000000000001" y="110" class="t-edge-default" font-size="8" text-anchor="middle">entregado</text>
         </g>
-        <g data-detail="context" data-edge-from="logica" data-edge-to="procesos" data-edge-label="mismo sistema" data-edge-key="8" data-edge-id="h8">
-          <rect x="685.8" y="299" width="72.4" height="14" rx="3" class="c-mask"/>
-          <text x="722" y="309" class="t-edge-dashed" font-size="8" text-anchor="middle">mismo sistema</text>
+        <g data-detail="context" data-edge-from="mantenimiento" data-edge-to="analisis" data-edge-label="nuevos requerimientos" data-edge-key="4" data-edge-id="e5">
+          <rect x="497.4000000000001" y="166" width="110.8" height="14" rx="3" class="c-mask"/>
+          <text x="552.8000000000001" y="176" class="t-edge-dashed" font-size="8" text-anchor="middle">nuevos requerimientos</text>
         </g>
-
 
         <!-- Legend -->
         <g data-legend="" data-legend-bridge="">
-          <text x="20" y="434" class="t-primary" font-size="12" font-weight="650">Leyenda</text>
-          <g data-legend-semantic-kind="frontend" data-legend-kind="frontend" data-legend-label="UA1" data-legend-x="20" data-legend-baseline="454" data-legend-width="57">
-            <rect x="20" y="446" width="14" height="9" rx="2" class="c-frontend" stroke-width="1"/>
-            <text x="42" y="454" class="t-muted" font-size="7.5" font-weight="500">UA1</text>
+          <text x="20" y="182" class="t-primary" font-size="12" font-weight="650">Leyenda</text>
+          <g data-legend-semantic-kind="frontend" data-legend-kind="frontend" data-legend-label="En este módulo" data-legend-x="20" data-legend-baseline="202" data-legend-width="104">
+            <rect x="20" y="194" width="14" height="9" rx="2" class="c-frontend" stroke-width="1"/>
+            <text x="42" y="202" class="t-muted" font-size="7.5" font-weight="500">En este módulo</text>
           </g>
-          <g data-legend-semantic-kind="backend" data-legend-kind="backend" data-legend-label="UA2 parte 1" data-legend-x="84" data-legend-baseline="454" data-legend-width="91">
-            <rect x="84" y="446" width="14" height="9" rx="2" class="c-backend" stroke-width="1"/>
-            <text x="106" y="454" class="t-muted" font-size="7.5" font-weight="500">UA2 parte 1</text>
-          </g>
-          <g data-legend-semantic-kind="security" data-legend-kind="security" data-legend-label="Evaluación sumativa" data-legend-x="182" data-legend-baseline="454" data-legend-width="126">
-            <rect x="182" y="446" width="14" height="9" rx="2" class="c-security" stroke-width="1"/>
-            <text x="204" y="454" class="t-muted" font-size="7.5" font-weight="500">Evaluación sumativa</text>
-          </g>
-          <g data-legend-semantic-kind="messagebus" data-legend-kind="messagebus" data-legend-label="UA2 parte 2" data-legend-x="315" data-legend-baseline="454" data-legend-width="91">
-            <rect x="315" y="446" width="14" height="9" rx="2" class="c-messagebus" stroke-width="1"/>
-            <text x="337" y="454" class="t-muted" font-size="7.5" font-weight="500">UA2 parte 2</text>
-          </g>
-          <g data-legend-semantic-kind="external" data-legend-kind="external" data-legend-label="Inicio" data-legend-x="413" data-legend-baseline="454" data-legend-width="70">
-            <rect x="413" y="446" width="14" height="9" rx="2" class="c-external" stroke-width="1"/>
-            <text x="435" y="454" class="t-muted" font-size="7.5" font-weight="500">Inicio</text>
+          <g data-legend-semantic-kind="backend" data-legend-kind="backend" data-legend-label="Fuera de este módulo" data-legend-x="131" data-legend-baseline="202" data-legend-width="130">
+            <rect x="131" y="194" width="14" height="9" rx="2" class="c-backend" stroke-width="1"/>
+            <text x="153" y="202" class="t-muted" font-size="7.5" font-weight="500">Fuera de este módulo</text>
           </g>
         </g>
       </svg>
@@ -5414,11 +5306,11 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       <div class="card">
         <div class="card-header">
           <div class="card-dot rose"></div>
-          <h3>Regla del módulo</h3>
+          <h3>Dónde estamos</h3>
         </div>
         <ul>
-          <li>Mismo negocio y mismo equipo de la ES1 a la ES3</li>
-          <li>Un requerimiento mal levantado se arrastra hasta el final</li>
+          <li>Este módulo cubre solo análisis y diseño</li>
+          <li>No se programa aquí: eso es POO Seguro</li>
         </ul>
       </div>
     </div>
