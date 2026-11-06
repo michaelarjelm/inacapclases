@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA1 Sesión 2 - Las pantallas de tu app</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0; color: var(--text);
+      scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white; justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 640px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px; border-bottom: 6px solid var(--red);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+    .slide-separator.sep-blue   { border-color: var(--blue); }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+    }
+    .sep-green .sep-num { color: #AFAFAF; }
+    .sep-orange .sep-num { color: #D98A8E; }
+    .sep-blue .sep-num { color: #E08B80; }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .cover-title span, .sep-title span, .concept-title span { color: var(--red) !important; }
+    .sep-desc { font-size: 22px; color: rgba(255,255,255,0.45); max-width: 640px; line-height: 1.65; }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 56px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 50px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark); margin-bottom: 26px;
+    }
+    .concept-body { max-width: 940px; }
+    .concept-body.ancho { max-width: 1180px; }
+    .concept-body p { font-size: 20px; line-height: 1.65; color: #333; margin-bottom: 16px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 16px 20px; margin: 16px 0;
+      max-width: 940px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px;
+    }
+    .callout-content p { font-size: 17px; line-height: 1.55; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+
+    /* INDICE (sobre fondo oscuro) */
+    .index-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 30px; max-width: 780px; }
+    .index-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 20px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 30px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 8px;
+    }
+    .index-name { font-size: 16px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-pasos    { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-practica { background: #F7E3E3; color: #8E1A1F; border: 1px solid #E2CACA; }
+    .badge-cierre   { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* RESUMEN */
+    .resumen-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 28px; max-width: 880px; }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .resumen-cmd { font-size: 16px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* TABLA */
+    .tbl { width: 100%; max-width: 940px; border-collapse: collapse; margin-top: 14px; font-size: 16px; }
+    .tbl th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 9px 14px; text-align: left;
+    }
+    .tbl td { padding: 10px 14px; border-bottom: 1px solid #E0E0E0; vertical-align: middle; line-height: 1.4; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:nth-child(even) td { background: #F8F8F8; }
+
+    /* VOCABULARIO */
+    .voc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; max-width: 980px; margin-top: 18px; }
+    .voc-grid.tres { grid-template-columns: repeat(3, 1fr); }
+    .voc-card {
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 16px 20px;
+    }
+    .voc-nombre {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 6px;
+    }
+    .voc-desc { font-size: 15px; color: #555; line-height: 1.5; margin-bottom: 6px; }
+    .voc-desc:last-child { margin-bottom: 0; }
+    .voc-desc b { color: var(--dark); }
+    .voc-muestra { margin-top: 10px; }
+
+    /* DEFINICION */
+    .definicion {
+      background: #FFF6F6; border: 2px solid #F3C9CB; border-left: 6px solid var(--red);
+      border-radius: 8px; padding: 20px 24px; margin: 14px 0; max-width: 940px;
+    }
+    .def-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .def-txt { font-size: 22px; line-height: 1.5; color: var(--dark); font-weight: 500; }
+    .def-txt strong { font-weight: 800; }
+    .def-ej { font-size: 17px; line-height: 1.55; color: #666; margin-top: 10px; font-style: italic; }
+
+    /* ACTIVIDAD */
+    .actividad {
+      background: #1A1A1A; border-radius: 8px; padding: 20px 24px;
+      margin: 14px 0; max-width: 960px;
+    }
+    .act-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .act-t { font-size: 21px; line-height: 1.45; color: white; font-weight: 600; }
+    .act-d { font-size: 16px; line-height: 1.55; color: rgba(255,255,255,0.55); margin-top: 8px; }
+    .act-list { margin-top: 10px; }
+    .act-li {
+      font-size: 17px; color: rgba(255,255,255,0.85); line-height: 1.65;
+      padding-left: 22px; position: relative;
+    }
+    .act-li::before { content: "\2192"; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+    /* PASO */
+    .paso {
+      display: flex; gap: 16px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 5px solid var(--red);
+      border-radius: 8px; padding: 13px 18px; margin: 9px 0; max-width: 940px;
+    }
+    .paso-num {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 24px; font-weight: 900;
+      color: var(--red); line-height: 1; flex-shrink: 0; width: 30px; padding-top: 2px;
+    }
+    .paso-cont { flex: 1; }
+    .paso-tit { font-size: 17px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .paso-desc { font-size: 15px; color: #444; line-height: 1.5; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+      background: #EBEBEB; padding: 2px 6px; border-radius: 3px; color: #C0392B;
+    }
+    .code-block { background: #1A1A1A; border-radius: 8px; padding: 16px 20px; margin: 12px 0; max-width: 940px; overflow-x: auto; }
+    .code-block pre { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #EDEDED; line-height: 1.65; white-space: pre-wrap; word-break: break-word; }
+    .code-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 8px;
+    }
+    .code-block .hl { color: #FF8A8E; font-weight: 600; }
+
+    /* LINEA DE TIEMPO (etapas del modulo) */
+    .timeline { display: flex; align-items: flex-start; margin-top: 26px; position: relative; max-width: 1000px; }
+    .timeline::before {
+      content: ''; position: absolute; top: 26px; left: 12%; right: 12%; height: 3px;
+      background: var(--border); z-index: 0;
+    }
+    .tl-step { flex: 1; text-align: center; position: relative; z-index: 1; padding: 0 8px; }
+    .tl-dot {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: white; border: 3px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 18px; color: #aaa;
+    }
+    .tl-step.now .tl-dot {
+      width: 56px; height: 56px; margin-top: -5px;
+      border-color: var(--red); background: var(--red); color: white; font-size: 22px;
+      box-shadow: 0 6px 18px rgba(227,30,36,0.4);
+    }
+    .tl-tag {
+      display: inline-block; font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      color: white; background: var(--red); border-radius: 10px; padding: 2px 10px; margin-bottom: 8px;
+    }
+    .tl-title {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 19px; font-weight: 800;
+      text-transform: uppercase; color: var(--dark); margin-bottom: 6px; letter-spacing: 0.01em;
+    }
+    .tl-step.now .tl-title { color: var(--red); }
+    .tl-desc { font-size: 14px; color: #666; line-height: 1.5; max-width: 200px; margin: 0 auto; }
+
+    /* GRILLA DE APPS */
+    .apps {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 10px; max-width: 1080px; margin-top: 14px;
+    }
+    .app-item {
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 3px solid var(--red);
+      border-radius: 6px; padding: 10px 14px;
+    }
+    .app-nom { font-size: 17px; font-weight: 700; color: var(--dark); }
+    .app-nom b { color: var(--red); font-family: 'Barlow Condensed', sans-serif; margin-right: 6px; }
+    .app-ia { font-size: 13px; color: #666; line-height: 1.4; margin-top: 3px; }
+
+    /* CHECKPOINT */
+    .chk { max-width: 940px; margin-top: 16px; }
+    .chk-item {
+      display: flex; gap: 18px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 16px 20px; margin-bottom: 12px;
+    }
+    .chk-num {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 32px; font-weight: 900;
+      color: var(--red); line-height: 1; flex-shrink: 0; width: 38px;
+    }
+    .chk-cont { flex: 1; }
+    .chk-tit { font-size: 19px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .chk-desc { font-size: 16px; color: #555; line-height: 1.5; }
+
+    /* CAPTURA REAL */
+    .captura-real {
+      background: #1A1A1A; border: 1px solid #2C2C2C; border-radius: 10px;
+      padding: 10px; margin: 12px 0; max-width: 720px;
+    }
+    .captura-real img { width: 100%; height: auto; display: block; border-radius: 4px; }
+    .captura-real-cap {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.35);
+      text-align: center; margin-top: 8px;
+    }
+
+    /* DOS COLUMNAS: texto + telefono o captura */
+    .duo { display: grid; grid-template-columns: 1fr 290px; gap: 36px; align-items: center; max-width: 1120px; }
+    .duo.cap { grid-template-columns: 1fr 1fr; }
+    .trio-fonos { display: flex; gap: 34px; flex-wrap: wrap; justify-content: flex-start; margin-top: 8px; }
+
+    /* MAQUETA DE TELEFONO */
+    .fono {
+      width: 250px; flex-shrink: 0; background: #FFF;
+      border: 9px solid #1A1A1A; border-radius: 26px; overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.22); position: relative;
+    }
+    .fono.chico { width: 230px; }
+    .fono-status {
+      background: #1A1A1A; color: rgba(255,255,255,0.45);
+      font-size: 10px; padding: 5px 14px; display: flex; justify-content: space-between;
+    }
+    .fono-screen {
+      background: #FFF; padding: 22px 16px; min-height: 420px;
+      display: flex; flex-direction: column; align-items: center; gap: 11px;
+    }
+    .fono-screen.izq { align-items: stretch; }
+    .fono-logo {
+      width: 62px; height: 62px; border-radius: 12px; background: #3DDC84;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fono-img {
+      width: 100%; height: 110px; border-radius: 8px; background: linear-gradient(135deg,#F3C9CB,#E8E8E8);
+      display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999;
+    }
+    .fono-titulo {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 20px;
+      color: var(--dark); text-transform: uppercase;
+    }
+    .fono-sub { font-size: 12px; color: #777; text-align: center; }
+    .fono-campo {
+      width: 100%; border-bottom: 2px solid #9E9E9E;
+      padding: 7px 4px; font-size: 12px; color: #9A9A9A;
+    }
+    .fono-check { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #444; width: 100%; }
+    .fono-check-box { width: 15px; height: 15px; border: 2px solid #777; border-radius: 3px; flex-shrink: 0; }
+    .fono-check-box.on { background: #6750A4; border-color: #6750A4; }
+    .fono-switch { width: 30px; height: 16px; border-radius: 9px; background: #6750A4; position: relative; flex-shrink: 0; }
+    .fono-switch::after { content: ''; position: absolute; right: 2px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: white; }
+    .fono-fila { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 12px; color: #333; padding: 6px 0; border-bottom: 1px solid #EEE; }
+    .fono-btn {
+      background: #6750A4; color: #FFF; text-align: center;
+      padding: 9px 22px; border-radius: 20px; font-weight: 600; font-size: 12px;
+    }
+    .fono-btn.ancho { width: 100%; }
+    .fono-link { font-size: 11px; color: #6750A4; }
+    .fono-precio { font-size: 18px; font-weight: 800; color: var(--dark); }
+    .fono-cap {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+      text-align: center; margin-top: 10px;
+    }
+    .fono-vacio { color: #CCC; font-size: 11px; text-align: center; margin-top: 150px; }
+
+    /* elementos de la maqueta: nuevo (resaltado) o ya puesto */
+    .nuevo { outline: 3px solid var(--red); outline-offset: 3px; border-radius: 4px; }
+    /* marcas numeradas para la actividad */
+    .mk { position: relative; }
+    .mk::after {
+      content: attr(data-n); position: absolute; left: -26px; top: 50%; transform: translateY(-50%);
+      width: 20px; height: 20px; border-radius: 50%; background: var(--red); color: white;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fono.marcas .fono-screen { padding-left: 34px; }
+
+    #progress {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--red);
+      width: 0%; z-index: 9999; transition: width 0.35s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+    }
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+
+    /* AGREGADOS S2: piezas de maqueta */
+    .fm-caja { background: #F3C9CB; border-radius: 4px; padding: 8px 14px; font-size: 12px; font-weight: 700; color: var(--dark); text-align: center; }
+    .fm-barra { display: flex; align-items: center; gap: 6px; width: 100%; padding-bottom: 6px; }
+    .fm-h { flex: 1; font-weight: 800; font-size: 15px; color: var(--dark); }
+    .fm-ico { font-size: 15px; color: #6750A4; letter-spacing: 6px; white-space: nowrap; }
+    .fm-fila { display: flex; align-items: center; gap: 8px; width: 100%; padding: 5px 0; }
+    .fm-car { width: 30px; height: 30px; border-radius: 50%; background: #3DDC84; flex-shrink: 0; }
+    .fm-txt { flex: 1; }
+    .fm-t { font-weight: 700; font-size: 12px; color: var(--dark); }
+    .fm-s { font-size: 10px; color: #777; }
+    .fm-btn { background: #6750A4; color: #FFF; border-radius: 14px; padding: 5px 12px; font-size: 11px; font-weight: 600; }
+    .anida { border: 2px dashed var(--red); border-radius: 8px; padding: 10px 12px 12px; margin: 6px 0; background: #FFF; }
+    .anida .anida { border-color: #6750A4; }
+    .anida-k { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--red); margin-bottom: 6px; }
+    .anida .anida .anida-k { color: #6750A4; }
+    .tag { display: inline-block; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 9px; border-radius: 12px; background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+
+<!-- PORTADA -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Aplicaciones Móviles para IoT &middot; TI3V42 &middot; Unidad 1 &middot; Sesión 2</div>
+  <div class="cover-title anim">Las pantallas<br>de <span>tu app</span></div>
+  <p class="cover-desc anim">
+    Hoy aprendes a ordenar componentes dentro de contenedores, armas tres pantallas
+    nuevas escribiendo su XML a mano y subes tu proyecto a GitHub.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>114-4A-F2</span></span>
+    <span class="cover-chip">Viernes 6 de noviembre 2026</span>
+    <span class="cover-chip">18:30 a 22:30 &middot; Laboratorio A404</span>
+    <span class="cover-chip">INACAP Puente Alto</span>
+  </div>
+</div>
+
+
+<!-- AGENDA -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">200 minutos</div>
+  <div class="sep-title anim">Lo que vemos<br><span>hoy</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Contenedores: cómo se ordenan los componentes</div>
+      <div class="index-type">Concepto + actividades &middot; 45 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Pantalla Lista</div>
+      <div class="index-type">Demo + tu app &middot; 45 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Pantalla para agregar</div>
+      <div class="index-type">Demo + tu app &middot; 45 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Pantalla Detalle</div>
+      <div class="index-type">Demo + tu app &middot; 25 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Tu proyecto en GitHub</div>
+      <div class="index-type">Práctica guiada &middot; 30 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">06</div>
+      <div class="index-name">Checkpoint y cierre</div>
+      <div class="index-type">Salida &middot; 10 min</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 01: CONTENEDORES ============ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Bloque 01</span>
+  <div class="sep-num anim">01 &middot; Concepto + actividades &middot; 45 min</div>
+  <div class="sep-title anim">Los <span>contenedores</span></div>
+  <p class="sep-desc anim">
+    En el login pusiste cada componente amarrado a otro. Hoy aprendes otras formas de
+    ordenarlos, que necesitas para pantallas con listas y filas.
+  </p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">La caja que ordena a las demás</div>
+  <div class="concept-title anim">Qué es un <span>contenedor</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Contenedor (ViewGroup)</div>
+      <div class="def-txt">Un componente que <strong>no se ve</strong>, pero que <strong>contiene a otros componentes</strong> y decide dónde va cada uno.</div>
+      <div class="def-ej">En tu login, la etiqueta que abre y cierra todo el archivo, <code>ConstraintLayout</code>, es un contenedor: adentro están el logo, los campos y el botón.</div>
+    </div>
+    <div class="voc-grid tres">
+      <div class="voc-card">
+        <div class="voc-nombre">ConstraintLayout</div>
+        <div class="voc-desc">Cada componente se amarra a otro o al borde. Ya lo usaste en el login.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">LinearLayout</div>
+        <div class="voc-desc">Pone los componentes uno detrás de otro: en columna o en fila. El protagonista de hoy.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">ScrollView</div>
+        <div class="voc-desc">Permite deslizar el contenido con el dedo cuando no cabe en la pantalla.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Repaso</span>
+  <div class="concept-label anim">Lo que ya sabes del login</div>
+  <div class="concept-title anim">ConstraintLayout,<br>en <span>tres reglas</span></div>
+  <div class="concept-body anim">
+    <div class="paso"><div class="paso-num">1</div><div class="paso-cont"><div class="paso-tit">Cada componente se amarra</div><div class="paso-desc">Con <code>app:layout_constraint...</code> dices a qué se pega arriba, a la izquierda y a la derecha. Sin restricciones, el componente se va a la esquina de arriba a la izquierda.</div></div></div>
+    <div class="paso"><div class="paso-num">2</div><div class="paso-cont"><div class="paso-tit">0dp significa "estírate entre tus amarras"</div><div class="paso-desc">El campo correo tenía <code>layout_width="0dp"</code> y estaba amarrado a los dos lados: por eso iba de borde a borde.</div></div></div>
+    <div class="paso"><div class="paso-num">3</div><div class="paso-cont"><div class="paso-tit">Sirve para pantallas con pocas piezas</div><div class="paso-desc">Un login, un detalle. Cuando hay filas que se repiten, amarrar cada pieza se vuelve largo: ahí conviene LinearLayout.</div></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">Un solo atributo cambia todo</div>
+  <div class="concept-title anim">LinearLayout:<br>columna o <span>fila</span></div>
+  <div class="concept-body ancho anim">
+    <div class="duo cap">
+      <div>
+        <div class="code-block">
+          <div class="code-title">En columna</div>
+<pre>&lt;LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+<span class="hl">    android:orientation="vertical"&gt;</span>
+    &lt;TextView ... android:text="A" /&gt;
+    &lt;TextView ... android:text="B" /&gt;
+    &lt;TextView ... android:text="C" /&gt;
+&lt;/LinearLayout&gt;</pre>
+        </div>
+        <div class="code-block">
+          <div class="code-title">En fila</div>
+<pre>&lt;LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+<span class="hl">    android:orientation="horizontal"&gt;</span>
+    &lt;TextView ... android:text="A" /&gt;
+    &lt;TextView ... android:text="B" /&gt;
+    &lt;TextView ... android:text="C" /&gt;
+&lt;/LinearLayout&gt;</pre>
+        </div>
+      </div>
+      <div class="trio-fonos">
+        <div>
+          <div class="fono chico"><div class="fono-status"><span>18:30</span><span>&#9679;&#9679;&#9679;</span></div>
+            <div class="fono-screen izq" style="min-height:200px;">
+              <div class="fm-caja">A</div><div class="fm-caja">B</div><div class="fm-caja">C</div>
+            </div></div>
+          <div class="fono-cap">vertical</div>
+        </div>
+        <div>
+          <div class="fono chico"><div class="fono-status"><span>18:30</span><span>&#9679;&#9679;&#9679;</span></div>
+            <div class="fono-screen izq" style="min-height:200px;">
+              <div style="display:flex;gap:6px;"><div class="fm-caja">A</div><div class="fm-caja">B</div><div class="fm-caja">C</div></div>
+            </div></div>
+          <div class="fono-cap">horizontal</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout-tip" style="margin:8px 0;"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Sin restricciones</strong><p>Dentro de un LinearLayout no se escribe ningún <code>app:layout_constraint...</code>. El orden en que escribes los componentes en el XML es el orden en que aparecen.</p></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">Repartir el espacio que sobra</div>
+  <div class="concept-title anim">layout_weight<br>y <span>gravity</span></div>
+  <div class="concept-body ancho anim">
+    <div class="duo">
+      <div>
+        <div class="code-block">
+          <div class="code-title">Un título que empuja dos botones a la derecha</div>
+<pre>&lt;LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+<span class="hl">    android:gravity="center_vertical"&gt;</span>
+
+    &lt;TextView
+<span class="hl">        android:layout_width="0dp"</span>
+<span class="hl">        android:layout_weight="1"</span>
+        android:text="Mis canciones" /&gt;
+
+    &lt;Button ... android:text="+" /&gt;
+    &lt;Button ... android:text="X" /&gt;
+&lt;/LinearLayout&gt;</pre>
+        </div>
+      </div>
+      <div>
+        <div class="fono"><div class="fono-status"><span>18:30</span><span>&#9679;&#9679;&#9679;</span></div>
+          <div class="fono-screen izq" style="min-height:160px;">
+            <div style="display:flex;align-items:center;gap:6px;"><div class="nuevo" style="flex:1;font-weight:700;font-size:13px;">Mis canciones</div><div class="fono-btn" style="padding:6px 12px;">+</div><div class="fono-btn" style="padding:6px 12px;">X</div></div>
+          </div></div>
+      </div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Atributo</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td><code>layout_weight="1"</code></td><td>"Quédate con todo el espacio que sobra". Los botones ocupan lo justo y el título se estira hasta tocarlos.</td></tr>
+        <tr><td><code>layout_width="0dp"</code></td><td>Va siempre junto al weight en una fila: le dice a Android que el ancho lo decide el peso, no el texto.</td></tr>
+        <tr><td><code>gravity="center_vertical"</code></td><td>Lo usa el contenedor para alinear a sus hijos. Aquí los centra en altura, para que el título y los botones queden en la misma línea.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">La idea más importante de hoy</div>
+  <div class="concept-title anim">Contenedores<br>dentro de <span>contenedores</span></div>
+  <div class="concept-body ancho anim">
+    <div class="duo">
+      <div>
+        <p>Una fila de una lista de canciones tiene una imagen, dos textos uno encima del otro y un botón. Ningún contenedor solo lo resuelve, pero dos sí:</p>
+        <div class="paso"><div class="paso-num">1</div><div class="paso-cont"><div class="paso-tit">Un LinearLayout horizontal para la fila</div><div class="paso-desc">Pone imagen, textos y botón uno al lado del otro.</div></div></div>
+        <div class="paso"><div class="paso-num">2</div><div class="paso-cont"><div class="paso-tit">Un LinearLayout vertical para los textos</div><div class="paso-desc">Va dentro de la fila y pone el título encima del artista. Con weight 1, empuja el botón al borde derecho.</div></div></div>
+        <div class="callout callout-important" style="margin:8px 0;"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Así se lee</strong><p>Cada caja punteada es un contenedor. Lo que está dentro de una caja, en el XML está entre su etiqueta de apertura y su etiqueta de cierre.</p></div></div>
+      </div>
+      <div>
+        <div class="anida">
+          <div class="anida-k">LinearLayout horizontal (la fila)</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="fm-car"></div>
+            <div class="anida" style="flex:1;margin:0;">
+              <div class="anida-k">LinearLayout vertical</div>
+              <div class="fm-t">Fix You</div>
+              <div class="fm-s">Coldplay</div>
+            </div>
+            <div class="fm-btn">+1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Concepto</span>
+  <div class="concept-label anim">Cuando hay más filas que pantalla</div>
+  <div class="concept-title anim">El <span>ScrollView</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">ScrollView</div>
+      <div class="def-txt">Un contenedor que deja <strong>deslizar con el dedo</strong> lo que tiene adentro cuando no cabe en la pantalla.</div>
+      <div class="def-ej">Sin ScrollView, la canción número 15 de tu lista quedaría cortada abajo y no habría forma de verla.</div>
+    </div>
+    <div class="paso"><div class="paso-num">1</div><div class="paso-cont"><div class="paso-tit">Un solo hijo</div><div class="paso-desc">Un ScrollView acepta exactamente un componente adentro. Por eso siempre lleva un LinearLayout vertical, y dentro de ese van las filas.</div></div></div>
+    <div class="paso"><div class="paso-num">2</div><div class="paso-cont"><div class="paso-tit">Que ocupe lo que queda</div><div class="paso-desc">Si arriba hay una barra con el título, el ScrollView lleva <code>layout_height="0dp"</code> y <code>layout_weight="1"</code>: toma el resto de la pantalla, en vertical.</div></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Predecir antes de escribir</div>
+  <div class="concept-title anim">¿Cuál de las <span>tres</span>?</div>
+  <div class="concept-body ancho anim">
+    <div class="duo cap">
+      <div>
+        <div class="code-block">
+          <div class="code-title">El XML</div>
+<pre>&lt;LinearLayout
+    android:orientation="vertical" ...&gt;
+
+    &lt;TextView ... android:text="Playlist" /&gt;
+
+    &lt;LinearLayout
+        android:orientation="horizontal" ...&gt;
+        &lt;Button ... android:text="Alegre" /&gt;
+        &lt;Button ... android:text="Triste" /&gt;
+    &lt;/LinearLayout&gt;
+
+    &lt;Button ... android:text="Generar" /&gt;
+&lt;/LinearLayout&gt;</pre>
+        </div>
+        <div class="actividad">
+          <div class="act-k">Actividad &middot; 5 min &middot; en dupla</div>
+          <div class="act-t">¿Cuál de las tres maquetas dibuja este XML? Justifiquen en una frase.</div>
+        </div>
+      </div>
+      <div class="trio-fonos" style="gap:14px;flex-wrap:nowrap;">
+        <div><div class="fono chico" style="width:150px;"><div class="fono-screen izq" style="min-height:150px;padding:12px;">
+          <div class="fm-t">Playlist</div><div class="fono-btn">Alegre</div><div class="fono-btn">Triste</div><div class="fono-btn">Generar</div></div></div><div class="fono-cap">A</div></div>
+        <div><div class="fono chico" style="width:150px;"><div class="fono-screen izq" style="min-height:150px;padding:12px;">
+          <div class="fm-t">Playlist</div><div style="display:flex;gap:4px;"><div class="fono-btn" style="padding:8px 8px;">Alegre</div><div class="fono-btn" style="padding:8px 8px;">Triste</div></div><div class="fono-btn">Generar</div></div></div><div class="fono-cap">B</div></div>
+        <div><div class="fono chico" style="width:150px;"><div class="fono-screen izq" style="min-height:150px;padding:12px;">
+          <div style="display:flex;gap:4px;align-items:center;"><div class="fm-t">Playlist</div><div class="fono-btn" style="padding:8px 6px;">Alegre</div></div><div style="display:flex;gap:4px;"><div class="fono-btn" style="padding:8px 6px;">Triste</div><div class="fono-btn" style="padding:8px 6px;">Generar</div></div></div></div><div class="fono-cap">C</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Resolución</span>
+  <div class="concept-label anim">Leer el XML de afuera hacia adentro</div>
+  <div class="concept-title anim">Es la <span>B</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Etiqueta</th><th>Qué decide</th></tr></thead>
+      <tbody>
+        <tr><td>LinearLayout de afuera, <code>vertical</code></td><td>Sus tres hijos van en columna: el texto, la fila de botones y el botón Generar.</td></tr>
+        <tr><td>LinearLayout de adentro, <code>horizontal</code></td><td>Alegre y Triste van uno al lado del otro, como un solo bloque dentro de la columna.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Por qué no la A ni la C</strong><p>La A ignora el LinearLayout horizontal: pone todo en columna. La C mezcla elementos de distintos contenedores en una misma fila, algo que este XML no dice.</p></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Un compañero quería una barra con el título a la izquierda y dos botones a la derecha</div>
+  <div class="concept-title anim">Encuentra los<br>tres <span>errores</span></div>
+  <div class="concept-body anim">
+    <div class="code-block">
+      <div class="code-title">barra con errores</div>
+<pre>&lt;LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"&gt;
+
+    &lt;TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Mis canciones"
+        app:layout_constraintStart_toStartOf="parent" /&gt;
+
+    &lt;Button ... android:text="+" /&gt;
+    &lt;Button ... android:text="X" /&gt;
+&lt;/LinearLayout&gt;</pre>
+    </div>
+    <div class="actividad">
+      <div class="act-k">Actividad &middot; 5 min &middot; en dupla</div>
+      <div class="act-t">Encuentren los tres errores sin mirar la lámina anterior. Digan qué línea agregarían, cambiarían o borrarían.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Resolución</span>
+  <div class="concept-label anim">Los tres errores</div>
+  <div class="concept-title anim">Error y <span>corrección</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Error</th><th>Corrección</th></tr></thead>
+      <tbody>
+        <tr><td>Falta <code>android:orientation</code></td><td>Agregar <code>android:orientation="horizontal"</code>. Siempre escríbelo, aunque horizontal sea lo que Android usa si falta: así cualquiera que lea el XML sabe cómo se ordena.</td></tr>
+        <tr><td>El TextView tiene weight pero ancho <code>wrap_content</code></td><td>Cambiar a <code>layout_width="0dp"</code>. Con wrap_content, el peso se suma al ancho del texto y el resultado es difícil de predecir.</td></tr>
+        <tr><td>Hay una restricción <code>app:layout_constraint...</code></td><td>Borrarla. Dentro de un LinearLayout, las restricciones no hacen nada.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 02: LISTA ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Demo + tu app &middot; 45 min</div>
+  <div class="sep-title anim">Pantalla<br><span>Lista</span></div>
+  <p class="sep-desc anim">
+    La pantalla principal de Mi Música: las canciones guardadas. Primero la escribimos
+    juntos, después tu dupla hace la de su app.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">El mapa</span>
+  <div class="concept-label anim">Lo que vas a tener al final de la sesión 3</div>
+  <div class="concept-title anim">Las pantallas<br>de <span>tu app</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Pantalla</th><th>En Mi Música</th><th>Cuándo</th></tr></thead>
+      <tbody>
+        <tr><td>Login</td><td>Correo, contraseña e ingresar</td><td>Sesión 1, hecha</td></tr>
+        <tr><td><strong>Lista</strong></td><td>Mis canciones guardadas</td><td><span class="tag">Hoy</span></td></tr>
+        <tr><td><strong>Agregar</strong></td><td>Buscar una canción para guardarla</td><td><span class="tag">Hoy</span></td></tr>
+        <tr><td><strong>Detalle</strong></td><td>Una canción: favorita, escuchar, eliminar</td><td><span class="tag">Hoy</span></td></tr>
+        <tr><td>Registro</td><td>Crear una cuenta</td><td>Sesión 3</td></tr>
+        <tr><td>IA</td><td>Playlist según tu ánimo</td><td>Sesión 3</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Hoy, solo interfaz y datos de ejemplo</strong><p>Las canciones de hoy están escritas a mano en el XML. Desde la unidad 2, el código las va a reemplazar por las canciones reales del usuario.</p></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Paso a paso</span>
+  <div class="concept-label anim">Cada pantalla es una Activity con su propio layout</div>
+  <div class="concept-title anim">Crea una<br><span>Activity nueva</span></div>
+  <div class="concept-body anim">
+    <div class="paso"><div class="paso-num">1</div><div class="paso-cont"><div class="paso-tit">Archivo, Nuevo, Activity, Empty Views Activity</div><div class="paso-desc">La misma plantilla que elegiste al crear el proyecto en la sesión 1.</div></div></div>
+    <div class="paso"><div class="paso-num">2</div><div class="paso-cont"><div class="paso-tit">Nombre: ListaActivity</div><div class="paso-desc">Android Studio propone solo el nombre del layout: <code>activity_lista</code>. Déjalo así.</div></div></div>
+    <div class="paso"><div class="paso-num">3</div><div class="paso-cont"><div class="paso-tit">Finalizar</div><div class="paso-desc">Se crean dos archivos: <code>ListaActivity.kt</code> (el código, no lo toques hoy) y <code>activity_lista.xml</code> (el layout). Abre el XML en la vista Split.</div></div></div>
+    <div class="callout callout-warn"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Esta pantalla no se abre al correr la app</strong><p>La app siempre parte en el login, y todavía no hay código que lleve de una pantalla a otra: eso se programa en la sesión 4. Hoy cada pantalla se revisa en la vista previa de Split, a la derecha del XML.</p></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Paso 1 de 6 &middot; LinearLayout</span>
+  <div class="concept-label anim">Cambiar el contenedor de la pantalla</div>
+  <div class="concept-title anim">La <span>raíz</span></div>
+  <div class="concept-body ancho anim">
+    <div class="duo">
+      <div>
+        <p style="font-size:17px;margin-bottom:6px;">Borra todo el contenido de <code>activity_lista.xml</code> y escribe esto. En rojo, lo que cambia respecto de lo que traía.</p>
+        <div class="code-block">
+          <div class="code-title">activity_lista.xml</div>
+<pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+<span class="hl">&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"</span>
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+<span class="hl">    android:orientation="vertical"</span>
+    tools:context=".ListaActivity"&gt;
+
+<span class="hl">&lt;/LinearLayout&gt;</span></pre>
+        </div>
+      </div>
+      <div>
+        <div class="fono"><div class="fono-status"><span>18:30</span><span>&#9679;&#9679;&#9679;</span></div>
+          <div class="fono-screen izq"><div class="fono-vacio">pantalla vacía</div></div></div>
+        <div class="fono-cap">1 de 6</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Paso 1 de 6 &middot; Línea por línea</span>
+  <div class="concept-label anim">LinearLayout raíz</div>
+  <div class="concept-title anim">Qué hace cada <span>línea</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Línea</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lt;LinearLayout</code></td><td>El contenedor de toda la pantalla. Va en vez de ConstraintLayout.</td></tr>
+        <tr><td><code>xmlns:android / xmlns:tools</code></td><td>Le dicen a Android de dónde salen los atributos que empiezan con <code>android:</code> y <code>tools:</code>. Solo se escriben en la raíz. No hay <code>xmlns:app</code> porque aquí no usamos restricciones.</td></tr>
+        <tr><td><code>android:id="@+id/main"</code></td><td>Un nombre que el código de la Activity ya usa. Si lo borras, la app se cae cuando abra esta pantalla.</td></tr>
+        <tr><td><code>orientation="vertical"</code></td><td>Barra arriba, lista abajo: en columna.</td></tr>
+        <tr><td><code>tools:context</code></td><td>Le dice a la vista previa a qué Activity pertenece este layout. No cambia nada en el teléfono.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-warn"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>No le pongas padding a la raíz</strong><p>El código que trae la Activity cambia el padding de la raíz para no quedar debajo de la barra de estado. Cualquier padding que escribas ahí se pierde: ponlo en los contenedores de adentro.</p></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Paso 2 de 6 &middot; LinearLayout horizontal</span>
+  <div class="concept-label anim">Dentro de la raíz, antes de &lt;/LinearLayout&gt;</div>
+  <div class="concept-title anim">La barra y<br>su <span>título</span></div>
+  <div class="concept-body ancho anim">
+    <div class="duo">
+      <div>
+        <div class="code-block">
+          <div class="code-title">activity_lista.xml</div>
+<pre><span class="hl">&lt;LinearLayout</span>
+<span class="hl">    android:layout_width="match_parent"</span>
+<span class="hl">    android:layout_height="wrap_content"</span>
+<span class="hl">    android:orientation="horizontal"</span>
+<span class="hl">    android:gravity="center_vertical"</span>
+<span class="hl">    android:padding="16dp"&gt;</span>
+<span class="hl"></span>
+<span class="hl">    &lt;TextView</span>
+<span class="hl">        android:id="@+id/txtTitulo"</span>
+<span class="hl">        android:layout_width="0dp"</span>
+<span class="hl">        android:layout_height="wrap_content"</span>
+<span class="hl">        android:layout_weight="1"</span>
+<span class="hl">        android:text="Mis canciones"</span>
+<span class="hl">        android:textSize="24sp"</span>
+<span class="hl">        android:textStyle="bold" /&gt;</span>
+<span class="hl">&lt;/LinearLayout&gt;</span></pre>
+        </div>
+      </div>
+      <div>
+        <div class="fono"><div class="fono-status"><span>18:30</span><span>&#9679;&#9679;&#9679;</span></div>
+          <div class="fono-screen izq"><div class="nuevo fm-barra"><div class="fm-h">Mis canciones</div></div></div></div>
+        <div class="fono-cap">2 de 6</div>
+      </div>
+    </div>
+    <div class="callout callout-tip" style="margin:8px 0;"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Lo mismo que en el bloque 01</strong><p>El título lleva <code>0dp</code> y <code>weight="1"</code>: así, cuando agregues los botones, los va a empujar al borde derecho.</p></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Paso 3 de 6 &middot; ImageButton</span>
+  <div class="concept-label anim">Dentro de la barra, después del título</div>
+  <div class="concept-title anim">Los tres <span>botones</span></div>
+  <div class="concept-body ancho anim">
+    <div class="duo">
+      <div>
+        <div class="code-block">
+          <div class="code-title">activity_lista.xml &middot; dentro de la barra</div>
+<pre><span class="hl">&lt;ImageButton</span>
+<span class="hl">    android:id="@+id/btnIA"</span>
+<span class="hl">    android:layout_width="48dp"</span>
+<span class="hl">    android:layout_height="48dp"</span>
+<span class="hl">    android:src="@android:drawable/star_big_on"</span>
+<span class="hl">    android:background="@android:color/transparent"</span>
+<span class="hl">    android:contentDescription="Playlist con IA" /&gt;</span>
+
+&lt;ImageButton
+    android:id="@+id/btnAgregar"
+    ... (mismo tamaño y fondo)
+    android:src="@android:drawable/ic_input_add"
+    android:contentDescription="Agregar canción" /&gt;
+
+&lt;ImageButton
+    android:id="@+id/btnSalir"
+    ... (mismo tamaño y fondo)
+    android:src="@android:drawable/ic_menu_close_clear_cancel"
+    android:contentDescription="Cerrar sesión" /&gt;</pre>
+        </div>
+      </div>
+      <div>
+        <div class="fono"><div class="fono-status"><span>18:30</span><span>&#9679;&#9679;&#9679;</span></div>
+          <div class="fono-screen izq"><div class="fm-barra"><div class="fm-h">Mis canciones</div><span class="nuevo fm-ico">&#9733; &#43; &#10005;</span></div></div></div>
+        <div class="fono-cap">3 de 6</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Paso 3 de 6 &middot; Línea por línea</span>
+  <div class="concept-label anim">ImageButton &middot; componente nuevo</div>
+  <div class="concept-title anim">Qué hace cada <span>línea</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Línea</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lt;ImageButton</code></td><td>Un botón que muestra un ícono en vez de texto.</td></tr>
+        <tr><td><code>48dp x 48dp</code></td><td>El tamaño mínimo que Android recomienda para algo que se toca con el dedo.</td></tr>
+        <tr><td><code>src="@android:drawable/..."</code></td><td>El ícono. <code>@android:</code> significa "de los íconos que trae Android": no tienes que descargar ni importar nada.</td></tr>
+        <tr><td><code>background="@android:color/transparent"</code></td><td>Le quita el fondo gris de botón: queda solo el ícono, como en las apps que usas.</td></tr>
+        <tr><td><code>contentDescription</code></td><td>Lo que lee en voz alta el lector de pantalla para una persona ciega. Un ícono sin texto siempre lo necesita.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Otros íconos que trae Android</strong><p><code>ic_media_play</code> (play), <code>ic_menu_delete</code> (eliminar), <code>ic_menu_search</code> (buscar), <code>ic_menu_edit</code> (editar). Escribe <code>@android:drawable/ic_</code> y Android Studio te muestra la lista.</p></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Paso 4 de 6 &middot; ScrollView</span>
+  <div class="concept-label anim">Después de la barra, antes del cierre de la raíz</div>
+  <div class="concept-title anim">El espacio<br>de la <span>lista</span></div>
+  <div class="concept-body ancho anim">
+    <div class="duo">
+      <div>
+        <div class="code-block">
+          <div class="code-title">activity_lista.xml</div>
+<pre><span class="hl">&lt;ScrollView</span>
+<span class="hl">    android:layout_width="match_parent"</span>
+<span class="hl">    android:layout_height="0dp"</span>
+<span class="hl">    android:layout_weight="1"&gt;</span>
+<span class="hl"></span>
+<span class="hl">    &lt;LinearLayout</span>
+<span class="hl">        android:layout_width="match_parent"</span>
+<span class="hl">        android:layout_height="wrap_content"</span>
+<span class="hl">        android:orientation="vertical"</span>
+<span class="hl">        android:paddingHorizontal="16dp"&gt;</span>
+<span class="hl"></span>
+<span class="hl">        &lt;!-- aquí van las filas --&gt;</span>
+<span class="hl"></span>
+<span class="hl">    &lt;/LinearLayout&gt;</span>
+<span class="hl">&lt;/ScrollView&gt;</span></pre>
+        </div>
+      </div>
+      <div>
+        <div class="fono"><div class="fono-status"><span>18:30</span><span>&#9679;&#9679;&#9679;</span></div>
+          <div class="fono-screen izq"><div class="fm-barra"><div class="fm-h">Mis canciones</div><span class="fm-ico">&#9733; &#43; &#10005;</span></div><div class="nuevo" style="flex:1;min-height:300px;border:2px dashed #CCC;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#AAA;">ScrollView</div></div></div>
+        <div class="fono-cap">4 de 6</div>
+      </div>
+    </div>
+    <div class="callout callout-tip" style="margin:8px 0;"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>&lt;!-- ... --&gt; es un comentario</strong><p>Android lo ignora. Sirve para dejarte notas en el XML; bórralo cuando pongas la primera fila.</p></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Paso 5 de 6 &middot; Fila</span>
+  <div class="concept-label anim">Dentro del LinearLayout vertical del ScrollView</div>
+  <div class="concept-title anim">La primera <span>fila</span></div>
+  <div class="concept-body ancho anim">
+    <div class="duo">
+      <div>
+        <div class="code-block">
+          <div class="code-title">activity_lista.xml &middot; una fila</div>
+<pre><span class="hl">&lt;LinearLayout</span>
+<span class="hl">    android:layout_width="match_parent"</span>
+<span class="hl">    android:layout_height="wrap_content"</span>
+<span class="hl">    android:orientation="horizontal"</span>
+<span class="hl">    android:gravity="center_vertical"</span>
+<span class="hl">    android:paddingVertical="8dp"&gt;</span>
+
+    &lt;ImageView
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@mipmap/ic_launcher"
+        android:contentDescription="Carátula" /&gt;
+
+<span class="hl">    &lt;LinearLayout</span>
+<span class="hl">        android:layout_width="0dp"</span>
+<span class="hl">        android:layout_height="wrap_content"</span>
+<span class="hl">        android:layout_weight="1"</span>
+<span class="hl">        android:layout_marginStart="12dp"</span>
+<span class="hl">        android:orientation="vertical"&gt;</span>
+
+        &lt;TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fix You"
+            android:textSize="18sp"
+            android:textStyle="bold" /&gt;
+
+        &lt;TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Coldplay"
+            android:textSize="14sp" /&gt;
+<span class="hl">    &lt;/LinearLayout&gt;</span>
+
+    &lt;Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+1" /&gt;
+<span class="hl">&lt;/LinearLayout&gt;</span></pre>
+        </div>
+      </div>
+      <div>
+        <div class="fono"><div class="fono-status"><span>18:30</span><span>&#9679;&#9679;&#9679;</span></div>
+          <div class="fono-screen izq"><div class="fm-barra"><div class="fm-h">Mis canciones</div><span class="fm-ico">&#9733; &#43; &#10005;</span></div>
+            <div class="nuevo fm-fila"><div class="fm-car"></div><div class="fm-txt"><div class="fm-t">Fix You</div><div class="fm-s">Coldplay</div></div><div class="fm-btn">+1</div></div></div></div>
+        <div class="fono-cap">5 de 6</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Paso 5 de 6 &middot; Línea por línea</span>
+  <div class="concept-label anim">La fila: dos contenedores, uno dentro del otro</div>
+  <div class="concept-title anim">Qué hace cada <span>línea</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Pieza</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td>LinearLayout <code>horizontal</code></td><td>La fila: carátula, textos y botón, uno al lado del otro.</td></tr>
+        <tr><td><code>gravity="center_vertical"</code></td><td>Centra en altura: el botón queda a la misma altura que el centro de la carátula.</td></tr>
+        <tr><td><code>paddingVertical="8dp"</code></td><td>Espacio arriba y abajo de cada fila, para que no queden pegadas.</td></tr>
+        <tr><td><code>src="@mipmap/ic_launcher"</code></td><td>Por ahora, el ícono de la app como carátula de ejemplo. En la unidad 2 se cambia por la carátula real.</td></tr>
+        <tr><td>LinearLayout <code>vertical</code> con <code>weight="1"</code></td><td>Pone el título sobre el artista y se queda con el espacio que sobra: empuja el botón +1 al borde derecho.</td></tr>
+        <tr><td><code>layout_marginStart="12dp"</code></td><td>Separa los textos de la carátula.</td></tr>
+        <tr><td><code>&lt;Button ... "+1"</code></td><td>Un botón de texto, el mismo de tu login. Más adelante suma una reproducción a la canción.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Paso 6 de 6 &middot; Copiar y cambiar</span>
+  <div class="concept-label anim">Una fila más es un bloque más</div>
+  <div class="concept-title anim">Dos filas más y<br>la pantalla <span>completa</span></div>
+  <div class="concept-body ancho anim">
+    <div class="duo cap">
+      <div>
+        <div class="paso"><div class="paso-num">1</div><div class="paso-cont"><div class="paso-tit">Copia la fila completa</div><div class="paso-desc">Desde su <code>&lt;LinearLayout</code> hasta su <code>&lt;/LinearLayout&gt;</code>. Si te sobra o te falta una etiqueta, la vista previa deja de funcionar.</div></div></div>
+        <div class="paso"><div class="paso-num">2</div><div class="paso-cont"><div class="paso-tit">Pégala dos veces, debajo de la primera</div><div class="paso-desc">Dentro del mismo LinearLayout vertical del ScrollView.</div></div></div>
+        <div class="paso"><div class="paso-num">3</div><div class="paso-cont"><div class="paso-tit">Cambia solo los textos</div><div class="paso-desc">"Tren al Sur", Los Prisioneros. "Gracias a la Vida", Violeta Parra.</div></div></div>
+        <div class="callout callout-info" style="margin:8px 0;"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Repetir a mano no es la solución final</strong><p>Con 3 filas funciona. Con 200 canciones no: en la unidad 2 una sola fila se va a repetir automáticamente por cada canción guardada.</p></div></div>
+      </div>
+      <div class="captura-real" style="max-width:300px;">
+        <img src="data:image/jpeg;base64,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rVnBLZ+GYLj7TZWzx+WJrgpsaRVPKryT2ya9OoosFgooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigDlfieutN4Oux4b+0/2hvj2/ZifM27huxjnp6VzGp6Hrl38QfBGpTWc0i21igvZ8cRyAMW3HscmvUaKLBY8q8G+HtXsr3x411YSxre3ObYsP9aNznK+owwr0Xw9DJb6LaQzoUkWP5lPUc1oUUAZmu+H9J8Qwww6zZR3UcMnmRq5PDdOx/SuN8P8AhrT9eudSh1/wTZ6fDZXIWzdE2GZQTzkYyOBz0Oa9FooAB6Yri/HOl3U95Fd28TSx+XsYIMkEEnp+NdpRWdWmqkeVnPisPHEU3Tk7HkX9n3v/AD5z/wDfs0f2fe/8+c//AH7Neu0Vy/UV3PK/sOH87PN/D+i3F7dC3vbBJLAuHnS5gDIcZxww689q2/Bfgiy8N3d/qRigN/eTO26JNqQRFsrGg7DGM+prrfpRXTSpKmrXPTwmFWGp8idwooorU6gooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiio7iaO2gkmlIVI1LMfagCSiqGkakupQM/ltFIjYaNuozyD+Iq/QAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAYnivxLb+GbOG5uYJZhLJ5YEeM5wT3+lTeGtetvEWmC+tEdF3lGjfG5SPXHtzXJfGjjQ7D/r6P/oBqt8OnOi+Jr7Q5GPlXUKXNvk9flB/9BP/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r994aES6Va2DXPlR6g9xNN5g3puV8tk/7RHY1f8A+EbtGsry3nmuJnvWVp53Yb22kFR0wAMdMUAZ3iPVL2C5v/sd9IDaQ+YIYLUyAHaT+9YjAB9ARxzRceIrmy82e42mK50xbq0QDpKMBk98lkNaN/4btr24upftV3Cl4oW5ihkCrLgYyeMjjjg81V1DR/tl9o1iLWQ2mmMspuZCMMFXCoMdTnBPGOKAN2wW4Sxt1vHElyI181gMZbHPH1qeiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACvK/iH4bexvX1O0Qm1nbMmB/q3PX8D/OvVKbLGk0bRSorxsMMrDIIrSlUdOV0M+eaK9L1z4cwzu02kTiAnnyZMlfwPUfrXNS+A/EEbYW1jkH95ZV/qa9KOIpy6juczRXR/8IP4h/58B/39T/Gj/hB/EP8Az4D/AL+p/jV+1h3QHOUV0f8Awg/iH/nwH/f1P8aP+EH8Q/8APgP+/qf40e1h3QHOUV0f/CD+If8AnwH/AH9T/Gj/AIQfxD/z4D/v6n+NHtYd0BzlFdH/AMIP4h/58R/39T/GtHTvhzqczg300NtH3AO9vyHH61LrU11A5PT7G41G7jtbSMyTSHAA/mfavbvD2kxaJpUNlFhio3SPj7zHqf8APao9B8PWGhQlLOPMjD55n5Zv8B7CtauCvX9pothBRRRXOIKKKKACggEEEAg+tFFANXMHUPDcUpeSzYRMw+4fu/8A1qw20W/gk+eAleeV+YfpXdUVm6UWedWyyhUfMtH5HmTaTdLKpS3kxnptPFWbbw5qVw3EBjUnrIduP616JRUqijKOU018UmzC0vw1bWria4Inl6gEfKv4d63aKK1SS2PSpUYUlaCsFFFFM0CiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKy9Q1y1syyKfNlA+4p6fU1hv4mvJZMRrHGvPQZNZupFHFWzChSdm7vyOworh01/US65n6n0FWYPFF3G+Jo45F/I0lWiYRzag97o6+is+w1e1vW2I2yXujdfwrQrRNPY9GnUhUV4u6CiiimWFFF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j2iC1a1SMH5fLJBII/4DWjRQBlafoUVhLEYrq7aGHIhgeTKR54x0yRj1JxUb+G7NobqAy3AjuJ/tAAf/AFUmd25OOOeec1s0UAZmm6JDp97NeC4uJ7iaNY5HmfduAJI7cdasR6fDHqk2oqW8+WFIWyeNqkkf+hVbooAo6rpcOprD5kksUsEnmQzRNhkOMH9DiqUXhiyjjlUy3EhmuY7l3eTLGRMYPTvituigCqbGE6ouokt56wmEc8bSwPT1yKypfCdlJuT7Rdrb+f5626yfIr7t2QMevat+igBaSiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigApskaSxtHKiujDDKwyCKdRQBwmufDq3uHabSZvs7Hnyn5X8D1Fc1L4B15GwtvHIPVZB/WvYKK3jiakVYdzxv/hBfEH/Pmv8A39X/ABo/4QXxB/z5r/39X/GvZKKv63MLnjf/AAgviD/nzX/v6v8AjR/wgviD/nzX/v6v+NeyUUfW5hc8b/4QXxB/z5r/AN/V/wAaP+EF8Qf8+a/9/V/xr2Sij63MLnjn/CC+IP8An0X/AL+r/jWjp3w41GVwb6eKBO4U7m/wr1Kik8XUYXMvQtAsNDg2WcXzt9+VuWb8f6VqUUVzttu7EFFFFIAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q==" alt="Pantalla Lista de Mi Música en el emulador">
+        <div class="captura-real-cap">Captura real &middot; emulador Pixel</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Tu app</span>
+  <div class="concept-label anim">La misma estructura, con los datos de tu app</div>
+  <div class="concept-title anim">La lista de<br><span>tu app</span></div>
+  <div class="concept-body anim">
+    <div class="actividad">
+      <div class="act-k">Actividad &middot; 15 min &middot; en dupla &middot; en Android Studio</div>
+      <div class="act-t">Creen ListaActivity en el proyecto de su app y escriban su lista.</div>
+      <div class="act-list">
+        <div class="act-li">Barra con el título de su lista y al menos dos ImageButton: agregar y salir</div>
+        <div class="act-li">ScrollView con tres filas de ejemplo inventadas, con datos de su app</div>
+        <div class="act-li">Cada fila con dos textos uno sobre otro y un botón o ImageButton de acción rápida</div>
+      </div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>App</th><th>Texto grande</th><th>Texto chico</th><th>Acción rápida</th></tr></thead>
+      <tbody>
+        <tr><td>Control de gastos</td><td>Supermercado</td><td>$ 23.400 &middot; Comida</td><td>Eliminar</td></tr>
+        <tr><td>Cuidado de plantas</td><td>Monstera</td><td>Último riego: lunes</td><td>Regar</td></tr>
+        <tr><td>Diario de lectura</td><td>Cien años de soledad</td><td>García Márquez &middot; nota 6</td><td>Editar</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 03: AGREGAR ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 03</span>
+  <div class="sep-num anim">03 &middot; Demo + tu app &middot; 45 min</div>
+  <div class="sep-title anim">Pantalla<br>para <span>agregar</span></div>
+  <p class="sep-desc anim">
+    En Mi Música, las canciones no se escriben: se buscan. Esta pantalla trae un
+    componente nuevo, el Spinner.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Elegir una opción de una lista cerrada</div>
+  <div class="concept-title anim">El <span>Spinner</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Spinner</div>
+      <div class="def-txt">Una lista desplegable: muestra la opción elegida y, al tocarla, abre las demás.</div>
+      <div class="def-ej">En Mi Música: buscar "Por canción" o "Por artista". El usuario no escribe la opción, la elige.</div>
+    </div>
+    <div class="paso"><div class="paso-num">1</div><div class="paso-cont"><div class="paso-tit">Las opciones van en un archivo aparte</div><div class="paso-desc">Clic derecho en <code>res/values</code>, Nuevo, Values Resource File. Nombre: <code>arrays</code>.</div></div></div>
+    <div class="code-block">
+      <div class="code-title">res/values/arrays.xml</div>
+<pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;resources&gt;
+<span class="hl">    &lt;string-array name="tipos_busqueda"&gt;</span>
+<span class="hl">        &lt;item&gt;Por canción&lt;/item&gt;</span>
+<span class="hl">        &lt;item&gt;Por artista&lt;/item&gt;</span>
+<span class="hl">    &lt;/string-array&gt;</span>
+&lt;/resources&gt;</pre>
+    </div>
+    <div class="callout callout-tip" style="margin:8px 0;"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>string-array</strong><p>Una lista de textos con nombre. El Spinner la usa con <code>@array/tipos_busqueda</code>. En la sesión 3 vas a mover todos los textos de la app a archivos como este.</p></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Paso 1 de 3 &middot; Buscador</span>
+  <div class="concept-label anim">Crea BuscarActivity con Empty Views Activity y cambia la raíz igual que en la Lista</div>
+  <div class="concept-title anim">El <span>buscador</span></div>
+  <div class="concept-body ancho anim">
+    <div class="duo">
+      <div>
+        <div class="code-block">
+          <div class="code-title">activity_buscar.xml &middot; dentro de la raíz vertical</div>
+<pre>&lt;LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"&gt;
+
+    &lt;TextView ...
+        android:text="Buscar canción"
+        android:textSize="24sp"
+        android:textStyle="bold" /&gt;
+
+    &lt;EditText
+        android:id="@+id/edtBusqueda"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Ejemplo: fix you"
+        android:inputType="text" /&gt;
+
+<span class="hl">    &lt;LinearLayout</span>
+<span class="hl">        android:layout_width="match_parent"</span>
+<span class="hl">        android:layout_height="wrap_content"</span>
+<span class="hl">        android:layout_marginTop="8dp"</span>
+<span class="hl">        android:orientation="horizontal"</span>
+<span class="hl">        android:gravity="center_vertical"&gt;</span>
+<span class="hl"></span>
+<span class="hl">        &lt;Spinner</span>
+<span class="hl">            android:id="@+id/spnTipo"</span>
+<span class="hl">            android:layout_width="0dp"</span>
+<span class="hl">            android:layout_height="wrap_content"</span>
+<span class="hl">            android:layout_weight="1"</span>
+<span class="hl">            android:entries="@array/tipos_busqueda" /&gt;</span>
+<span class="hl"></span>
+<span class="hl">        &lt;Button</span>
+<span class="hl">            android:id="@+id/btnBuscar"</span>
+<span class="hl">            android:layout_width="wrap_content"</span>
+<span class="hl">            android:layout_height="wrap_content"</span>
+<span class="hl">            android:text="Buscar" /&gt;</span>
+<span class="hl">    &lt;/LinearLayout&gt;</span>
+&lt;/LinearLayout&gt;</pre>
+        </div>
+      </div>
+      <div>
+        <div class="fono"><div class="fono-status"><span>18:30</span><span>&#9679;&#9679;&#9679;</span></div>
+          <div class="fono-screen izq"><div class="fm-h">Buscar canción</div><div class="fono-campo">Ejemplo: fix you</div>
+            <div class="nuevo" style="display:flex;align-items:center;gap:8px;"><div style="flex:1;font-size:12px;">Por canción &#9662;</div><div class="fm-btn">Buscar</div></div></div></div>
+        <div class="fono-cap">1 de 3</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Paso 1 de 3 &middot; Línea por línea</span>
+  <div class="concept-label anim">Spinner &middot; componente nuevo</div>
+  <div class="concept-title anim">Qué hace cada <span>línea</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Línea</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lt;Spinner</code></td><td>La lista desplegable.</td></tr>
+        <tr><td><code>android:id="@+id/spnTipo"</code></td><td>Su nombre. <code>spn</code> al inicio avisa que es un Spinner, como <code>edt</code> para EditText y <code>btn</code> para botones.</td></tr>
+        <tr><td><code>0dp</code> + <code>weight="1"</code></td><td>Otra vez el mismo truco: el Spinner ocupa todo el ancho que deja el botón Buscar.</td></tr>
+        <tr><td><code>android:entries="@array/tipos_busqueda"</code></td><td>Las opciones, sacadas del string-array de <code>arrays.xml</code>. Si el nombre no coincide, Android Studio lo marca en rojo.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>La fila Spinner + botón está dentro del bloque vertical</strong><p>Otra vez dos contenedores anidados: el bloque de arriba va en columna, y dentro de él, una fila horizontal.</p></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Paso 2 de 3 &middot; Resultados</span>
+  <div class="concept-label anim">Después del buscador: un título y la misma lista de la pantalla anterior</div>
+  <div class="concept-title anim">Los <span>resultados</span></div>
+  <div class="concept-body ancho anim">
+    <div class="duo">
+      <div>
+        <div class="code-block">
+          <div class="code-title">activity_buscar.xml &middot; después del buscador</div>
+<pre><span class="hl">&lt;TextView</span>
+<span class="hl">    android:layout_width="wrap_content"</span>
+<span class="hl">    android:layout_height="wrap_content"</span>
+<span class="hl">    android:layout_marginStart="16dp"</span>
+<span class="hl">    android:text="Resultados"</span>
+<span class="hl">    android:textStyle="bold" /&gt;</span>
+
+&lt;ScrollView ...  (igual que en la Lista)
+    &lt;LinearLayout ... vertical, paddingHorizontal 16dp&gt;
+
+        &lt;!-- 3 filas copiadas de la Lista --&gt;
+
+    &lt;/LinearLayout&gt;
+&lt;/ScrollView&gt;</pre>
+        </div>
+        <div class="paso"><div class="paso-num">1</div><div class="paso-cont"><div class="paso-tit">Copia el ScrollView completo de activity_lista.xml</div><div class="paso-desc">Con sus tres filas adentro.</div></div></div>
+        <div class="paso"><div class="paso-num">2</div><div class="paso-cont"><div class="paso-tit">Cambia los textos</div><div class="paso-desc">El texto chico ahora lleva artista y género: "Coldplay &middot; Alternativa".</div></div></div>
+      </div>
+      <div>
+        <div class="fono"><div class="fono-status"><span>18:30</span><span>&#9679;&#9679;&#9679;</span></div>
+          <div class="fono-screen izq"><div class="fm-h">Buscar canción</div><div class="fono-campo">Ejemplo: fix you</div>
+            <div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;font-size:12px;">Por canción &#9662;</div><div class="fm-btn">Buscar</div></div>
+            <div class="nuevo"><div class="fm-t" style="font-size:11px;">Resultados</div><div class="fm-fila"><div class="fm-car"></div><div class="fm-txt"><div class="fm-t">Fix You</div><div class="fm-s">Coldplay &middot; Alternativa</div></div><div class="fm-btn">+1</div></div></div></div></div>
+        <div class="fono-cap">2 de 3</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Paso 3 de 3 &middot; ImageButton</span>
+  <div class="concept-label anim">En los resultados no se suma una reproducción: se escucha un adelanto</div>
+  <div class="concept-title anim">Cambia +1<br>por <span>play</span></div>
+  <div class="concept-body ancho anim">
+    <div class="duo cap">
+      <div>
+        <p style="font-size:17px;margin-bottom:6px;">En cada fila de resultados, reemplaza el <code>&lt;Button ... "+1" /&gt;</code> por:</p>
+        <div class="code-block">
+          <div class="code-title">activity_buscar.xml &middot; en cada fila</div>
+<pre><span class="hl">&lt;ImageButton</span>
+<span class="hl">    android:layout_width="48dp"</span>
+<span class="hl">    android:layout_height="48dp"</span>
+<span class="hl">    android:src="@android:drawable/ic_media_play"</span>
+<span class="hl">    android:background="@android:color/transparent"</span>
+<span class="hl">    android:contentDescription="Escuchar 30 segundos" /&gt;</span></pre>
+        </div>
+        <div class="callout callout-info" style="margin:8px 0;"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Datos reales, escritos a mano</strong><p>Estos tres resultados son los que entrega de verdad el catálogo de iTunes al buscar "fix you". En la unidad 2, la app los va a pedir a internet en vez de tenerlos escritos.</p></div></div>
+      </div>
+      <div class="captura-real" style="max-width:300px;">
+        <img src="data:image/jpeg;base64,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rVnBLZ+GYLj7TZWzx+WJrgpsaRVPKryT2ya9OoosFgooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigDlfieutN4Oux4b+0/2hvj2/ZifM27huxjnp6VzGp6Hrl38QfBGpTWc0i21igvZ8cRyAMW3HscmvUaKLBY8q8G+HtXsr3x411YSxre3ObYsP9aNznK+owwr0Xw9DJb6LaQzoUkWP5lPUc1oUUAZmu+H9J8Qwww6zZR3UcMnmRq5PDdOx/SuN8P8AhrT9eudSh1/wTZ6fDZXIWzdE2GZQTzkYyOBz0Oa9FooAB6Yri/HOl3U95Fd28TSx+XsYIMkEEnp+NdpRWdWmqkeVnPisPHEU3Tk7HkX9n3v/AD5z/wDfs0f2fe/8+c//AH7Neu0Vy/UV3PK/sOH87PN/D+i3F7dC3vbBJLAuHnS5gDIcZxww689q2/Bfgiy8N3d/qRigN/eTO26JNqQRFsrGg7DGM+prrfpRXTSpKmrXPTwmFWGp8idwooorU6gooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiud8beJm8MWNvcrai486Xy8F9uOCc9PaudPxF1KCFbm78NXEdqQD5u44wehyVxQB6JRWdoOsWuu6ZHf2THy3JUqw5Rh1BrRoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiioL6SWCynlt4TNMkbNHGD99gOB+NAE9FYfhHU9U1XTXn1jTzZTiUqq4I3Lgc4PPtUPirU9Ztp7Oy8P2JmuJ2/eTSRkxRL7n1oA6Kio7dZVgjW4dXlCjeyrtBPfAqSgAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiig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uqBQSSFHQe1NoorpGFdn8Kt39v3GM7fspz/30uK4yvS/hVpjRWt1qUgx5xEcefQdT+f8qwxLtTYM72iiivKJCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigDM8RaNBrmmyWk/yt96NwOUbsa8Y1fSbzSLtre9iKMPusB8rD1Br3qq1/YWuowGG9gjmjPZh0+npW9Gu6enQZ4BRXql58ONKmctbzzwZ7cMKrf8ACsrX/oJS/wDfof412rFUx3PNKK9L/wCFZW3/AEEpf+/Q/wAaP+FZW3/QSl/79D/Gj61T7hc80or0v/hWVt/0Epf+/Q/xo/4Vlbf9BKX/AL9D/Gj61T7hc80or0v/AIVlbf8AQSl/79D/ABo/4Vlbf9BKX/v0P8aPrVPuFzzSivS/+FZWv/QSl/79D/GtHTvh/o9q4efzblh0Ehwv5Ck8VTWwXOA8L+GbrXrpcK0dop/eTEfoPU17LaW0NnaxW1ugSKJQqqOwp8MMcEaxwoqIvAVRgCn1xVqzqPyEFFFFYiCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAorh/iFcrDrGgxXF7PaWcrSid4ZCpwAMdPeq/h3XP7PbXrtby5vtBs41aGaY7mMndQT15NAHoFFcfpfjV57uOC/ski8+2e4g8mYSEhRuKsB0bFSaD4su9VaOQ6cgtpY3cPHMGMWBkCQds0AdZQCDnBBx1welclF4yZ9A0jVPsYB1C7FuY9/3MsRnOOelc5e6nqWnWXjC50+Qh49TCmQvzEpOOAevPGKAueoUVzF7r+p2VlYbtPiNxNDvleS4CxrjoN3cmq6+NTdabpUunWBlvdSkeOOB32hSn3iW9KAOvBB6EcdcGivOdG8QSaSfE99fW8hnOoRxpbB8/vGBAUHpit2HxVcW897aazpxt7u3tDdpHE+8SoOoB9aAOpormvDfiO71ieMS2EaQSxeYs0MwkCf7L+hrpaACiiigAoooo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x70Adz/aFn9l+0/aI/ID+X5meA27bj8+Kp6fr1lf6je2UL/PaEZY9GGMk/h0rk7iYxeHJtHNvObxdS3FBGcbTcbw2emMVev7aaW78WWVtGy3V3Cj25C4DgRgHB+vFAHTWerWF9K0VpdRyyAZ2qe3qPWkt9Y065ErQXkTrEu6RgeFHuawUlg1LU9DGl2skRtGZ52MWzyo9hGw+uSRx7VRTTbhvh3BFbwMswkEkyBPnZBKS3Hfjt3oA6601SxvEke2uUdYhmQg42j1Oe1FjqtjqDslncpK6jJAPOPX6VzFvbQXZ1K5827vg1gYZEWDytyk5wP9rrU3hyRjrEUcIN1bpakfaHg8t4eRhCe+f6UAdbRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQBU1ZGexcKpY5BwB71G015enEINvD3dh8x+lX6KLBYr2tlDbcqNznq7ck1YoooAKKKKACiiigAooooAKzdY0tL+IlMJMOjY6+xrSopNJqzM6tKNWLjJaHns8FxaSSR3Ee0hTzjg1TZBMw4AYZwce1elTwRXEZSZFdT2IrJl8N2TNuiLxn65FYOk1seHVyqpGV6Tujz1NyyKCBnI7U/JyeB+Vdo3hGFmBNwcjuFqzbeFtPhbdIGlPox4qVSkZxy7ES3VjkrKwutQuNlvGCM8sRwK7vSdMi02AIoDSEfO+Ov/ANarcUSQpsiRUUdgKfW0KaiethcDGh7z1YUUUVodwUUUUAR3MRnt5IlkeIsMb0OGX3FRadZQ6fZx2tuDsTPLHJJJyST6k81ZooAKPwoooAKKKKACj8KKKACiiigA/CiiigAo/CiigAooooAKKKKAD8KPwoooAKKKKADp0FH4UUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQB//9k=" alt="Pantalla Buscar de Mi Música en el emulador">
+        <div class="captura-real-cap">Captura real &middot; emulador Pixel</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Tu app</span>
+  <div class="concept-label anim">Tu app no busca en internet: tu usuario escribe los datos</div>
+  <div class="concept-title anim">El formulario<br>de <span>tu app</span></div>
+  <div class="concept-body anim">
+    <div class="actividad">
+      <div class="act-k">Actividad &middot; 20 min &middot; en dupla &middot; en Android Studio</div>
+      <div class="act-t">Creen AgregarActivity con el formulario para agregar un elemento a su lista.</div>
+      <div class="act-list">
+        <div class="act-li">Raíz LinearLayout vertical, y adentro otro LinearLayout vertical con padding de 16dp</div>
+        <div class="act-li">Un título, los EditText que necesite su app y un Spinner con su propio string-array</div>
+        <div class="act-li">Un botón Guardar al final, de ancho completo</div>
+      </div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>App</th><th>EditText</th><th>Spinner</th></tr></thead>
+      <tbody>
+        <tr><td>Control de gastos</td><td>Descripción, monto</td><td>Categoría: comida, transporte, casa, otros</td></tr>
+        <tr><td>Rutinas de gimnasio</td><td>Ejercicio, series, peso</td><td>Grupo muscular</td></tr>
+        <tr><td>Vocabulario de inglés</td><td>Palabra, traducción</td><td>Tipo: sustantivo, verbo, adjetivo</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 04: DETALLE ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 04</span>
+  <div class="sep-num anim">04 &middot; Demo + tu app &middot; 25 min</div>
+  <div class="sep-title anim">Pantalla<br><span>Detalle</span></div>
+  <p class="sep-desc anim">
+    Lo que ves al tocar una canción de la lista. Trae el último componente nuevo de hoy: el Switch.
+  </p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Paso 1 de 2 &middot; ScrollView + LinearLayout</span>
+  <div class="concept-label anim">Crea DetalleActivity. Aquí la raíz es un ScrollView, por si la pantalla no cabe</div>
+  <div class="concept-title anim">La carátula<br>y los <span>datos</span></div>
+  <div class="concept-body ancho anim">
+    <div class="duo">
+      <div>
+        <div class="code-block">
+          <div class="code-title">activity_detalle.xml</div>
+<pre><span class="hl">&lt;ScrollView xmlns:android="..." xmlns:tools="..."</span>
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DetalleActivity"&gt;
+
+    &lt;LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+<span class="hl">        android:gravity="center_horizontal"</span>
+        android:padding="24dp"&gt;
+
+        &lt;ImageView
+            android:id="@+id/imgCaratula"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="Carátula" /&gt;
+
+        &lt;TextView android:id="@+id/txtCancion" ...
+            android:text="Fix You" android:textSize="26sp" /&gt;
+        &lt;TextView android:id="@+id/txtArtista" ...
+            android:text="Coldplay" android:textSize="18sp" /&gt;
+        &lt;TextView android:id="@+id/txtGenero" ...
+            android:text="Alternativa" /&gt;
+        &lt;TextView android:id="@+id/txtVeces" ...
+            android:text="Escuchada 12 veces" /&gt;
+
+        &lt;!-- paso 2 --&gt;
+    &lt;/LinearLayout&gt;
+<span class="hl">&lt;/ScrollView&gt;</span></pre>
+        </div>
+      </div>
+      <div>
+        <div class="fono"><div class="fono-status"><span>18:30</span><span>&#9679;&#9679;&#9679;</span></div>
+          <div class="fono-screen"><div class="nuevo fm-car" style="width:110px;height:110px;"></div><div class="fono-titulo" style="text-transform:none;">Fix You</div><div class="fono-sub">Coldplay<br>Alternativa<br><br>Escuchada 12 veces</div></div></div>
+        <div class="fono-cap">1 de 2</div>
+      </div>
+    </div>
+    <div class="callout callout-tip" style="margin:8px 0;"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Aquí sí llevan id</strong><p>En la unidad 2, el código va a escribir en estos TextView los datos de la canción que tocaste. Para encontrarlos, necesita sus nombres.</p></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Paso 2 de 2 &middot; Switch</span>
+  <div class="concept-label anim">Donde dice &lt;!-- paso 2 --&gt;</div>
+  <div class="concept-title anim">Escuchar, favorita<br>y <span>eliminar</span></div>
+  <div class="concept-body ancho anim">
+    <div class="duo cap">
+      <div>
+        <div class="code-block">
+          <div class="code-title">activity_detalle.xml</div>
+<pre>&lt;ImageButton
+    android:id="@+id/btnPlay"
+    android:layout_width="64dp"
+    android:layout_height="64dp"
+    android:layout_marginTop="8dp"
+    android:src="@android:drawable/ic_media_play"
+    android:contentDescription="Escuchar 30 segundos" /&gt;
+
+<span class="hl">&lt;Switch</span>
+<span class="hl">    android:id="@+id/swFavorita"</span>
+<span class="hl">    android:layout_width="match_parent"</span>
+<span class="hl">    android:layout_height="wrap_content"</span>
+<span class="hl">    android:layout_marginTop="16dp"</span>
+<span class="hl">    android:text="Favorita"</span>
+<span class="hl">    android:checked="true" /&gt;</span>
+
+&lt;Button
+    android:id="@+id/btnEliminar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="24dp"
+    android:text="Eliminar de mi colección" /&gt;</pre>
+        </div>
+      </div>
+      <div class="captura-real" style="max-width:300px;">
+        <img src="data:image/jpeg;base64,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rVnBLZ+GYLj7TZWzx+WJrgpsaRVPKryT2ya9OoosFgooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigDlfieutN4Oux4b+0/2hvj2/ZifM27huxjnp6VzGp6Hrl38QfBGpTWc0i21igvZ8cRyAMW3HscmvUaKLBY8q8G+HtXsr3x411YSxre3ObYsP9aNznK+owwr0Xw9DJb6LaQzoUkWP5lPUc1oUUAZmu+H9J8Qwww6zZR3UcMnmRq5PDdOx/SuN8P8AhrT9eudSh1/wTZ6fDZXIWzdE2GZQTzkYyOBz0Oa9FooAB6Yri/HOl3U95Fd28TSx+XsYIMkEEnp+NdpRWdWmqkeVnPisPHEU3Tk7HkX9n3v/AD5z/wDfs0f2fe/8+c//AH7Neu0Vy/UV3PK/sOH87PN/D+i3F7dC3vbBJLAuHnS5gDIcZxww689q2/Bfgiy8N3d/qRigN/eTO26JNqQRFsrGg7DGM+prrfpRXTSpKmrXPTwmFWGp8idwooorU6gooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKCQBk4/GgAoqpPqVlB/rLhM+inJ/Sqh1+2L7Ykkc/TFS5JGE8TRho5I1qK52TxK4JEdqv1Mn/1qhPiS77QQ/man2sTB5lh11Ooorlx4ku+8EJ/E1Yt/EbyOFe1HPdX/wDrUe1iEcxw8na50FFY8fiG0JxIkkfuRn+VXoNRs5+I7hCfQnB/WqUkzeGJoz+GSLVFAOeQaKo3CiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKA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KKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACilooASiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA8d0HVPGHiHULu30/VtpgyxEgAGN2B2rrdB0vxnBq9vLq2pxTWSk+agIywwcdvXFcB4Nu9cs9Wv38P2i3UzAiVWGcLu4PX1r0jwrqXiq71No9e05La1ERIdVx82RgdfrQIh8J2+pW+vanLf67BeW5DFYUk3FPm64/hwOK6q0vbS83fZLmKbb97y2DY/KvMvhiAfGutggcpL2/6aiqOvfafAHim5k0vaLe+hYxoTwuf/iW6e1Az1uG/s552ghuYpJlzlFcFhjrxTNWhubnTbiKxnMFyyHypQPut261yHwr0EWWlNq9xhru/wDmDHkhM/zJ5ruqAOC+GviW91G4vtK1qUvewtuQuADgcMvHof51U1fX9W1bx3Houh3jQW0RCTMgB6cu3I7dPrVP4hWtx4a8S23iTTML9oyrjHHmYwc/Uc/UVsfCfRDbabLrF1lrm+PyE9RHnr+J5/KgDtLu9tbGMPeXEcKesjAZpbO+tb5N9ncRTqO8bg15Tp9qPHPju/XVJZDaWu8pEGxhVbaoHp6mk1W0HgXxvp7aVJILS52F4i2cqW2sD6+ooA9W+3WguvshuYvtH/PLcN3TPT6UXN9aWjolzcxQs/3VdwC30rzOUD/hdScD/WD/ANE0nxfAPiDReP4P/ZxQFz1WilpKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA8x+FNheWmu6q91azQo8Xys6EA/P2zXp46iikoA8x+HlndWXi3Wrm6tZ4oTHKQzRnB/eA8evFVbXQr/xx4j1C+1WKe0tUjKwCRSuOoQDP5mvWcmigDz/4ZT6np7XOg6pazosLM0EjKdvX5lB9O4rv6X8aSgDh/i3aXF5oFolpBJM4uwxEa7iBtbniug8GxyQ+FtKimRkkS2UMrDBB962aSgDyy7sdW8FeLrnVrGxe80+6LZCDoGOSDjoQaSCy1bxv4stdSvbCSz0+1K8OOoU5wM9STXqlFMLHlvjCz1PRfHcXiG1spLq3O1vkGcELtZTjpxWZ4tl1rxHqOm38mjXFvAvyxLtLHG4Ek8cV7NRk0gsFJRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABVW+1Ox0/b9uu4YN3TzGAzVuuR8LWsGqXus6pfwpPP9ukt4/MUMI40wAAD09aAOpt54bmFZreRJY26OhyDUlc/wDZbbwnbaxqcbn7GwE4tVGFjYDB2/7xxVG51TxDpmnJrOoraPafK09tEp3xIxHIboSM88UAdML62OoGwEo+1CLzjH3CZxn86de3cFjaS3d04jghUs7HsBXNvcRw+PLm5dv3SaKJCfYSZ/lWTrd5r2p+Cr/U5fskdlc2zMttg71jPQ7umcc4xQB30brLGkiHKOAyn1B5FE0qQxPLKwVEUszegHJrlrjU9TivdE0rTBbj7VYl2kmBOzaF546/ShdT1ANrGjawIXuI7F7iKaEELJGQQeD0INAHS2d1De2sV1bOJIZVDow7g9DU1chpV1f2/g7Ql0/7PGHtk825uG+SFQvp1JNP0zXNRupNW05JrS5vLW3E1vcQj5JN2cAjPXIx1oA6yiuVbxLPdaNoc1gsf2zU5kjKsMhMZ8w49sGuroASiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACuXjttU0DUb99Psvt1jezG42LIFeKQ/e69QetdRRQBzC6NqOr6brCazL5L6ioWG3Vty2ygfL9Tnk1WvoPEGsaSuiXVgluHCR3N4JQylARkqOuTj8K7CigDnZdGlm8TXE7Jixl0r7JuB5yW6Y+lY9xZeIv+EUn8OLpscjJAYEuvOAR0HTjruxxXdUUAcTqhvLPxT4d+y24nni0+VXi3hdwAUHBPGat2+m6lqF9qmq31sLaSaxNna2+8McckliOOTXRS2FtLqEF+6E3ECNHG2egbrx+FWaAOJl0PUodM8NlrJLwadCUuLFnGCxUAMM8EirnhzTr+HxLfajdadDZW9xaxpHHEy/KVJ4OO/euqqO4iW4gkhcsFkUqSpwcHjg9qAOM8NaWU8ZaptcPZae7m2UdEkmAZx+GP1rt6p6VplppVt9mskKoWLMWbczsepJPU1coAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAK5nxXqd9b3UMWltzaRG9u1xnfEpA2fj8x/4DXTVzkfhw3l/qF9qU08clzLsRYJtoEKjCg49eT+NAEuq3sn9r6C9o7PDP5zFEOBKBFlRVfSfEsraPc3uqWzxsl28ESpgmVt5VVAB69v1pum6Jf2s2jRylWh02a4VXLctEVIj/HkD8Kgk8O3s+lXNjJFFmHUTeW7NJ8swLltpxyvDYoA0ZPE8UFrfyXlpNDNZRLNJCSrFkJwCpBweRTpfEDwmzSTTLoXF40iww8biFAOTzxwe/Ss2fQJ7nSNUig0yCznuIBFH+/Ls2Dk5J4AravrCafW9Iu4wvlWnneZk8/MmBj8aAIYfECy2Mswsrn7RFcfZntgAWEnXrnGMHOc4qjqvieeLRNTntLN0vbHAljcqRHkZDcHBGPSmXmiaiVv2hCus2pi5MIl2+dFsClSR05GfwqBPDt9JYeIYfs8FqdRjjEEaSbgpVSME0Aak+rtBeBpoblZU06S5a1UqQQrAH/gX44q5/bNu1xaxRBpPtFs1yGUZ2xgDk/XOBVa3srubXLbUbqBYkFg8Eke8Nhy4OPcYFVdF0C8sIdSVrhVlaM21jIOfKhG4pn3y36CgC3Za+Li+trW4sp7U3Ss0DSlfnwMkEA5U45wa2q47TND1CPVNIuZbGCAWe8Ty+f5jykoRu57Z/HmuxoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACis/xDeS6doV/ewBfNt4HkQEcZAzVTSpNRmkhkuNSs5oym5440G7p9aANuisqy8Qafe3McELvmUnyXZCElx12nvRH4h06S6W3WR/ml8pZdh8tn6bQ3TOeKANWis86zYjT3vzIfs6SmItt/iD7P8A0Kor3xBp9lcSQTPITER5zqhZYs9Nx7UAatFc0PEkdpq2rw3zSNBbtGY/LjLbEKAkkjtmtO81yytTGpMkrSR+aBChb5P7xx2oA0qKzbjXbCG3tZhI0ouxugWJdzOMZJA9Kz9H8QxyWN/eXkpMSag8EICfMRxtXHrQB0VFU9N1K21JZTblg8TbZI5F2shxkZH0rP1rUtRstQsUjghFnPdxwGRmy53ZzgdulAG5RWXqLarLfJb6eY4IBFve4kXdls4Cgfrml8O6hLqekx3VwirJudG2fdbaxXcPY4zQBp0VQTWLKS0tbpJCY7qURRcclySMY/A/lUJ8QacLz7N5jf63yfNCHyw/Tbu6Zzx9aANWisq88Q6fZ3MkMzv+6IEzqhKRE/3j2pb7X7CxnaGZ3YxqGlZELCMHoWI6UAalFZl/rtjYyrHI0kjmPzSIkLbU/vHHatCCaO4gjmhYPHIoZGHcHpQA+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAy/FNvLd+G9Tt7eMyTS2zqiDqxI4FZ2ii1hkiSDQri3nMWwyvHhRxzk56ZrpaWgDjdItr2G+sYbW0uraBGb7TDMQ0UQ2n/AFZ69entVjRPtllp9lo0ulvLJbyhXlcfutobPmA+uOcetdTRQBwt1b6imh3WjJp1xJKb8yiUAbDGZw+Qfp2rST7Xpcur239mSXn2y5eaFgBscOANrntjH5V1FFAHNwWFys3iUmAqLmNFiwOHxDjA/His8QajAlhDcW160C6bDGq2pCsJQMMHPp09utdpRQBxOjWd9pEOh3k1lNJ5FlJazRIMvGS4IOPTjFOSDVI9NupVtJ4vO1h55Y0A83yS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70ciuoprosgAdVYAgjIzgjoaAOU8SQSaV4eumvbmfUo5ZYkKznasYLgbm287e59hWHptlHquseIdLhuLdo59MiKtaKUjWUM+GHuDt5FekOiyIUdQysMFWGQaZDbwQf6mGOPAx8igcenFAWPO/P1LXPD+u65FHLHdrZJYxIowwKczlffcSP8AgNaCHSm8QaD/AMIyI8COX7V5I48jyzjf779uM89a7ZEVAQihRkngY570yG2ggLGGGOMv97YgGfrigLHm9tYw23wu06eGELcTz2jSyY+Z/wDSV61pkWen+JPGEn2UNP8AY4pYooxteUeW2/afc+neu38mLyxH5SeWDwu0YHccUGGIy+aYkMgG3eVG7Hpn0oCx5xoEsI8V+HfsktltltZxJHaKRtGwEK5PU59ea9KqGO0toSGht4kIOcogHPrU1ABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAVmavGfMSTB24x9K06R1DqVYAg0Ac433TivIdQieC+uI3B3LIfx5r3o2Nuf4P1rk/FfguLUD9os/3c3f/AGvrVRdgPKauaPA91qtpDECWaZen1ya1/wDhC9W8zZtTH97Ndt4P8IJpL/arkiS4x1I6fSqckB2C/dGaWiiswCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigBNoznA/KloooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKgv7uKws5ru4bbFChZj9KNwK+savZaPam4vpQi/wqPvMfQCvPdV+I1/M5XToY7ePszjcx/pXM69rFzreoPd3LHB4jTPCL2ArOr0qWGileWrHY328aeICc/2gw+ij/Ck/wCEy8Qf9BB/yH+FYNFb+yh2Gb3/AAmX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" alt="Pantalla Detalle de Mi Música en el emulador">
+        <div class="captura-real-cap">Captura real &middot; emulador Pixel</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Paso 2 de 2 &middot; Línea por línea</span>
+  <div class="concept-label anim">Switch &middot; componente nuevo</div>
+  <div class="concept-title anim">Qué hace cada <span>línea</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Línea</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lt;Switch</code></td><td>Un interruptor de encendido y apagado. Sirve para un sí o no que cambia al momento, como favorita.</td></tr>
+        <tr><td><code>android:id="@+id/swFavorita"</code></td><td><code>sw</code> al inicio avisa que es un Switch.</td></tr>
+        <tr><td><code>android:text="Favorita"</code></td><td>El texto a la izquierda del interruptor.</td></tr>
+        <tr><td><code>android:checked="true"</code></td><td>Parte encendido. Sin esta línea parte apagado.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-warn"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Switch o CheckBox</strong><p>El CheckBox del login ("Recordarme") se marca para algo que se aplica después, al ingresar. El Switch se usa para algo que cambia en el momento. Android Studio puede subrayar el Switch en amarillo y sugerir otro: es una sugerencia, no un error.</p></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Tu app</span>
+  <div class="concept-label anim">Un elemento de tu lista, completo</div>
+  <div class="concept-title anim">El detalle<br>de <span>tu app</span></div>
+  <div class="concept-body anim">
+    <div class="actividad">
+      <div class="act-k">Actividad &middot; 10 min &middot; en dupla &middot; en Android Studio</div>
+      <div class="act-t">Creen DetalleActivity con los datos de un elemento de su lista.</div>
+      <div class="act-list">
+        <div class="act-li">Raíz ScrollView con un LinearLayout vertical centrado adentro</div>
+        <div class="act-li">Cada dato en su propio TextView, con id</div>
+        <div class="act-li">Un Switch con sentido para su app y un botón Eliminar</div>
+      </div>
+      <div class="act-d">Ejemplos de Switch: "Gasto fijo mensual", "Planta de interior", "Libro terminado", "Palabra aprendida".</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ BLOQUE 05: GITHUB ============ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Bloque 05</span>
+  <div class="sep-num anim">05 &middot; Práctica guiada &middot; 30 min</div>
+  <div class="sep-title anim">Tu proyecto<br>en <span>GitHub</span></div>
+  <p class="sep-desc anim">
+    Todas las entregas del módulo son un link a su repositorio. Hoy lo crean y
+    suben lo que llevan.
+  </p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Cinco palabras antes de empezar</div>
+  <div class="concept-title anim">Git y <span>GitHub</span></div>
+  <div class="concept-body anim">
+    <div class="voc-grid">
+      <div class="voc-card"><div class="voc-nombre">Git</div><div class="voc-desc">Un programa que guarda el historial de cambios de un proyecto. Funciona en tu computador.</div></div>
+      <div class="voc-card"><div class="voc-nombre">GitHub</div><div class="voc-desc">Un sitio web donde se guarda una copia del proyecto con todo su historial, para compartirlo.</div></div>
+      <div class="voc-card"><div class="voc-nombre">Repositorio</div><div class="voc-desc">La carpeta del proyecto con su historial. Uno por dupla.</div></div>
+      <div class="voc-card"><div class="voc-nombre">Commit</div><div class="voc-desc">Una foto del proyecto en un momento, con un mensaje que dice qué cambió: "Pantallas lista, buscar y detalle".</div></div>
+      <div class="voc-card"><div class="voc-nombre">Push</div><div class="voc-desc">Subir a GitHub los commits que tienes en tu computador.</div></div>
+      <div class="voc-card"><div class="voc-nombre">Colaborador</div><div class="voc-desc">Otra cuenta de GitHub con permiso para subir cambios a tu repositorio: tu compañero de dupla.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Paso a paso &middot; Android Studio</span>
+  <div class="concept-label anim">Lo hace un integrante de la dupla, en el computador donde está el proyecto</div>
+  <div class="concept-title anim">Publicar el <span>proyecto</span></div>
+  <div class="concept-body anim">
+    <div class="paso"><div class="paso-num">0</div><div class="paso-cont"><div class="paso-tit">Cada uno con su cuenta</div><div class="paso-desc">Si no tienes cuenta, créala en github.com/signup con tu correo de INACAP. Los dos integrantes la necesitan.</div></div></div>
+    <div class="paso"><div class="paso-num">1</div><div class="paso-cont"><div class="paso-tit">Menú Git (o VCS), GitHub, Share Project on GitHub</div><div class="paso-desc">Si Android Studio pide instalar Git, acepta y espera a que termine.</div></div></div>
+    <div class="paso"><div class="paso-num">2</div><div class="paso-cont"><div class="paso-tit">Inicia sesión</div><div class="paso-desc">Elige iniciar sesión con GitHub: se abre el navegador, entras con tu cuenta y autorizas a Android Studio.</div></div></div>
+    <div class="paso"><div class="paso-num">3</div><div class="paso-cont"><div class="paso-tit">Nombre del repositorio</div><div class="paso-desc">El nombre de tu app, sin espacios: <code>control-de-gastos</code>. Deja desmarcado "Private", para que el profe pueda abrir el link.</div></div></div>
+    <div class="paso"><div class="paso-num">4</div><div class="paso-cont"><div class="paso-tit">Primer commit</div><div class="paso-desc">Android Studio muestra los archivos a subir. Déjalos todos marcados, escribe el mensaje "Login, lista, agregar y detalle" y confirma con Add.</div></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-pasos">Paso a paso &middot; GitHub</span>
+  <div class="concept-label anim">El repositorio ya está en GitHub. Faltan tres cosas</div>
+  <div class="concept-title anim">Compañero, cambios<br>y <span>cerrar sesión</span></div>
+  <div class="concept-body anim">
+    <div class="paso"><div class="paso-num">5</div><div class="paso-cont"><div class="paso-tit">Agrega a tu compañero</div><div class="paso-desc">En github.com, en tu repositorio: Settings, Collaborators, Add people, su nombre de usuario. Le llega una invitación que tiene que aceptar.</div></div></div>
+    <div class="paso"><div class="paso-num">6</div><div class="paso-cont"><div class="paso-tit">Cada vez que avances: commit y push</div><div class="paso-desc">En Android Studio, menú Git, Commit. Marca los archivos, escribe qué cambió y usa el botón Commit and Push.</div></div></div>
+    <div class="paso"><div class="paso-num">7</div><div class="paso-cont"><div class="paso-tit">Copia el link</div><div class="paso-desc">La dirección del repositorio en el navegador: <code>https://github.com/tu-usuario/control-de-gastos</code>. Es lo que vas a pegar en el AAI para la ES1.</div></div></div>
+    <div class="paso"><div class="paso-num">8</div><div class="paso-cont"><div class="paso-tit">Antes de irte, cierra tu sesión</div><div class="paso-desc">El computador del laboratorio lo usa otra sección. Archivo, Configuración, Control de versiones, GitHub: quita tu cuenta. Y cierra sesión en el navegador.</div></div></div>
+    <div class="callout callout-warn"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Plan B: si Android Studio no logra conectarse</strong><p>Crea el repositorio en github.com (New repository), elige "uploading an existing file" y arrastra la carpeta <code>app</code>, la carpeta <code>gradle</code> y los archivos sueltos de la raíz del proyecto. No subas las carpetas <code>build</code> ni <code>.gradle</code>.</p></div></div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Un repositorio por dupla</div>
+  <div class="concept-title anim">Sube tu <span>app</span></div>
+  <div class="concept-body anim">
+    <div class="actividad">
+      <div class="act-k">Actividad &middot; 20 min &middot; en dupla</div>
+      <div class="act-t">Dejen su proyecto en GitHub con todo lo de hoy.</div>
+      <div class="act-list">
+        <div class="act-li">Repositorio público con el nombre de su app</div>
+        <div class="act-li">Primer commit con el login y las tres pantallas nuevas</div>
+        <div class="act-li">El compañero agregado como colaborador, con la invitación aceptada</div>
+        <div class="act-li">Abran el link en el navegador y verifiquen que se ve la carpeta <code>app</code></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ CHECKPOINT ============ -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-cierre">Checkpoint</span>
+  <div class="concept-label anim">Sin nota: revisa que te llevas esto antes de irte</div>
+  <div class="concept-title anim">Checkpoint<br>de <span>salida</span></div>
+  <div class="concept-body anim">
+    <div class="chk">
+      <div class="chk-item"><div class="chk-num">1</div><div class="chk-cont"><div class="chk-tit">Lista, agregar y detalle de tu app</div><div class="chk-desc">Las tres se ven bien en la vista previa de Split, sin errores en rojo.</div></div></div>
+      <div class="chk-item"><div class="chk-num">2</div><div class="chk-cont"><div class="chk-tit">Puedes explicar una fila</div><div class="chk-desc">Qué contenedor la ordena, qué contenedor va dentro y por qué el botón queda a la derecha.</div></div></div>
+      <div class="chk-item"><div class="chk-num">3</div><div class="chk-cont"><div class="chk-tit">El link de tu repositorio</div><div class="chk-desc">Abre en el navegador, muestra tu proyecto y tu compañero aparece como colaborador.</div></div></div>
+      <div class="chk-item"><div class="chk-num">4</div><div class="chk-cont"><div class="chk-tit">Sesión cerrada</div><div class="chk-desc">Tu cuenta de GitHub quitada de Android Studio y del navegador del laboratorio.</div></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- CIERRE -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen de la sesión</div>
+  <div class="sep-title anim">Lo que te<br><span>llevas</span></div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item"><div class="resumen-cmd">LinearLayout</div><div class="resumen-desc">Ordena en columna o en fila según orientation. Sin restricciones</div></div>
+    <div class="resumen-item"><div class="resumen-cmd">0dp + layout_weight</div><div class="resumen-desc">Un componente se queda con el espacio que sobra y empuja a los demás</div></div>
+    <div class="resumen-item"><div class="resumen-cmd">Contenedores anidados</div><div class="resumen-desc">Una fila horizontal con una columna adentro: la base de toda lista</div></div>
+    <div class="resumen-item"><div class="resumen-cmd">ScrollView</div><div class="resumen-desc">Desliza lo que no cabe. Un solo hijo</div></div>
+    <div class="resumen-item"><div class="resumen-cmd">ImageButton, Spinner y Switch</div><div class="resumen-desc">Botón con ícono, lista desplegable con string-array e interruptor</div></div>
+    <div class="resumen-item"><div class="resumen-cmd">GitHub</div><div class="resumen-desc">Un repositorio por dupla. Commit y push cada vez que avances</div></div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Próxima sesión (viernes 13/11 &middot; 18:30 a 22:30)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,0.6); line-height:1.6;">
+      Pantallas de registro y de IA &middot;
+      Recursos: colores, textos, tema e ícono de tu app &middot;
+      Se muestra la ES1 &middot;
+      Comienza la unidad 2: tu primera línea de Kotlin
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
+
