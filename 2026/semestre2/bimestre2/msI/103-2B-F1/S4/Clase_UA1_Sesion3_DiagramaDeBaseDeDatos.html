@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA1 Sesión 3 - Diagrama de base de datos y ES1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0; color: var(--text);
+      scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white; justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 620px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px; border-bottom: 6px solid var(--red);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+    .slide-separator.sep-blue   { border-color: var(--blue); }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+    }
+    .sep-green .sep-num { color: #AFAFAF; }
+    .sep-orange .sep-num { color: #D98A8E; }
+    .sep-blue .sep-num { color: #E08B80; }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .cover-title span, .sep-title span, .concept-title span { color: var(--red) !important; }
+    .sep-desc { font-size: 22px; color: rgba(255,255,255,0.45); max-width: 620px; line-height: 1.65; }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 60px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark); margin-bottom: 30px;
+    }
+    .concept-body { max-width: 920px; }
+    .concept-body p { font-size: 21px; line-height: 1.7; color: #333; margin-bottom: 18px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 18px 22px; margin: 20px 0;
+      max-width: 920px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+    }
+    .callout-content p { font-size: 18px; line-height: 1.6; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+
+    /* INDICE */
+    .index-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 32px; max-width: 720px; }
+    .index-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 18px 20px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 32px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 8px;
+    }
+    .index-name { font-size: 16px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-pasos    { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-practica { background: #F7E3E3; color: #8E1A1F; border: 1px solid #E2CACA; }
+    .badge-cierre   { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* RESUMEN */
+    .resumen-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 28px; max-width: 880px; }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .resumen-cmd { font-size: 16px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* TWO COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 920px; margin-top: 20px; }
+    .col-card { background: #F8F8F8; border: 1px solid #E0E0E0; border-radius: 8px; padding: 20px 22px; }
+    .col-card.bad  { border-left: 4px solid var(--red); }
+    .col-card.good { border-left: 4px solid var(--green); }
+    .col-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 12px;
+    }
+    .col-card p { font-size: 17px; line-height: 1.6; color: #444; }
+    .col-card p + p { margin-top: 8px; }
+    .col-card ul { margin-left: 18px; }
+    .col-card li { font-size: 17px; line-height: 1.7; color: #444; margin-bottom: 4px; }
+
+    /* TABLA */
+    .tbl { width: 100%; max-width: 920px; border-collapse: collapse; margin-top: 18px; font-size: 17px; }
+    .tbl th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 10px 16px; text-align: left;
+    }
+    .tbl td { padding: 12px 16px; border-bottom: 1px solid #E0E0E0; vertical-align: middle; line-height: 1.45; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:nth-child(even) td { background: #F8F8F8; }
+
+    /* VOCABULARIO */
+    .voc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; max-width: 920px; margin-top: 22px; }
+    .voc-card {
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 18px 22px;
+    }
+    .voc-nombre {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 4px;
+    }
+    .voc-desc { font-size: 16px; color: #555; line-height: 1.55; }
+
+    /* DEFINICION */
+    .definicion {
+      background: #FFF6F6; border: 2px solid #F3C9CB; border-left: 6px solid var(--red);
+      border-radius: 8px; padding: 22px 26px; margin: 16px 0; max-width: 920px;
+    }
+    .def-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .def-txt { font-size: 23px; line-height: 1.55; color: var(--dark); font-weight: 500; }
+    .def-txt strong { font-weight: 800; }
+    .def-ej { font-size: 18px; line-height: 1.55; color: #666; margin-top: 12px; font-style: italic; }
+
+    /* DIAGRAMA */
+    .diagrama {
+      background: white; border: 1px solid #E0E0E0; border-radius: 8px;
+      padding: 16px; margin: 18px 0; max-width: 920px;
+    }
+    .diagrama-cap {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 8px; text-align: center;
+    }
+
+    /* ACTIVIDAD */
+    .actividad {
+      background: #1A1A1A; border-radius: 8px; padding: 22px 26px;
+      margin: 16px 0; max-width: 950px;
+    }
+    .act-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .act-t { font-size: 22px; line-height: 1.5; color: white; font-weight: 600; }
+    .act-d { font-size: 17px; line-height: 1.55; color: rgba(255,255,255,0.55); margin-top: 8px; }
+    .act-list { margin-top: 12px; }
+    .act-li {
+      font-size: 18px; color: rgba(255,255,255,0.85); line-height: 1.7;
+      padding-left: 22px; position: relative;
+    }
+    .act-li::before { content: "\2192"; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+    /* CHECKPOINT */
+    .chk { max-width: 920px; margin-top: 18px; }
+    .chk-item {
+      display: flex; gap: 18px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 18px 22px; margin-bottom: 14px;
+    }
+    .chk-num {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 900;
+      color: var(--red); line-height: 1; flex-shrink: 0; width: 40px;
+    }
+    .chk-cont { flex: 1; }
+    .chk-tit { font-size: 20px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .chk-desc { font-size: 17px; color: #555; line-height: 1.5; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: #EBEBEB; padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    #progress {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--red);
+      width: 0%; z-index: 9999; transition: width 0.35s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+    }
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+
+    /* AGREGADOS S2 */
+    .voc-grid.tres { grid-template-columns: repeat(3, 1fr); }
+    .pasos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; max-width: 920px; margin-top: 18px; }
+    .paso {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-radius: 8px; padding: 14px 18px;
+    }
+    .paso-n {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 30px; font-weight: 900;
+      color: var(--red); line-height: 1; flex-shrink: 0; width: 34px;
+    }
+    .paso-t { font-size: 17px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .paso-d { font-size: 15px; color: #555; line-height: 1.5; }
+    .tag {
+      display: inline-block; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 9px; border-radius: 12px;
+      background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; white-space: nowrap;
+    }
+    .tag.gris { background: #F2F2F2; color: #4A4A4A; border-color: #DADADA; }
+  
+    /* AGREGADOS S3 */
+    .datos { border-collapse: collapse; margin-top: 14px; font-size: 16px; max-width: 920px; }
+    .datos th { background: #1A1A1A; color: white; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 8px 14px; text-align: left; }
+    .datos td { font-family: 'JetBrains Mono', monospace; font-size: 14px; padding: 8px 14px; border: 1px solid #E0E0E0; }
+    .datos tr.marca td { background: #FFF6F6; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+<!-- PORTADA -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Modelamiento de Soluciones Informáticas &middot; TI3V25 &middot; Unidad 1 &middot; Sesión 3</div>
+  <div class="cover-title anim">Diagrama de<br><span>base de datos</span></div>
+  <p class="cover-desc anim">
+    Hoy dibujas el segundo diagrama de tu ES1: qué información guarda el sistema
+    de tu negocio y cómo se conecta. Al final te muestro la ES1.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>103-2B-F1</span></span>
+    <span class="cover-chip">Martes 10 de noviembre 2026</span>
+    <span class="cover-chip">120 minutos</span>
+    <span class="cover-chip">INACAP Puente Alto</span>
+  </div>
+</div>
+
+
+<!-- AGENDA -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">Antes de empezar</div>
+  <div class="sep-title anim">Lo que vemos<br><span>hoy</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">00</div>
+      <div class="index-name">Lo que traemos de la sesión 2</div>
+      <div class="index-type">Repaso + actividad &middot; 5 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Qué es un diagrama de base de datos</div>
+      <div class="index-type">Concepto + actividad &middot; 10 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Entidad, atributo, tipo de dato y clave primaria</div>
+      <div class="index-type">Concepto + demo + actividad &middot; 25 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Relación, cardinalidad y clave foránea</div>
+      <div class="index-type">Concepto + demo + actividades &middot; 35 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Taller en draw.io: tu propio diagrama</div>
+      <div class="index-type">Práctica guiada &middot; 25 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">La ES1: qué entregas y cómo armas el informe</div>
+      <div class="index-type">Presentación + actividad &middot; 20 min</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BLOQUE 00: REPASO ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 00</span>
+  <div class="sep-num anim">00 &middot; Repaso + actividad &middot; 5 min</div>
+  <div class="sep-title anim">Lo que traemos<br>de la <span>sesión 2</span></div>
+  <p class="sep-desc anim">
+    El diagrama de casos de uso dice qué se puede hacer con el sistema. Para que cada
+    caso de uso funcione, el sistema tiene que recordar datos. Hoy dibujamos esos datos.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Repaso &middot; sesión 2</span>
+  <div class="concept-label anim">Los casos de uso del taller de Pedro</div>
+  <div class="concept-title anim">Qué hace<br>el <span>sistema</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Actor</th><th>Caso de uso</th><th>Relación</th></tr></thead>
+      <tbody>
+        <tr><td>Recepcionista</td><td>Registrar vehículo</td><td></td></tr>
+        <tr><td>Recepcionista</td><td>Generar orden de trabajo</td><td><span class='tag gris'>extend</span> Avisar repuesto sin stock</td></tr>
+        <tr><td>Mecánico</td><td>Registrar horas trabajadas</td><td><span class='tag gris'>include</span> Calcular mano de obra</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La pregunta de hoy</strong>
+        <p>Cada uno de esos casos de uso necesita datos guardados. Para generar una orden de trabajo, el sistema tiene que saber de qué vehículo es, de qué cliente es ese vehículo y qué repuestos se usaron. Si apagas el computador, esos datos tienen que seguir ahí mañana.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Predecir antes de aprender</div>
+  <div class="concept-title anim">¿Qué tiene que<br><span>recordar</span>?</div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 3 min &middot; en parejas &middot; en un archivo de texto</div>
+      <div class="act-t">Para cada caso de uso del taller, escriban qué datos tiene que tener guardados el sistema para poder hacerlo.</div>
+      <div class="act-list">
+        <div class="act-li">Registrar vehículo: ¿qué datos del vehículo? ¿y de su dueño?</div>
+        <div class="act-li">Generar orden de trabajo: ¿qué datos tiene una orden?</div>
+        <div class="act-li">Avisar repuesto sin stock: ¿qué dato del repuesto mira el sistema para saber que no hay?</div>
+      </div>
+      <div class="act-d">Guarden la lista: en el bloque 01 la ordenamos y se convierte en el diagrama.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BLOQUE 01: QUE ES ============ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Bloque 01</span>
+  <div class="sep-num anim">01 &middot; Concepto + actividad &middot; 10 min</div>
+  <div class="sep-title anim">Diagrama de<br><span>base de datos</span></div>
+  <p class="sep-desc anim">
+    Antes de dibujarlo, cuatro palabras que vas a usar toda la clase:
+    base de datos, tabla, registro y columna.
+  </p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Dónde queda guardada la información</div>
+  <div class="concept-title anim">Base de datos<br>y <span>tabla</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Base de datos</div>
+      <div class="def-txt">El lugar donde el sistema <strong>guarda su información de forma permanente</strong>, organizada en tablas.</div>
+      <div class="def-ej">Lo que registra el recepcionista hoy sigue ahí mañana, aunque se apague el computador.</div>
+    </div>
+    <table class="datos">
+      <thead><tr><th>rut</th><th>nombre</th><th>telefono</th></tr></thead>
+      <tbody>
+        <tr class="marca"><td>12.345.678-5</td><td>Ana Soto</td><td>+56 9 1234 5678</td></tr>
+        <tr><td>9.876.543-K</td><td>Luis Rojas</td><td>+56 9 8765 4321</td></tr>
+      </tbody>
+    </table>
+    <div class="voc-grid tres" style="margin-top:16px;">
+      <div class="voc-card"><div class="voc-nombre">Tabla</div><div class="voc-desc">Guarda un solo tipo de cosa. Esta es la tabla de clientes.</div></div>
+      <div class="voc-card"><div class="voc-nombre">Registro</div><div class="voc-desc">Una fila de la tabla: un cliente concreto. La fila marcada es Ana Soto.</div></div>
+      <div class="voc-card"><div class="voc-nombre">Columna</div><div class="voc-desc">Un dato que tienen todos los registros: rut, nombre, teléfono.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">El diagrama de hoy</div>
+  <div class="concept-title anim">El plano<br>de las <span>tablas</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Diagrama de base de datos (modelo entidad-relación)</div>
+      <div class="def-txt">Un diagrama que muestra <strong>qué tablas va a tener la base de datos, qué datos guarda cada una y cómo se conectan</strong> entre sí.</div>
+      <div class="def-ej">El diagrama no muestra los registros (Ana, Luis): muestra la forma de la tabla, igual que un plano muestra las piezas de una casa y no los muebles.</div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Diagrama</th><th>Pregunta que responde</th></tr></thead>
+      <tbody>
+        <tr><td>Casos de uso (sesión 2)</td><td>¿Qué puede hacer cada usuario con el sistema?</td></tr>
+        <tr><td><strong>Base de datos (hoy)</strong></td><td>¿Qué información guarda el sistema y cómo se conecta?</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>¿Y el diagrama de clases que nombramos en la sesión 2?</strong>
+        <p>También habla de datos, pero de otra cosa: describe los objetos del programa mientras está funcionando. El de base de datos describe dónde queda guardada la información cuando el programa se cierra. El de clases lo ves en la UA2.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">De la lista a las tablas</div>
+  <div class="concept-title anim">¿Tabla, dato<br>o <span>nada</span>?</div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 4 min &middot; en parejas</div>
+      <div class="act-t">Estas palabras salen del correo de Pedro y de su diagrama de casos de uso. Clasifiquen cada una: ¿es una tabla, es un dato de otra tabla, o no se guarda?</div>
+      <div class="act-list">
+        <div class="act-li">vehículo &middot; patente &middot; dueño &middot; orden de trabajo</div>
+        <div class="act-li">repuesto &middot; horas trabajadas &middot; stock &middot; mano de pintura</div>
+      </div>
+      <div class="act-d">Pista: si tiene varios datos propios que hay que recordar, es una tabla. Si es un solo dato que describe a otra cosa, es un dato de esa tabla.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Resolución</span>
+  <div class="concept-label anim">De dónde salen las tablas</div>
+  <div class="concept-title anim">Las <span>respuestas</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Palabra</th><th>¿Qué es?</th><th>Por qué</th></tr></thead>
+      <tbody>
+        <tr><td>vehículo</td><td><strong style='color:var(--red)'>Tabla</strong></td><td>Tiene datos propios: patente, tipo, marca</td></tr>
+        <tr><td>dueño</td><td><strong style='color:var(--red)'>Tabla</strong> (CLIENTE)</td><td>Tiene datos propios: rut, nombre, teléfono</td></tr>
+        <tr><td>orden de trabajo</td><td><strong style='color:var(--red)'>Tabla</strong></td><td>Tiene fecha, horas, si está pagada</td></tr>
+        <tr><td>repuesto</td><td><strong style='color:var(--red)'>Tabla</strong></td><td>Tiene código, nombre, stock, precio</td></tr>
+        <tr><td>patente</td><td>Dato de VEHICULO</td><td>Describe a un vehículo, no tiene datos propios</td></tr>
+        <tr><td>horas trabajadas</td><td>Dato de ORDEN_TRABAJO</td><td>Describe una orden</td></tr>
+        <tr><td>stock</td><td>Dato de REPUESTO</td><td>Es el dato que mira el caso de uso 'Avisar repuesto sin stock'</td></tr>
+        <tr><td>mano de pintura</td><td>No se guarda</td><td>Es el comentario del correo que no es requerimiento</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============ BLOQUE 02: ENTIDAD Y ATRIBUTO ============ -->
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Concepto + demo + actividad &middot; 25 min</div>
+  <div class="sep-title anim">Entidad<br>y <span>atributo</span></div>
+  <p class="sep-desc anim">
+    La primera pieza del diagrama: una tabla, con sus datos, el tipo de cada dato
+    y el dato que la identifica.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Las cuatro piezas de una tabla en el diagrama</div>
+  <div class="concept-title anim">Las piezas<br>de una <span>entidad</span></div>
+  <div class="concept-body anim">
+    <div class="voc-grid">
+      <div class="voc-card"><div class="voc-nombre">Entidad</div><div class="voc-desc">Una tabla en el diagrama. Se dibuja como un rectángulo con el nombre arriba, en mayúsculas y en singular: CLIENTE, no Clientes.</div></div>
+      <div class="voc-card"><div class="voc-nombre">Atributo</div><div class="voc-desc">Una columna de esa tabla. Se dibuja como una fila dentro del rectángulo: <code>nombre</code>.</div></div>
+      <div class="voc-card"><div class="voc-nombre">Tipo de dato</div><div class="voc-desc">Qué clase de valor guarda el atributo: texto, número, fecha. Se escribe al lado: <code>nombre : Texto</code>.</div></div>
+      <div class="voc-card"><div class="voc-nombre">Clave primaria (PK)</div><div class="voc-desc">El atributo que identifica a cada registro sin confusión. Se marca con PK y subrayado.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Tipos de dato</span>
+  <div class="concept-label anim">Los cinco que vas a usar en este módulo</div>
+  <div class="concept-title anim">Qué clase<br>de <span>valor</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Tipo</th><th>Qué guarda</th><th>Ejemplo en el taller</th><th>Nombre en SQL</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Texto</strong></td><td>Letras, símbolos o números con los que no se calcula</td><td>patente: <code>GHTR-45</code></td><td>VARCHAR</td></tr>
+        <tr><td><strong>Entero</strong></td><td>Números sin decimales</td><td>stock: <code>12</code></td><td>INT</td></tr>
+        <tr><td><strong>Decimal</strong></td><td>Números con decimales</td><td>precio_usd: <code>18.50</code></td><td>DECIMAL</td></tr>
+        <tr><td><strong>Fecha</strong></td><td>Un día del calendario</td><td>fecha_ingreso: <code>2026-11-10</code></td><td>DATE</td></tr>
+        <tr><td><strong>Sí/No</strong></td><td>Solo dos valores posibles</td><td>pagada: <code>sí</code></td><td>BOOLEAN</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El error típico: rut y teléfono no son números</strong>
+        <p>Con un rut o un teléfono nunca haces una suma. Además el rut puede terminar en K y el teléfono lleva +56. Por eso son Texto. Regla: si no vas a calcular con el dato, es Texto.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 1 de 3</span>
+  <div class="concept-label anim">No partimos del diagrama terminado: lo armamos pieza por pieza</div>
+  <div class="concept-title anim">Primero,<br>una <span>entidad</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de base de datos &middot; paso 1 de 9</div>
+      <svg viewBox="0 0 900 440" style="width:100%; height:auto; display:block;">
+<rect x="30" y="40" width="190" height="80" fill="white" stroke="#E31E24" stroke-width="2"/>
+<rect x="30" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="125" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">CLIENTE</text>
+<text x="125" y="101" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12" font-style="italic" fill="#999">(sin atributos todavía)</text>
+</svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Entidad</div>
+        <div class="voc-desc"><strong>Función:</strong> representa una tabla de la base de datos: un tipo de cosa que el sistema tiene que recordar.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> CLIENTE, el dueño del vehículo en el correo de Pedro. Nombre en mayúsculas y en singular.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 2 de 3</span>
+  <div class="concept-label anim">Ahora le ponemos los datos que guarda</div>
+  <div class="concept-title anim">Se agregan<br>los <span>atributos</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de base de datos &middot; paso 2 de 9</div>
+      <svg viewBox="0 0 900 440" style="width:100%; height:auto; display:block;">
+<rect x="30" y="40" width="190" height="104" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="30" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="125" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">CLIENTE</text>
+<line x1="70" y1="72" x2="70" y2="144" stroke="#E0E0E0" stroke-width="1"/>
+<rect x="31" y="72" width="188" height="24" fill="#FFE4E5"/>
+<text x="78" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">rut : Texto</text>
+<rect x="31" y="96" width="188" height="24" fill="#FFE4E5"/>
+<line x1="30" y1="96" x2="220" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">nombre : Texto</text>
+<rect x="31" y="120" width="188" height="24" fill="#FFE4E5"/>
+<line x1="30" y1="120" x2="220" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">telefono : Texto</text>
+<rect x="30" y="40" width="190" height="104" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+</svg>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Atributo</div>
+        <div class="voc-desc"><strong>Función:</strong> una columna de la tabla: un dato que tienen todos los clientes. Va una fila por atributo.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> rut, nombre y telefono: lo que el recepcionista necesita para ubicar y llamar al dueño.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Tipo de dato</div>
+        <div class="voc-desc"><strong>Función:</strong> dice qué clase de valor guarda el atributo, para que la base de datos no acepte cualquier cosa.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> los tres son Texto: con ninguno se calcula, y el rut puede terminar en K.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 3 de 3</span>
+  <div class="concept-label anim">Falta saber cómo distinguir a un cliente de otro</div>
+  <div class="concept-title anim">Se marca la<br><span>clave primaria</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de base de datos &middot; paso 3 de 9</div>
+      <svg viewBox="0 0 900 440" style="width:100%; height:auto; display:block;">
+<rect x="30" y="40" width="190" height="104" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="30" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="125" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">CLIENTE</text>
+<line x1="70" y1="72" x2="70" y2="144" stroke="#E0E0E0" stroke-width="1"/>
+<rect x="31" y="72" width="188" height="24" fill="#FFE4E5"/>
+<text x="50" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="78" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">rut : Texto</text>
+<line x1="30" y1="96" x2="220" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">nombre : Texto</text>
+<line x1="30" y1="120" x2="220" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">telefono : Texto</text>
+<rect x="30" y="40" width="190" height="104" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+</svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Clave primaria (PK)</div>
+        <div class="voc-desc"><strong>Función:</strong> el atributo que identifica a cada registro sin confusión. Dos registros nunca tienen la misma.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> rut: dos clientes pueden llamarse Ana Soto, pero no pueden tener el mismo rut. Se marca PK y se subraya.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Reglas</span>
+  <div class="concept-label anim">Cómo elegir la clave primaria</div>
+  <div class="concept-title anim">Una buena<br><span>clave primaria</span></div>
+  <div class="concept-body anim">
+    <div class="pasos">
+      <div class="paso"><div class="paso-n">1</div><div><div class="paso-t">Es única</div><div class="paso-d">No se repite entre dos registros. El nombre no sirve: hay personas con el mismo nombre.</div></div></div>
+      <div class="paso"><div class="paso-n">2</div><div><div class="paso-t">Nunca está vacía</div><div class="paso-d">Todo registro la tiene desde que se crea. Un cliente sin rut no se puede guardar.</div></div></div>
+      <div class="paso"><div class="paso-n">3</div><div><div class="paso-t">No cambia</div><div class="paso-d">La patente de un vehículo sigue siendo la misma toda su vida, por eso sirve.</div></div></div>
+      <div class="paso"><div class="paso-n">4</div><div><div class="paso-t">Si no hay una natural, se inventa</div><div class="paso-d">Una orden de trabajo no tiene un dato único propio, así que se le da un número correlativo: id_orden : Entero.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Con la tabla de tipos a la vista</div>
+  <div class="concept-title anim">¿Qué tipo<br>de <span>dato</span> es?</div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; en parejas &middot; en un archivo de texto</div>
+      <div class="act-t">Escriban el tipo de dato de cada atributo y marquen cuál usarían como clave primaria en su tabla.</div>
+      <div class="act-list">
+        <div class="act-li">VEHICULO: patente &middot; tipo (auto, moto o camión) &middot; año</div>
+        <div class="act-li">ORDEN_TRABAJO: fecha_ingreso &middot; horas_trabajadas &middot; pagada</div>
+        <div class="act-li">REPUESTO: codigo &middot; stock &middot; precio_usd</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Resolución</span>
+  <div class="concept-label anim">Un tipo por atributo</div>
+  <div class="concept-title anim">Las <span>respuestas</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Atributo</th><th>Tipo</th><th>Por qué</th></tr></thead>
+      <tbody>
+        <tr><td>patente <span class='tag'>PK</span></td><td>Texto</td><td>Tiene letras y guion. Es única y no cambia</td></tr>
+        <tr><td>tipo</td><td>Texto</td><td>Guarda una palabra: auto, moto o camión</td></tr>
+        <tr><td>año</td><td>Entero</td><td>Se puede calcular con él: antigüedad del vehículo</td></tr>
+        <tr><td>fecha_ingreso</td><td>Fecha</td><td>Es un día del calendario</td></tr>
+        <tr><td>horas_trabajadas</td><td>Decimal</td><td>Puede ser 2,5 horas, y con ella se calcula la mano de obra</td></tr>
+        <tr><td>pagada</td><td>Sí/No</td><td>Solo tiene dos valores posibles</td></tr>
+        <tr><td>codigo <span class='tag'>PK</span></td><td>Texto</td><td>Los códigos de repuesto suelen llevar letras: <code>FLT-200</code></td></tr>
+        <tr><td>stock</td><td>Entero</td><td>No hay media unidad de un filtro</td></tr>
+        <tr><td>precio_usd</td><td>Decimal</td><td>Los dólares llevan centavos</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============ BLOQUE 03: RELACIONES ============ -->
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 03</span>
+  <div class="sep-num anim">03 &middot; Concepto + demo + actividades &middot; 35 min</div>
+  <div class="sep-title anim">Relación y<br><span>cardinalidad</span></div>
+  <p class="sep-desc anim">
+    Una tabla sola no sirve de mucho. Hay que decir qué cliente es dueño de qué vehículo,
+    y de cuántos.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Las tres piezas que conectan las tablas</div>
+  <div class="concept-title anim">Cómo se conectan<br>las <span>entidades</span></div>
+  <div class="concept-body anim">
+    <div class="voc-grid tres">
+      <div class="voc-card"><div class="voc-nombre">Relación</div><div class="voc-desc">Una línea entre dos entidades que dice que sus registros están vinculados. Un vehículo pertenece a un cliente.</div></div>
+      <div class="voc-card"><div class="voc-nombre">Cardinalidad</div><div class="voc-desc">Un 1 o una N en cada extremo de la línea: cuántos registros de un lado se conectan con cuántos del otro.</div></div>
+      <div class="voc-card"><div class="voc-nombre">Clave foránea (FK)</div><div class="voc-desc">Un atributo que guarda la clave primaria de otra tabla. Es lo que hace real la relación dentro de la base de datos.</div></div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Cardinalidad</th><th>Qué significa</th><th>Ejemplo en el taller</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1 a 1</strong></td><td>Un registro se conecta con uno solo del otro lado, en ambos sentidos</td><td>Un vehículo tiene un solo permiso de circulación vigente</td></tr>
+        <tr><td><strong>1 a N</strong></td><td>Un registro de un lado se conecta con muchos del otro</td><td>Un cliente puede tener varios vehículos</td></tr>
+        <tr><td><strong>N a N</strong></td><td>Muchos de un lado con muchos del otro</td><td>Una orden usa varios repuestos, y un repuesto aparece en varias órdenes</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Método</span>
+  <div class="concept-label anim">La cardinalidad no se adivina: se pregunta dos veces</div>
+  <div class="concept-title anim">Las dos<br><span>preguntas</span></div>
+  <div class="concept-body anim">
+    <div class="pasos">
+      <div class="paso"><div class="paso-n">1</div><div><div class="paso-t">Pregunta de ida</div><div class="paso-d">¿Un cliente puede tener más de un vehículo? Sí. Entonces junto a VEHICULO va una N.</div></div></div>
+      <div class="paso"><div class="paso-n">2</div><div><div class="paso-t">Pregunta de vuelta</div><div class="paso-d">¿Un vehículo puede tener más de un cliente dueño? No. Entonces junto a CLIENTE va un 1.</div></div></div>
+      <div class="paso"><div class="paso-n">3</div><div><div class="paso-t">Junta las respuestas</div><div class="paso-d">1 junto a CLIENTE y N junto a VEHICULO: la relación es 1 a N.</div></div></div>
+      <div class="paso"><div class="paso-n">4</div><div><div class="paso-t">Escríbela en los dos extremos</div><div class="paso-d">Una cardinalidad con un solo número está incompleta: siempre van dos.</div></div></div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Truco para no confundirte</strong>
+        <p>Cada número se escribe al lado de la entidad a la que responde. La pregunta "¿cuántos vehículos?" se contesta junto a VEHICULO.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 1 de 6</span>
+  <div class="concept-label anim">Seguimos el mismo diagrama: se agrega una segunda entidad</div>
+  <div class="concept-title anim">Una segunda entidad<br>y la <span>relación</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de base de datos &middot; paso 4 de 9</div>
+      <svg viewBox="0 0 900 440" style="width:100%; height:auto; display:block;">
+<rect x="30" y="40" width="190" height="104" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="30" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="125" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">CLIENTE</text>
+<line x1="70" y1="72" x2="70" y2="144" stroke="#E0E0E0" stroke-width="1"/>
+<text x="50" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="78" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">rut : Texto</text>
+<line x1="30" y1="96" x2="220" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">nombre : Texto</text>
+<line x1="30" y1="120" x2="220" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">telefono : Texto</text>
+<rect x="30" y="40" width="190" height="104" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="355" y="40" width="190" height="104" fill="white" stroke="#E31E24" stroke-width="2"/>
+<rect x="355" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="450" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">VEHICULO</text>
+<line x1="395" y1="72" x2="395" y2="144" stroke="#E0E0E0" stroke-width="1"/>
+<text x="375" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="403" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">patente : Texto</text>
+<line x1="355" y1="96" x2="545" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">tipo : Texto</text>
+<line x1="355" y1="120" x2="545" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">marca : Texto</text>
+<rect x="355" y="40" width="190" height="104" fill="none" stroke="#E31E24" stroke-width="2"/>
+<line x1="220" y1="88" x2="355" y2="88" stroke="#E31E24" stroke-width="2"/>
+</svg>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Entidad VEHICULO</div>
+        <div class="voc-desc"><strong>Función:</strong> la segunda tabla, armada igual que CLIENTE: nombre, atributos con tipo y PK.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> patente como PK, porque es única y no cambia.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Relación</div>
+        <div class="voc-desc"><strong>Función:</strong> la línea que dice que los registros de las dos tablas están vinculados. Va de borde a borde, sin flecha.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> la línea entre CLIENTE y VEHICULO: todo vehículo tiene un dueño.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 2 de 6</span>
+  <div class="concept-label anim">Ahora decimos cuántos con cuántos</div>
+  <div class="concept-title anim">Se agrega la<br><span>cardinalidad</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de base de datos &middot; paso 5 de 9</div>
+      <svg viewBox="0 0 900 440" style="width:100%; height:auto; display:block;">
+<rect x="30" y="40" width="190" height="104" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="30" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="125" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">CLIENTE</text>
+<line x1="70" y1="72" x2="70" y2="144" stroke="#E0E0E0" stroke-width="1"/>
+<text x="50" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="78" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">rut : Texto</text>
+<line x1="30" y1="96" x2="220" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">nombre : Texto</text>
+<line x1="30" y1="120" x2="220" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">telefono : Texto</text>
+<rect x="30" y="40" width="190" height="104" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="355" y="40" width="190" height="104" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="355" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="450" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">VEHICULO</text>
+<line x1="395" y1="72" x2="395" y2="144" stroke="#E0E0E0" stroke-width="1"/>
+<text x="375" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="403" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">patente : Texto</text>
+<line x1="355" y1="96" x2="545" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">tipo : Texto</text>
+<line x1="355" y1="120" x2="545" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">marca : Texto</text>
+<rect x="355" y="40" width="190" height="104" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<line x1="220" y1="88" x2="355" y2="88" stroke="#1A1A1A" stroke-width="2"/>
+<text x="228" y="80" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#E31E24">1</text>
+<text x="347" y="80" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#E31E24">N</text>
+</svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Cardinalidad</div>
+        <div class="voc-desc"><strong>Función:</strong> el 1 y la N en los extremos de la línea, sacados de las dos preguntas del método.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> 1 junto a CLIENTE y N junto a VEHICULO: un cliente tiene varios vehículos, un vehículo tiene un solo dueño.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 3 de 6</span>
+  <div class="concept-label anim">La línea se ve en el dibujo. En la base de datos hace falta un dato</div>
+  <div class="concept-title anim">Se agrega la<br><span>clave foránea</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de base de datos &middot; paso 6 de 9</div>
+      <svg viewBox="0 0 900 440" style="width:100%; height:auto; display:block;">
+<rect x="30" y="40" width="190" height="104" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="30" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="125" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">CLIENTE</text>
+<line x1="70" y1="72" x2="70" y2="144" stroke="#E0E0E0" stroke-width="1"/>
+<text x="50" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="78" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">rut : Texto</text>
+<line x1="30" y1="96" x2="220" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">nombre : Texto</text>
+<line x1="30" y1="120" x2="220" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">telefono : Texto</text>
+<rect x="30" y="40" width="190" height="104" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="355" y="40" width="190" height="128" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="355" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="450" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">VEHICULO</text>
+<line x1="395" y1="72" x2="395" y2="168" stroke="#E0E0E0" stroke-width="1"/>
+<text x="375" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="403" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">patente : Texto</text>
+<line x1="355" y1="96" x2="545" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">tipo : Texto</text>
+<line x1="355" y1="120" x2="545" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">marca : Texto</text>
+<rect x="356" y="144" width="188" height="24" fill="#FFE4E5"/>
+<line x1="355" y1="144" x2="545" y2="144" stroke="#EEEEEE" stroke-width="1"/>
+<text x="375" y="160" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#555555">FK</text>
+<text x="403" y="160" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">rut_cliente : Texto</text>
+<rect x="355" y="40" width="190" height="128" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<line x1="220" y1="88" x2="355" y2="88" stroke="#1A1A1A" stroke-width="2"/>
+<text x="228" y="80" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#1A1A1A">1</text>
+<text x="347" y="80" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#1A1A1A">N</text>
+</svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Clave foránea (FK)</div>
+        <div class="voc-desc"><strong>Función:</strong> un atributo que guarda la PK de la otra tabla. Así cada vehículo sabe quién es su dueño.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> rut_cliente en VEHICULO: guarda el rut de su dueño. El vehículo GHTR-45 guarda 12.345.678-5, el rut de Ana.</div>
+      </div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La regla de la FK</strong>
+        <p>La clave foránea va siempre en la tabla del lado N. Si la pusieras en CLIENTE tendrías que guardar varias patentes en una sola celda, y eso no se puede.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 4 de 6</span>
+  <div class="concept-label anim">La misma regla, una vez más</div>
+  <div class="concept-title anim">Se agrega la<br><span>orden de trabajo</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de base de datos &middot; paso 7 de 9</div>
+      <svg viewBox="0 0 900 440" style="width:100%; height:auto; display:block;">
+<rect x="30" y="40" width="190" height="104" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="30" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="125" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">CLIENTE</text>
+<line x1="70" y1="72" x2="70" y2="144" stroke="#E0E0E0" stroke-width="1"/>
+<text x="50" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="78" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">rut : Texto</text>
+<line x1="30" y1="96" x2="220" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">nombre : Texto</text>
+<line x1="30" y1="120" x2="220" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">telefono : Texto</text>
+<rect x="30" y="40" width="190" height="104" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="355" y="40" width="190" height="128" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="355" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="450" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">VEHICULO</text>
+<line x1="395" y1="72" x2="395" y2="168" stroke="#E0E0E0" stroke-width="1"/>
+<text x="375" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="403" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">patente : Texto</text>
+<line x1="355" y1="96" x2="545" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">tipo : Texto</text>
+<line x1="355" y1="120" x2="545" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">marca : Texto</text>
+<line x1="355" y1="144" x2="545" y2="144" stroke="#EEEEEE" stroke-width="1"/>
+<text x="375" y="160" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#555555">FK</text>
+<text x="403" y="160" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">rut_cliente : Texto</text>
+<rect x="355" y="40" width="190" height="128" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<line x1="220" y1="88" x2="355" y2="88" stroke="#1A1A1A" stroke-width="2"/>
+<text x="228" y="80" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#1A1A1A">1</text>
+<text x="347" y="80" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#1A1A1A">N</text>
+<rect x="660" y="40" width="220" height="152" fill="white" stroke="#E31E24" stroke-width="2"/>
+<rect x="660" y="40" width="220" height="32" fill="#1A1A1A"/>
+<text x="770" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">ORDEN_TRABAJO</text>
+<line x1="700" y1="72" x2="700" y2="192" stroke="#E0E0E0" stroke-width="1"/>
+<text x="680" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="708" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">id_orden : Entero</text>
+<line x1="660" y1="96" x2="880" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="708" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">fecha_ingreso : Fecha</text>
+<line x1="660" y1="120" x2="880" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="708" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">horas_trabajadas : Decimal</text>
+<line x1="660" y1="144" x2="880" y2="144" stroke="#EEEEEE" stroke-width="1"/>
+<text x="708" y="160" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">pagada : Sí/No</text>
+<rect x="661" y="168" width="218" height="24" fill="#FFE4E5"/>
+<line x1="660" y1="168" x2="880" y2="168" stroke="#EEEEEE" stroke-width="1"/>
+<text x="680" y="184" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#555555">FK</text>
+<text x="708" y="184" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">patente : Texto</text>
+<rect x="660" y="40" width="220" height="152" fill="none" stroke="#E31E24" stroke-width="2"/>
+<line x1="545" y1="88" x2="660" y2="88" stroke="#E31E24" stroke-width="2"/>
+<text x="553" y="80" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#E31E24">1</text>
+<text x="652" y="80" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#E31E24">N</text>
+</svg>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Entidad ORDEN_TRABAJO</div>
+        <div class="voc-desc"><strong>Función:</strong> la tabla del caso de uso "Generar orden de trabajo". No tiene un dato único propio, así que su PK es un número correlativo.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> id_orden : Entero. Guarda la fecha, las horas trabajadas y si está pagada.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Relación 1 a N con su FK</div>
+        <div class="voc-desc"><strong>Función:</strong> ¿Un vehículo puede tener varias órdenes? Sí, una por cada visita. ¿Una orden es de varios vehículos? No.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> 1 junto a VEHICULO, N junto a ORDEN_TRABAJO, y la FK patente va en ORDEN_TRABAJO, el lado N.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 5 de 6</span>
+  <div class="concept-label anim">Ahora los repuestos de cada orden</div>
+  <div class="concept-title anim">Aparece una<br>relación <span>N a N</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de base de datos &middot; paso 8 de 9</div>
+      <svg viewBox="0 0 900 440" style="width:100%; height:auto; display:block;">
+<rect x="30" y="40" width="190" height="104" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="30" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="125" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">CLIENTE</text>
+<line x1="70" y1="72" x2="70" y2="144" stroke="#E0E0E0" stroke-width="1"/>
+<text x="50" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="78" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">rut : Texto</text>
+<line x1="30" y1="96" x2="220" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">nombre : Texto</text>
+<line x1="30" y1="120" x2="220" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">telefono : Texto</text>
+<rect x="30" y="40" width="190" height="104" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="355" y="40" width="190" height="128" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="355" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="450" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">VEHICULO</text>
+<line x1="395" y1="72" x2="395" y2="168" stroke="#E0E0E0" stroke-width="1"/>
+<text x="375" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="403" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">patente : Texto</text>
+<line x1="355" y1="96" x2="545" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">tipo : Texto</text>
+<line x1="355" y1="120" x2="545" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">marca : Texto</text>
+<line x1="355" y1="144" x2="545" y2="144" stroke="#EEEEEE" stroke-width="1"/>
+<text x="375" y="160" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#555555">FK</text>
+<text x="403" y="160" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">rut_cliente : Texto</text>
+<rect x="355" y="40" width="190" height="128" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<line x1="220" y1="88" x2="355" y2="88" stroke="#1A1A1A" stroke-width="2"/>
+<text x="228" y="80" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#1A1A1A">1</text>
+<text x="347" y="80" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#1A1A1A">N</text>
+<rect x="660" y="40" width="220" height="152" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="660" y="40" width="220" height="32" fill="#1A1A1A"/>
+<text x="770" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">ORDEN_TRABAJO</text>
+<line x1="700" y1="72" x2="700" y2="192" stroke="#E0E0E0" stroke-width="1"/>
+<text x="680" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="708" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">id_orden : Entero</text>
+<line x1="660" y1="96" x2="880" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="708" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">fecha_ingreso : Fecha</text>
+<line x1="660" y1="120" x2="880" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="708" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">horas_trabajadas : Decimal</text>
+<line x1="660" y1="144" x2="880" y2="144" stroke="#EEEEEE" stroke-width="1"/>
+<text x="708" y="160" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">pagada : Sí/No</text>
+<line x1="660" y1="168" x2="880" y2="168" stroke="#EEEEEE" stroke-width="1"/>
+<text x="680" y="184" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#555555">FK</text>
+<text x="708" y="184" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">patente : Texto</text>
+<rect x="660" y="40" width="220" height="152" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<line x1="545" y1="88" x2="660" y2="88" stroke="#1A1A1A" stroke-width="2"/>
+<text x="553" y="80" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#1A1A1A">1</text>
+<text x="652" y="80" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#1A1A1A">N</text>
+<rect x="355" y="290" width="190" height="128" fill="white" stroke="#E31E24" stroke-width="2"/>
+<rect x="355" y="290" width="190" height="32" fill="#1A1A1A"/>
+<text x="450" y="311" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">REPUESTO</text>
+<line x1="395" y1="322" x2="395" y2="418" stroke="#E0E0E0" stroke-width="1"/>
+<text x="375" y="338" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="403" y="338" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">codigo : Texto</text>
+<line x1="355" y1="346" x2="545" y2="346" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="362" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">nombre : Texto</text>
+<line x1="355" y1="370" x2="545" y2="370" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="386" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">stock : Entero</text>
+<line x1="355" y1="394" x2="545" y2="394" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="410" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">precio_usd : Decimal</text>
+<rect x="355" y="290" width="190" height="128" fill="none" stroke="#E31E24" stroke-width="2"/>
+<line x1="690" y1="192" x2="520" y2="290" stroke="#E31E24" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="698" y="214" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#E31E24">N</text>
+<text x="512" y="284" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#E31E24">N</text>
+</svg>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Entidad REPUESTO</div>
+        <div class="voc-desc"><strong>Función:</strong> la tabla que necesita "Avisar repuesto sin stock": el atributo stock es el que mira el sistema.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> codigo como PK, stock : Entero, precio_usd : Decimal para el dólar del día.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Relación N a N</div>
+        <div class="voc-desc"><strong>Función:</strong> ¿Una orden usa varios repuestos? Sí. ¿Un repuesto aparece en varias órdenes? Sí. N en los dos extremos.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> la línea punteada en rojo: todavía no sabemos en qué tabla va la FK.</div>
+      </div>
+    </div>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>El problema</strong>
+        <p>La regla dice que la FK va en el lado N, pero aquí los dos lados son N. Si la pones en ORDEN_TRABAJO, una orden solo podría tener un repuesto. Si la pones en REPUESTO, un repuesto solo podría estar en una orden.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 6 de 6</span>
+  <div class="concept-label anim">Una N a N se resuelve con una tabla al medio</div>
+  <div class="concept-title anim">Diagrama de base de datos<br><span>completo</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de base de datos &middot; Sistema del taller (completo)</div>
+      <svg viewBox="0 0 900 440" style="width:100%; height:auto; display:block;">
+<rect x="30" y="40" width="190" height="104" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="30" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="125" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">CLIENTE</text>
+<line x1="70" y1="72" x2="70" y2="144" stroke="#E0E0E0" stroke-width="1"/>
+<text x="50" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="78" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">rut : Texto</text>
+<line x1="30" y1="96" x2="220" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">nombre : Texto</text>
+<line x1="30" y1="120" x2="220" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="78" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">telefono : Texto</text>
+<rect x="30" y="40" width="190" height="104" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="355" y="40" width="190" height="128" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="355" y="40" width="190" height="32" fill="#1A1A1A"/>
+<text x="450" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">VEHICULO</text>
+<line x1="395" y1="72" x2="395" y2="168" stroke="#E0E0E0" stroke-width="1"/>
+<text x="375" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="403" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">patente : Texto</text>
+<line x1="355" y1="96" x2="545" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">tipo : Texto</text>
+<line x1="355" y1="120" x2="545" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">marca : Texto</text>
+<line x1="355" y1="144" x2="545" y2="144" stroke="#EEEEEE" stroke-width="1"/>
+<text x="375" y="160" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#555555">FK</text>
+<text x="403" y="160" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">rut_cliente : Texto</text>
+<rect x="355" y="40" width="190" height="128" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<line x1="220" y1="88" x2="355" y2="88" stroke="#1A1A1A" stroke-width="2"/>
+<text x="228" y="80" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#1A1A1A">1</text>
+<text x="347" y="80" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#1A1A1A">N</text>
+<rect x="660" y="40" width="220" height="152" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="660" y="40" width="220" height="32" fill="#1A1A1A"/>
+<text x="770" y="61" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">ORDEN_TRABAJO</text>
+<line x1="700" y1="72" x2="700" y2="192" stroke="#E0E0E0" stroke-width="1"/>
+<text x="680" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="708" y="88" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">id_orden : Entero</text>
+<line x1="660" y1="96" x2="880" y2="96" stroke="#EEEEEE" stroke-width="1"/>
+<text x="708" y="112" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">fecha_ingreso : Fecha</text>
+<line x1="660" y1="120" x2="880" y2="120" stroke="#EEEEEE" stroke-width="1"/>
+<text x="708" y="136" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">horas_trabajadas : Decimal</text>
+<line x1="660" y1="144" x2="880" y2="144" stroke="#EEEEEE" stroke-width="1"/>
+<text x="708" y="160" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">pagada : Sí/No</text>
+<line x1="660" y1="168" x2="880" y2="168" stroke="#EEEEEE" stroke-width="1"/>
+<text x="680" y="184" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#555555">FK</text>
+<text x="708" y="184" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">patente : Texto</text>
+<rect x="660" y="40" width="220" height="152" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<line x1="545" y1="88" x2="660" y2="88" stroke="#1A1A1A" stroke-width="2"/>
+<text x="553" y="80" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#1A1A1A">1</text>
+<text x="652" y="80" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#1A1A1A">N</text>
+<rect x="355" y="290" width="190" height="128" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="355" y="290" width="190" height="32" fill="#1A1A1A"/>
+<text x="450" y="311" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">REPUESTO</text>
+<line x1="395" y1="322" x2="395" y2="418" stroke="#E0E0E0" stroke-width="1"/>
+<text x="375" y="338" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="403" y="338" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">codigo : Texto</text>
+<line x1="355" y1="346" x2="545" y2="346" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="362" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">nombre : Texto</text>
+<line x1="355" y1="370" x2="545" y2="370" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="386" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">stock : Entero</text>
+<line x1="355" y1="394" x2="545" y2="394" stroke="#EEEEEE" stroke-width="1"/>
+<text x="403" y="410" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">precio_usd : Decimal</text>
+<rect x="355" y="290" width="190" height="128" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="660" y="290" width="220" height="128" fill="white" stroke="#E31E24" stroke-width="2"/>
+<rect x="660" y="290" width="220" height="32" fill="#1A1A1A"/>
+<text x="770" y="311" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">DETALLE_REPUESTO</text>
+<line x1="700" y1="322" x2="700" y2="418" stroke="#E0E0E0" stroke-width="1"/>
+<text x="680" y="338" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#E31E24">PK</text>
+<text x="708" y="338" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A" text-decoration="underline">id_detalle : Entero</text>
+<rect x="661" y="346" width="218" height="24" fill="#FFE4E5"/>
+<line x1="660" y1="346" x2="880" y2="346" stroke="#EEEEEE" stroke-width="1"/>
+<text x="680" y="362" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#555555">FK</text>
+<text x="708" y="362" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">id_orden : Entero</text>
+<rect x="661" y="370" width="218" height="24" fill="#FFE4E5"/>
+<line x1="660" y1="370" x2="880" y2="370" stroke="#EEEEEE" stroke-width="1"/>
+<text x="680" y="386" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#555555">FK</text>
+<text x="708" y="386" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">codigo_repuesto : Texto</text>
+<line x1="660" y1="394" x2="880" y2="394" stroke="#EEEEEE" stroke-width="1"/>
+<text x="708" y="410" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">cantidad : Entero</text>
+<rect x="660" y="290" width="220" height="128" fill="none" stroke="#E31E24" stroke-width="2"/>
+<line x1="770" y1="192" x2="770" y2="290" stroke="#E31E24" stroke-width="2"/>
+<text x="778" y="212" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#E31E24">1</text>
+<text x="778" y="284" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#E31E24">N</text>
+<line x1="545" y1="354" x2="660" y2="354" stroke="#E31E24" stroke-width="2"/>
+<text x="553" y="346" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#E31E24">1</text>
+<text x="652" y="346" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="800" fill="#E31E24">N</text>
+</svg>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Tabla intermedia</div>
+        <div class="voc-desc"><strong>Función:</strong> una entidad nueva que reemplaza la relación N a N por dos relaciones 1 a N. Guarda una FK hacia cada lado.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> DETALLE_REPUESTO: cada registro dice "en la orden 1520 se usaron 2 unidades del repuesto FLT-200".</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Dos relaciones 1 a N</div>
+        <div class="voc-desc"><strong>Función:</strong> una orden tiene muchos detalles, y un repuesto aparece en muchos detalles. La regla de la FK vuelve a funcionar.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo en este diagrama:</strong> las FK id_orden y codigo_repuesto van en DETALLE_REPUESTO, que está en el lado N de las dos.</div>
+      </div>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La tabla intermedia gana un dato propio</strong>
+        <p>cantidad no podía ir ni en la orden ni en el repuesto: es cuántas unidades de ese repuesto se usaron en esa orden. Cuando un dato depende de los dos lados a la vez, es la señal de que existe una tabla intermedia.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Las dos preguntas, ahora tú</div>
+  <div class="concept-title anim">¿1 a 1, 1 a N<br>o <span>N a N</span>?</div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; en parejas &middot; en un archivo de texto</div>
+      <div class="act-t">Pedro quiere agregar estas tablas. Para cada par, hagan las dos preguntas, escriban la cardinalidad y digan en qué tabla va la FK.</div>
+      <div class="act-list">
+        <div class="act-li">MECANICO y ORDEN_TRABAJO: cada orden la hace un solo mecánico</div>
+        <div class="act-li">CLIENTE y CITA: un cliente puede agendar varias citas</div>
+        <div class="act-li">MECANICO y ESPECIALIDAD: un mecánico puede tener varias especialidades (frenos, motor) y cada especialidad la tienen varios mecánicos</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Resolución</span>
+  <div class="concept-label anim">La FK siempre en el lado N</div>
+  <div class="concept-title anim">Las <span>respuestas</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Par</th><th>Cardinalidad</th><th>Dónde va la FK</th></tr></thead>
+      <tbody>
+        <tr><td>MECANICO y ORDEN_TRABAJO</td><td>1 a N</td><td>id_mecanico en ORDEN_TRABAJO</td></tr>
+        <tr><td>CLIENTE y CITA</td><td>1 a N</td><td>rut_cliente en CITA</td></tr>
+        <tr><td>MECANICO y ESPECIALIDAD</td><td>N a N</td><td>En una tabla intermedia MECANICO_ESPECIALIDAD, con una FK hacia cada lado</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Un compañero dibujó esta entidad. Tiene cuatro errores</div>
+  <div class="concept-title anim">Encuentra<br>los <span>errores</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Entidad con errores &middot; no copiar</div>
+      <svg viewBox="0 0 900 200" style="width:100%; height:auto; display:block;">
+<rect x="260" y="30" width="380" height="128" fill="white" stroke="#1A1A1A" stroke-width="2"/>
+<rect x="260" y="30" width="380" height="32" fill="#1A1A1A"/>
+<text x="450" y="51" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="white">ORDEN_TRABAJO</text>
+<line x1="300" y1="62" x2="300" y2="158" stroke="#E0E0E0" stroke-width="1"/>
+<text x="308" y="78" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">fecha</text>
+<line x1="260" y1="86" x2="640" y2="86" stroke="#EEEEEE" stroke-width="1"/>
+<text x="308" y="102" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">horas_trabajadas : Decimal</text>
+<line x1="260" y1="110" x2="640" y2="110" stroke="#EEEEEE" stroke-width="1"/>
+<text x="308" y="126" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">telefono_cliente : Entero</text>
+<line x1="260" y1="134" x2="640" y2="134" stroke="#EEEEEE" stroke-width="1"/>
+<text x="308" y="150" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1A1A1A">repuestos : Texto</text>
+<rect x="260" y="30" width="380" height="128" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+<text x="450" y="185" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-style="italic" fill="#666">Un registro de ejemplo: repuestos = "filtro, aceite, bujía"</text>
+</svg>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; en parejas</div>
+      <div class="act-t">Usen las reglas de hoy. Para cada error, digan qué regla rompe y cómo lo corregirían.</div>
+      <div class="act-list">
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Resolución</span>
+  <div class="concept-label anim">Los cuatro errores, uno por regla</div>
+  <div class="concept-title anim">Error y<br><span>corrección</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Error</th><th>Por qué está mal</th><th>Corrección</th></tr></thead>
+      <tbody>
+        <tr><td>No tiene clave primaria</td><td>No hay forma de distinguir una orden de otra</td><td>Agregar <code>id_orden : Entero</code> como PK</td></tr>
+        <tr><td><code>fecha</code> sin tipo</td><td>Todo atributo lleva su tipo de dato</td><td><code>fecha_ingreso : Fecha</code></td></tr>
+        <tr><td><code>telefono_cliente : Entero</code></td><td>Es un dato del cliente, no de la orden, y además un teléfono es Texto</td><td>Va en CLIENTE como Texto. La orden llega al cliente por la FK patente</td></tr>
+        <tr><td><code>repuestos : Texto</code> con varios valores</td><td>Una celda guarda un solo valor. Una lista escondida es una N a N sin resolver</td><td>Tabla intermedia DETALLE_REPUESTO</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Guarda esta tabla</strong>
+        <p>Antes de entregar tu diagrama en la ES1, revisa cada entidad con estos cuatro errores.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BLOQUE 04: TALLER ============ -->
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-practica">Bloque 04</span>
+  <div class="sep-num anim">04 &middot; Práctica guiada &middot; 25 min</div>
+  <div class="sep-title anim">Tu propio<br><span>diagrama</span></div>
+  <p class="sep-desc anim">
+    En el computador, en draw.io, con tu diagrama de casos de uso de la sesión 2 al lado.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-pasos">Paso a paso &middot; draw.io</span>
+  <div class="concept-label anim">8 min &middot; el profe lo hace en vivo y tú lo sigues en tu computador</div>
+  <div class="concept-title anim">Las piezas<br>en <span>draw.io</span></div>
+  <div class="concept-body anim">
+    <div class="pasos">
+      <div class="paso"><div class="paso-n">1</div><div><div class="paso-t">Abre tu .drawio de la sesión 2</div><div class="paso-d">Abajo, junto a la pestaña "Página-1", haz clic en "+" para agregar una página. Doble clic en la pestaña nueva y nómbrala "Base de datos".</div></div></div>
+      <div class="paso"><div class="paso-n">2</div><div><div class="paso-t">Activa las formas de base de datos</div><div class="paso-d">Abajo del panel izquierdo, "+ Más formas", marca "Entidad relación" y aplica.</div></div></div>
+      <div class="paso"><div class="paso-n">3</div><div><div class="paso-t">Arrastra una tabla</div><div class="paso-d">En la sección "Entidad relación", arrastra la tabla que trae una columna para PK. Doble clic en el encabezado: nombre en mayúsculas y en singular.</div></div></div>
+      <div class="paso"><div class="paso-n">4</div><div><div class="paso-t">Escribe los atributos</div><div class="paso-d">Doble clic en cada fila: <code>nombre : Tipo</code>. Para agregar una fila, selecciona una y duplícala (Ctrl+D, o Cmd+D en Mac). Si queda afuera, arrástrala dentro de la tabla.</div></div></div>
+      <div class="paso"><div class="paso-n">5</div><div><div class="paso-t">Marca PK y FK</div><div class="paso-d">En la columna izquierda de cada fila, escribe PK en la clave primaria y FK en cada clave foránea.</div></div></div>
+      <div class="paso"><div class="paso-n">6</div><div><div class="paso-t">Une dos tablas</div><div class="paso-d">Pasa el mouse sobre una tabla y arrastra la flecha azul hasta la otra. En el panel derecho, deja las dos puntas de la línea en "ninguna".</div></div></div>
+      <div class="paso"><div class="paso-n">7</div><div><div class="paso-t">Escribe la cardinalidad</div><div class="paso-d">Doble clic sobre la línea, cerca de cada extremo, y escribe 1 o N. Siempre en los dos extremos.</div></div></div>
+      <div class="paso"><div class="paso-n">8</div><div><div class="paso-t">Guarda y exporta</div><div class="paso-d">Archivo, Guardar (el .drawio). Luego Archivo, Exportar como, PNG, solo la página "Base de datos": es la imagen que va al informe.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Taller</span>
+  <div class="concept-label anim">Solo o en dupla, sobre tu propio negocio</div>
+  <div class="concept-title anim">De tus casos de uso<br>a tus <span>tablas</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 17 min &middot; solo o en dupla &middot; en draw.io</div>
+      <div class="act-t">Dibuja el diagrama de base de datos de tu propio negocio.</div>
+      <div class="act-list">
+        <div class="act-li">Para cada caso de uso de tu diagrama, pregúntate qué datos tiene que recordar el sistema. De ahí salen tus entidades</div>
+        <div class="act-li">Al menos tres entidades, cada una con al menos tres atributos con su tipo de dato</div>
+        <div class="act-li">Una clave primaria en cada entidad, siguiendo las cuatro reglas</div>
+        <div class="act-li">Al menos dos relaciones, con la cardinalidad en los dos extremos (usa las dos preguntas)</div>
+        <div class="act-li">La FK en la tabla del lado N. Si te aparece una N a N, resuélvela con una tabla intermedia</div>
+        <div class="act-li">Revisa cada entidad con la tabla de los cuatro errores antes de exportar</div>
+      </div>
+      <div class="act-d">Si no lo terminas en la sala, lo terminas en casa: es el segundo diagrama de tu ES1.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BLOQUE 05: ES1 ============ -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Bloque 05</span>
+  <div class="sep-num anim">05 &middot; Presentación + actividad &middot; 20 min</div>
+  <div class="sep-title anim">La primera<br><span>evaluación</span></div>
+  <p class="sep-desc anim">
+    Ya tienes todo lo que pide la ES1. Ahora falta reunirlo en un informe.
+  </p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">ES1</span>
+  <div class="concept-label anim">Evaluación Sumativa N°1 &middot; 20 % del módulo</div>
+  <div class="concept-title anim">Lo que<br><span>entregas</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th></th><th></th></tr></thead>
+      <tbody>
+        <tr><td><strong>Qué</strong></td><td>Un informe en PDF con tus requerimientos, tu análisis de factibilidad y tus dos diagramas</td></tr>
+        <tr><td><strong>Sobre qué</strong></td><td>Tu negocio, el mismo que reservaste en el portal</td></tr>
+        <tr><td><strong>Quiénes</strong></td><td>Solo o en dupla, igual que en la reserva. En dupla, un solo informe</td></tr>
+        <tr><td><strong>Se entrega</strong></td><td>Martes 17 de noviembre, 18:30, al comenzar la clase, en la tarea "Evaluación Sumativa N°1" del AAI</td></tr>
+        <tr><td><strong>Enunciado y pauta</strong></td><td>En el AAI desde hoy. Léela completa antes de empezar</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-warn anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Un cambio respecto de lo que dije en la sesión 1</strong>
+        <p>En la primera clase dije que la ES1 tenía tres diagramas. Tiene dos: casos de uso y base de datos. El diagrama de flujo no forma parte de esta evaluación.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Estructura</span>
+  <div class="concept-label anim">Cinco secciones, en este orden, después de la portada</div>
+  <div class="concept-title anim">Cómo se arma<br>el <span>informe</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Sección</th><th>Qué va</th><th>De dónde sale</th></tr></thead>
+      <tbody>
+        <tr><td>1. Contexto</td><td>Qué negocio es y qué problema resuelve el sistema</td><td>Tu correo del cliente</td></tr>
+        <tr><td>2. Requerimientos</td><td>Funcionales, no funcionales, el comentario descartado y la contradicción con la pregunta que le harías al cliente</td><td><span class='tag'>Sesión 1</span></td></tr>
+        <tr><td>3. Factibilidad</td><td>Técnica, operativa y económica de tu sistema: qué entra en la primera versión y qué queda para más adelante</td><td><span class='tag'>Sesión 1</span></td></tr>
+        <tr><td>4. Casos de uso</td><td>El diagrama como imagen y por qué lo dibujaste así</td><td><span class='tag'>Sesión 2</span></td></tr>
+        <tr><td>5. Base de datos</td><td>El diagrama como imagen y por qué lo dibujaste así</td><td><span class='tag'>Hoy</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Lo que se evalúa</span>
+  <div class="concept-label anim">La diferencia entre un informe de 4 y uno de 7</div>
+  <div class="concept-title anim">Describir<br>vs <span>justificar</span></div>
+  <div class="concept-body anim">
+    <div class="two-col">
+      <div class="col-card bad">
+        <div class="col-card-title">Describe</div>
+        <p>"El diagrama tiene cinco entidades: CLIENTE, VEHICULO, ORDEN_TRABAJO, REPUESTO y DETALLE_REPUESTO."</p>
+        <p>Dice qué hay. Eso ya se ve en la imagen.</p>
+      </div>
+      <div class="col-card good">
+        <div class="col-card-title">Justifica</div>
+        <p>"VEHICULO usa la patente como clave primaria porque es única y no cambia. ORDEN_TRABAJO no tiene un dato así, por eso usa un número correlativo."</p>
+        <p>Dice por qué se decidió así y no de otra forma.</p>
+      </div>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; en parejas</div>
+      <div class="act-t">Esta frase describe. Reescríbanla para que justifique.</div>
+      <div class="act-list">
+        <div class="act-li">"Entre ORDEN_TRABAJO y REPUESTO hay una tabla DETALLE_REPUESTO."</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKPOINT -->
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-cierre">Checkpoint</span>
+  <div class="concept-label anim">Sin nota: revisa que te llevas esto antes de irte</div>
+  <div class="concept-title anim">Checkpoint<br>de <span>salida</span></div>
+  <div class="concept-body anim">
+    <div class="chk">
+      <div class="chk-item">
+        <div class="chk-num">1</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Tu diagrama de base de datos guardado en .drawio</div>
+          <div class="chk-desc">Al menos tres entidades con PK y tipos de dato, y dos relaciones con cardinalidad en los dos extremos. Si no lo terminaste, lo terminas en casa.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">2</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Puedes justificar cada FK en una frase</div>
+          <div class="chk-desc">"rut_cliente va en VEHICULO porque VEHICULO es el lado N de la relación."</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">3</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Sabes qué entregas, cuándo y dónde</div>
+          <div class="chk-desc">El informe de la ES1 en PDF, el martes 17 de noviembre a las 18:30, en el AAI.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- CIERRE -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen de la sesión</div>
+  <div class="sep-title anim">Lo que te<br><span>llevas</span> hoy</div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">Diagrama de base de datos</div>
+      <div class="resumen-desc">Qué tablas tiene la base de datos, qué guarda cada una y cómo se conectan</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Entidad, atributo y tipo</div>
+      <div class="resumen-desc">Tabla en mayúsculas y singular, una fila por atributo, cada uno con su tipo. Si no calculas con el dato, es Texto</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Clave primaria</div>
+      <div class="resumen-desc">Única, nunca vacía y que no cambia. Si no hay una natural, un número correlativo</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Cardinalidad</div>
+      <div class="resumen-desc">Dos preguntas, un número en cada extremo: 1 a 1, 1 a N o N a N</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Clave foránea</div>
+      <div class="resumen-desc">Va en el lado N. Una N a N se resuelve con una tabla intermedia</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">ES1</div>
+      <div class="resumen-desc">Informe con cinco secciones y dos diagramas. Se entrega el martes 17 de noviembre a las 18:30</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Próxima sesión (martes 17/11 &middot; 120 min)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,0.6); line-height:1.6;">
+      Se entrega la ES1 al comenzar &middot;
+      Paradigma 4+1 &middot;
+      Historias de usuario &middot;
+      Vista Lógica: diagrama de comunicación
+    </div>
+  </div>
+</div>
+
+<script>
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
