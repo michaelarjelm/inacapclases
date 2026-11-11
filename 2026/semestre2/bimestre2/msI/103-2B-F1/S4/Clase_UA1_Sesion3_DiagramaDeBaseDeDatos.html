@@ -325,8 +325,8 @@
   <div class="cover-eyebrow anim">Modelamiento de Soluciones Informáticas &middot; TI3V25 &middot; Unidad 1 &middot; Sesión 3</div>
   <div class="cover-title anim">Diagrama de<br><span>base de datos</span></div>
   <p class="cover-desc anim">
-    Hoy dibujas el segundo diagrama de tu ES1: qué información guarda el sistema
-    de tu negocio y cómo se conecta. Al final te muestro la ES1.
+    Hoy dibujas qué información guarda el sistema de tu negocio y cómo se conecta.
+    Al final te muestro la ES1.
   </p>
   <div class="cover-chips anim">
     <span class="cover-chip">Sección <span>103-2B-F1</span></span>
@@ -1295,7 +1295,7 @@
       <div class="callout-icon">&#9679;</div>
       <div class="callout-content">
         <strong>Guarda esta tabla</strong>
-        <p>Antes de entregar tu diagrama en la ES1, revisa cada entidad con estos cuatro errores.</p>
+        <p>Cada vez que dibujes un diagrama de base de datos, revisa cada entidad con estos cuatro errores.</p>
       </div>
     </div>
   </div>
@@ -1345,7 +1345,7 @@
         <div class="act-li">La FK en la tabla del lado N. Si te aparece una N a N, resuélvela con una tabla intermedia</div>
         <div class="act-li">Revisa cada entidad con la tabla de los cuatro errores antes de exportar</div>
       </div>
-      <div class="act-d">Si no lo terminas en la sala, lo terminas en casa: es el segundo diagrama de tu ES1.</div>
+      <div class="act-d">Si no lo terminas en la sala, lo terminas en casa. No forma parte de la ES1.</div>
     </div>
   </div>
 </div>
@@ -1368,7 +1368,7 @@
     <table class="tbl">
       <thead><tr><th></th><th></th></tr></thead>
       <tbody>
-        <tr><td><strong>Qué</strong></td><td>Un informe en PDF con tus requerimientos, tu análisis de factibilidad y tus dos diagramas</td></tr>
+        <tr><td><strong>Qué</strong></td><td>Un informe en PDF con tus requerimientos, tu análisis de factibilidad y tu diagrama de casos de uso</td></tr>
         <tr><td><strong>Sobre qué</strong></td><td>Tu negocio, el mismo que reservaste en el portal</td></tr>
         <tr><td><strong>Quiénes</strong></td><td>Solo o en dupla, igual que en la reserva. En dupla, un solo informe</td></tr>
         <tr><td><strong>Se entrega</strong></td><td>Martes 17 de noviembre, 18:30, al comenzar la clase, en la tarea "Evaluación Sumativa N°1" del AAI</td></tr>
@@ -1379,7 +1379,7 @@
       <div class="callout-icon">&#9679;</div>
       <div class="callout-content">
         <strong>Un cambio respecto de lo que dije en la sesión 1</strong>
-        <p>En la primera clase dije que la ES1 tenía tres diagramas. Tiene dos: casos de uso y base de datos. El diagrama de flujo no forma parte de esta evaluación.</p>
+        <p>En la primera clase dije que la ES1 tenía tres diagramas. Tiene uno: el de casos de uso. El diagrama de base de datos que vemos hoy y el diagrama de flujo no forman parte de esta evaluación.</p>
       </div>
     </div>
   </div>
@@ -1387,7 +1387,7 @@
 
 <div class="slide slide-concept red-accent">
   <span class="slide-badge badge-concepto">Estructura</span>
-  <div class="concept-label anim">Cinco secciones, en este orden, después de la portada</div>
+  <div class="concept-label anim">Cuatro secciones, en este orden, después de la portada</div>
   <div class="concept-title anim">Cómo se arma<br>el <span>informe</span></div>
   <div class="concept-body anim">
     <table class="tbl">
@@ -1397,7 +1397,6 @@
         <tr><td>2. Requerimientos</td><td>Funcionales, no funcionales, el comentario descartado y la contradicción con la pregunta que le harías al cliente</td><td><span class='tag'>Sesión 1</span></td></tr>
         <tr><td>3. Factibilidad</td><td>Técnica, operativa y económica de tu sistema: qué entra en la primera versión y qué queda para más adelante</td><td><span class='tag'>Sesión 1</span></td></tr>
         <tr><td>4. Casos de uso</td><td>El diagrama como imagen y por qué lo dibujaste así</td><td><span class='tag'>Sesión 2</span></td></tr>
-        <tr><td>5. Base de datos</td><td>El diagrama como imagen y por qué lo dibujaste así</td><td><span class='tag'>Hoy</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -1411,12 +1410,12 @@
     <div class="two-col">
       <div class="col-card bad">
         <div class="col-card-title">Describe</div>
-        <p>"El diagrama tiene cinco entidades: CLIENTE, VEHICULO, ORDEN_TRABAJO, REPUESTO y DETALLE_REPUESTO."</p>
+        <p>"El diagrama tiene dos actores, Recepcionista y Mecánico, y cinco casos de uso."</p>
         <p>Dice qué hay. Eso ya se ve en la imagen.</p>
       </div>
       <div class="col-card good">
         <div class="col-card-title">Justifica</div>
-        <p>"VEHICULO usa la patente como clave primaria porque es única y no cambia. ORDEN_TRABAJO no tiene un dato así, por eso usa un número correlativo."</p>
+        <p>"Calcular mano de obra se une con include a Registrar horas trabajadas porque cada vez que el mecánico registra horas el sistema tiene que calcular el cobro: no es opcional."</p>
         <p>Dice por qué se decidió así y no de otra forma.</p>
       </div>
     </div>
@@ -1424,7 +1423,7 @@
       <div class="act-k">Actividad &middot; 5 min &middot; en parejas</div>
       <div class="act-t">Esta frase describe. Reescríbanla para que justifique.</div>
       <div class="act-list">
-        <div class="act-li">"Entre ORDEN_TRABAJO y REPUESTO hay una tabla DETALLE_REPUESTO."</div>
+        <div class="act-li">"Avisar repuesto sin stock extiende a Generar orden de trabajo."</div>
       </div>
     </div>
   </div>
@@ -1441,7 +1440,7 @@
         <div class="chk-num">1</div>
         <div class="chk-cont">
           <div class="chk-tit">Tu diagrama de base de datos guardado en .drawio</div>
-          <div class="chk-desc">Al menos tres entidades con PK y tipos de dato, y dos relaciones con cardinalidad en los dos extremos. Si no lo terminaste, lo terminas en casa.</div>
+          <div class="chk-desc">Al menos tres entidades con PK y tipos de dato, y dos relaciones con cardinalidad en los dos extremos. Si no lo terminaste, lo terminas en casa. No forma parte de la ES1.</div>
         </div>
       </div>
       <div class="chk-item">
@@ -1491,7 +1490,7 @@
     </div>
     <div class="resumen-item">
       <div class="resumen-cmd">ES1</div>
-      <div class="resumen-desc">Informe con cinco secciones y dos diagramas. Se entrega el martes 17 de noviembre a las 18:30</div>
+      <div class="resumen-desc">Informe con cuatro secciones y el diagrama de casos de uso. Se entrega el martes 17 de noviembre a las 18:30</div>
     </div>
   </div>
   <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);">
