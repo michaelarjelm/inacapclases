@@ -558,7 +558,7 @@
   <div class="concept-label anim">ScrollView como raíz</div>
   <div class="concept-title anim">Qué hace cada <span>línea</span></div>
   <div class="concept-body anim">
-<table class="tbl"><thead><tr><th>Línea</th><th>Qué hace</th></tr></thead><tbody><tr><td><code>&lt;ScrollView</code> como raíz</td><td>Con el teclado abierto no caben ocho componentes en la pantalla. El ScrollView deja deslizar el formulario hasta el botón.</td></tr><tr><td><code>android:id="@+id/main"</code></td><td>Lo usa el código que trae la Activity. Va en la raíz, aunque la raíz ahora sea un ScrollView.</td></tr><tr><td><code>&lt;LinearLayout ... vertical</code></td><td>El único hijo del ScrollView. Dentro van todos los componentes, uno debajo del otro.</td></tr><tr><td><code>padding="32dp"</code></td><td>Margen interior de 32dp en los cuatro lados. Va en el LinearLayout, no en la raíz.</td></tr></tbody></table><div class="callout callout-warn"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Lo mismo de la sesión 2</strong><p>La raíz no lleva padding: el código de la Activity lo pisa. El ScrollView, un solo hijo.</p></div></div>
+<table class="tbl"><thead><tr><th>Línea</th><th>Qué hace</th></tr></thead><tbody><tr><td><code>&lt;ScrollView</code> como raíz</td><td>Con el teclado abierto no caben ocho componentes en la pantalla. El ScrollView deja deslizar el formulario hasta el botón.</td></tr><tr><td><code>android:id="@+id/main"</code></td><td>Lo usa el código que trae la Activity. Va en la raíz, aunque la raíz ahora sea un ScrollView.</td></tr><tr><td><code>&lt;LinearLayout</code> con <code>orientation="vertical"</code></td><td>El único hijo del ScrollView. Dentro van todos los componentes, uno debajo del otro.</td></tr><tr><td><code>padding="32dp"</code></td><td>Margen interior de 32dp en los cuatro lados. Va en el LinearLayout, no en la raíz.</td></tr></tbody></table><div class="callout callout-warn"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Lo mismo de la sesión 2</strong><p>La raíz no lleva padding: el código de la Activity lo pisa. El ScrollView, un solo hijo.</p></div></div>
   </div>
 </div>
 
@@ -580,7 +580,9 @@
 
 &lt;TextView
     android:id="@+id/txtSubtitulo"
-    ... (igual, sin textStyle)
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
     android:layout_marginBottom="8dp"
     android:text="Guarda tus canciones favoritas"
     android:textSize="14sp" /&gt;
@@ -591,7 +593,31 @@
 <span class="hl">    android:layout_height="wrap_content"</span>
 <span class="hl">    android:layout_marginTop="12dp"</span>
 <span class="hl">    android:hint="Nombre"</span>
-<span class="hl">    android:inputType="textPersonName" /&gt;</span></pre>
+<span class="hl">    android:inputType="textPersonName" /&gt;</span>
+
+&lt;EditText
+    android:id="@+id/edtCorreo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:hint="Correo"
+    android:inputType="textEmailAddress" /&gt;
+
+&lt;EditText
+    android:id="@+id/edtClave"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:hint="Contraseña"
+    android:inputType="textPassword" /&gt;
+
+&lt;EditText
+    android:id="@+id/edtRepetirClave"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:hint="Repetir contraseña"
+    android:inputType="textPassword" /&gt;</pre>
 </div></div><div><div class="fono"><div class="fono-status"><span>18:30</span><span>&#9679;&#9679;&#9679;</span></div><div class="fono-screen izq"><div class="nuevo" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:9px;"><div class="fono-titulo" style="text-transform:none;font-size:22px;">Crear cuenta</div><div class="fono-sub">Guarda tus canciones favoritas</div><div class="fono-campo">Nombre</div></div></div></div><div class="fono-cap">2 de 4</div></div></div>
   </div>
 </div>
@@ -636,10 +662,21 @@
 
     &lt;RadioButton
         android:id="@+id/rbPop"
-        ... (igual, sin checked)
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Pop" /&gt;
 
-    &lt;!-- rbUrbano y rbOtro, igual --&gt;
+    &lt;RadioButton
+        android:id="@+id/rbUrbano"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Urbano" /&gt;
+
+    &lt;RadioButton
+        android:id="@+id/rbOtro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Otro" /&gt;
 <span class="hl">&lt;/RadioGroup&gt;</span></pre>
 </div></div><div><div class="fono"><div class="fono-status"><span>18:30</span><span>&#9679;&#9679;&#9679;</span></div><div class="fono-screen izq"><div class="fono-titulo" style="text-transform:none;font-size:22px;">Crear cuenta</div><div class="fono-sub">Guarda tus canciones favoritas</div><div class="fono-campo">Nombre</div><div class="fono-campo">Correo</div><div class="fono-campo">Contraseña</div><div class="fono-campo">Repetir contraseña</div><div class="nuevo" style="width:100%;display:flex;flex-direction:column;gap:9px;"><div class="fono-lbl" style="margin-top:6px;">¿Qué escuchas más?</div><div class="fono-radio"><span><span class="rb on"></span>Rock</span><span><span class="rb"></span>Pop</span><span><span class="rb"></span>Urbano</span><span><span class="rb"></span>Otro</span></div></div></div></div><div class="fono-cap">3 de 4</div></div></div>
   </div>
@@ -695,13 +732,37 @@
   <div class="concept-title anim">¿Qué pasa si<br>lo sacas del <span>grupo</span>?</div>
   <div class="concept-body ancho anim">
 <div class="duo cap"><div><div class="code-block"><div class="code-title">dos opciones fuera del RadioGroup</div>
-<pre>&lt;RadioGroup ... android:orientation="horizontal"&gt;
-    &lt;RadioButton android:id="@+id/rbRock" ... android:text="Rock" /&gt;
-    &lt;RadioButton android:id="@+id/rbPop"  ... android:text="Pop" /&gt;
+<pre>&lt;RadioGroup
+    android:id="@+id/rgGenero"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"&gt;
+
+    &lt;RadioButton
+        android:id="@+id/rbRock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="Rock" /&gt;
+
+    &lt;RadioButton
+        android:id="@+id/rbPop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pop" /&gt;
 &lt;/RadioGroup&gt;
 
-<span class="hl">&lt;RadioButton android:id="@+id/rbUrbano" ... android:text="Urbano" /&gt;</span>
-<span class="hl">&lt;RadioButton android:id="@+id/rbOtro"   ... android:text="Otro" /&gt;</span></pre>
+<span class="hl">&lt;RadioButton</span>
+<span class="hl">    android:id="@+id/rbUrbano"</span>
+<span class="hl">    android:layout_width="wrap_content"</span>
+<span class="hl">    android:layout_height="wrap_content"</span>
+<span class="hl">    android:text="Urbano" /&gt;</span>
+
+<span class="hl">&lt;RadioButton</span>
+<span class="hl">    android:id="@+id/rbOtro"</span>
+<span class="hl">    android:layout_width="wrap_content"</span>
+<span class="hl">    android:layout_height="wrap_content"</span>
+<span class="hl">    android:text="Otro" /&gt;</span></pre>
 </div></div><div class="actividad"><div class="act-k">Actividad &middot; 4 min &middot; en dupla</div><div class="act-t">Marcas Rock y después tocas Urbano. ¿Qué queda marcado?</div><div class="act-d">Escriban su respuesta y pruébenlo en el emulador o tocando la vista previa.</div><div class="act-list"><div class="act-li">A: solo Urbano</div><div class="act-li">B: Rock y Urbano</div><div class="act-li">C: nada, la app se cae</div></div></div></div>
   </div>
 </div>
@@ -735,10 +796,24 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"&gt;
 
-    &lt;RadioButton android:id="@+id/rbBasico" ... android:text="Básico" /&gt;
-    &lt;RadioButton android:id="@+id/rbMedio"  ... android:text="Medio" /&gt;
+    &lt;RadioButton
+        android:id="@+id/rbBasico"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Básico" /&gt;
+
+    &lt;RadioButton
+        android:id="@+id/rbMedio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Medio" /&gt;
 &lt;/RadioGroup&gt;
-&lt;RadioButton android:id="@+id/rbAvanzado" ... android:text="Avanzado" /&gt;</pre>
+
+&lt;RadioButton
+    android:id="@+id/rbAvanzado"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Avanzado" /&gt;</pre>
 </div><div class="actividad"><div class="act-k">Actividad &middot; 5 min &middot; en dupla</div><div class="act-t">Encuentren los tres errores y escriban cómo se corrige cada uno.</div></div>
   </div>
 </div>
@@ -797,16 +872,28 @@
     android:orientation="vertical"
     tools:context=".IAActivity"&gt;
 
-<span class="hl">    &lt;LinearLayout ... horizontal, center_vertical, padding 16dp&gt;</span>
+<span class="hl">    &lt;LinearLayout</span>
+<span class="hl">        android:layout_width="match_parent"</span>
+<span class="hl">        android:layout_height="wrap_content"</span>
+<span class="hl">        android:orientation="horizontal"</span>
+<span class="hl">        android:gravity="center_vertical"</span>
+<span class="hl">        android:padding="16dp"&gt;</span>
+
 <span class="hl">        &lt;TextView</span>
 <span class="hl">            android:id="@+id/txtTituloIA"</span>
 <span class="hl">            android:layout_width="0dp"</span>
+<span class="hl">            android:layout_height="wrap_content"</span>
 <span class="hl">            android:layout_weight="1"</span>
-<span class="hl">            ... android:text="Playlist con IA" 24sp bold /&gt;</span>
+<span class="hl">            android:text="Playlist con IA"</span>
+<span class="hl">            android:textSize="24sp"</span>
+<span class="hl">            android:textStyle="bold" /&gt;</span>
+
 <span class="hl">        &lt;ImageButton</span>
 <span class="hl">            android:id="@+id/btnVolver"</span>
-<span class="hl">            ... 48dp, fondo transparente</span>
+<span class="hl">            android:layout_width="48dp"</span>
+<span class="hl">            android:layout_height="48dp"</span>
 <span class="hl">            android:src="@android:drawable/ic_menu_close_clear_cancel"</span>
+<span class="hl">            android:background="@android:color/transparent"</span>
 <span class="hl">            android:contentDescription="Volver a la lista" /&gt;</span>
 <span class="hl">    &lt;/LinearLayout&gt;</span>
 &lt;/LinearLayout&gt;</pre>
@@ -829,8 +916,12 @@
 <span class="hl">    android:paddingHorizontal="16dp"</span>
 <span class="hl">    android:paddingBottom="16dp"&gt;</span>
 
-    &lt;TextView ... android:text="¿Cómo te sientes hoy?"
-        android:textSize="18sp" android:textStyle="bold" /&gt;
+    &lt;TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¿Cómo te sientes hoy?"
+        android:textSize="18sp"
+        android:textStyle="bold" /&gt;
 
 <span class="hl">    &lt;EditText</span>
 <span class="hl">        android:id="@+id/edtAnimo"</span>
@@ -844,7 +935,9 @@
 
     &lt;Button
         android:id="@+id/btnGenerar"
-        ... match_parent, marginTop 8dp
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="Generar playlist" /&gt;
 
     &lt;!-- aquí va la respuesta: paso 3 --&gt;
@@ -870,9 +963,13 @@
   <div class="concept-title anim">El espacio de<br>la <span>respuesta</span></div>
   <div class="concept-body ancho anim">
 <div class="duo"><div><div class="code-block"><div class="code-title">activity_ia.xml</div>
-<pre>&lt;TextView ... android:layout_marginTop="24dp"
+<pre>&lt;TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="24dp"
     android:text="Tu playlist"
-    android:textSize="18sp" android:textStyle="bold" /&gt;
+    android:textSize="18sp"
+    android:textStyle="bold" /&gt;
 
 <span class="hl">&lt;ScrollView</span>
 <span class="hl">    android:layout_width="match_parent"</span>
@@ -959,11 +1056,25 @@
 <span class="hl">    &lt;string name="registro_subtitulo"&gt;Guarda tus canciones favoritas&lt;/string&gt;</span>
 <span class="hl">    &lt;string name="hint_nombre"&gt;Nombre&lt;/string&gt;</span>
 <span class="hl">    &lt;string name="hint_correo"&gt;Correo&lt;/string&gt;</span>
+<span class="hl">    &lt;string name="hint_clave"&gt;Contraseña&lt;/string&gt;</span>
+<span class="hl">    &lt;string name="hint_repetir_clave"&gt;Repetir contraseña&lt;/string&gt;</span>
 <span class="hl">    &lt;string name="registro_pregunta_genero"&gt;¿Qué escuchas más?&lt;/string&gt;</span>
 <span class="hl">    &lt;string name="genero_rock"&gt;Rock&lt;/string&gt;</span>
+<span class="hl">    &lt;string name="genero_pop"&gt;Pop&lt;/string&gt;</span>
+<span class="hl">    &lt;string name="genero_urbano"&gt;Urbano&lt;/string&gt;</span>
+<span class="hl">    &lt;string name="genero_otro"&gt;Otro&lt;/string&gt;</span>
+<span class="hl">    &lt;string name="registro_terminos"&gt;Acepto los términos y condiciones&lt;/string&gt;</span>
 <span class="hl">    &lt;string name="registro_boton"&gt;Crear cuenta&lt;/string&gt;</span>
 <span class="hl">    &lt;string name="registro_ir_login"&gt;¿Ya tienes cuenta? Ingresa&lt;/string&gt;</span>
-    &lt;!-- ... uno por cada texto de la pantalla --&gt;
+
+<span class="hl">    &lt;!-- IA --&gt;</span>
+<span class="hl">    &lt;string name="ia_titulo"&gt;Playlist con IA&lt;/string&gt;</span>
+<span class="hl">    &lt;string name="ia_volver"&gt;Volver a la lista&lt;/string&gt;</span>
+<span class="hl">    &lt;string name="ia_pregunta"&gt;¿Cómo te sientes hoy?&lt;/string&gt;</span>
+<span class="hl">    &lt;string name="ia_hint_animo"&gt;Ej: cansado, quiero algo tranquilo para estudiar&lt;/string&gt;</span>
+<span class="hl">    &lt;string name="ia_boton"&gt;Generar playlist&lt;/string&gt;</span>
+<span class="hl">    &lt;string name="ia_tu_playlist"&gt;Tu playlist&lt;/string&gt;</span>
+<span class="hl">    &lt;string name="ia_respuesta_ejemplo"&gt;Para estudiar tranquilo:\n\n1. Fix You, Coldplay\n2. Gracias a la Vida, Violeta Parra\n3. Tren al Sur, Los Prisioneros&lt;/string&gt;</span>
 &lt;/resources&gt;</pre>
 </div><table class="tbl"><thead><tr><th>Parte</th><th>Qué es</th></tr></thead><tbody><tr><td><code>&lt;string&gt;</code></td><td>Un recurso de texto. Abre y cierra, como un componente.</td></tr><tr><td><code>name="registro_titulo"</code></td><td>El nombre con que lo llamas. Minúsculas, guion bajo, sin espacios ni tildes. Empieza con letra.</td></tr><tr><td>El contenido</td><td>El texto que se ve en pantalla. Aquí sí van tildes, eñes y signos ¿?</td></tr></tbody></table>
   </div>
@@ -978,23 +1089,37 @@
 <div class="ba"><div class="code-block"><div class="code-title">Antes</div>
 <pre>&lt;TextView
     android:id="@+id/txtTituloRegistro"
-    ...
-<span class="hl">    android:text="Crear cuenta" /&gt;</span>
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+<span class="hl">    android:text="Crear cuenta"</span>
+    android:textSize="28sp"
+    android:textStyle="bold" /&gt;
 
 &lt;EditText
     android:id="@+id/edtNombre"
-    ...
-<span class="hl">    android:hint="Nombre" /&gt;</span></pre>
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+<span class="hl">    android:hint="Nombre"</span>
+    android:inputType="textPersonName" /&gt;</pre>
 </div><div class="code-block"><div class="code-title">Después</div>
 <pre>&lt;TextView
     android:id="@+id/txtTituloRegistro"
-    ...
-<span class="hl">    android:text="@string/registro_titulo" /&gt;</span>
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+<span class="hl">    android:text="@string/registro_titulo"</span>
+    android:textSize="28sp"
+    android:textStyle="bold" /&gt;
 
 &lt;EditText
     android:id="@+id/edtNombre"
-    ...
-<span class="hl">    android:hint="@string/hint_nombre" /&gt;</span></pre>
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+<span class="hl">    android:hint="@string/hint_nombre"</span>
+    android:inputType="textPersonName" /&gt;</pre>
 </div></div><table class="tbl"><thead><tr><th>Pieza</th><th>Qué significa</th></tr></thead><tbody><tr><td><code>@</code></td><td>"Búscalo en los recursos".</td></tr><tr><td><code>string/</code></td><td>El tipo de recurso: un texto de strings.xml.</td></tr><tr><td><code>registro_titulo</code></td><td>El name que le pusiste. Si no existe, la línea queda en rojo.</td></tr></tbody></table><div class="callout callout-tip"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Atajo, una vez que lo entiendes</strong><p>Con el cursor sobre un texto en amarillo, Option+Enter (Mac) o Alt+Enter (Windows), Extract string resource. Android Studio escribe las dos partes por ti.</p></div></div>
   </div>
 </div>
@@ -1026,16 +1151,28 @@
 <div class="ba"><div class="code-block"><div class="code-title">activity_registro.xml</div>
 <pre>&lt;TextView
     android:id="@+id/txtIrLogin"
-    ...
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginTop="16dp"
+    android:text="@string/registro_ir_login"
 <span class="hl">    android:textColor="@color/primario" /&gt;</span>
 
 &lt;TextView
     android:id="@+id/txtSubtitulo"
-    ...
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginBottom="8dp"
+    android:text="@string/registro_subtitulo"
+    android:textSize="14sp"
 <span class="hl">    android:textColor="@color/texto_suave" /&gt;</span></pre>
 </div><div class="code-block"><div class="code-title">activity_ia.xml</div>
 <pre>&lt;ScrollView
-    ...
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:layout_marginTop="8dp"
 <span class="hl">    android:background="@color/fondo_tarjeta"</span>
     android:padding="16dp"&gt;</pre>
 </div></div><div class="callout callout-tip"><div class="callout-icon">&#9679;</div><div class="callout-content"><strong>Revisa con la vista Split</strong><p>Si el nombre está bien escrito, la vista previa muestra el color de inmediato. Al lado del número de línea aparece un cuadrito con el color.</p></div></div>
@@ -1065,8 +1202,12 @@
 </div><div class="code-block"><div class="code-title">activity_ia.xml</div>
 <pre>&lt;TextView
     android:id="@+id/txtTituloIA"
-    ...
-    android:text="@strings/ia_titulo" /&gt;</pre>
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:text="@strings/ia_titulo"
+    android:textSize="24sp"
+    android:textStyle="bold" /&gt;</pre>
 </div></div><div class="actividad"><div class="act-k">Actividad &middot; 4 min &middot; en dupla</div><div class="act-t">Encuentren los tres errores y escriban la línea corregida.</div></div>
   </div>
 </div>
@@ -1131,8 +1272,13 @@
   <div class="concept-title anim">Escribir<br>el <span>estilo</span></div>
   <div class="concept-body anim">
 <div class="code-block"><div class="code-title">res/values/themes.xml</div>
-<pre>&lt;resources ...&gt;
-    &lt;style name="Base.Theme.MiMusica" ...&gt; ... &lt;/style&gt;
+<pre>&lt;resources xmlns:tools="http://schemas.android.com/tools"&gt;
+    &lt;!-- Base application theme. --&gt;
+    &lt;style name="Base.Theme.MiMusica" parent="Theme.Material3.DayNight.NoActionBar"&gt;
+        &lt;!-- Customize your light theme here. --&gt;
+        &lt;!-- &lt;item name="colorPrimary"&gt;@color/my_light_primary&lt;/item&gt; --&gt;
+    &lt;/style&gt;
+
     &lt;style name="Theme.MiMusica" parent="Base.Theme.MiMusica" /&gt;
 
 <span class="hl">    &lt;!-- Estilos de Mi Música --&gt;</span>
@@ -1174,7 +1320,23 @@
     android:hint="@string/hint_nombre"
     android:inputType="textPersonName" /&gt;
 
-&lt;!-- edtCorreo, edtClave y edtRepetirClave, igual --&gt;</pre>
+&lt;EditText
+    android:id="@+id/edtCorreo"
+<span class="hl">    style="@style/Campo"</span>
+    android:hint="@string/hint_correo"
+    android:inputType="textEmailAddress" /&gt;
+
+&lt;EditText
+    android:id="@+id/edtClave"
+<span class="hl">    style="@style/Campo"</span>
+    android:hint="@string/hint_clave"
+    android:inputType="textPassword" /&gt;
+
+&lt;EditText
+    android:id="@+id/edtRepetirClave"
+<span class="hl">    style="@style/Campo"</span>
+    android:hint="@string/hint_repetir_clave"
+    android:inputType="textPassword" /&gt;</pre>
 </div></div><div><table class="tbl"><thead><tr><th>Regla</th><th>Qué significa</th></tr></thead><tbody><tr><td><code>style</code> va sin <code>android:</code></td><td>Es el único atributo del componente que no lleva el prefijo.</td></tr><tr><td>El componente le gana al estilo</td><td>Si el componente escribe el mismo atributo, se usa el del componente.</td></tr><tr><td>Lo propio de cada uno, fuera</td><td>id, hint e inputType cambian en cada campo: no van en el estilo.</td></tr></tbody></table></div></div><div class="actividad"><div class="act-k">Actividad &middot; 2 min &middot; predecir</div><div class="act-t">El estilo Campo dice <code>textSize 16sp</code>. Un EditText tiene <code>style="@style/Campo"</code> y además <code>android:textSize="20sp"</code>. ¿De qué tamaño se ve la letra?</div></div>
   </div>
 </div>
