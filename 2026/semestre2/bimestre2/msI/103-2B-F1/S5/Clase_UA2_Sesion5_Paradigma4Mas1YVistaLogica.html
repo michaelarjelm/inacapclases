@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA2 Sesión 5 - Paradigma 4+1 y Vista Lógica</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0; color: var(--text);
+      scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white; justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 620px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px; border-bottom: 6px solid var(--red);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+    .slide-separator.sep-blue   { border-color: var(--blue); }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+    }
+    .sep-green .sep-num { color: #AFAFAF; }
+    .sep-orange .sep-num { color: #D98A8E; }
+    .sep-blue .sep-num { color: #E08B80; }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .cover-title span, .sep-title span, .concept-title span { color: var(--red) !important; }
+    .sep-desc { font-size: 22px; color: rgba(255,255,255,0.45); max-width: 620px; line-height: 1.65; }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 60px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark); margin-bottom: 30px;
+    }
+    .concept-body { max-width: 920px; }
+    .concept-body p { font-size: 21px; line-height: 1.7; color: #333; margin-bottom: 18px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 18px 22px; margin: 20px 0;
+      max-width: 920px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+    }
+    .callout-content p { font-size: 18px; line-height: 1.6; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+
+    /* INDICE */
+    .index-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 32px; max-width: 720px; }
+    .index-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 18px 20px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 32px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 8px;
+    }
+    .index-name { font-size: 16px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-pasos    { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-practica { background: #F7E3E3; color: #8E1A1F; border: 1px solid #E2CACA; }
+    .badge-cierre   { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* RESUMEN */
+    .resumen-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 28px; max-width: 880px; }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .resumen-cmd { font-size: 16px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* TWO COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 920px; margin-top: 20px; }
+    .col-card { background: #F8F8F8; border: 1px solid #E0E0E0; border-radius: 8px; padding: 20px 22px; }
+    .col-card.bad  { border-left: 4px solid var(--red); }
+    .col-card.good { border-left: 4px solid var(--green); }
+    .col-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 12px;
+    }
+    .col-card p { font-size: 17px; line-height: 1.6; color: #444; }
+    .col-card p + p { margin-top: 8px; }
+    .col-card ul { margin-left: 18px; }
+    .col-card li { font-size: 17px; line-height: 1.7; color: #444; margin-bottom: 4px; }
+
+    /* TABLA */
+    .tbl { width: 100%; max-width: 920px; border-collapse: collapse; margin-top: 18px; font-size: 17px; }
+    .tbl th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 10px 16px; text-align: left;
+    }
+    .tbl td { padding: 12px 16px; border-bottom: 1px solid #E0E0E0; vertical-align: middle; line-height: 1.45; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:nth-child(even) td { background: #F8F8F8; }
+
+    /* VOCABULARIO */
+    .voc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; max-width: 920px; margin-top: 22px; }
+    .voc-card {
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 18px 22px;
+    }
+    .voc-nombre {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 4px;
+    }
+    .voc-desc { font-size: 16px; color: #555; line-height: 1.55; }
+
+    /* DEFINICION */
+    .definicion {
+      background: #FFF6F6; border: 2px solid #F3C9CB; border-left: 6px solid var(--red);
+      border-radius: 8px; padding: 22px 26px; margin: 16px 0; max-width: 920px;
+    }
+    .def-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .def-txt { font-size: 23px; line-height: 1.55; color: var(--dark); font-weight: 500; }
+    .def-txt strong { font-weight: 800; }
+    .def-ej { font-size: 18px; line-height: 1.55; color: #666; margin-top: 12px; font-style: italic; }
+
+    /* DIAGRAMA */
+    .diagrama {
+      background: white; border: 1px solid #E0E0E0; border-radius: 8px;
+      padding: 16px; margin: 18px 0; max-width: 920px;
+    }
+    .diagrama-cap {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 8px; text-align: center;
+    }
+
+    /* ACTIVIDAD */
+    .actividad {
+      background: #1A1A1A; border-radius: 8px; padding: 22px 26px;
+      margin: 16px 0; max-width: 950px;
+    }
+    .act-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .act-t { font-size: 22px; line-height: 1.5; color: white; font-weight: 600; }
+    .act-d { font-size: 17px; line-height: 1.55; color: rgba(255,255,255,0.55); margin-top: 8px; }
+    .act-list { margin-top: 12px; }
+    .act-li {
+      font-size: 18px; color: rgba(255,255,255,0.85); line-height: 1.7;
+      padding-left: 22px; position: relative;
+    }
+    .act-li::before { content: "\2192"; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+    /* CHECKPOINT */
+    .chk { max-width: 920px; margin-top: 18px; }
+    .chk-item {
+      display: flex; gap: 18px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 18px 22px; margin-bottom: 14px;
+    }
+    .chk-num {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 900;
+      color: var(--red); line-height: 1; flex-shrink: 0; width: 40px;
+    }
+    .chk-cont { flex: 1; }
+    .chk-tit { font-size: 20px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .chk-desc { font-size: 17px; color: #555; line-height: 1.5; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: #EBEBEB; padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    #progress {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--red);
+      width: 0%; z-index: 9999; transition: width 0.35s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+    }
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+
+    /* AGREGADOS S2 */
+    .voc-grid.tres { grid-template-columns: repeat(3, 1fr); }
+    .pasos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; max-width: 920px; margin-top: 18px; }
+    .paso {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-radius: 8px; padding: 14px 18px;
+    }
+    .paso-n {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 30px; font-weight: 900;
+      color: var(--red); line-height: 1; flex-shrink: 0; width: 34px;
+    }
+    .paso-t { font-size: 17px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .paso-d { font-size: 15px; color: #555; line-height: 1.5; }
+    .tag {
+      display: inline-block; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 9px; border-radius: 12px;
+      background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; white-space: nowrap;
+    }
+    .tag.gris { background: #F2F2F2; color: #4A4A4A; border-color: #DADADA; }
+  
+    /* AGREGADOS S3 */
+    .datos { border-collapse: collapse; margin-top: 14px; font-size: 16px; max-width: 920px; }
+    .datos th { background: #1A1A1A; color: white; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 8px 14px; text-align: left; }
+    .datos td { font-family: 'JetBrains Mono', monospace; font-size: 14px; padding: 8px 14px; border: 1px solid #E0E0E0; }
+    .datos tr.marca td { background: #FFF6F6; }
+  
+    /* AGREGADOS S5 */
+    .formula { font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 800; color: var(--dark); line-height: 1.25; margin: 10px 0 6px; }
+    .formula span { color: var(--red); }
+    .guion { max-width: 920px; margin-top: 14px; }
+    .guion-item { display: flex; gap: 16px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid #E0E0E0; font-size: 18px; line-height: 1.5; color: #333; }
+    .guion-item:last-child { border-bottom: none; }
+    .guion-n { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 900; color: var(--red); width: 30px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+<!-- PORTADA -->
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Modelamiento de Soluciones Informáticas &middot; TI3V25 &middot; Unidad 2 &middot; Sesión 5</div>
+  <div class="cover-title anim">Paradigma 4+1<br>y <span>Vista Lógica</span></div>
+  <p class="cover-desc anim">
+    Empieza la Unidad 2. El mismo negocio que modelaste en la ES1 se mira ahora por dentro:
+    qué piezas tiene el sistema y cómo colaboran.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>103-2B-F1</span></span>
+    <span class="cover-chip">Martes 17 de noviembre 2026</span>
+    <span class="cover-chip">18:30 a 20:30 &middot; 120 minutos</span>
+    <span class="cover-chip">INACAP Puente Alto</span>
+  </div>
+</div>
+
+<!-- AGENDA -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">Antes de empezar</div>
+  <div class="sep-title anim">Lo que vemos<br><span>hoy</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">00</div>
+      <div class="index-name">Entrega de la ES1 y de dónde venimos</div>
+      <div class="index-type">Inicio &middot; 5 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Qué es el paradigma 4+1</div>
+      <div class="index-type">Concepto + actividad &middot; 20 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Historias de usuario</div>
+      <div class="index-type">Concepto + actividades &middot; 25 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Vista Lógica: diagrama de comunicación</div>
+      <div class="index-type">Concepto + demo + actividad &middot; 35 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Taller en draw.io: tu primera vista</div>
+      <div class="index-type">Práctica guiada &middot; 30 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Checkpoint y cierre</div>
+      <div class="index-type">Salida &middot; 5 min</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 00</span>
+  <div class="sep-num anim">00 &middot; Inicio &middot; 5 min</div>
+  <div class="sep-title anim">Cierra la <span>ES1</span>,<br>abre la UA2</div>
+  <p class="sep-desc anim">
+    La primera evaluación queda entregada. Desde hoy trabajas sobre ese mismo negocio, pero mirando el sistema desde adentro.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">ES1</span>
+  <div class="concept-label anim">Antes de seguir avanzando</div>
+  <div class="concept-title anim">Se entrega<br>la <span>ES1</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Qué</th><th>Dónde</th><th>Hasta cuándo</th></tr></thead>
+      <tbody><tr><td>Informe de la ES1 en PDF</td><td>Tarea "Evaluación Sumativa N°1" del AAI</td><td>Hoy, martes 17 de noviembre, 23:59</td></tr></tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La clase no espera la entrega</strong>
+        <p>Si ya lo subiste, listo. Si te falta, lo terminas después de clases: la tarea cierra hoy a las 23:59 y no acepta atrasos. Lo que subas queda enviado.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Repaso &middot; Unidad 1</span>
+  <div class="concept-label anim">Lo que ya sabes del taller de Pedro</div>
+  <div class="concept-title anim">La UA1 te dejó<br>el <span>qué</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Lo que hiciste</th><th>Qué responde</th></tr></thead>
+      <tbody><tr><td>Requerimientos y factibilidad (sesión 1)</td><td>¿Qué necesita Pedro y qué entra en la primera versión?</td></tr><tr><td>Diagrama de casos de uso (sesión 2)</td><td>¿Qué puede hacer cada actor con el sistema?</td></tr></tbody>
+    </table>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La pregunta de la Unidad 2</strong>
+        <p>Ya sabes qué tiene que hacer el sistema. Ahora la pregunta es otra: ¿cómo está armado por dentro para hacerlo? Para responderla no basta un dibujo: se necesitan varios, cada uno mirando una parte distinta.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-separator ">
+  <span class="slide-badge badge-concepto">Bloque 01</span>
+  <div class="sep-num anim">01 &middot; Concepto + actividad &middot; 20 min</div>
+  <div class="sep-title anim">El paradigma<br><span>4+1</span></div>
+  <p class="sep-desc anim">
+    El nombre de la unidad. Una forma ordenada de describir cómo está armado un sistema, desde cinco ángulos.
+  </p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Antes del 4+1, una palabra</div>
+  <div class="concept-title anim">Arquitectura<br>de <span>software</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Arquitectura de software</div>
+      <div class="def-txt">La <strong>forma en que está armado un sistema por dentro</strong>: qué piezas tiene, qué hace cada una, cómo se comunican y dónde queda instalado.</div>
+      <div class="def-ej">En el taller: el sistema tiene una parte que muestra pantallas, otra que calcula la mano de obra y otra que guarda los datos. Cómo se reparten ese trabajo es su arquitectura.</div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Diferencia con la UA1</strong>
+        <p>El diagrama de casos de uso mira el sistema desde afuera, como lo ve Pedro. La arquitectura lo mira desde adentro, como lo ve quien lo construye.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Cinco vistas de un mismo sistema</div>
+  <div class="concept-title anim">Paradigma<br><span>4+1</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Paradigma 4+1 (modelo de vistas 4+1)</div>
+      <div class="def-txt">Una forma de documentar la arquitectura de un sistema con <strong>cinco vistas</strong>. Cada vista responde una pregunta distinta sobre el mismo sistema.</div>
+      <div class="def-ej">Lo propuso Philippe Kruchten en 1995. Es como los planos de una casa: uno muestra la electricidad, otro las cañerías, otro la estructura. Ninguno alcanza solo; juntos describen la casa completa.</div>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Vista</div>
+        <div class="voc-desc"><strong>Función:</strong> una forma de mirar el sistema que muestra solo lo que importa para una pregunta, y deja fuera el resto.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> la vista física muestra en qué computadores queda instalado el sistema, pero no qué datos guarda.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Por qué "4+1"</div>
+        <div class="voc-desc"><strong>Función:</strong> son cuatro vistas principales más una quinta, los escenarios, que recorre las otras cuatro con un caso concreto.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> el escenario "el mecánico registra sus horas" se sigue por las cuatro vistas, como recorrer la casa con todos los planos en la mano.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Las cinco vistas</span>
+  <div class="concept-label anim">Una pregunta por vista, un diagrama por vista</div>
+  <div class="concept-title anim">Las <span>cinco</span><br>vistas</div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Vista</th><th>Pregunta que responde</th><th>Quién la usa</th><th>Diagrama en el módulo</th><th>Cuándo</th></tr></thead>
+      <tbody><tr><td><strong>Lógica</strong></td><td>¿Qué piezas tiene el sistema y cómo colaboran para cumplir lo que pide el usuario?</td><td>Analista</td><td>Comunicación y clases</td><td><span class='tag'>Hoy</span> y próxima</td></tr><tr><td><strong>Desarrollo</strong></td><td>¿En qué módulos se divide el código?</td><td>Programadores</td><td>Componentes</td><td>Más adelante</td></tr><tr><td><strong>Procesos</strong></td><td>¿En qué orden ocurren las cosas mientras el sistema funciona?</td><td>Programadores</td><td>Secuencia</td><td>Más adelante</td></tr><tr><td><strong>Física</strong></td><td>¿En qué computadores y servidores queda instalado?</td><td>Encargado de TI</td><td>Despliegue</td><td>Más adelante</td></tr><tr><td><strong>Escenarios</strong> (+1)</td><td>¿Cómo funciona todo junto en un caso concreto?</td><td>Todos, también el cliente</td><td>Una historia que recorre las cuatro</td><td>Al final</td></tr></tbody>
+    </table>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Ya los conoces de nombre</strong>
+        <p>En la sesión 2 viste el catálogo de diagramas UML del módulo. Comunicación, clases, componentes, secuencia y despliegue son los de la Unidad 2: el 4+1 dice en qué vista va cada uno.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Predecir antes de aprender</div>
+  <div class="concept-title anim">¿Qué vista<br><span>responde</span>?</div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; en parejas &middot; en un archivo de texto</div>
+      <div class="act-t">Con la tabla anterior a la vista, decidan qué vista responde cada pregunta.</div>
+      <div class="act-list">
+        <div class="act-li">Pedro: "¿El sistema va a funcionar en el computador de la recepción o en internet?"</div>
+        <div class="act-li">Un programador nuevo: "¿En qué parte del código está lo que calcula la mano de obra?"</div>
+        <div class="act-li">El analista: "Cuando el mecánico registra sus horas, ¿qué piezas del sistema participan?"</div>
+        <div class="act-li">Un programador: "¿Se busca primero el vehículo o primero la tarifa?"</div>
+      </div>
+      <div class="act-d">En 5 minutos revisamos.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Resolución</span>
+  <div class="concept-label anim">Cada pregunta tiene su vista</div>
+  <div class="concept-title anim">Las <span>respuestas</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Pregunta</th><th>Vista</th><th>Por qué</th></tr></thead>
+      <tbody><tr><td>¿Recepción o internet?</td><td>Física</td><td>Habla de dónde queda instalado</td></tr><tr><td>¿Dónde está el cálculo en el código?</td><td>Desarrollo</td><td>Habla de cómo se divide el código</td></tr><tr><td>¿Qué piezas participan al registrar horas?</td><td>Lógica</td><td>Habla de las piezas y cómo colaboran</td></tr><tr><td>¿Primero el vehículo o la tarifa?</td><td>Procesos</td><td>Habla del orden en el tiempo</td></tr></tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Hoy: solo la primera</strong>
+        <p>Las otras vistas se explican desde cero cuando les toque. Hoy construyes la Vista Lógica de tu negocio, y para eso primero necesitas historias de usuario.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Concepto + actividades &middot; 25 min</div>
+  <div class="sep-title anim">Historias<br>de <span>usuario</span></div>
+  <p class="sep-desc anim">
+    Tus casos de uso de la ES1, reescritos en una frase que dice quién quiere qué y para qué. Es la entrada de la Vista Lógica.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">Un requerimiento, contado por quien lo usa</div>
+  <div class="concept-title anim">Historia<br>de <span>usuario</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Historia de usuario</div>
+      <div class="def-txt">Una frase corta que describe una funcionalidad <strong>desde el punto de vista de quien la usa</strong>, con una fórmula fija.</div>
+      <div class="formula">Como <span>[rol]</span>, quiero <span>[acción]</span>, para <span>[beneficio]</span>.</div>
+      <div class="def-ej">"Como mecánico, quiero registrar las horas trabajadas en una orden, para que el cobro de mano de obra salga correcto."</div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>No es algo nuevo</strong>
+        <p>Es el mismo caso de uso, con dos datos más: quién lo pide y por qué le importa. El "por qué" es lo que el diagrama de casos de uso no decía.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Sus tres partes</span>
+  <div class="concept-label anim">Cada parte cumple una función distinta</div>
+  <div class="concept-title anim">Rol, acción<br>y <span>beneficio</span></div>
+  <div class="concept-body anim">
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Rol &middot; Como...</div>
+        <div class="voc-desc"><strong>Función:</strong> quién usa la funcionalidad. Es uno de los actores de tu diagrama de casos de uso.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> "Como mecánico". El mismo actor que dibujaste afuera del rectángulo.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Acción &middot; quiero...</div>
+        <div class="voc-desc"><strong>Función:</strong> qué quiere hacer con el sistema. Sale de uno de tus casos de uso.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> "quiero registrar las horas trabajadas en una orden". Es el caso de uso "Registrar horas trabajadas".</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Beneficio &middot; para...</div>
+        <div class="voc-desc"><strong>Función:</strong> por qué le importa. Dice qué gana el negocio cuando la funcionalidad existe.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> "para que el cobro de mano de obra salga correcto". Sale del problema del correo de Pedro.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Método</span>
+  <div class="concept-label anim">Del diagrama de casos de uso a las historias</div>
+  <div class="concept-title anim">Caso de uso<br>a <span>historia</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Actor</th><th>Caso de uso</th><th>Historia de usuario</th></tr></thead>
+      <tbody><tr><td>Recepcionista</td><td>Registrar vehículo</td><td>Como recepcionista, quiero registrar un vehículo cuando llega, para saber qué autos hay en el taller y de quién son.</td></tr><tr><td>Recepcionista</td><td>Generar orden de trabajo</td><td>Como recepcionista, quiero generar una orden de trabajo, para dejar escrito qué se le va a hacer a cada vehículo.</td></tr><tr><td>Mecánico</td><td>Registrar horas trabajadas</td><td>Como mecánico, quiero registrar las horas trabajadas en una orden, para que el cobro de mano de obra salga correcto.</td></tr></tbody>
+    </table>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>¿Y los include y extend?</strong>
+        <p>"Calcular mano de obra" no tiene historia propia: nadie lo pide directo, ocurre dentro de "Registrar horas trabajadas". Una historia por cada caso de uso que un actor inicia.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Reglas</span>
+  <div class="concept-label anim">Cómo revisar una historia antes de usarla</div>
+  <div class="concept-title anim">Una buena<br><span>historia</span></div>
+  <div class="concept-body anim">
+    <div class="pasos">
+      <div class="paso"><div class="paso-n">1</div><div><div class="paso-t">El rol es un actor</div><div class="paso-d">Uno de los actores de tu diagrama. "Como usuario" es muy vago: ¿cuál usuario?</div></div></div>
+      <div class="paso"><div class="paso-n">2</div><div><div class="paso-t">Una sola acción</div><div class="paso-d">Un caso de uso por historia. Si tiene "y" en la acción, probablemente son dos historias.</div></div></div>
+      <div class="paso"><div class="paso-n">3</div><div><div class="paso-t">El beneficio no repite la acción</div><div class="paso-d">"Quiero registrar horas, para registrar las horas" no dice nada. El "para" responde ¿y eso de qué le sirve?</div></div></div>
+      <div class="paso"><div class="paso-n">4</div><div><div class="paso-t">En el idioma del cliente</div><div class="paso-d">Sin botones, pantallas ni base de datos. Pedro tiene que poder leerla y decir "sí, eso necesito".</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Cada historia rompe una regla</div>
+  <div class="concept-title anim">Corrige las<br><span>historias</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; en parejas</div>
+      <div class="act-t">Para cada historia, digan qué regla rompe y escríbanla corregida.</div>
+      <div class="act-list">
+        <div class="act-li">"Como usuario, quiero generar una orden de trabajo, para dejar registro del trabajo."</div>
+        <div class="act-li">"Como mecánico, quiero registrar mis horas y ver la lista de repuestos, para trabajar mejor."</div>
+        <div class="act-li">"Como recepcionista, quiero registrar un vehículo, para registrar el vehículo."</div>
+        <div class="act-li">"Como recepcionista, quiero apretar el botón Guardar, para que el vehículo quede en la base de datos."</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Resolución</span>
+  <div class="concept-label anim">Una regla por historia</div>
+  <div class="concept-title anim">Así se <span>corrige</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Historia</th><th>Regla que rompe</th><th>Corrección</th></tr></thead>
+      <tbody><tr><td>Como usuario...</td><td>1: el rol es vago</td><td>Como recepcionista, quiero generar una orden de trabajo, ...</td></tr><tr><td>...registrar mis horas y ver la lista de repuestos</td><td>2: dos acciones</td><td>Dos historias: una para registrar horas y otra para consultar repuestos</td></tr><tr><td>...para registrar el vehículo</td><td>3: el beneficio repite la acción</td><td>...para saber qué autos hay en el taller y de quién son</td></tr><tr><td>...apretar el botón Guardar... base de datos</td><td>4: habla de la pantalla y de la tecnología</td><td>Como recepcionista, quiero registrar un vehículo cuando llega, para ...</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Tu negocio</span>
+  <div class="concept-label anim">Con tu diagrama de casos de uso de la ES1 al lado</div>
+  <div class="concept-title anim">Tus <span>historias</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 8 min &middot; solo o en dupla &middot; en un archivo de texto</div>
+      <div class="act-t">Escribe las historias de usuario de tu negocio.</div>
+      <div class="act-list">
+        <div class="act-li">Una historia por cada caso de uso que un actor inicia (los include y extend no llevan historia propia)</div>
+        <div class="act-li">Fórmula completa: Como... quiero... para...</div>
+        <div class="act-li">Revisa cada una con las cuatro reglas</div>
+        <div class="act-li">Marca la historia más importante de tu negocio: con esa dibujas el diagrama de hoy</div>
+      </div>
+      <div class="act-d">Guarda el archivo: las historias son la primera parte de tu ES2.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 03</span>
+  <div class="sep-num anim">03 &middot; Concepto + demo + actividad &middot; 35 min</div>
+  <div class="sep-title anim">Vista Lógica:<br>diagrama de <span>comunicación</span></div>
+  <p class="sep-desc anim">
+    La primera vista del 4+1. Toma una historia de usuario y muestra qué piezas del sistema trabajan para cumplirla.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">La primera vista</div>
+  <div class="concept-title anim">Vista<br><span>Lógica</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Vista Lógica</div>
+      <div class="def-txt">La vista que muestra <strong>qué piezas tiene el sistema por dentro y cómo colaboran</strong> para cumplir lo que pide el usuario.</div>
+      <div class="def-ej">Se dibuja con dos diagramas: el de comunicación (hoy) y el de clases (próxima sesión).</div>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Objeto</div>
+        <div class="voc-desc"><strong>Función:</strong> una pieza del sistema que sabe hacer algo o guarda algo. Cada objeto tiene una responsabilidad propia.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> la orden de trabajo sabe cuántas horas lleva. La tarifa sabe cuánto se cobra por hora según el tipo de vehículo.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Mensaje</div>
+        <div class="voc-desc"><strong>Función:</strong> un pedido que una pieza le hace a otra: "haz esto" o "dame este dato".</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> la orden de trabajo le pide al vehículo su tipo, porque la tarifa depende de si es auto, moto o camión.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">El diagrama de hoy</div>
+  <div class="concept-title anim">Diagrama de<br><span>comunicación</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">Diagrama de comunicación (UML)</div>
+      <div class="def-txt">Un diagrama que muestra <strong>qué objetos se envían mensajes</strong> para cumplir una historia de usuario, numerados en el orden en que ocurren.</div>
+      <div class="def-ej">Responde "¿qué piezas participan y qué se piden entre ellas?", no "¿qué datos guarda cada una?". Eso lo responde el diagrama de clases.</div>
+    </div>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Una historia, un diagrama</strong>
+        <p>No se dibuja todo el sistema en un solo diagrama de comunicación. Cada historia de usuario tiene el suyo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Método</span>
+  <div class="concept-label anim">Antes de dibujar, se lee la historia</div>
+  <div class="concept-title anim">De la historia<br>a las <span>piezas</span></div>
+  <div class="concept-body anim">
+    <div class="definicion">
+      <div class="def-k">La historia que vamos a dibujar</div>
+      <div class="def-txt">"Como <strong>mecánico</strong>, quiero <strong>registrar las horas</strong> trabajadas en una <strong>orden</strong>, para que el cobro de <strong>mano de obra</strong> salga correcto."</div>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Lo que buscas en la historia</th><th>Se convierte en</th><th>En esta historia</th></tr></thead>
+      <tbody><tr><td>El rol</td><td>El actor</td><td>Mecánico</td></tr><tr><td>Quien recibe el pedido del actor</td><td>El objeto :Sistema</td><td>:Sistema</td></tr><tr><td>Los sustantivos que saben o guardan algo</td><td>Objetos</td><td>:OrdenTrabajo, :Vehiculo (su tipo), :Tarifa (el valor por hora)</td></tr><tr><td>Los verbos</td><td>Mensajes</td><td>registrar horas, agregar horas, obtener el tipo, calcular la mano de obra</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 1 de 6</span>
+  <div class="concept-label anim">No partimos del diagrama terminado: lo armamos pieza por pieza</div>
+  <div class="concept-title anim">El actor y<br>el <span>primer objeto</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de comunicación &middot; Registrar horas trabajadas &middot; paso 1 de 6</div>
+      <svg viewBox="0 105 1060 260" style="width:100%; height:auto; display:block;"><defs><marker id="c5f1d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker><marker id="c5f1r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E31E24"/></marker></defs><circle cx="60" cy="135" r="13" fill="white" stroke="#E31E24" stroke-width="2"/><line x1="60" y1="148" x2="60" y2="190" stroke="#E31E24" stroke-width="2"/><line x1="38" y1="163" x2="82" y2="163" stroke="#E31E24" stroke-width="2"/><line x1="60" y1="190" x2="42" y2="225" stroke="#E31E24" stroke-width="2"/><line x1="60" y1="190" x2="78" y2="225" stroke="#E31E24" stroke-width="2"/><text x="60" y="245" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="15" font-weight="700" fill="#E31E24">Mecánico</text><rect x="250" y="140" width="150" height="50" rx="3" fill="white" stroke="#E31E24" stroke-width="2"/><text x="325" y="171" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#E31E24" text-decoration="underline">:Sistema</text></svg>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Actor</div>
+        <div class="voc-desc"><strong>Función:</strong> quien inicia todo. Es el rol de la historia y se dibuja igual que en casos de uso, afuera de todo.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> Mecánico.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Objeto</div>
+        <div class="voc-desc"><strong>Función:</strong> una pieza del sistema. Rectángulo con dos puntos y el nombre, subrayado: <code>:Sistema</code>.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> :Sistema, la pieza que recibe el pedido del mecánico y reparte el trabajo.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 2 de 6</span>
+  <div class="concept-label anim">Para pedir algo, primero tienen que estar conectados</div>
+  <div class="concept-title anim">Se agrega<br>el <span>enlace</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de comunicación &middot; Registrar horas trabajadas &middot; paso 2 de 6</div>
+      <svg viewBox="0 105 1060 260" style="width:100%; height:auto; display:block;"><defs><marker id="c5f2d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker><marker id="c5f2r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E31E24"/></marker></defs><circle cx="60" cy="135" r="13" fill="white" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="148" x2="60" y2="190" stroke="#1A1A1A" stroke-width="2"/><line x1="38" y1="163" x2="82" y2="163" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="190" x2="42" y2="225" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="190" x2="78" y2="225" stroke="#1A1A1A" stroke-width="2"/><text x="60" y="245" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="15" font-weight="700" fill="#1A1A1A">Mecánico</text><rect x="250" y="140" width="150" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="325" y="171" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A" text-decoration="underline">:Sistema</text><line x1="88" y1="175" x2="250" y2="175" stroke="#E31E24" stroke-width="2"/></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Enlace</div>
+        <div class="voc-desc"><strong>Función:</strong> una línea simple que dice "estos dos se pueden hablar". Sin enlace, no puede viajar un mensaje.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> la línea entre el mecánico y :Sistema.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 3 de 6</span>
+  <div class="concept-label anim">El primer pedido, con su número</div>
+  <div class="concept-title anim">El primer<br><span>mensaje</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de comunicación &middot; Registrar horas trabajadas &middot; paso 3 de 6</div>
+      <svg viewBox="0 105 1060 260" style="width:100%; height:auto; display:block;"><defs><marker id="c5f3d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker><marker id="c5f3r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E31E24"/></marker></defs><circle cx="60" cy="135" r="13" fill="white" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="148" x2="60" y2="190" stroke="#1A1A1A" stroke-width="2"/><line x1="38" y1="163" x2="82" y2="163" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="190" x2="42" y2="225" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="190" x2="78" y2="225" stroke="#1A1A1A" stroke-width="2"/><text x="60" y="245" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="15" font-weight="700" fill="#1A1A1A">Mecánico</text><rect x="250" y="140" width="150" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="325" y="171" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A" text-decoration="underline">:Sistema</text><line x1="88" y1="175" x2="250" y2="175" stroke="#1A1A1A" stroke-width="2"/><line x1="130" y1="150" x2="225" y2="150" stroke="#E31E24" stroke-width="2" marker-end="url(#c5f3r)"/><text x="95" y="128" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#E31E24">1: registrarHoras(idOrden, horas)</text></svg>
+    </div>
+    <div class="voc-grid">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Mensaje</div>
+        <div class="voc-desc"><strong>Función:</strong> una flecha corta al lado del enlace, que apunta a quien recibe el pedido. Lleva el nombre de la acción, con verbo y paréntesis.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> <code>registrarHoras(idOrden, horas)</code>: el mecánico le entrega a :Sistema la orden y las horas.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: Número de secuencia</div>
+        <div class="voc-desc"><strong>Función:</strong> el número antes de los dos puntos. Dice en qué orden ocurren los mensajes.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> el <code>1</code>: es lo primero que pasa.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 4 de 6</span>
+  <div class="concept-label anim">:Sistema reparte el trabajo</div>
+  <div class="concept-title anim">Segundo objeto,<br>segundo <span>mensaje</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de comunicación &middot; Registrar horas trabajadas &middot; paso 4 de 6</div>
+      <svg viewBox="0 105 1060 260" style="width:100%; height:auto; display:block;"><defs><marker id="c5f4d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker><marker id="c5f4r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E31E24"/></marker></defs><circle cx="60" cy="135" r="13" fill="white" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="148" x2="60" y2="190" stroke="#1A1A1A" stroke-width="2"/><line x1="38" y1="163" x2="82" y2="163" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="190" x2="42" y2="225" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="190" x2="78" y2="225" stroke="#1A1A1A" stroke-width="2"/><text x="60" y="245" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="15" font-weight="700" fill="#1A1A1A">Mecánico</text><rect x="250" y="140" width="150" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="325" y="171" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A" text-decoration="underline">:Sistema</text><line x1="88" y1="175" x2="250" y2="175" stroke="#1A1A1A" stroke-width="2"/><line x1="130" y1="150" x2="225" y2="150" stroke="#1A1A1A" stroke-width="2" marker-end="url(#c5f4d)"/><text x="95" y="128" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#1A1A1A">1: registrarHoras(idOrden, horas)</text><rect x="580" y="140" width="180" height="50" rx="3" fill="white" stroke="#E31E24" stroke-width="2"/><text x="670" y="171" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#E31E24" text-decoration="underline">:OrdenTrabajo</text><line x1="400" y1="175" x2="580" y2="175" stroke="#E31E24" stroke-width="2"/><line x1="430" y1="150" x2="550" y2="150" stroke="#E31E24" stroke-width="2" marker-end="url(#c5f4r)"/><text x="410" y="128" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#E31E24">2: agregarHoras(horas)</text></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: segundo objeto y mensaje entre objetos</div>
+        <div class="voc-desc"><strong>Función:</strong> los mensajes no solo salen del actor: un objeto también le pide cosas a otro.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> <code>2: agregarHoras(horas)</code>: :Sistema le pide a :OrdenTrabajo que sume las horas a esa orden.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 5 de 6</span>
+  <div class="concept-label anim">La orden necesita un dato que no tiene</div>
+  <div class="concept-title anim">Se agrega<br>el <span>vehículo</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de comunicación &middot; Registrar horas trabajadas &middot; paso 5 de 6</div>
+      <svg viewBox="0 105 1060 260" style="width:100%; height:auto; display:block;"><defs><marker id="c5f5d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker><marker id="c5f5r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E31E24"/></marker></defs><circle cx="60" cy="135" r="13" fill="white" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="148" x2="60" y2="190" stroke="#1A1A1A" stroke-width="2"/><line x1="38" y1="163" x2="82" y2="163" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="190" x2="42" y2="225" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="190" x2="78" y2="225" stroke="#1A1A1A" stroke-width="2"/><text x="60" y="245" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="15" font-weight="700" fill="#1A1A1A">Mecánico</text><rect x="250" y="140" width="150" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="325" y="171" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A" text-decoration="underline">:Sistema</text><line x1="88" y1="175" x2="250" y2="175" stroke="#1A1A1A" stroke-width="2"/><line x1="130" y1="150" x2="225" y2="150" stroke="#1A1A1A" stroke-width="2" marker-end="url(#c5f5d)"/><text x="95" y="128" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#1A1A1A">1: registrarHoras(idOrden, horas)</text><rect x="580" y="140" width="180" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="670" y="171" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A" text-decoration="underline">:OrdenTrabajo</text><line x1="400" y1="175" x2="580" y2="175" stroke="#1A1A1A" stroke-width="2"/><line x1="430" y1="150" x2="550" y2="150" stroke="#1A1A1A" stroke-width="2" marker-end="url(#c5f5d)"/><text x="410" y="128" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#1A1A1A">2: agregarHoras(horas)</text><rect x="520" y="300" width="140" height="50" rx="3" fill="white" stroke="#E31E24" stroke-width="2"/><text x="590" y="331" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#E31E24" text-decoration="underline">:Vehiculo</text><line x1="600" y1="190" x2="600" y2="300" stroke="#E31E24" stroke-width="2"/><line x1="585" y1="215" x2="585" y2="275" stroke="#E31E24" stroke-width="2" marker-end="url(#c5f5r)"/><text x="575" y="250" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#E31E24">3: obtenerTipo()</text></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: tercer objeto</div>
+        <div class="voc-desc"><strong>Función:</strong> un objeto puede pedir un dato que no tiene. Por eso existe el enlace hacia quien sí lo tiene.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> <code>3: obtenerTipo()</code>: la orden le pregunta al vehículo si es auto, moto o camión.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 6 de 6</span>
+  <div class="concept-label anim">El último pedido cierra la historia</div>
+  <div class="concept-title anim">Diagrama<br><span>completo</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de comunicación &middot; Registrar horas trabajadas &middot; paso 6 de 6</div>
+      <svg viewBox="0 105 1060 260" style="width:100%; height:auto; display:block;"><defs><marker id="c5f6d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker><marker id="c5f6r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E31E24"/></marker></defs><circle cx="60" cy="135" r="13" fill="white" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="148" x2="60" y2="190" stroke="#1A1A1A" stroke-width="2"/><line x1="38" y1="163" x2="82" y2="163" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="190" x2="42" y2="225" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="190" x2="78" y2="225" stroke="#1A1A1A" stroke-width="2"/><text x="60" y="245" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="15" font-weight="700" fill="#1A1A1A">Mecánico</text><rect x="250" y="140" width="150" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="325" y="171" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A" text-decoration="underline">:Sistema</text><line x1="88" y1="175" x2="250" y2="175" stroke="#1A1A1A" stroke-width="2"/><line x1="130" y1="150" x2="225" y2="150" stroke="#1A1A1A" stroke-width="2" marker-end="url(#c5f6d)"/><text x="95" y="128" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#1A1A1A">1: registrarHoras(idOrden, horas)</text><rect x="580" y="140" width="180" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="670" y="171" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A" text-decoration="underline">:OrdenTrabajo</text><line x1="400" y1="175" x2="580" y2="175" stroke="#1A1A1A" stroke-width="2"/><line x1="430" y1="150" x2="550" y2="150" stroke="#1A1A1A" stroke-width="2" marker-end="url(#c5f6d)"/><text x="410" y="128" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#1A1A1A">2: agregarHoras(horas)</text><rect x="520" y="300" width="140" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="590" y="331" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A" text-decoration="underline">:Vehiculo</text><line x1="600" y1="190" x2="600" y2="300" stroke="#1A1A1A" stroke-width="2"/><line x1="585" y1="215" x2="585" y2="275" stroke="#1A1A1A" stroke-width="2" marker-end="url(#c5f6d)"/><text x="575" y="250" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#1A1A1A">3: obtenerTipo()</text><rect x="720" y="300" width="140" height="50" rx="3" fill="white" stroke="#E31E24" stroke-width="2"/><text x="790" y="331" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#E31E24" text-decoration="underline">:Tarifa</text><line x1="740" y1="190" x2="740" y2="300" stroke="#E31E24" stroke-width="2"/><line x1="755" y1="215" x2="755" y2="275" stroke="#E31E24" stroke-width="2" marker-end="url(#c5f6r)"/><text x="765" y="250" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#E31E24">4: calcularManoObra(tipo, horas)</text></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Elemento agregado: el include, convertido en mensaje</div>
+        <div class="voc-desc"><strong>Función:</strong> lo que en casos de uso era un include aquí es un mensaje que ocurre siempre, sin condición.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> <code>4: calcularManoObra(tipo, horas)</code>: el include "Calcular mano de obra" de la sesión 2.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Lectura</span>
+  <div class="concept-label anim">Así se lee, mensaje por mensaje</div>
+  <div class="concept-title anim">Cómo se <span>lee</span></div>
+  <div class="concept-body anim">
+    <div class="guion">
+      <div class="guion-item"><div class="guion-n">1</div><div><strong>Mecánico &rarr; :Sistema</strong>: le entrega la orden y las horas. <code>registrarHoras(idOrden, horas)</code></div></div>
+      <div class="guion-item"><div class="guion-n">2</div><div><strong>:Sistema &rarr; :OrdenTrabajo</strong>: le pide que sume las horas. <code>agregarHoras(horas)</code></div></div>
+      <div class="guion-item"><div class="guion-n">3</div><div><strong>:OrdenTrabajo &rarr; :Vehiculo</strong>: le pregunta su tipo. <code>obtenerTipo()</code></div></div>
+      <div class="guion-item"><div class="guion-n">4</div><div><strong>:OrdenTrabajo &rarr; :Tarifa</strong>: le pide el valor de la mano de obra con ese tipo y esas horas. <code>calcularManoObra(tipo, horas)</code></div></div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La lectura completa</strong>
+        <p>El mecánico registra sus horas, la orden las suma, averigua qué tipo de vehículo es y la tarifa calcula cuánto cobrar. Una historia, un actor, cuatro objetos, cuatro mensajes.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Reglas</span>
+  <div class="concept-label anim">Lo que se revisa en todo diagrama de comunicación</div>
+  <div class="concept-title anim">Las reglas<br>del <span>diagrama</span></div>
+  <div class="concept-body anim">
+    <div class="pasos">
+      <div class="paso"><div class="paso-n">1</div><div><div class="paso-t">Objeto con dos puntos y subrayado</div><div class="paso-d"><code>:OrdenTrabajo</code>, no "OrdenTrabajo" ni "la orden". Nombre en singular, sin espacios.</div></div></div>
+      <div class="paso"><div class="paso-n">2</div><div><div class="paso-t">Todo mensaje lleva número</div><div class="paso-d">1, 2, 3... sin saltos ni repetidos. El número dice el orden.</div></div></div>
+      <div class="paso"><div class="paso-n">3</div><div><div class="paso-t">Todo mensaje es un verbo con paréntesis</div><div class="paso-d"><code>obtenerTipo()</code>, no "tipo". Entre paréntesis, los datos que viajan, si los hay.</div></div></div>
+      <div class="paso"><div class="paso-n">4</div><div><div class="paso-t">Un mensaje solo viaja por un enlace</div><div class="paso-d">Si dos objetos no están unidos por una línea, no se pueden enviar mensajes.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Un compañero dibujó la historia "Registrar vehículo"</div>
+  <div class="concept-title anim">Encuentra los<br><span>errores</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama con errores &middot; no copiar</div>
+      <svg viewBox="0 70 1000 150" style="width:100%; height:auto; display:block;"><defs><marker id="errd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker><marker id="errr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E31E24"/></marker></defs><circle cx="60" cy="95" r="13" fill="white" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="108" x2="60" y2="150" stroke="#1A1A1A" stroke-width="2"/><line x1="38" y1="123" x2="82" y2="123" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="150" x2="42" y2="185" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="150" x2="78" y2="185" stroke="#1A1A1A" stroke-width="2"/><text x="60" y="205" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="15" font-weight="700" fill="#1A1A1A">Recepcionista</text><rect x="230" y="100" width="150" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="305" y="131" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A" text-decoration="underline">:Sistema</text><rect x="510" y="100" width="150" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="585" y="131" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A">Vehiculo</text><rect x="800" y="100" width="160" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="880" y="131" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A" text-decoration="underline">:BaseDatos</text><line x1="88" y1="135" x2="230" y2="135" stroke="#1A1A1A" stroke-width="2"/><line x1="380" y1="135" x2="510" y2="135" stroke="#1A1A1A" stroke-width="2"/><line x1="115" y1="110" x2="205" y2="110" stroke="#1A1A1A" stroke-width="2" marker-end="url(#errd)"/><text x="100" y="88" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#1A1A1A">1: vehiculo</text><line x1="405" y1="110" x2="490" y2="110" stroke="#1A1A1A" stroke-width="2" marker-end="url(#errd)"/><text x="395" y="88" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#1A1A1A">crear(datos)</text><line x1="690" y1="110" x2="780" y2="110" stroke="#1A1A1A" stroke-width="2" marker-end="url(#errd)"/><text x="680" y="88" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#1A1A1A">3: guardar()</text></svg>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; en parejas</div>
+      <div class="act-t">Hay cuatro errores, uno por regla. Para cada uno, digan qué regla rompe y cómo se corrige.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Resolución</span>
+  <div class="concept-label anim">Los cuatro errores, uno por regla</div>
+  <div class="concept-title anim">Error y<br><span>corrección</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Error</th><th>Regla que rompe</th><th>Corrección</th></tr></thead>
+      <tbody><tr><td><code>Vehiculo</code> sin dos puntos ni subrayado</td><td>1: así se nombra un objeto</td><td><code>:Vehiculo</code>, subrayado</td></tr><tr><td><code>crear(datos)</code> sin número</td><td>2: todo mensaje lleva número</td><td><code>2: crear(datos)</code></td></tr><tr><td><code>1: vehiculo</code> es un sustantivo</td><td>3: el mensaje es un verbo</td><td><code>1: registrarVehiculo(datos)</code></td></tr><tr><td><code>3: guardar()</code> sin línea entre :Vehiculo y :BaseDatos</td><td>4: el mensaje necesita enlace</td><td>Dibujar el enlace entre los dos objetos</td></tr></tbody>
+    </table>
+    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Guarda esta tabla</strong>
+        <p>Antes de exportar tu diagrama, revísalo con estas cuatro reglas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 04</span>
+  <div class="sep-num anim">04 &middot; Práctica guiada &middot; 30 min</div>
+  <div class="sep-title anim">Tu primera<br><span>vista</span></div>
+  <p class="sep-desc anim">
+    En draw.io, en el mismo archivo de tu ES1, con tus historias de usuario al lado.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Paso a paso &middot; draw.io</span>
+  <div class="concept-label anim">10 min &middot; el profe lo hace en vivo y tú lo sigues en tu computador</div>
+  <div class="concept-title anim">Las piezas<br>en <span>draw.io</span></div>
+  <div class="concept-body anim">
+    <div class="pasos">
+      <div class="paso"><div class="paso-n">1</div><div><div class="paso-t">Abre tu .drawio de la ES1</div><div class="paso-d">Abajo, junto a las pestañas de página, haz clic en "+". Doble clic en la pestaña nueva y nómbrala "Vista Lógica".</div></div></div>
+      <div class="paso"><div class="paso-n">2</div><div><div class="paso-t">Agrega el actor</div><div class="paso-d">Escribe "actor" en el buscador de formas y arrástralo a la izquierda. Doble clic para ponerle el rol de tu historia.</div></div></div>
+      <div class="paso"><div class="paso-n">3</div><div><div class="paso-t">Agrega los objetos</div><div class="paso-d">Un rectángulo por objeto. Doble clic y escribe <code>:Nombre</code>. Selecciona el texto y subráyalo con Ctrl+U (Cmd+U en Mac).</div></div></div>
+      <div class="paso"><div class="paso-n">4</div><div><div class="paso-t">Une con enlaces</div><div class="paso-d">Pasa el mouse sobre una forma y arrastra la flecha azul a la otra. En el panel derecho, deja las dos puntas en "ninguna".</div></div></div>
+      <div class="paso"><div class="paso-n">5</div><div><div class="paso-t">Escribe el mensaje</div><div class="paso-d">Doble clic en un espacio vacío, elige Texto y escribe <code>1: verbo(datos)</code>. Ponlo al lado del enlace.</div></div></div>
+      <div class="paso"><div class="paso-n">6</div><div><div class="paso-t">Dibuja la flecha del mensaje</div><div class="paso-d">Una línea corta junto al texto, con punta solo del lado de quien recibe el pedido.</div></div></div>
+      <div class="paso"><div class="paso-n">7</div><div><div class="paso-t">Revisa la numeración</div><div class="paso-d">1, 2, 3... en el orden en que ocurren. Revisa las cuatro reglas.</div></div></div>
+      <div class="paso"><div class="paso-n">8</div><div><div class="paso-t">Guarda y exporta</div><div class="paso-d">Archivo, Guardar. Luego Exportar como, PNG, solo la página "Vista Lógica": es la imagen que va a la ES2.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Taller</span>
+  <div class="concept-label anim">Solo o en dupla, sobre tu propio negocio</div>
+  <div class="concept-title anim">De tu historia<br>al <span>diagrama</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 20 min &middot; solo o en dupla &middot; en draw.io</div>
+      <div class="act-t">Dibuja el diagrama de comunicación de una historia de usuario de tu negocio.</div>
+      <div class="act-list">
+        <div class="act-li">Elige la historia que marcaste como la más importante de tu negocio</div>
+        <div class="act-li">El actor es el rol de la historia; el primer objeto es <code>:Sistema</code></div>
+        <div class="act-li">Al menos tres objetos además del actor, sacados de los sustantivos de la historia</div>
+        <div class="act-li">Al menos tres mensajes numerados, cada uno con verbo y paréntesis</div>
+        <div class="act-li">Si tu caso de uso tenía un include, aparece como un mensaje</div>
+        <div class="act-li">Revisa con las cuatro reglas y exporta el PNG</div>
+      </div>
+      <div class="act-d">Este diagrama es una de las piezas de tu ES2.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-cierre">Checkpoint</span>
+  <div class="concept-label anim">Sin nota: revisa que te llevas esto antes de irte</div>
+  <div class="concept-title anim">Checkpoint<br>de <span>salida</span></div>
+  <div class="concept-body anim">
+    <div class="chk">
+      <div class="chk-item">
+        <div class="chk-num">1</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Puedes explicar el 4+1 en una frase</div>
+          <div class="chk-desc">"Cinco vistas del mismo sistema, cada una responde una pregunta distinta; la quinta recorre las otras cuatro con un caso concreto."</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">2</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Tus historias de usuario escritas</div>
+          <div class="chk-desc">Una por cada caso de uso que un actor inicia, con rol, acción y beneficio.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">3</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Tu diagrama de comunicación guardado en .drawio</div>
+          <div class="chk-desc">En la página "Vista Lógica", con mensajes numerados. Si no lo terminaste, lo terminas en casa: es parte de tu ES2.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CIERRE -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen de la sesión</div>
+  <div class="sep-title anim">Lo que te<br><span>llevas</span> hoy</div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">Arquitectura de software</div>
+      <div class="resumen-desc">Cómo está armado el sistema por dentro: piezas, comunicación y dónde se instala</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Paradigma 4+1</div>
+      <div class="resumen-desc">Cuatro vistas (Lógica, Desarrollo, Procesos, Física) más los Escenarios que las recorren</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Historia de usuario</div>
+      <div class="resumen-desc">Como [rol], quiero [acción], para [beneficio]. Una por caso de uso que un actor inicia</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Vista Lógica</div>
+      <div class="resumen-desc">Qué piezas tiene el sistema y cómo colaboran. Diagramas de comunicación y de clases</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Diagrama de comunicación</div>
+      <div class="resumen-desc">Actor, objetos <code>:Nombre</code> subrayados, enlaces y mensajes numerados. Uno por historia</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Tu ES2 empieza hoy</div>
+      <div class="resumen-desc">Tus historias y tu diagrama de comunicación son sus primeras piezas</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Próxima sesión (martes 24/11 &middot; 120 min)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,0.6); line-height:1.6;">
+      Vista Lógica, segunda parte: diagrama de clases &middot;
+      Taller sobre tu propio negocio
+    </div>
+  </div>
+</div>
+
+<script>
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
