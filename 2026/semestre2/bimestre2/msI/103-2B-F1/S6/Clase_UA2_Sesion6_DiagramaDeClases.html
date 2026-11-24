@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UA2 Sesión 6 - Vista Lógica: diagrama de clases</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E31E24;
+      --blue:   #C0392B;
+      --green:  #4A4A4A;
+      --orange: #8E1A1F;
+      --purple: #8E1A1F;
+      --dark:   #1A1A1A;
+      --gray:   #F4F4F4;
+      --border: #E0E0E0;
+      --text:   #1A1A1A;
+      --muted:  #666;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #F0F0F0; color: var(--text);
+      scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh;
+    }
+
+    .slide {
+      min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always;
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    /* PORTADA */
+    .slide-cover {
+      background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+      color: white; justify-content: center; padding: 80px;
+      border-bottom: 6px solid var(--red);
+    }
+    .cover-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 80px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 32px;
+    }
+    .cover-title span { color: var(--red); }
+    .cover-desc {
+      font-size: 22px; color: rgba(255,255,255,0.5);
+      max-width: 620px; line-height: 1.65; margin-bottom: 56px;
+    }
+    .cover-chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cover-chip {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 600;
+      padding: 8px 16px; border-radius: 20px;
+    }
+    .cover-chip span { color: white; }
+
+    /* SEPARADOR */
+    .slide-separator {
+      background: var(--dark); color: white;
+      justify-content: center; padding: 80px; border-bottom: 6px solid var(--red);
+    }
+    .slide-separator.sep-green  { border-color: var(--green); }
+    .slide-separator.sep-orange { border-color: var(--orange); }
+    .slide-separator.sep-blue   { border-color: var(--blue); }
+    .sep-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 16px;
+    }
+    .sep-green .sep-num { color: #AFAFAF; }
+    .sep-orange .sep-num { color: #D98A8E; }
+    .sep-blue .sep-num { color: #E08B80; }
+    .sep-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 72px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.92; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .sep-title span { color: var(--red); }
+    .cover-title span, .sep-title span, .concept-title span { color: var(--red) !important; }
+    .sep-desc { font-size: 22px; color: rgba(255,255,255,0.45); max-width: 620px; line-height: 1.65; }
+
+    /* CONCEPTO */
+    .slide-concept {
+      background: white; padding: 60px 80px;
+      border-bottom: 3px solid var(--border); justify-content: center;
+    }
+    .slide-concept.blue-accent   { border-top: 6px solid var(--blue); }
+    .slide-concept.green-accent  { border-top: 6px solid var(--green); }
+    .slide-concept.orange-accent { border-top: 6px solid var(--orange); }
+    .slide-concept.red-accent    { border-top: 6px solid var(--red); }
+    .concept-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .concept-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 900; text-transform: uppercase;
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--dark); margin-bottom: 30px;
+    }
+    .concept-body { max-width: 920px; }
+    .concept-body p { font-size: 21px; line-height: 1.7; color: #333; margin-bottom: 18px; }
+    .concept-body p:last-child { margin-bottom: 0; }
+    .concept-body strong { color: var(--dark); }
+
+    /* CALLOUTS */
+    .callout {
+      border-radius: 6px; padding: 18px 22px; margin: 20px 0;
+      max-width: 920px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; }
+    .callout-content { flex: 1; }
+    .callout-content > strong {
+      display: block; font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+    }
+    .callout-content p { font-size: 18px; line-height: 1.6; margin: 0; }
+    .callout-important { background: #FFF1F2; border: 1px solid #FECDD3; }
+    .callout-important strong { color: var(--red); }
+    .callout-important p { color: #881337; }
+    .callout-tip { background: #F2F2F2; border: 1px solid #DADADA; }
+    .callout-tip strong { color: var(--green); }
+    .callout-tip p { color: #333333; }
+    .callout-info { background: #FBEEEC; border: 1px solid #ECCFCB; }
+    .callout-info strong { color: var(--blue); }
+    .callout-info p { color: #7A1E16; }
+    .callout-warn { background: #F7EFEF; border: 1px solid #E2CACA; }
+    .callout-warn strong { color: var(--orange); }
+    .callout-warn p { color: #5A1418; }
+
+    /* INDICE */
+    .index-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 32px; max-width: 720px; }
+    .index-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 18px 20px;
+    }
+    .index-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 32px; font-weight: 900; color: var(--red); line-height: 1; margin-bottom: 8px;
+    }
+    .index-name { font-size: 16px; font-weight: 600; color: white; line-height: 1.4; }
+    .index-type { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* BADGE */
+    .slide-badge {
+      position: absolute; top: 24px; right: 32px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .badge-concepto { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .badge-pasos    { background: #F2F2F2; color: var(--green); border: 1px solid #DADADA; }
+    .badge-practica { background: #F7E3E3; color: #8E1A1F; border: 1px solid #E2CACA; }
+    .badge-cierre   { background: rgba(227,30,36,0.10); color: var(--red); border: 1px solid rgba(227,30,36,0.3); }
+
+    /* RESUMEN */
+    .resumen-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 28px; max-width: 880px; }
+    .resumen-item {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .resumen-cmd { font-size: 16px; color: white; margin-bottom: 6px; font-weight: 700; }
+    .resumen-desc { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* TWO COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 920px; margin-top: 20px; }
+    .col-card { background: #F8F8F8; border: 1px solid #E0E0E0; border-radius: 8px; padding: 20px 22px; }
+    .col-card.bad  { border-left: 4px solid var(--red); }
+    .col-card.good { border-left: 4px solid var(--green); }
+    .col-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 12px;
+    }
+    .col-card p { font-size: 17px; line-height: 1.6; color: #444; }
+    .col-card p + p { margin-top: 8px; }
+    .col-card ul { margin-left: 18px; }
+    .col-card li { font-size: 17px; line-height: 1.7; color: #444; margin-bottom: 4px; }
+
+    /* TABLA */
+    .tbl { width: 100%; max-width: 920px; border-collapse: collapse; margin-top: 18px; font-size: 17px; }
+    .tbl th {
+      background: var(--dark); color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 10px 16px; text-align: left;
+    }
+    .tbl td { padding: 12px 16px; border-bottom: 1px solid #E0E0E0; vertical-align: middle; line-height: 1.45; }
+    .tbl tr:last-child td { border-bottom: none; }
+    .tbl tr:nth-child(even) td { background: #F8F8F8; }
+
+    /* VOCABULARIO */
+    .voc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; max-width: 920px; margin-top: 22px; }
+    .voc-card {
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 18px 22px;
+    }
+    .voc-nombre {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 900; text-transform: uppercase;
+      color: var(--dark); margin-bottom: 4px;
+    }
+    .voc-desc { font-size: 16px; color: #555; line-height: 1.55; }
+
+    /* DEFINICION */
+    .definicion {
+      background: #FFF6F6; border: 2px solid #F3C9CB; border-left: 6px solid var(--red);
+      border-radius: 8px; padding: 22px 26px; margin: 16px 0; max-width: 920px;
+    }
+    .def-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .def-txt { font-size: 23px; line-height: 1.55; color: var(--dark); font-weight: 500; }
+    .def-txt strong { font-weight: 800; }
+    .def-ej { font-size: 18px; line-height: 1.55; color: #666; margin-top: 12px; font-style: italic; }
+
+    /* DIAGRAMA */
+    .diagrama {
+      background: white; border: 1px solid #E0E0E0; border-radius: 8px;
+      padding: 16px; margin: 18px 0; max-width: 920px;
+    }
+    .diagrama-cap {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 8px; text-align: center;
+    }
+
+    /* ACTIVIDAD */
+    .actividad {
+      background: #1A1A1A; border-radius: 8px; padding: 22px 26px;
+      margin: 16px 0; max-width: 950px;
+    }
+    .act-k {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .act-t { font-size: 22px; line-height: 1.5; color: white; font-weight: 600; }
+    .act-d { font-size: 17px; line-height: 1.55; color: rgba(255,255,255,0.55); margin-top: 8px; }
+    .act-list { margin-top: 12px; }
+    .act-li {
+      font-size: 18px; color: rgba(255,255,255,0.85); line-height: 1.7;
+      padding-left: 22px; position: relative;
+    }
+    .act-li::before { content: "\2192"; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+    /* CHECKPOINT */
+    .chk { max-width: 920px; margin-top: 18px; }
+    .chk-item {
+      display: flex; gap: 18px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-left: 4px solid var(--red);
+      border-radius: 8px; padding: 18px 22px; margin-bottom: 14px;
+    }
+    .chk-num {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 900;
+      color: var(--red); line-height: 1; flex-shrink: 0; width: 40px;
+    }
+    .chk-cont { flex: 1; }
+    .chk-tit { font-size: 20px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .chk-desc { font-size: 17px; color: #555; line-height: 1.5; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: #EBEBEB; padding: 2px 7px; border-radius: 3px; color: #C0392B;
+    }
+
+    #progress {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--red);
+      width: 0%; z-index: 9999; transition: width 0.35s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+    }
+    .anim {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .anim { opacity: 1; transform: none; }
+    .slide.visible .anim:nth-child(1) { transition-delay:   0ms; }
+    .slide.visible .anim:nth-child(2) { transition-delay: 100ms; }
+    .slide.visible .anim:nth-child(3) { transition-delay: 210ms; }
+    .slide.visible .anim:nth-child(4) { transition-delay: 330ms; }
+    .slide.visible .anim:nth-child(5) { transition-delay: 450ms; }
+    .slide.visible .anim:nth-child(6) { transition-delay: 560ms; }
+
+    /* AGREGADOS S2 */
+    .voc-grid.tres { grid-template-columns: repeat(3, 1fr); }
+    .pasos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; max-width: 920px; margin-top: 18px; }
+    .paso {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: #F8F8F8; border: 1px solid #E0E0E0; border-radius: 8px; padding: 14px 18px;
+    }
+    .paso-n {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 30px; font-weight: 900;
+      color: var(--red); line-height: 1; flex-shrink: 0; width: 34px;
+    }
+    .paso-t { font-size: 17px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+    .paso-d { font-size: 15px; color: #555; line-height: 1.5; }
+    .tag {
+      display: inline-block; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 9px; border-radius: 12px;
+      background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; white-space: nowrap;
+    }
+    .tag.gris { background: #F2F2F2; color: #4A4A4A; border-color: #DADADA; }
+  
+    /* AGREGADOS S3 */
+    .datos { border-collapse: collapse; margin-top: 14px; font-size: 16px; max-width: 920px; }
+    .datos th { background: #1A1A1A; color: white; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 8px 14px; text-align: left; }
+    .datos td { font-family: 'JetBrains Mono', monospace; font-size: 14px; padding: 8px 14px; border: 1px solid #E0E0E0; }
+    .datos tr.marca td { background: #FFF6F6; }
+  
+    /* AGREGADOS S5 */
+    .formula { font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 800; color: var(--dark); line-height: 1.25; margin: 10px 0 6px; }
+    .formula span { color: var(--red); }
+    .guion { max-width: 920px; margin-top: 14px; }
+    .guion-item { display: flex; gap: 16px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid #E0E0E0; font-size: 18px; line-height: 1.5; color: #333; }
+    .guion-item:last-child { border-bottom: none; }
+    .guion-n { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 900; color: var(--red); width: 30px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="slide slide-cover">
+  <div class="cover-eyebrow anim">Modelamiento de Soluciones Informáticas &middot; TI3V25 &middot; Unidad 2 &middot; Sesión 6</div>
+  <div class="cover-title anim">Diagrama<br>de <span>clases</span></div>
+  <p class="cover-desc anim">
+    La segunda parte de la Vista Lógica. Las piezas que se enviaban mensajes la sesión pasada
+    ahora muestran qué datos guardan, qué saben hacer y cómo se relacionan.
+  </p>
+  <div class="cover-chips anim">
+    <span class="cover-chip">Sección <span>103-2B-F1</span></span>
+    <span class="cover-chip">Martes 24 de noviembre 2026</span>
+    <span class="cover-chip">18:30 a 20:30 &middot; 120 minutos</span>
+    <span class="cover-chip">INACAP Puente Alto</span>
+  </div>
+</div>
+
+<div class="slide slide-separator">
+  <span class="slide-badge badge-concepto">Agenda</span>
+  <div class="sep-num anim">Antes de empezar</div>
+  <div class="sep-title anim">Lo que vemos<br><span>hoy</span></div>
+  <div class="index-grid anim">
+    <div class="index-item">
+      <div class="index-num">00</div>
+      <div class="index-name">De la comunicación a las clases</div>
+      <div class="index-type">Repaso &middot; 5 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-name">Clase y objeto</div>
+      <div class="index-type">Concepto + actividad &middot; 15 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-name">Las tres partes de una clase</div>
+      <div class="index-type">Concepto + demo + actividad &middot; 25 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-name">Relaciones entre clases y diagrama completo</div>
+      <div class="index-type">Concepto + demo + actividades &middot; 40 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-name">Taller en draw.io: tu diagrama de clases</div>
+      <div class="index-type">Práctica guiada &middot; 30 min</div>
+    </div>
+    <div class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-name">Checkpoint y cierre</div>
+      <div class="index-type">Salida &middot; 5 min</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 00</span>
+  <div class="sep-num anim">00 &middot; Repaso &middot; 5 min</div>
+  <div class="sep-title anim">De la comunicación<br>a las <span>clases</span></div>
+  <p class="sep-desc anim">
+    La Vista Lógica tiene dos diagramas. El primero ya lo dibujaste; hoy sale el segundo, del mismo material.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Repaso &middot; sesión 5</span>
+  <div class="concept-label anim">El diagrama de comunicación de "Registrar horas trabajadas"</div>
+  <div class="concept-title anim">Lo que ya<br><span>dibujaste</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de comunicación &middot; sesión 5</div>
+      <svg viewBox="0 105 1060 260" style="width:100%; height:auto; display:block;"><defs><marker id="c6cld" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker><marker id="c6clr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker></defs><circle cx="60" cy="135" r="13" fill="white" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="148" x2="60" y2="190" stroke="#1A1A1A" stroke-width="2"/><line x1="38" y1="163" x2="82" y2="163" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="190" x2="42" y2="225" stroke="#1A1A1A" stroke-width="2"/><line x1="60" y1="190" x2="78" y2="225" stroke="#1A1A1A" stroke-width="2"/><text x="60" y="245" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="15" font-weight="700" fill="#1A1A1A">Mecánico</text><rect x="250" y="140" width="150" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="325" y="171" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A" text-decoration="underline">:Sistema</text><line x1="88" y1="175" x2="250" y2="175" stroke="#1A1A1A" stroke-width="2"/><line x1="130" y1="150" x2="225" y2="150" stroke="#1A1A1A" stroke-width="2" marker-end="url(#c6cld)"/><text x="95" y="128" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#1A1A1A">1: registrarHoras(idOrden, horas)</text><rect x="580" y="140" width="180" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="670" y="171" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A" text-decoration="underline">:OrdenTrabajo</text><line x1="400" y1="175" x2="580" y2="175" stroke="#1A1A1A" stroke-width="2"/><line x1="430" y1="150" x2="550" y2="150" stroke="#1A1A1A" stroke-width="2" marker-end="url(#c6cld)"/><text x="410" y="128" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#1A1A1A">2: agregarHoras(horas)</text><rect x="520" y="300" width="140" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="590" y="331" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A" text-decoration="underline">:Vehiculo</text><line x1="600" y1="190" x2="600" y2="300" stroke="#1A1A1A" stroke-width="2"/><line x1="585" y1="215" x2="585" y2="275" stroke="#1A1A1A" stroke-width="2" marker-end="url(#c6cld)"/><text x="575" y="250" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#1A1A1A">3: obtenerTipo()</text><rect x="720" y="300" width="140" height="50" rx="3" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="790" y="331" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="600" fill="#1A1A1A" text-decoration="underline">:Tarifa</text><line x1="740" y1="190" x2="740" y2="300" stroke="#1A1A1A" stroke-width="2"/><line x1="755" y1="215" x2="755" y2="275" stroke="#1A1A1A" stroke-width="2" marker-end="url(#c6clr)"/><text x="765" y="250" text-anchor="start" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="600" fill="#1A1A1A">4: calcularManoObra(tipo, horas)</text></svg>
+    </div>
+    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Lo que ese diagrama no dice</strong>
+        <p>Dice qué se piden las piezas en una historia. No dice qué datos guarda cada una (¿qué sabe una orden de trabajo?), ni cómo se relacionan siempre, en todas las historias. Eso lo responde el diagrama de clases.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Las dos partes de la Vista Lógica</span>
+  <div class="concept-label anim">Mismas piezas, otra pregunta</div>
+  <div class="concept-title anim">Comunicación<br>y <span>clases</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th></th><th>Diagrama de comunicación</th><th>Diagrama de clases</th></tr></thead>
+      <tbody><tr><td>Pregunta</td><td>¿Qué se piden las piezas para cumplir una historia?</td><td>¿Qué datos guarda y qué sabe hacer cada pieza, y cómo se relacionan?</td></tr><tr><td>Alcance</td><td>Una historia de usuario</td><td>Todo el sistema</td></tr><tr><td>Cuándo</td><td>Sesión 5</td><td><span class='tag'>Hoy</span></td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-separator ">
+  <span class="slide-badge badge-concepto">Bloque 01</span>
+  <div class="sep-num anim">01 &middot; Concepto + actividad &middot; 15 min</div>
+  <div class="sep-title anim">Clase y<br><span>objeto</span></div>
+  <p class="sep-desc anim">
+    Por qué en la sesión 5 escribiste :OrdenTrabajo con dos puntos adelante.
+  </p>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-concepto">Definición</span>
+  <div class="concept-label anim">El molde y lo que sale del molde</div>
+  <div class="concept-title anim">Clase y<br><span>objeto</span></div>
+  <div class="concept-body anim">
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Clase</div>
+        <div class="voc-desc"><strong>Función:</strong> el molde: describe qué datos tiene y qué sabe hacer un tipo de cosa del sistema. Se escribe sin dos puntos, con mayúscula inicial.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> OrdenTrabajo: toda orden tiene número, fecha y horas, y sabe sumar horas y calcular su total.</div>
+      </div>
+      <div class="voc-card">
+        <div class="voc-nombre">Objeto</div>
+        <div class="voc-desc"><strong>Función:</strong> una cosa concreta hecha con ese molde, con sus propios valores. En el diagrama de comunicación se escribe :NombreDeLaClase.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> :OrdenTrabajo es una orden concreta, por ejemplo la 1520 del 10 de noviembre con 2,5 horas.</div>
+      </div>
+    </div>    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Los dos puntos</strong>
+        <p>:OrdenTrabajo se lee "un objeto de la clase OrdenTrabajo". Hoy dibujas el molde, así que se escribe OrdenTrabajo, sin dos puntos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Predecir antes de aprender</div>
+  <div class="concept-title anim">¿Clase u<br><span>objeto</span>?</div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 4 min &middot; en parejas &middot; en un archivo de texto</div>
+      <div class="act-t">Clasifiquen cada una: ¿es una clase (un molde) o un objeto (una cosa concreta)?</div>
+      <div class="act-list">
+        <div class="act-li">Vehiculo</div>
+        <div class="act-li">El auto patente GHTR-45</div>
+        <div class="act-li">Mecanico</div>
+        <div class="act-li">Juan, el mecánico del turno de la tarde</div>
+        <div class="act-li">La orden 1520</div>
+        <div class="act-li">Tarifa</div>
+      </div>
+      <div class="act-d">Pista: si tiene valores propios que lo distinguen de los demás, es un objeto.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Resolución</span>
+  <div class="concept-label anim">Molde o cosa concreta</div>
+  <div class="concept-title anim">Las <span>respuestas</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Palabra</th><th>Es</th><th>Por qué</th></tr></thead>
+      <tbody><tr><td>Vehiculo</td><td>Clase</td><td>Describe a todos los vehículos</td></tr><tr><td>El auto GHTR-45</td><td>Objeto</td><td>Un vehículo concreto, con su patente</td></tr><tr><td>Mecanico</td><td>Clase</td><td>Describe a todos los mecánicos</td></tr><tr><td>Juan</td><td>Objeto</td><td>Un mecánico concreto</td></tr><tr><td>La orden 1520</td><td>Objeto</td><td>Una orden concreta, con su número</td></tr><tr><td>Tarifa</td><td>Clase</td><td>Describe cómo se cobra, para cualquier tipo de vehículo</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-separator sep-blue">
+  <span class="slide-badge badge-concepto">Bloque 02</span>
+  <div class="sep-num anim">02 &middot; Concepto + demo + actividad &middot; 25 min</div>
+  <div class="sep-title anim">Las tres partes<br>de una <span>clase</span></div>
+  <p class="sep-desc anim">
+    Una caja dividida en tres, siempre en el mismo orden: nombre, datos y acciones.
+  </p>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 1 de 3</span>
+  <div class="concept-label anim">No partimos de la caja terminada</div>
+  <div class="concept-title anim">Primero, el <span>nombre</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Anatomía de una clase &middot; paso 1 de 3</div>
+      <svg viewBox="0 0 1060 68" style="width:100%; height:auto; display:block;"><rect x="330" y="20" width="400" height="28" fill="white" stroke="#E31E24" stroke-width="2"/><text x="530" y="39" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="17" font-weight="700" fill="#E31E24">OrdenTrabajo</text></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Compartimento agregado: Nombre</div>
+        <div class="voc-desc"><strong>Función:</strong> identifica la clase. Un sustantivo en singular, con mayúscula inicial y sin espacios.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> OrdenTrabajo, no "Ordenes" ni "orden de trabajo".</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 2 de 3</span>
+  <div class="concept-label anim">Lo que guarda cada orden</div>
+  <div class="concept-title anim">Se agregan los<br><span>atributos</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Anatomía de una clase &middot; paso 2 de 3</div>
+      <svg viewBox="0 0 1060 134" style="width:100%; height:auto; display:block;"><rect x="330" y="20" width="400" height="94" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="530" y="39" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="17" font-weight="700" fill="#1A1A1A">OrdenTrabajo</text><line x1="330" y1="48" x2="730" y2="48" stroke="#1A1A1A" stroke-width="1.5"/><text x="338" y="67" font-family="'JetBrains Mono',monospace" font-size="15" fill="#E31E24">- numero : Entero</text><text x="338" y="85" font-family="'JetBrains Mono',monospace" font-size="15" fill="#E31E24">- fecha : Fecha</text><text x="338" y="103" font-family="'JetBrains Mono',monospace" font-size="15" fill="#E31E24">- horas : Decimal</text></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Compartimento agregado: Atributos</div>
+        <div class="voc-desc"><strong>Función:</strong> los datos que guarda cada objeto de la clase. Cada uno con nombre, dos puntos y tipo: <code>nombre : Tipo</code>. El - adelante dice que es privado.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> numero : Entero, fecha : Fecha, horas : Decimal. Son los datos que tiene toda orden.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 3 de 3</span>
+  <div class="concept-label anim">Lo que sabe hacer cada orden</div>
+  <div class="concept-title anim">Se agregan los<br><span>métodos</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Anatomía de una clase &middot; paso 3 de 3</div>
+      <svg viewBox="0 0 1060 182" style="width:100%; height:auto; display:block;"><rect x="330" y="20" width="400" height="142" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="530" y="39" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="17" font-weight="700" fill="#1A1A1A">OrdenTrabajo</text><line x1="330" y1="48" x2="730" y2="48" stroke="#1A1A1A" stroke-width="1.5"/><text x="338" y="67" font-family="'JetBrains Mono',monospace" font-size="15" fill="#1A1A1A">- numero : Entero</text><text x="338" y="85" font-family="'JetBrains Mono',monospace" font-size="15" fill="#1A1A1A">- fecha : Fecha</text><text x="338" y="103" font-family="'JetBrains Mono',monospace" font-size="15" fill="#1A1A1A">- horas : Decimal</text><line x1="330" y1="114" x2="730" y2="114" stroke="#1A1A1A" stroke-width="1.5"/><text x="338" y="133" font-family="'JetBrains Mono',monospace" font-size="15" fill="#E31E24">+ agregarHoras(horas : Decimal)</text><text x="338" y="151" font-family="'JetBrains Mono',monospace" font-size="15" fill="#E31E24">+ calcularTotal() : Decimal</text></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Compartimento agregado: Métodos</div>
+        <div class="voc-desc"><strong>Función:</strong> las acciones que sabe hacer cada objeto. Verbo, paréntesis con los datos que recibe y, si devuelve algo, dos puntos y el tipo. El + dice que es público.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> agregarHoras(horas : Decimal) es el mensaje 2 de la sesión 5. calcularTotal() : Decimal devuelve cuánto se cobra.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Visibilidad y tipos</span>
+  <div class="concept-label anim">Lo que va adelante y atrás de cada línea</div>
+  <div class="concept-title anim">+, - y los<br><span>tipos</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Símbolo</th><th>Nombre</th><th>Significa</th><th>Regla práctica</th></tr></thead>
+      <tbody><tr><td><code>-</code></td><td>Privado</td><td>Solo la propia clase lo puede tocar</td><td>Los atributos van privados: nadie de afuera cambia las horas de una orden directo</td></tr><tr><td><code>+</code></td><td>Público</td><td>Cualquier otra clase lo puede usar</td><td>Los métodos van públicos: son la forma de pedirle algo a la clase</td></tr></tbody>
+    </table>    <table class="tbl">
+      <thead><tr><th>Tipo</th><th>Qué guarda</th><th>Ejemplo</th></tr></thead>
+      <tbody><tr><td>Texto</td><td>Letras, o números con los que no se calcula</td><td>patente, marca</td></tr><tr><td>Entero</td><td>Números sin decimales</td><td>numero, cantidad</td></tr><tr><td>Decimal</td><td>Números con decimales</td><td>horas (2,5), valorHora</td></tr><tr><td>Fecha</td><td>Un día del calendario</td><td>fecha</td></tr><tr><td>Sí/No</td><td>Solo dos valores</td><td>pagada</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Método</span>
+  <div class="concept-label anim">Los mensajes de la sesión 5 se convierten en métodos</div>
+  <div class="concept-title anim">De mensaje<br>a <span>método</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Mensaje de la sesión 5</th><th>Lo recibe</th><th>Método en la clase</th></tr></thead>
+      <tbody><tr><td>2: agregarHoras(horas)</td><td>:OrdenTrabajo</td><td>OrdenTrabajo: <code>+ agregarHoras(horas : Decimal)</code></td></tr><tr><td>3: obtenerTipo()</td><td>:Vehiculo</td><td>Vehiculo: <code>+ obtenerTipo() : Texto</code></td></tr><tr><td>4: calcularManoObra(tipo, horas)</td><td>:Tarifa</td><td>Tarifa: <code>+ calcularManoObra(tipo : Texto, horas : Decimal) : Decimal</code></td></tr></tbody>
+    </table>    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>La regla</strong>
+        <p>Cada mensaje que recibe un objeto es un método de su clase. El que envía no gana un método: el que recibe sí.</p>
+      </div>
+    </div>    <div class="callout callout-info anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>¿Y :Sistema?</strong>
+        <p>Coordina la historia, pero no guarda datos del negocio. En el diagrama de clases dibujamos las clases del negocio: órdenes, vehículos, tarifas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Con lo que acabas de ver</div>
+  <div class="concept-title anim">¿Atributo o<br><span>método</span>?</div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; en parejas &middot; en un archivo de texto</div>
+      <div class="act-t">Para cada palabra, decidan si es atributo o método de su clase, y escríbanla completa: con -, tipo y paréntesis donde corresponda.</div>
+      <div class="act-list">
+        <div class="act-li">Vehiculo: patente</div>
+        <div class="act-li">Vehiculo: obtenerTipo</div>
+        <div class="act-li">Tarifa: valorHora</div>
+        <div class="act-li">LineaRepuesto: cantidad</div>
+        <div class="act-li">LineaRepuesto: subtotal</div>
+        <div class="act-li">OrdenTrabajo: pagada</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-concepto">Resolución</span>
+  <div class="concept-label anim">Dato o acción</div>
+  <div class="concept-title anim">Las <span>respuestas</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Palabra</th><th>Es</th><th>Escrito completo</th></tr></thead>
+      <tbody><tr><td>patente</td><td>Atributo</td><td><code>- patente : Texto</code></td></tr><tr><td>obtenerTipo</td><td>Método</td><td><code>+ obtenerTipo() : Texto</code></td></tr><tr><td>valorHora</td><td>Atributo</td><td><code>- valorHora : Decimal</code></td></tr><tr><td>cantidad</td><td>Atributo</td><td><code>- cantidad : Entero</code></td></tr><tr><td>subtotal</td><td>Método</td><td><code>+ subtotal() : Decimal</code>: calcula cantidad por precio</td></tr><tr><td>pagada</td><td>Atributo</td><td><code>- pagada : Sí/No</code></td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="slide slide-separator sep-green">
+  <span class="slide-badge badge-concepto">Bloque 03</span>
+  <div class="sep-num anim">03 &middot; Concepto + demo + actividades &middot; 40 min</div>
+  <div class="sep-title anim">Relaciones entre<br><span>clases</span></div>
+  <p class="sep-desc anim">
+    Cuatro formas de relacionarse, cada una con su símbolo. Una por una, y después el diagrama completo del taller.
+  </p>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Relación 1 de 4</span>
+  <div class="concept-label anim">Una conoce a la otra</div>
+  <div class="concept-title anim"><span>Asociación</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Asociación &middot; símbolo</div>
+      <svg viewBox="0 15 780 75" style="width:100%; height:auto; display:block;"><rect x="40" y="30" width="220" height="28" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="150" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="700" fill="#1A1A1A">Mecanico</text><rect x="520" y="30" width="220" height="28" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="630" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="700" fill="#1A1A1A">OrdenTrabajo</text><polyline points="260,44 520,44" fill="none" stroke="#1A1A1A" stroke-width="2"/><text x="268" y="36" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="800" fill="#E31E24">1</text><text x="512" y="45" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="26" font-weight="800" fill="#E31E24">*</text></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Asociación</div>
+        <div class="voc-desc"><strong>Función:</strong> dos clases están vinculadas: una conoce o usa a la otra, y ninguna depende de la otra para existir. Línea simple.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> Mecanico y OrdenTrabajo: un mecánico atiende muchas órdenes. Si se borra una orden, el mecánico sigue existiendo.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Relación 2 de 4</span>
+  <div class="concept-label anim">Un "tiene" que se puede separar</div>
+  <div class="concept-title anim"><span>Agregación</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Agregación &middot; símbolo</div>
+      <svg viewBox="0 15 780 75" style="width:100%; height:auto; display:block;"><rect x="40" y="30" width="220" height="28" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="150" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="700" fill="#1A1A1A">Taller</text><rect x="520" y="30" width="220" height="28" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="630" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="700" fill="#1A1A1A">Mecanico</text><polygon points="260,44 272,36 284,44 272,52" fill="white" stroke="#1A1A1A" stroke-width="2"/><polyline points="284,44 520,44" fill="none" stroke="#1A1A1A" stroke-width="2"/><text x="292" y="34" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="800" fill="#E31E24">1</text><text x="512" y="45" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="26" font-weight="800" fill="#E31E24">*</text></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Agregación</div>
+        <div class="voc-desc"><strong>Función:</strong> un todo agrupa partes, pero las partes existen sin el todo. Rombo hueco del lado del todo.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> Taller y Mecanico: el taller tiene mecánicos. Si el taller cierra, cada mecánico sigue existiendo y puede trabajar en otro lado.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Relación 3 de 4</span>
+  <div class="concept-label anim">Un "tiene" que no se puede separar</div>
+  <div class="concept-title anim"><span>Composición</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Composición &middot; símbolo</div>
+      <svg viewBox="0 15 780 75" style="width:100%; height:auto; display:block;"><rect x="40" y="30" width="220" height="28" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="150" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="700" fill="#1A1A1A">OrdenTrabajo</text><rect x="520" y="30" width="220" height="28" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="630" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="700" fill="#1A1A1A">LineaRepuesto</text><polygon points="260,44 272,36 284,44 272,52" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="2"/><polyline points="284,44 520,44" fill="none" stroke="#1A1A1A" stroke-width="2"/><text x="292" y="34" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="800" fill="#E31E24">1</text><text x="512" y="45" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="26" font-weight="800" fill="#E31E24">*</text></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Composición</div>
+        <div class="voc-desc"><strong>Función:</strong> un todo tiene partes que no existen sin él: si se borra el todo, se borran sus partes. Rombo relleno del lado del todo.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> OrdenTrabajo y LineaRepuesto: cada línea dice cuántas unidades de un repuesto usó esa orden. Sin la orden, la línea no tiene sentido.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Relación 4 de 4</span>
+  <div class="concept-label anim">Un "es un"</div>
+  <div class="concept-title anim"><span>Herencia</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Herencia &middot; símbolo</div>
+      <svg viewBox="0 15 780 75" style="width:100%; height:auto; display:block;"><rect x="40" y="30" width="220" height="28" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="150" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="700" fill="#1A1A1A">Auto</text><rect x="520" y="30" width="220" height="28" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="630" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="700" fill="#1A1A1A">Vehiculo</text><polyline points="260,44 502,44" fill="none" stroke="#1A1A1A" stroke-width="2"/><polygon points="502,44 520,33 520,55" fill="white" stroke="#1A1A1A" stroke-width="2"/></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Herencia</div>
+        <div class="voc-desc"><strong>Función:</strong> una clase hija es un tipo especial de la clase padre: recibe sus atributos y métodos, y agrega los suyos. Triángulo hueco apuntando al padre.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> Auto y Camion heredan de Vehiculo: los dos tienen patente y marca, pero el camión además tiene ejes.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Comparación</span>
+  <div class="concept-label anim">Las cuatro, una al lado de la otra</div>
+  <div class="concept-title anim">Las cuatro<br><span>relaciones</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Relación</th><th>Símbolo</th><th>Se lee</th><th>Pregunta para decidir</th></tr></thead>
+      <tbody><tr><td>Asociación</td><td>Línea simple</td><td>"conoce a"</td><td>¿Se usan, sin que una sea parte de la otra?</td></tr><tr><td>Agregación</td><td>Rombo hueco en el todo</td><td>"tiene"</td><td>Si borro el todo, ¿la parte sigue teniendo sentido? Sí</td></tr><tr><td>Composición</td><td>Rombo relleno en el todo</td><td>"tiene, y no se separa"</td><td>Si borro el todo, ¿la parte sigue teniendo sentido? No</td></tr><tr><td>Herencia</td><td>Triángulo hueco hacia el padre</td><td>"es un"</td><td>¿Puedo decir "X es un Y"?</td></tr></tbody>
+    </table>    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Multiplicidad, en todas menos herencia</strong>
+        <p>Igual que la cardinalidad: un 1 o un * en cada extremo. * significa "muchos". Una orden tiene * líneas; una línea es de 1 orden.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">La pregunta del borrado</div>
+  <div class="concept-title anim">¿Agregación o<br><span>composición</span>?</div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 4 min &middot; en parejas</div>
+      <div class="act-t">Para cada par, decidan si es agregación o composición, y de qué lado va el rombo.</div>
+      <div class="act-list">
+        <div class="act-li">Pedido y LineaPedido</div>
+        <div class="act-li">Equipo de fútbol y Jugador</div>
+        <div class="act-li">Casa y Habitacion</div>
+        <div class="act-li">Curso y Estudiante</div>
+      </div>
+      <div class="act-d">Respuestas: composición (rombo en Pedido), agregación (rombo en Equipo), composición (rombo en Casa) y agregación (rombo en Curso). El jugador y el estudiante existen sin su equipo o su curso; la línea y la habitación, no.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 1 de 4</span>
+  <div class="concept-label anim">Primero, dos clases y lo que las une</div>
+  <div class="concept-title anim">Vehículo y<br><span>orden</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de clases &middot; Sistema del taller &middot; paso 1 de 4</div>
+      <svg viewBox="0 15 1090 200" style="width:100%; height:auto; display:block;"><rect x="400" y="30" width="300" height="142" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="550" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#1A1A1A">OrdenTrabajo</text><line x1="400" y1="58" x2="700" y2="58" stroke="#1A1A1A" stroke-width="1.5"/><text x="408" y="77" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- numero : Entero</text><text x="408" y="95" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- fecha : Fecha</text><text x="408" y="113" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- horas : Decimal</text><line x1="400" y1="124" x2="700" y2="124" stroke="#1A1A1A" stroke-width="1.5"/><text x="408" y="143" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ agregarHoras(horas : Decimal)</text><text x="408" y="161" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ calcularTotal() : Decimal</text><rect x="30" y="30" width="250" height="106" fill="white" stroke="#E31E24" stroke-width="2"/><text x="155" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#E31E24">Vehiculo</text><line x1="30" y1="58" x2="280" y2="58" stroke="#E31E24" stroke-width="1.5"/><text x="38" y="77" font-family="'JetBrains Mono',monospace" font-size="12" fill="#E31E24">- patente : Texto</text><text x="38" y="95" font-family="'JetBrains Mono',monospace" font-size="12" fill="#E31E24">- marca : Texto</text><line x1="30" y1="106" x2="280" y2="106" stroke="#E31E24" stroke-width="1.5"/><text x="38" y="125" font-family="'JetBrains Mono',monospace" font-size="12" fill="#E31E24">+ obtenerTipo() : Texto</text><polyline points="280,75 400,75" fill="none" stroke="#E31E24" stroke-width="2"/><text x="288" y="67" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="800" fill="#E31E24">1</text><text x="392" y="76" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="26" font-weight="800" fill="#E31E24">*</text></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Relación agregada: Asociación con multiplicidad</div>
+        <div class="voc-desc"><strong>Función:</strong> un vehículo tiene muchas órdenes a lo largo del tiempo; cada orden es de un solo vehículo.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> 1 junto a Vehiculo, * junto a OrdenTrabajo.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 2 de 4</span>
+  <div class="concept-label anim">La clase que sabe cobrar</div>
+  <div class="concept-title anim">Se agrega<br>la <span>tarifa</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de clases &middot; Sistema del taller &middot; paso 2 de 4</div>
+      <svg viewBox="0 15 1090 380" style="width:100%; height:auto; display:block;"><rect x="400" y="30" width="300" height="142" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="550" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#1A1A1A">OrdenTrabajo</text><line x1="400" y1="58" x2="700" y2="58" stroke="#1A1A1A" stroke-width="1.5"/><text x="408" y="77" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- numero : Entero</text><text x="408" y="95" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- fecha : Fecha</text><text x="408" y="113" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- horas : Decimal</text><line x1="400" y1="124" x2="700" y2="124" stroke="#1A1A1A" stroke-width="1.5"/><text x="408" y="143" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ agregarHoras(horas : Decimal)</text><text x="408" y="161" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ calcularTotal() : Decimal</text><rect x="30" y="30" width="250" height="106" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="155" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#1A1A1A">Vehiculo</text><line x1="30" y1="58" x2="280" y2="58" stroke="#1A1A1A" stroke-width="1.5"/><text x="38" y="77" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- patente : Texto</text><text x="38" y="95" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- marca : Texto</text><line x1="30" y1="106" x2="280" y2="106" stroke="#1A1A1A" stroke-width="1.5"/><text x="38" y="125" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ obtenerTipo() : Texto</text><polyline points="280,75 400,75" fill="none" stroke="#1A1A1A" stroke-width="2"/><text x="288" y="67" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="800" fill="#E31E24">1</text><text x="392" y="76" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="26" font-weight="800" fill="#E31E24">*</text><rect x="630" y="230" width="450" height="106" fill="white" stroke="#E31E24" stroke-width="2"/><text x="855" y="249" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#E31E24">Tarifa</text><line x1="630" y1="258" x2="1080" y2="258" stroke="#E31E24" stroke-width="1.5"/><text x="638" y="277" font-family="'JetBrains Mono',monospace" font-size="12" fill="#E31E24">- tipoVehiculo : Texto</text><text x="638" y="295" font-family="'JetBrains Mono',monospace" font-size="12" fill="#E31E24">- valorHora : Decimal</text><line x1="630" y1="306" x2="1080" y2="306" stroke="#E31E24" stroke-width="1.5"/><text x="638" y="325" font-family="'JetBrains Mono',monospace" font-size="12" fill="#E31E24">+ calcularManoObra(tipo : Texto, horas : Decimal) : Decimal</text><polyline points="700,75 850,75 850,230" fill="none" stroke="#E31E24" stroke-width="2"/><text x="708" y="76" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="26" font-weight="800" fill="#E31E24">*</text><text x="858" y="222" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="800" fill="#E31E24">1</text></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Relación agregada: Asociación</div>
+        <div class="voc-desc"><strong>Función:</strong> la orden usa una tarifa para calcular la mano de obra. Es el mensaje 4 de la sesión 5, ahora como relación permanente.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> * órdenes usan 1 tarifa según el tipo de vehículo.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 3 de 4</span>
+  <div class="concept-label anim">Las partes que no existen sin la orden</div>
+  <div class="concept-title anim">Se agrega la<br><span>composición</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de clases &middot; Sistema del taller &middot; paso 3 de 4</div>
+      <svg viewBox="0 15 1090 470" style="width:100%; height:auto; display:block;"><rect x="400" y="30" width="300" height="142" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="550" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#1A1A1A">OrdenTrabajo</text><line x1="400" y1="58" x2="700" y2="58" stroke="#1A1A1A" stroke-width="1.5"/><text x="408" y="77" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- numero : Entero</text><text x="408" y="95" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- fecha : Fecha</text><text x="408" y="113" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- horas : Decimal</text><line x1="400" y1="124" x2="700" y2="124" stroke="#1A1A1A" stroke-width="1.5"/><text x="408" y="143" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ agregarHoras(horas : Decimal)</text><text x="408" y="161" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ calcularTotal() : Decimal</text><rect x="30" y="30" width="250" height="106" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="155" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#1A1A1A">Vehiculo</text><line x1="30" y1="58" x2="280" y2="58" stroke="#1A1A1A" stroke-width="1.5"/><text x="38" y="77" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- patente : Texto</text><text x="38" y="95" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- marca : Texto</text><line x1="30" y1="106" x2="280" y2="106" stroke="#1A1A1A" stroke-width="1.5"/><text x="38" y="125" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ obtenerTipo() : Texto</text><polyline points="280,75 400,75" fill="none" stroke="#1A1A1A" stroke-width="2"/><text x="288" y="67" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="800" fill="#E31E24">1</text><text x="392" y="76" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="26" font-weight="800" fill="#E31E24">*</text><rect x="630" y="230" width="450" height="106" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="855" y="249" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#1A1A1A">Tarifa</text><line x1="630" y1="258" x2="1080" y2="258" stroke="#1A1A1A" stroke-width="1.5"/><text x="638" y="277" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- tipoVehiculo : Texto</text><text x="638" y="295" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- valorHora : Decimal</text><line x1="630" y1="306" x2="1080" y2="306" stroke="#1A1A1A" stroke-width="1.5"/><text x="638" y="325" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ calcularManoObra(tipo : Texto, horas : Decimal) : Decimal</text><polyline points="700,75 850,75 850,230" fill="none" stroke="#1A1A1A" stroke-width="2"/><text x="708" y="76" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="26" font-weight="800" fill="#E31E24">*</text><text x="858" y="222" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="800" fill="#E31E24">1</text><rect x="400" y="330" width="220" height="106" fill="white" stroke="#E31E24" stroke-width="2"/><text x="510" y="349" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#E31E24">LineaRepuesto</text><line x1="400" y1="358" x2="620" y2="358" stroke="#E31E24" stroke-width="1.5"/><text x="408" y="377" font-family="'JetBrains Mono',monospace" font-size="12" fill="#E31E24">- codigo : Texto</text><text x="408" y="395" font-family="'JetBrains Mono',monospace" font-size="12" fill="#E31E24">- cantidad : Entero</text><line x1="400" y1="406" x2="620" y2="406" stroke="#E31E24" stroke-width="1.5"/><text x="408" y="425" font-family="'JetBrains Mono',monospace" font-size="12" fill="#E31E24">+ subtotal() : Decimal</text><polygon points="510,172 518,184 510,196 502,184" fill="#E31E24" stroke="#E31E24" stroke-width="2"/><polyline points="510,196 510,330" fill="none" stroke="#E31E24" stroke-width="2"/><text x="520" y="212" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="800" fill="#E31E24">1</text><text x="520" y="331" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="26" font-weight="800" fill="#E31E24">*</text></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Relación agregada: Composición</div>
+        <div class="voc-desc"><strong>Función:</strong> rombo relleno del lado de OrdenTrabajo. Si se borra la orden, se borran sus líneas.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> 1 OrdenTrabajo tiene * LineaRepuesto.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-pasos">Construcción &middot; 4 de 4</span>
+  <div class="concept-label anim">Los tipos de vehículo</div>
+  <div class="concept-title anim">Diagrama<br><span>completo</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama de clases &middot; Sistema del taller &middot; paso 4 de 4</div>
+      <svg viewBox="0 15 1090 470" style="width:100%; height:auto; display:block;"><rect x="400" y="30" width="300" height="142" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="550" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#1A1A1A">OrdenTrabajo</text><line x1="400" y1="58" x2="700" y2="58" stroke="#1A1A1A" stroke-width="1.5"/><text x="408" y="77" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- numero : Entero</text><text x="408" y="95" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- fecha : Fecha</text><text x="408" y="113" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- horas : Decimal</text><line x1="400" y1="124" x2="700" y2="124" stroke="#1A1A1A" stroke-width="1.5"/><text x="408" y="143" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ agregarHoras(horas : Decimal)</text><text x="408" y="161" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ calcularTotal() : Decimal</text><rect x="30" y="30" width="250" height="106" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="155" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#1A1A1A">Vehiculo</text><line x1="30" y1="58" x2="280" y2="58" stroke="#1A1A1A" stroke-width="1.5"/><text x="38" y="77" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- patente : Texto</text><text x="38" y="95" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- marca : Texto</text><line x1="30" y1="106" x2="280" y2="106" stroke="#1A1A1A" stroke-width="1.5"/><text x="38" y="125" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ obtenerTipo() : Texto</text><polyline points="280,75 400,75" fill="none" stroke="#1A1A1A" stroke-width="2"/><text x="288" y="67" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="800" fill="#E31E24">1</text><text x="392" y="76" text-anchor="end" font-family="'Barlow Condensed',sans-serif" font-size="26" font-weight="800" fill="#E31E24">*</text><rect x="630" y="230" width="450" height="106" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="855" y="249" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#1A1A1A">Tarifa</text><line x1="630" y1="258" x2="1080" y2="258" stroke="#1A1A1A" stroke-width="1.5"/><text x="638" y="277" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- tipoVehiculo : Texto</text><text x="638" y="295" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- valorHora : Decimal</text><line x1="630" y1="306" x2="1080" y2="306" stroke="#1A1A1A" stroke-width="1.5"/><text x="638" y="325" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ calcularManoObra(tipo : Texto, horas : Decimal) : Decimal</text><polyline points="700,75 850,75 850,230" fill="none" stroke="#1A1A1A" stroke-width="2"/><text x="708" y="76" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="26" font-weight="800" fill="#E31E24">*</text><text x="858" y="222" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="800" fill="#E31E24">1</text><rect x="400" y="330" width="220" height="106" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="510" y="349" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#1A1A1A">LineaRepuesto</text><line x1="400" y1="358" x2="620" y2="358" stroke="#1A1A1A" stroke-width="1.5"/><text x="408" y="377" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- codigo : Texto</text><text x="408" y="395" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- cantidad : Entero</text><line x1="400" y1="406" x2="620" y2="406" stroke="#1A1A1A" stroke-width="1.5"/><text x="408" y="425" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ subtotal() : Decimal</text><polygon points="510,172 518,184 510,196 502,184" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="2"/><polyline points="510,196 510,330" fill="none" stroke="#1A1A1A" stroke-width="2"/><text x="520" y="212" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="800" fill="#E31E24">1</text><text x="520" y="331" text-anchor="start" font-family="'Barlow Condensed',sans-serif" font-size="26" font-weight="800" fill="#E31E24">*</text><rect x="10" y="330" width="150" height="88" fill="white" stroke="#E31E24" stroke-width="2"/><text x="85" y="349" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#E31E24">Auto</text><line x1="10" y1="358" x2="160" y2="358" stroke="#E31E24" stroke-width="1.5"/><text x="18" y="377" font-family="'JetBrains Mono',monospace" font-size="12" fill="#E31E24">- puertas : Entero</text><line x1="10" y1="388" x2="160" y2="388" stroke="#E31E24" stroke-width="1.5"/><rect x="180" y="330" width="150" height="88" fill="white" stroke="#E31E24" stroke-width="2"/><text x="255" y="349" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#E31E24">Camion</text><line x1="180" y1="358" x2="330" y2="358" stroke="#E31E24" stroke-width="1.5"/><text x="188" y="377" font-family="'JetBrains Mono',monospace" font-size="12" fill="#E31E24">- ejes : Entero</text><line x1="180" y1="388" x2="330" y2="388" stroke="#E31E24" stroke-width="1.5"/><polygon points="155,136 166,154 144,154" fill="white" stroke="#E31E24" stroke-width="2"/><polyline points="155,154 155,280" fill="none" stroke="#E31E24" stroke-width="2"/><polyline points="85,280 255,280" fill="none" stroke="#E31E24" stroke-width="2"/><polyline points="85,280 85,330" fill="none" stroke="#E31E24" stroke-width="2"/><polyline points="255,280 255,330" fill="none" stroke="#E31E24" stroke-width="2"/></svg>
+    </div>
+    <div class="voc-grid" style="grid-template-columns:1fr;">
+      <div class="voc-card">
+        <div class="voc-nombre">Relación agregada: Herencia</div>
+        <div class="voc-desc"><strong>Función:</strong> triángulo hueco apuntando a Vehiculo. Auto y Camion reciben patente, marca y obtenerTipo(), y agregan su propio dato.</div>
+        <div class="voc-desc" style="margin-top:8px;"><strong>Ejemplo:</strong> Las dos líneas de las hijas se juntan antes de llegar al triángulo: una sola punta hacia el padre.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept blue-accent">
+  <span class="slide-badge badge-concepto">Lectura</span>
+  <div class="concept-label anim">Así se lee el diagrama completo</div>
+  <div class="concept-title anim">Cómo se <span>lee</span></div>
+  <div class="concept-body anim">
+    <div class="guion">
+      <div class="guion-item"><div class="guion-n">1</div><div><strong>Vehiculo (1) y OrdenTrabajo (*)</strong>: cada vehículo puede tener muchas órdenes; cada orden es de un vehículo.</div></div>
+      <div class="guion-item"><div class="guion-n">2</div><div><strong>OrdenTrabajo (*) y Tarifa (1)</strong>: cada orden se cobra con una tarifa.</div></div>
+      <div class="guion-item"><div class="guion-n">3</div><div><strong>OrdenTrabajo &#9670; LineaRepuesto</strong>: la orden se compone de sus líneas de repuestos; sin la orden, no existen.</div></div>
+      <div class="guion-item"><div class="guion-n">4</div><div><strong>Auto y Camion &#9655; Vehiculo</strong>: un auto es un vehículo, un camión es un vehículo.</div></div>
+    </div>
+    <div class="callout callout-tip anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Las mismas piezas de la sesión 5</strong>
+        <p>OrdenTrabajo, Vehiculo y Tarifa venían del diagrama de comunicación. LineaRepuesto, Auto y Camion aparecen al pensar en todo el sistema, no en una sola historia.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Reglas</span>
+  <div class="concept-label anim">Lo que se revisa en todo diagrama de clases</div>
+  <div class="concept-title anim">Las reglas<br>del <span>diagrama</span></div>
+  <div class="concept-body anim">
+    <div class="pasos">
+      <div class="paso"><div class="paso-n">1</div><div><div class="paso-t">Nombre en singular, sin dos puntos</div><div class="paso-d">OrdenTrabajo, no Ordenes ni :OrdenTrabajo. Con mayúscula inicial y sin espacios.</div></div></div>
+      <div class="paso"><div class="paso-n">2</div><div><div class="paso-t">Atributos privados y con tipo</div><div class="paso-d"><code>- fecha : Fecha</code>. Un atributo sin tipo está incompleto.</div></div></div>
+      <div class="paso"><div class="paso-n">3</div><div><div class="paso-t">Métodos públicos, con paréntesis</div><div class="paso-d"><code>+ calcularTotal() : Decimal</code>. Sin paréntesis no se distingue de un atributo.</div></div></div>
+      <div class="paso"><div class="paso-n">4</div><div><div class="paso-t">El rombo va en el todo</div><div class="paso-d">Del lado de la clase que contiene a las otras. Y multiplicidad en los dos extremos.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-practica">Actividad</span>
+  <div class="concept-label anim">Un compañero dibujó esta parte del taller</div>
+  <div class="concept-title anim">Encuentra los<br><span>errores</span></div>
+  <div class="concept-body anim">
+    <div class="diagrama">
+      <div class="diagrama-cap">Diagrama con errores &middot; no copiar</div>
+      <svg viewBox="0 15 900 150" style="width:100%; height:auto; display:block;"><rect x="60" y="30" width="300" height="106" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="210" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#1A1A1A">Ordenes</text><line x1="60" y1="58" x2="360" y2="58" stroke="#1A1A1A" stroke-width="1.5"/><text x="68" y="77" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- numero : Entero</text><text x="68" y="95" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- fecha</text><line x1="60" y1="106" x2="360" y2="106" stroke="#1A1A1A" stroke-width="1.5"/><text x="68" y="125" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ calcularTotal</text><rect x="600" y="30" width="260" height="106" fill="white" stroke="#1A1A1A" stroke-width="2"/><text x="730" y="49" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#1A1A1A">LineaRepuesto</text><line x1="600" y1="58" x2="860" y2="58" stroke="#1A1A1A" stroke-width="1.5"/><text x="608" y="77" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- codigo : Texto</text><text x="608" y="95" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">- cantidad : Entero</text><line x1="600" y1="106" x2="860" y2="106" stroke="#1A1A1A" stroke-width="1.5"/><text x="608" y="125" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1A1A1A">+ subtotal() : Decimal</text><polyline points="360,75 576,75" fill="none" stroke="#1A1A1A" stroke-width="2"/><polygon points="576,75 588,67 600,75 588,83" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="2"/></svg>
+    </div>
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 5 min &middot; en parejas</div>
+      <div class="act-t">Hay cuatro errores, uno por regla. Para cada uno, digan qué regla rompe y cómo se corrige.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept green-accent">
+  <span class="slide-badge badge-concepto">Resolución</span>
+  <div class="concept-label anim">Los cuatro errores, uno por regla</div>
+  <div class="concept-title anim">Error y<br><span>corrección</span></div>
+  <div class="concept-body anim">
+    <table class="tbl">
+      <thead><tr><th>Error</th><th>Regla que rompe</th><th>Corrección</th></tr></thead>
+      <tbody><tr><td>Ordenes</td><td>1: nombre en singular</td><td>OrdenTrabajo</td></tr><tr><td>- fecha sin tipo</td><td>2: atributo con tipo</td><td><code>- fecha : Fecha</code></td></tr><tr><td>+ calcularTotal sin paréntesis</td><td>3: método con paréntesis</td><td><code>+ calcularTotal() : Decimal</code></td></tr><tr><td>El rombo está en LineaRepuesto</td><td>4: el rombo va en el todo</td><td>Rombo junto a OrdenTrabajo, con 1 y * en los extremos</td></tr></tbody>
+    </table>    <div class="callout callout-important anim">
+      <div class="callout-icon">&#9679;</div>
+      <div class="callout-content">
+        <strong>Guarda esta tabla</strong>
+        <p>Antes de exportar tu diagrama, revísalo con estas cuatro reglas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-separator sep-orange">
+  <span class="slide-badge badge-concepto">Bloque 04</span>
+  <div class="sep-num anim">04 &middot; Práctica guiada &middot; 30 min</div>
+  <div class="sep-title anim">Tu diagrama<br>de <span>clases</span></div>
+  <p class="sep-desc anim">
+    En draw.io, en el mismo archivo, con tu diagrama de comunicación al lado.
+  </p>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-pasos">Paso a paso &middot; draw.io</span>
+  <div class="concept-label anim">10 min &middot; el profe lo hace en vivo y tú lo sigues en tu computador</div>
+  <div class="concept-title anim">Las piezas<br>en <span>draw.io</span></div>
+  <div class="concept-body anim">
+    <div class="pasos">
+      <div class="paso"><div class="paso-n">1</div><div><div class="paso-t">Agrega una página</div><div class="paso-d">Junto a las pestañas de página, "+". Nómbrala "Diagrama de clases".</div></div></div>
+      <div class="paso"><div class="paso-n">2</div><div><div class="paso-t">Agrega una clase</div><div class="paso-d">Escribe "class" en el buscador de formas y arrastra la que tiene tres partes. Doble clic en el título para el nombre.</div></div></div>
+      <div class="paso"><div class="paso-n">3</div><div><div class="paso-t">Escribe atributos y métodos</div><div class="paso-d">Doble clic en cada fila. Para agregar una fila, selecciónala y duplícala con Ctrl+D (Cmd+D en Mac).</div></div></div>
+      <div class="paso"><div class="paso-n">4</div><div><div class="paso-t">Une dos clases</div><div class="paso-d">Pasa el mouse sobre una clase y arrastra la flecha azul hasta la otra.</div></div></div>
+      <div class="paso"><div class="paso-n">5</div><div><div class="paso-t">Elige el símbolo</div><div class="paso-d">Panel derecho, punta de la línea: ninguna (asociación), rombo (agregación o composición) o triángulo (herencia).</div></div></div>
+      <div class="paso"><div class="paso-n">6</div><div><div class="paso-t">Hueco o relleno</div><div class="paso-d">Con la línea seleccionada, marca o desmarca "Relleno" en la punta: rombo relleno para composición, hueco para agregación y herencia.</div></div></div>
+      <div class="paso"><div class="paso-n">7</div><div><div class="paso-t">Escribe la multiplicidad</div><div class="paso-d">Doble clic sobre la línea cerca de cada extremo: 1 o *.</div></div></div>
+      <div class="paso"><div class="paso-n">8</div><div><div class="paso-t">Revisa y exporta</div><div class="paso-d">Cuatro reglas. Archivo, Exportar como, PNG, solo la página "Diagrama de clases".</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept orange-accent">
+  <span class="slide-badge badge-practica">Taller</span>
+  <div class="concept-label anim">Solo o en dupla, sobre tu propio negocio</div>
+  <div class="concept-title anim">De tus objetos<br>a tus <span>clases</span></div>
+  <div class="concept-body anim">
+    <div class="actividad anim">
+      <div class="act-k">Actividad &middot; 20 min &middot; solo o en dupla &middot; en draw.io</div>
+      <div class="act-t">Dibuja el diagrama de clases de tu negocio.</div>
+      <div class="act-list">
+        <div class="act-li">Cada objeto de tu diagrama de comunicación (menos :Sistema) es una clase</div>
+        <div class="act-li">Cada mensaje que recibe un objeto es un método de su clase</div>
+        <div class="act-li">Al menos tres atributos por clase, privados y con tipo</div>
+        <div class="act-li">Al menos una composición o agregación, con la pregunta del borrado</div>
+        <div class="act-li">Herencia solo si tu negocio tiene tipos de algo (tipos de habitación, de socio, de producto)</div>
+        <div class="act-li">Multiplicidad en los dos extremos de cada relación (menos herencia)</div>
+      </div>
+      <div class="act-d">Este diagrama completa la Vista Lógica de tu ES2.</div>
+    </div>
+  </div>
+</div>
+
+<div class="slide slide-concept red-accent">
+  <span class="slide-badge badge-cierre">Checkpoint</span>
+  <div class="concept-label anim">Sin nota: revisa que te llevas esto antes de irte</div>
+  <div class="concept-title anim">Checkpoint<br>de <span>salida</span></div>
+  <div class="concept-body anim">
+    <div class="chk">
+      <div class="chk-item">
+        <div class="chk-num">1</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Distingues clase de objeto</div>
+          <div class="chk-desc">"OrdenTrabajo es el molde; :OrdenTrabajo es una orden concreta."</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">2</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Tu diagrama de clases guardado en .drawio</div>
+          <div class="chk-desc">Con atributos, métodos, relaciones y multiplicidad. Si no lo terminaste, lo terminas en casa: completa la Vista Lógica de tu ES2.</div>
+        </div>
+      </div>
+      <div class="chk-item">
+        <div class="chk-num">3</div>
+        <div class="chk-cont">
+          <div class="chk-tit">Puedes justificar cada rombo</div>
+          <div class="chk-desc">"Es composición porque si borro la orden, sus líneas no tienen sentido solas."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CIERRE -->
+<div class="slide slide-separator">
+  <span class="slide-badge badge-cierre">Cierre</span>
+  <div class="sep-num anim">Resumen de la sesión</div>
+  <div class="sep-title anim">Lo que te<br><span>llevas</span> hoy</div>
+  <div class="resumen-grid anim">
+    <div class="resumen-item">
+      <div class="resumen-cmd">Clase y objeto</div>
+      <div class="resumen-desc">El molde (OrdenTrabajo) y una cosa concreta (:OrdenTrabajo)</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Tres partes</div>
+      <div class="resumen-desc">Nombre; atributos privados con tipo; métodos públicos con paréntesis</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">De mensaje a método</div>
+      <div class="resumen-desc">Cada mensaje que recibe un objeto es un método de su clase</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Asociación y agregación</div>
+      <div class="resumen-desc">Línea simple, y rombo hueco: la parte vive sin el todo</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Composición y herencia</div>
+      <div class="resumen-desc">Rombo relleno: la parte muere con el todo. Triángulo hueco: "es un"</div>
+    </div>
+    <div class="resumen-item">
+      <div class="resumen-cmd">Vista Lógica completa</div>
+      <div class="resumen-desc">Comunicación y clases: la segunda pieza de tu ES2</div>
+    </div>
+  </div>
+  <div style="margin-top:36px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);">
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:12px;">Próxima sesión (martes 01/12 &middot; 120 min)</div>
+    <div style="font-size:18px; color:rgba(255,255,255,0.6); line-height:1.6;">Vista de Desarrollo: diagrama de componentes &middot; Vista de Procesos: diagrama de secuencia</div>
+  </div>
+</div>
+
+<script>
+  const slides   = document.querySelectorAll('.slide');
+  const total    = slides.length;
+  const progress = document.getElementById('progress');
+  let current    = 0;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.intersectionRatio < 0.4) return;
+      e.target.classList.add('visible');
+      current = [...slides].indexOf(e.target);
+      progress.style.width = ((current + 1) / total * 100) + '%';
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => obs.observe(s));
+  slides[0].classList.add('visible');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(Math.min(current + 1, total - 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(Math.max(current - 1, 0));
+    } else if (e.key === 'Home') { goTo(0); }
+      else if (e.key === 'End')  { goTo(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') { toggleFS(); }
+  });
+
+  function goTo(idx) { slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+</script>
+
+</body>
+</html>
